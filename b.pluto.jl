@@ -9,6 +9,11 @@ frontmatter = (
     title="Something cool",
     description="Very fun stuff is happening!",
     tags=["fun", "cool"],
+    author=[(
+        name="JuliaPluto",
+        url="https://github.com/JuliaPluto",
+        image="https://github.com/JuliaPluto.png",
+    )],
 );
 
 # ╔═╡ ec425e6e-6b9c-11eb-0c63-97fade58f6b4
