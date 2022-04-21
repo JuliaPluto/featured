@@ -32,7 +32,7 @@ sqrt(sum(seq) * 6.0)
 
 # ╔═╡ ec425e6e-6b9c-11eb-0c63-97fade58f6b5
 frontmatter = (
-    tags=["basic", "classic"],
+    tags=["debug", "classic"],
     author=[(
         name="Pluto.jl",
         url="https://github.com/JuliaPluto",

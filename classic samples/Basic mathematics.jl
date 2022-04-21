@@ -359,6 +359,7 @@ frontmatter = (
         name="Pluto.jl",
         url="https://github.com/JuliaPluto",
     )],
+	order=2,
 );
 
 # ╔═╡ Cell order:
