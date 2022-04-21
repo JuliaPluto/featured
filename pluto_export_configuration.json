@@ -1,0 +1,19 @@
+{
+    
+    "title": "Featured Notebooks",
+    "description": "These notebooks from the Julia community show off what you can do with Pluto. Give it a try, you might learn something new!",
+    
+    "collections": [
+        {
+            "title": "Getting started",
+            "description": "Learn the basics of Pluto in just 10 minutes!",
+            "tags": ["basic"]
+        },
+        {
+            "title": "JavaScript",
+            "description": "kjadsfkjha ksdjfh aksjdhf akjhsdf *jkah* [dsfkjh](#) askdfjh as",
+            "tags": ["javascript"]
+        }
+    ]
+    
+}
