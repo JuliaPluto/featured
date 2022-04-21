@@ -622,6 +622,7 @@ frontmatter = (
         name="Pluto.jl",
         url="https://github.com/JuliaPluto",
     )],
+	order=3,
 );
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
