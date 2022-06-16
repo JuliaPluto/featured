@@ -4,7 +4,7 @@ This repository contains Pluto's *featured* notebooks! Learn more about our feat
 
 ## New submissions
 
-Right now, at the start, the Pluto featured notebooks are *invite-only*. In a couple of months, we will change the system to also allow applications from the public. So if you are interested in contributing, hold on!
+Right now, while we are still building up the system, the Pluto featured notebooks are *invite-only*: you should only submit a PR if you received an email from us. In a couple of months, we will change the system to also allow applications from the public. So if you are interested in contributing, hold on!
 
 
 ## How to add/change a notebook
