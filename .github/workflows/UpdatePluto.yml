@@ -33,6 +33,8 @@ jobs:
               run: |
                   julia --project -e '
                   import Pkg
+                  Pkg.instantiate()
+                  Pkg.resolve()
                   Pkg.rm("Pluto")
                   Pkg.add([Pkg.PackageSpec(name="Pluto", rev="${{ github.event.inputs.plutocommitsha }}")])
                   Pkg.update()
