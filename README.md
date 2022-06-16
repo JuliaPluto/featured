@@ -2,6 +2,10 @@
 
 This repository contains Pluto's *featured* notebooks! Learn more about our featured notebook system [here](https://github.com/fonsp/Pluto.jl/pull/2048).
 
+## New submissions
+
+Right now, at the start, the Pluto featured notebooks are *invite-only*. In a couple of months, we will change the system to also allow applications from the public. So if you are interested in contributing, hold on!
+
 
 ## How to add/change a notebook
 
