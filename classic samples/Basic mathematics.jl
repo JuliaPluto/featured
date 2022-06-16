@@ -1,5 +1,13 @@
 ### A Pluto.jl notebook ###
-# v0.11.4
+# v0.19.9
+
+#> [frontmatter]
+#> author_url = "https://github.com/JuliaPluto"
+#> order = "2"
+#> tags = ["basic", "classic"]
+#> author_name = "Pluto.jl"
+#> description = "Learn mathematics in Julia using pizzas! 🍕"
+#> license = "Unlicense"
 
 using Markdown
 using InteractiveUtils
@@ -7,101 +15,12 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : missing
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
 end
-
-# ╔═╡ e5e0a0da-d45c-11ea-1042-e9b5d0654d4f
-md"Fix the value of `c` below to make it `c = a * b`"
-
-# ╔═╡ 4dff4b5e-d461-11ea-29c8-d548fdb5f08b
-md"Edit the equation below to calculate the number of pizzas to order using the variables above for **people**, **avg**, and **slices**:"
-
-# ╔═╡ f907e46a-d471-11ea-07e5-f30e2aab3d08
-md"""The diameter of a pizza is often stated on a menu so let's define a **formula** to calculate the area of a pizza given the diameter **d**.
-
-We do this by writing a formula like this: `area(d) = pi * (d/2)^2`
-
-Let's write that below:
-"""
-
-# ╔═╡ d9575e9c-d472-11ea-1eda-2d335d039f28
-md"""Now we have a function called **area** that we can pass any diameter and it will return the area of a pizza (or circle), let's try that with the pizza from before with `area(2*r)` to get the area of the pizza:
-"""
-
-# ╔═╡ edb95b14-d473-11ea-3a5a-77382d31f941
-md"""## Finding the best pizza deal
-
-Let's see if a larger pizza is a better value by calculating the price per area.  There are 4 sizes: small, medium, large, extra large with the following prices:
-
-Size     | Diameter (inches) | Price ($)
-:------- | :---------------: | --------:
-small    | 9  | 13.10
-medium   | 13 | 20.95
-large    | 15 | 24.90 
-XL       | 17 | 30.95
-
-### 1. How many small pizzas is the same as one XL pizza?
-
-Edit the expression below:
-"""
-
-# ╔═╡ 5b07b8fe-d475-11ea-01aa-6b88d6ed8a05
-md"""### 2. Calculate the cost per area of each pizza:
-"""
-
-# ╔═╡ a42e4eb0-d474-11ea-316a-3d864451bc01
-md"Which size of pizza is the best deal?  Write your answer below and assign it to the variable **best_value**."
-
-# ╔═╡ cb419286-d4ff-11ea-1d7f-af5c8574b775
-md"""### 3. Is this a good deal?
-
-San Marinos has a special **\"Buy two medium pizzas and save \$5\"**.  Is this a better deal than buying a extra-large pizza?
-
-Calculate the total cost of two medium pizzas deal (saving \$5):"""
-
-# ╔═╡ 0d76d97c-d500-11ea-2433-e96c6fc43b05
-md"Calculate the total area of two medium pizzas:"
-
-# ╔═╡ 20a1e9cc-d500-11ea-3d9b-279c71bc20f1
-md"Now calculate cost per area by taking the total cost of two medium pizzas and divide by the total area:"
-
-# ╔═╡ 57f024ae-d500-11ea-1cc4-ed28348fdf93
-md"""Is it a better deal to get two medium pizzas for \$5 off or to just buy an extra-large?"""
-
-# ╔═╡ 180c8fdc-d503-11ea-04ca-bf2c07fd1c17
-md"""### 4. Advanced Problem
-
-A new worker at a pizza shop was getting paid for cutting pizza into pieces.  The pieces of pizza could be any size.  Calculate the maximum number of pieces the worker could make with two cuts of the pizza."""
-
-# ╔═╡ 92b4a012-d503-11ea-15a2-1f3a446d3284
-md"Now what about 3 cuts across the pizza?  What is the maximum number of pieces that can be made with **3 cuts**?"
-
-# ╔═╡ 2eb9a560-d507-11ea-3b8b-9d06678fe131
-md"Now, how many pieces can be made with **4 cuts**?"
-
-# ╔═╡ d1e3dec0-d507-11ea-1213-d37a9325ee2f
-md"Are you starting to see a pattern?  Can you figure out a formula for how many pieces of pizza can be made with \"n\" cuts?  Make a table and fill in the number of pieces for a number of cuts and see if you can find the pattern:
-
-Cuts | Pieces
-:--- | ------:
-0    |   1
-1    |   2
-2    |   4
-3    |   
-4    |   
-"
-
-# ╔═╡ 97bfd13c-dcc2-11ea-0067-ad8c2c6517fc
-md"To get an extra hint, figure out how many slices we can get from **5 cuts**:"
-
-# ╔═╡ e0cb2822-dcc2-11ea-2c85-5748bfe526dc
-md"Have you found the pattern? Write down the formula below:"
-
-# ╔═╡ 03249876-d508-11ea-16bb-fd5afed37a1f
-md"""##### Let's test your formula!"""
 
 # ╔═╡ 14158eb0-d45c-11ea-088f-330e45412320
 a = 2
@@ -118,6 +37,9 @@ This is an introduction to programming.  Let's get started!
 First let's do some simple math with setting **a = $a**, **b = $b** and **c = a * b**.  What will **c** equal?
 
 Type in the cells (with the coloured background) below and press **`Shift-Enter`** or the click the right-arrow button (▶️) to the right to execute the cell after changing the values."
+
+# ╔═╡ e5e0a0da-d45c-11ea-1042-e9b5d0654d4f
+md"Fix the value of `c` below to make it `c = a * b`"
 
 # ╔═╡ 30f0f882-d45c-11ea-2adc-7d84ecf8a7a6
 c = 10
@@ -156,6 +78,9 @@ Number of slices on a piece of pizza | slices
 
 """
 
+# ╔═╡ 4dff4b5e-d461-11ea-29c8-d548fdb5f08b
+md"Edit the equation below to calculate the number of pizzas to order using the variables above for **people**, **avg**, and **slices**:"
+
 # ╔═╡ 444e2fa4-d460-11ea-12aa-57e0576c2d66
 pizzas = 1
 
@@ -171,14 +96,47 @@ The area of a pizza is ``A = \pi r^2``.  Lets try calculating the area of a pizz
 # ╔═╡ 50f0f6d6-d471-11ea-304e-8f72e7ef9d7e
 A =  r^2
 
+# ╔═╡ f907e46a-d471-11ea-07e5-f30e2aab3d08
+md"""The diameter of a pizza is often stated on a menu so let's define a **formula** to calculate the area of a pizza given the diameter **d**.
+
+We do this by writing a formula like this: `area(d) = pi * (d/2)^2`
+
+Let's write that below:
+"""
+
 # ╔═╡ cb36a9ee-d472-11ea-1835-bf7963137e18
 area(d) = pi * (d / 2)^2
+
+# ╔═╡ d9575e9c-d472-11ea-1eda-2d335d039f28
+md"""Now we have a function called **area** that we can pass any diameter and it will return the area of a pizza (or circle), let's try that with the pizza from before with `area(2*r)` to get the area of the pizza:
+"""
 
 # ╔═╡ 04b010c0-d473-11ea-1767-136c7e26e122
 A2 = area(r)
 
+# ╔═╡ edb95b14-d473-11ea-3a5a-77382d31f941
+md"""## Finding the best pizza deal
+
+Let's see if a larger pizza is a better value by calculating the price per area.  There are 4 sizes: small, medium, large, extra large with the following prices:
+
+Size     | Diameter (inches) | Price ($)
+:------- | :---------------: | --------:
+small    | 9  | 13.10
+medium   | 13 | 20.95
+large    | 15 | 24.90 
+XL       | 17 | 30.95
+
+### 1. How many small pizzas is the same as one XL pizza?
+
+Edit the expression below:
+"""
+
 # ╔═╡ 637c26fa-d475-11ea-2c5b-2b0f4775b119
 smalls_in_xl = 1
+
+# ╔═╡ 5b07b8fe-d475-11ea-01aa-6b88d6ed8a05
+md"""### 2. Calculate the cost per area of each pizza:
+"""
 
 # ╔═╡ 3823d09e-d474-11ea-194e-59b5805f303b
 small = 13.10 / area(9)
@@ -192,34 +150,85 @@ large = 24.90 / area(15)
 # ╔═╡ 962e6b86-d474-11ea-11a6-a1d11e33ae42
 xl = 30.95 / area(17)
 
+# ╔═╡ a42e4eb0-d474-11ea-316a-3d864451bc01
+md"Which size of pizza is the best deal?  Write your answer below and assign it to the variable **best_value**."
+
 # ╔═╡ 16ec3f32-d4ff-11ea-20e2-5bc6dd5db083
 best_value = small
+
+# ╔═╡ cb419286-d4ff-11ea-1d7f-af5c8574b775
+md"""### 3. Is this a good deal?
+
+San Marinos has a special **\"Buy two medium pizzas and save \$5\"**.  Is this a better deal than buying a extra-large pizza?
+
+Calculate the total cost of two medium pizzas deal (saving \$5):"""
 
 # ╔═╡ f147b6cc-d4ff-11ea-05ad-6f5b441e5d1b
 two_medium_cost = 20.95 * 1 - 0
 
+# ╔═╡ 0d76d97c-d500-11ea-2433-e96c6fc43b05
+md"Calculate the total area of two medium pizzas:"
+
 # ╔═╡ 19eb2a82-d500-11ea-3782-596adc689382
 two_medium_area = 1 * area(13)
+
+# ╔═╡ 20a1e9cc-d500-11ea-3d9b-279c71bc20f1
+md"Now calculate cost per area by taking the total cost of two medium pizzas and divide by the total area:"
 
 # ╔═╡ 70e85498-d500-11ea-35af-474574f5c011
 two_medium_deal = 1
 
+# ╔═╡ 57f024ae-d500-11ea-1cc4-ed28348fdf93
+md"""Is it a better deal to get two medium pizzas for \$5 off or to just buy an extra-large?"""
+
+# ╔═╡ 180c8fdc-d503-11ea-04ca-bf2c07fd1c17
+md"""### 4. Advanced Problem
+
+A new worker at a pizza shop was getting paid for cutting pizza into pieces.  The pieces of pizza could be any size.  Calculate the maximum number of pieces the worker could make with two cuts of the pizza."""
+
 # ╔═╡ 6494e270-d503-11ea-38a7-df96e7f0a241
 cuts2 = 1
+
+# ╔═╡ 92b4a012-d503-11ea-15a2-1f3a446d3284
+md"Now what about 3 cuts across the pizza?  What is the maximum number of pieces that can be made with **3 cuts**?"
 
 # ╔═╡ a05aae8e-d506-11ea-190f-57e9ce53b8b9
 cuts3 = 1
 
+# ╔═╡ 2eb9a560-d507-11ea-3b8b-9d06678fe131
+md"Now, how many pieces can be made with **4 cuts**?"
+
 # ╔═╡ 5a8ede88-d507-11ea-30d9-c99a67243781
 cuts4 = 1
 
+# ╔═╡ d1e3dec0-d507-11ea-1213-d37a9325ee2f
+md"Are you starting to see a pattern?  Can you figure out a formula for how many pieces of pizza can be made with \"n\" cuts?  Make a table and fill in the number of pieces for a number of cuts and see if you can find the pattern:
+
+Cuts | Pieces
+:--- | ------:
+0    |   1
+1    |   2
+2    |   4
+3    |   
+4    |   
+"
+
+# ╔═╡ 97bfd13c-dcc2-11ea-0067-ad8c2c6517fc
+md"To get an extra hint, figure out how many slices we can get from **5 cuts**:"
+
 # ╔═╡ bae0cb62-dcc2-11ea-0667-512e1c407d40
 cuts5 = 1
+
+# ╔═╡ e0cb2822-dcc2-11ea-2c85-5748bfe526dc
+md"Have you found the pattern? Write down the formula below:"
 
 # ╔═╡ f5f89724-d507-11ea-0a93-6d904f36bbe4
 function pieces(n)
 	return n
 end
+
+# ╔═╡ 03249876-d508-11ea-16bb-fd5afed37a1f
+md"""##### Let's test your formula!"""
 
 # ╔═╡ bd9f3d24-d509-11ea-165d-3d465a0b4542
 md"""Move the slider to change the number of cuts: 
@@ -351,17 +360,6 @@ else
 	$(keep_working(md"The answer should be $(Int(n*(n+1)/2+1))."))"""
 end
 
-# ╔═╡ ec425e6e-6b9c-11eb-0c63-97fade58f6b5
-frontmatter = (
-    description="Learn mathematics in Julia using pizzas! 🍕",
-    tags=["basic", "classic"],
-    author=[(
-        name="Pluto.jl",
-        url="https://github.com/JuliaPluto",
-    )],
-	order=2,
-);
-
 # ╔═╡ Cell order:
 # ╟─03664f5c-d45c-11ea-21b6-91cd647a07aa
 # ╠═14158eb0-d45c-11ea-088f-330e45412320
@@ -427,4 +425,3 @@ frontmatter = (
 # ╟─4119d19e-dcbc-11ea-3ec8-271e88e1afca
 # ╟─921bba30-dcbc-11ea-13c3-87554722da8a
 # ╟─5a6d1a8e-dcbc-11ea-272a-6f769c8d309c
-# ╟─ec425e6e-6b9c-11eb-0c63-97fade58f6b5
