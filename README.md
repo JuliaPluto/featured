@@ -22,7 +22,8 @@ To add a notebook, simply add the file to this repository! It will be picked up 
 
 All notebook files in this repository will be rendered by PlutoSliderServer, but they will only show up in Pluto's main menu if they belong to a collection. 
 
-**Important:** If you are not using the `Unlicense` license, then also write a clear paragraph stating the license in the notebook itself!
+### License
+All current Pluto sample notebooks have had the `Unlicense` license, which means that people can copy code snippets from sample notebooks and use them freely. If you also want to use the `Unlicense`, great! If not, then also write a clear paragraph stating the license in the notebook itself.
 
 ## More instructions
 
