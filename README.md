@@ -25,6 +25,11 @@ All notebook files in this repository will be rendered by PlutoSliderServer, but
 ### License
 All current Pluto sample notebooks have had the `Unlicense` license, which means that people can copy code snippets from sample notebooks and use them freely. If you also want to use the `Unlicense`, great! If not, then also write a clear paragraph stating the license in the notebook itself.
 
+### Interactivity
+The current *featured* system distributes notebook *statefiles*, which work the same way as Pluto's HTML export: people can read the notebook instantly, without having to wait for it to run. There is a button to *Edit and Run* a notebook that users can press to use the featured notebook as a template.
+
+This means that sliders, buttons, etc don't immediately work, so notebooks that rely heavily on interactivity to tell a story are not a good fit. In the future, we plan to run a [PlutoSliderServer](https://github.com/JuliaPluto/PlutoSliderServer.jl) for sample notebooks, allowing instant interaction like https://computationalthinking.mit.edu/, but until then, keep this in mind.
+
 ## More instructions
 
 Check out [these instructions](https://github.com/JuliaPluto/pluto-developer-instructions/blob/main/How%20to%20update%20the%20featured%20notebooks.md) to learn more about maintenance.
