@@ -3,6 +3,7 @@
 
 #> [frontmatter]
 #> author_url = "https://github.com/JuliaPluto"
+#> image = "https://user-images.githubusercontent.com/6933510/174067386-c0a1296f-dba8-4dbf-b936-1c7f81933f94.png"
 #> tags = ["basic", "classic", "plotting"]
 #> author_name = "Pluto.jl"
 #> description = "An introduction to Plots.jl"

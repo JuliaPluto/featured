@@ -3,6 +3,7 @@
 
 #> [frontmatter]
 #> author_url = "https://github.com/JuliaPluto"
+#> image = "https://user-images.githubusercontent.com/6933510/174066114-bc76964d-6ed1-491a-baa0-5063e3b08a17.png"
 #> order = "2"
 #> tags = ["basic", "classic"]
 #> author_name = "Pluto.jl"
