@@ -3,6 +3,7 @@
 
 #> [frontmatter]
 #> author_url = "https://github.com/JuliaPluto"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg"
 #> tags = ["javascript", "classic"]
 #> author_name = "Pluto.jl"
 #> description = "Use HTML, CSS and JavaScript to make your own interactive visualizations!"
