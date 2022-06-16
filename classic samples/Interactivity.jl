@@ -1,5 +1,12 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.19.9
+
+#> [frontmatter]
+#> author_url = "https://github.com/JuliaPluto"
+#> tags = ["interactivity", "basic", "classic"]
+#> author_name = "Pluto.jl"
+#> description = "Learn the basics of interactivity in Pluto."
+#> license = "Unlicense"
 
 using Markdown
 using InteractiveUtils
@@ -251,16 +258,6 @@ md""
 # ╔═╡ f7555734-7f34-11ea-069a-6bb67e201bdc
 md"That's it for now! Let us know what you think using the feedback box below! 👇"
 
-# ╔═╡ ec425e6e-6b9c-11eb-0c63-97fade58f6b5
-frontmatter = (
-	description="Learn the basics of interactivity in Pluto.",
-	tags=["interactivity", "basic", "classic"],
-	author=[(
-		name="Pluto.jl",
-		url="https://github.com/JuliaPluto",
-	)],
-);
-
 # ╔═╡ Cell order:
 # ╟─db24490e-7eac-11ea-094e-9d3fc8f22784
 # ╠═bd24d02c-7eac-11ea-14ab-95021678e71e
@@ -290,4 +287,3 @@ frontmatter = (
 # ╟─dddb9f34-7f37-11ea-0abb-272ef1123d6f
 # ╟─23db0e90-7f35-11ea-1c05-115773b44afa
 # ╟─f7555734-7f34-11ea-069a-6bb67e201bdc
-# ╟─ec425e6e-6b9c-11eb-0c63-97fade58f6b5

@@ -1,5 +1,12 @@
 ### A Pluto.jl notebook ###
-# v0.10.2
+# v0.19.9
+
+#> [frontmatter]
+#> author_url = "https://github.com/JuliaPluto"
+#> tags = ["basic", "classic"]
+#> author_name = "Pluto.jl"
+#> description = "An interactive Julia puzzle about stacking disks."
+#> license = "Unlicense"
 
 using Markdown
 using InteractiveUtils
@@ -165,7 +172,7 @@ This is where we can check a solution. We start with a function that takes our r
 function run_solution(solver::Function, start = starting_stacks)
 	moves = solver(deepcopy(start)) #apply the solver
 	
-	all_states = Array{Any,1}(undef, length(moves) + 1)
+	all_states = Vector{Any}(undef, length(moves) + 1)
 	all_states[1] = start
 	
 	for (i, m) in enumerate(moves)
@@ -236,16 +243,6 @@ else
 	"""
 end
 
-# ╔═╡ ec425e6e-6b9c-11eb-0c63-97fade58f6b5
-frontmatter = (
-    description="Learn mathematics in Julia using pizzas! 🍕",
-    tags=["basic", "classic"],
-    author=[(
-        name="Pluto.jl",
-        url="https://github.com/JuliaPluto",
-    )],
-);
-
 # ╔═╡ Cell order:
 # ╟─5b2ee40e-a2b8-11ea-0fef-c35fe6918860
 # ╟─95fbd0d2-a2b9-11ea-0682-fdf783251797
@@ -275,4 +272,3 @@ frontmatter = (
 # ╠═10fb1c56-a2c5-11ea-2a06-0d8c36bfa138
 # ╠═8ea7f944-a329-11ea-22cc-4dbd11ec0610
 # ╟─e54add0a-a330-11ea-2eeb-1d42f552ba38
-# ╟─ec425e6e-6b9c-11eb-0c63-97fade58f6b5
