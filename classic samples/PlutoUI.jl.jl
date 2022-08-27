@@ -51,6 +51,9 @@ md"""
 Simply import the `PlutoUI` package, and Pluto's built-in package manager takes care of the rest!
 """
 
+# ╔═╡ deadce6b-4abc-42b0-9997-07be8637ee94
+TableOfContents()
+
 # ╔═╡ fddb794c-c75c-11ea-1f55-eb9c178424cd
 md"""
 # Basics
@@ -849,6 +852,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─3eff9592-cc63-11ea-2b61-4170d1a7656a
 # ╟─051f31fc-cc63-11ea-1e2c-0704285ea6a9
 # ╠═071d9ca5-9b42-4583-ad96-a48f93453a0e
+# ╟─deadce6b-4abc-42b0-9997-07be8637ee94
 # ╟─fb6142f6-c765-11ea-29fd-7ff4e823c02b
 # ╟─fddb794c-c75c-11ea-1f55-eb9c178424cd
 # ╟─b819e9a8-c760-11ea-11ee-dd01da663b5c
