@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width" />
     <meta charset="utf-8" />
     
-    
+    <meta name="description" content='Learn the basics of interactivity in Pluto.'>
+<meta property="og:article:tag" content='interactivity'>
+<meta property="og:article:tag" content='basic'>
+<meta property="og:article:tag" content='classic'>
+<meta property='og:image' content='https://user-images.githubusercontent.com/6933510/174067982-904951c4-4bba-42c7-a340-102ceb7e8e10.png'>
+<meta property='og:type' content='article'>
+<meta property='og:description' content='Learn the basics of interactivity in Pluto.'>
+
 <meta name="pluto-insertion-spot-meta">
 
     
@@ -13,11 +20,11 @@
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a2928">
     <meta name="color-scheme" content="light dark">
 
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/img/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/img/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/img/favicon-96x96.png" />
-    <link rel="pluto-logo-big" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/img/logo.svg" />
-    <link rel="pluto-logo-small" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/img/favicon_unsaturated.svg" />
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/img/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/img/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/img/favicon-96x96.png" />
+    <link rel="pluto-logo-big" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/img/logo.svg" />
+    <link rel="pluto-logo-small" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/img/favicon_unsaturated.svg" />
     
     <script defer>
         console.log(
@@ -33,13 +40,13 @@
     <!-- This doesn't do anything unless activated, and it makes sure parcel bundles this -->
     <script id="iframe-resizer-content-window-script" src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.2.11/js/iframeResizer.contentWindow.min.js" crossorigin="anonymous" defer></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/editor.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/hide-ui.css" type="text/css" media="all" data-pluto-file="hide-ui" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/binder.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/treeview.css" type="text/css" />
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/juliamono.css" as="style" />
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/vollkorn.css" as="style" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/highlightjs.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/editor.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/hide-ui.css" type="text/css" media="all" data-pluto-file="hide-ui" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/binder.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/treeview.css" type="text/css" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/juliamono.css" as="style" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/vollkorn.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/highlightjs.css" type="text/css">
 
     <script data-pluto-file="launch-parameters">
 window.pluto_notebook_id = undefined;
@@ -47,15 +54,15 @@ window.pluto_isolated_cell_ids = undefined;
 window.pluto_notebookfile = "Interactivity.jl";
 window.pluto_disable_ui = true;
 window.pluto_slider_server_url = undefined;
-window.pluto_binder_url = "https://mybinder.org/v2/gh/fonsp/pluto-on-binder/v0.19.9";
+window.pluto_binder_url = "https://mybinder.org/v2/gh/fonsp/pluto-on-binder/v0.19.12";
 window.pluto_statefile = "Interactivity.plutostate";
 window.pluto_preamble_html = undefined;
 </script>
 <meta name="pluto-insertion-spot-parameters">
 
 
-    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/editor.js" type="module" defer></script>
-    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@5b987fd59405576355615f3aff6601a3036431da/frontend/warn_old_browsers.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/editor.js" type="module" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@289c1d6/frontend/warn_old_browsers.js"></script>
 
     <!-- This script will be enabled by JS after the notebook has initialized to prevent taking up bandwidth during the initial load. -->
     <script type="text/javascript" id="MathJax-script" integrity="sha384-4kE/rQ11E8xT9QgrCBTyvenkuPfQo8rXYQvJZuMgxyPOoUfpatjQPlgdv6V5yhUK" crossorigin="anonymous" not-the-src-yet="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js" async></script>
