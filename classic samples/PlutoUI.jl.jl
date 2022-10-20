@@ -29,17 +29,7 @@ using PlutoUI
 # ╔═╡ bc532cd2-c75b-11ea-313f-8b5e771c9227
 md"""# PlutoUI.jl
 
-The [Interactivity sample notebook](./sample/Interactivity.jl) explains how Pluto notebooks can use **`@bind`** to add _interactivity_ to your notebook. It's a simple concept - it uses the same reactivity that you have when editing code, except now you use sliders and buttons, instead of editing code.
-
-However, code like
-
-```julia
-@bind x html"<input type=range min=5 max=15>"
-```
-is hard to memorize, so `PlutoUI` makes it more _Julian_:
-```julia
-@bind x Slider(5:15)
-```
+Pluto notebooks can use **`@bind`** to add _interactivity_ to your notebook. It's a simple concept - it uses the same reactivity that you have when editing code, except now you use sliders and buttons, instead of editing code.
 """
 
 # ╔═╡ 3eff9592-cc63-11ea-2b61-4170d1a7656a
