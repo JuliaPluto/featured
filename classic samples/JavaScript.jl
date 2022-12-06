@@ -466,7 +466,7 @@ Just like when writing a browser app, there are two ways to import JS dependenci
 
 ### Loading method 1: ES6 imports
 
-We recommend that you use an [**ES6 import**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) if the library supports it. (If it does not, you might be able to still get it using [esm.sh](https://esm.sh) or [skypack.dev](https://www.skypack.dev)!)
+We recommend that you use an [**ES6 import**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) if the library supports it. (If it does not, you might be able to still get it using [esm.sh](https://esm.sh)!)
 
 
 ##### Awkward note about syntax
