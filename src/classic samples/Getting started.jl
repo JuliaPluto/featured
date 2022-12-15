@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.9
+# v0.19.18
 
 #> [frontmatter]
 #> author_url = "https://github.com/JuliaPluto"
@@ -70,10 +70,16 @@ neighbors = [cat, friend, "Smerfetka", "Latte"]
 # ╔═╡ 19ff8d36-9547-11ea-0e08-e5cdd8338673
 md"Now, if you're like my grandma, you're feeding the entire neighborhood by yourself. Let's see how many cans of cat food you need to prepare."
 
+# ╔═╡ a4a60262-9547-11ea-3a81-5bf7f9ee5d16
+consumption = confusing_function("🥫", neighbors)
+
 # ╔═╡ 270ac49e-9549-11ea-3ffd-71ddaee9f134
 md"But what does `confusing_function` do? If you ever need help, click on 📚 **Live docs** in the lower right, and then place your cursor on the code you need help with. 
 
 If you don't see it, then your screen is too small! Maybe you need to zoom out?"
+
+# ╔═╡ e11e1660-9549-11ea-22f6-8bb53dc045fe
+md"Now we know to prepare $(length(consumption)) cans. Let's stock up!"
 
 # ╔═╡ 745a4584-954a-11ea-028e-59011f268ec6
 cans_in_stock = "🥫🥫🥫🥫"
@@ -87,6 +93,9 @@ end
 
 # ╔═╡ eac62fea-954e-11ea-2768-39ce6f4059ab
 # cans_in_stock = "🥫🥫🥫🥫🥫"
+
+# ╔═╡ f27f90c2-954f-11ea-3f93-17acb2ce4280
+md"We have $(length(cans_in_stock)) cans of cat food, and our cats need $(length(consumption)). Try adding another cat to the neighborhood to see what changes!"
 
 # ╔═╡ 6c8e2108-9550-11ea-014d-235770ed4771
 md"## Saving cats and notebooks
@@ -153,15 +162,6 @@ confusing_function(text::String, array::Array)
 Repeats the `text` as many times as there are elements in `array`.
 """
 confusing_function(text::String, array::Array) = repeat(text, length(array))
-
-# ╔═╡ a4a60262-9547-11ea-3a81-5bf7f9ee5d16
-consumption = confusing_function("🥫", neighbors)
-
-# ╔═╡ e11e1660-9549-11ea-22f6-8bb53dc045fe
-md"Now we know to prepare $(length(consumption)) cans. Let's stock up!"
-
-# ╔═╡ f27f90c2-954f-11ea-3f93-17acb2ce4280
-md"We have $(length(cans_in_stock)) cans of cat food, and our cats need $(length(consumption)). Try adding another cat to the neighborhood to see what changes!"
 
 # ╔═╡ 1deaaf36-9554-11ea-3dae-85851f73dbc6
 md"**Have fun using Pluto!**

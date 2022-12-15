@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.11
+# v0.19.18
 
 #> [frontmatter]
 #> author_url = "https://github.com/JuliaPluto"
