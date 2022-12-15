@@ -53,6 +53,7 @@ jobs:
                   
                   import PlutoSliderServer
 
+                  isdir("output") && rm("output"; recursive=true)
                   PlutoSliderServer.github_action("src";
                     Export_output_dir="output",
                     Export_cache_dir="pluto_state_cache",
