@@ -31,8 +31,9 @@ jobs:
 
             - name: Update Pkg environment
               run: |
-                  julia --project -e '
+                  julia -e '
                   import Pkg
+                  Pkg.activate("pluto-deployment-environment")
                   Pkg.instantiate()
                   Pkg.resolve()
                   Pkg.rm("Pluto")
@@ -41,6 +42,7 @@ jobs:
                   '
 
             - name: Push changes to main
+              working-directory: pluto-deployment-environment
               run: |
                   git add Project.toml Manifest.toml
                   git commit -m "$GITHUB_WORKFLOW" -m "Pluto version set to ${{ github.event.inputs.plutocommitsha }}"

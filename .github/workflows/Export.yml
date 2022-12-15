@@ -48,12 +48,12 @@ jobs:
               run: |
                 julia -e '
                   import Pkg
-                  Pkg.activate(".")
+                  Pkg.activate("pluto-deployment-environment")
                   Pkg.instantiate()
                   
                   import PlutoSliderServer
 
-                  PlutoSliderServer.github_action(".";
+                  PlutoSliderServer.github_action("src";
                     Export_output_dir="output",
                     Export_cache_dir="pluto_state_cache",
                     # more parameters can go here
