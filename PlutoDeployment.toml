@@ -1,4 +1,6 @@
 [Export]
 baked_notebookfile=false
 baked_state=false
+create_index=true
+create_pluto_featured_index=true
 # more parameters can go here
