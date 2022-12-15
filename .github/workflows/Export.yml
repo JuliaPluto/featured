@@ -26,7 +26,7 @@ jobs:
               uses: julia-actions/setup-julia@v1
               with:
                   # note: this version should match the version in the other actions in this repo
-                  version: "1.8"
+                  version: "1.6"
 
             - name: Cache Julia artifacts & such
               uses: julia-actions/cache@v1
