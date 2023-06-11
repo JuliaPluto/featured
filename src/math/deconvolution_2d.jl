@@ -1,6 +1,11 @@
 ### A Pluto.jl notebook ###
 # v0.19.25
 
+#> [frontmatter]
+#> title = "Images and Filtering"
+#> tags = ["images", "filtering", "deconvolution ", "gaussian", "pixel"]
+#> description = "Learn about filters in image processing!"
+
 using Markdown
 using InteractiveUtils
 
@@ -20,21 +25,30 @@ using Images,TestImages, PlutoUI
 # ╔═╡ 04a5c6d4-f8d5-11ed-141a-35481b811ee9
 md"""
 ## Images as Lists of numbers
-Hi There! Remember when you were kid and you used to play with legos ? you probably would put tiny pieces of different colors to form different shapes and elements ? 
+Hi There! Remember when you were kid and you used to play with legos? you probably would put tiny pieces of different colors to form different shapes and elements? 
 
 Well images in computers work exactly the same way! Each image is made of tiny elements we call pixels. Since our computers only understand numbers, these pixels are given to the computer as a list of numbers.  
 
-To keep things simple, we will only deal with black and white images for now. So, for a black and white image, each pixel is a number between 0 and 1. 
-
-Try it out! Move the slider around to get a different shade of gray
+In the following, we will explore how images can be processed in computer science and we will introduce a cool tool called filtering, which is a mathematical operation to modify images by smoothing, highlighting some parts of the images and way more.
 """
+
+# ╔═╡ 9be00bec-59a5-478b-ada2-854f7a52d66e
+md"""To keep things simple, we will only deal with black and white images for now. So, for a black and white image, each pixel is a number between 0 and 1. 
+
+Try it out! Move the slider around to set the pixel below to get a different shade of gray"""
 
 # ╔═╡ c4da04ab-f7e0-46fd-b352-e518e4733608
 g_slider = @bind g PlutoUI.Slider(0:0.05:1)
 
 # ╔═╡ 96a4b35a-5a3a-4ad0-9ffe-306db46d1c03
-#Move the Slider: $(g_slider) $(pixel)
 pixel = Gray.(g)
+
+# ╔═╡ 3f830a9b-3a78-4d18-ae3e-933778402a25
+md"""Now we can generate a 5x5 table of random pixels and combine them together and we have already our first image!
+"""
+
+# ╔═╡ 98919284-8099-43c8-b123-d1476d27a88d
+img = rand(Gray, 5, 5)
 
 # ╔═╡ eb983abe-5899-431b-84a1-7d06715d75c4
 md"""
@@ -42,48 +56,78 @@ Now that you know how images are built. Let's get to the fun part. First let's s
 """
 
 # ╔═╡ ef0bea69-6dfd-4526-a96e-6607771660fe
-testimage("coffee")
-
-# ╔═╡ 04bdc84a-0e3b-48d7-9129-50bc8c421e7c
-md"""Pretty neat right? But we're sticking with black and white images. """
+test_img = Gray.(testimage("coffee"))
 
 # ╔═╡ ebb63415-2738-47f3-b0ef-0fd6e6bac259
 md"""
 ## Using Filter 
 
-Now to make things more interesting, we will add some code that applies a filter to this image."""
+Now to make things more interesting, we will add some code that applies a filter to this image.
 
-# ╔═╡ fcf738bd-ab29-4ad8-a837-0fb2d0e7ed85
-test_img = Gray.(testimage("coffee"))
+This code basically goes over all the pixels in the image and applies the mathematical operation of convolution, that is the values of the pixel and its surrounding pixels are multipled by the value of the filter matrix. 
+
+However, it's alright if you don't understand exactly how the code works."""
 
 # ╔═╡ 44d594ff-a25b-4455-be56-863345c67b68
 # Code from "Towards Data Science": https://towardsdatascience.com/understanding-convolution-by-implementing-in-julia-3ed744e2e933
 function conv(input, filter)
-    input_r, input_c = size(input)
-    filter_r, filter_c = size(filter)
+    input_row, input_col = size(input)
+    filter_row, filter_col = size(filter)
 
-    result = zeros(input_r-filter_r+1, input_c-filter_c+1)
-    result_r, result_c = size(result)
+    result = zeros(input_row-filter_row+1, input_col-filter_col+1)
+    result_row, result_col = size(result)
 
-    for i in 1:result_r
-        for j in 1:result_c
-            result[i,j] = sum(input[i:i+filter_r-1,j:j+filter_c-1].*filter)
+    for i in 1:result_row
+        for j in 1:result_col
+            result[i,j] = sum(input[i:i+filter_row-1,j:j+filter_col-1].*filter)
         end
     end
   
     return result
 end
 
-# ╔═╡ 065819eb-3697-417d-9251-d7537cd3d247
-md"""Can you guess what this filter does?"""
+# ╔═╡ d752805d-ba2c-4133-a556-46a1da734557
+md"""Now let's start with a simple filter. This is called a "Box Blur" and it has the simple task of blurring the image.
 
-# ╔═╡ f2d1dbd2-2d93-4f39-9204-5b321fbe9a67
-test_filter = [[1,1,1] [0,0,0] [-1,-1,-1]]
+Can you see it ?"""
+
+# ╔═╡ d729f8b4-05e2-4863-b8c4-39b37646c36b
+test_filter = [[0.111,0.111,0.111] [0.111,0.111,0.111] [0.111,0.111,0.111]]
 
 # ╔═╡ 8ae0248f-6eba-4941-85f4-b21be3c7e725
-begin
+let
 	height, width = size(test_img)
 	filtered_img = Gray.(conv(test_img, test_filter))
+	padded_img = test_img[2:height-1, 2:width-1]
+	[padded_img filtered_img]
+end
+
+# ╔═╡ 19b49665-0382-4eb1-9c70-8295e0aa819b
+md"""You can also try other filters! 
+
+Choose a filter from the selection below and see what the filter matrix looks like and how the image changes. 
+
+Can you identify the difference between the right and left shift matrices ?"""
+
+# ╔═╡ adc154cf-7059-4f1d-9bac-56b9a93cc47f
+@bind test_filter_selected Select([
+	[[0,0,0] [0,1,0] [0,0,0]] => "Original",
+	[[1, 2, 1] [2, 4, 2] [1, 2, 1]] * 0.0625 => "Gaussian Blur", 
+	[[0.111,0.111,0.111] [0.111,0.111,0.111] [0.111,0.111,0.111]] => "Box Blur",
+	[[-0.111,-0.111,-0.111] [-0.111,0.89,-0.111] [-0.111,-0.111,-0.111]] => "Details",
+	[[0,-1,0] [-1,4,-1] [0,-1,0]] => "Edge Detection",
+	[[1,2,1] [0,0,0] [-1,-2,-1]] => "Vertical Edges",
+	[[1,0,-1] [2,0,-2] [1,0,-1]] => "Horizontal Edges",
+	[[0,0,0] [1,0,0] [0,0,0]] => "Left Shift",
+	[[0,0,0] [0,0,1] [0,0,0]] => "Right Shift"])
+
+# ╔═╡ 6c31cbb0-01ed-40cf-b400-3ed6b7c79ecc
+test_filter_selected
+
+# ╔═╡ 4b560bf2-00d9-4440-9589-834cd9177f66
+begin
+	height, width = size(test_img)
+	filtered_img = Gray.(conv(test_img, test_filter_selected))
 	padded_img = test_img[2:height-1, 2:width-1]
 	[padded_img filtered_img]
 end
@@ -91,22 +135,42 @@ end
 # ╔═╡ a174850b-91cc-4463-ab28-61ca0a7221c6
 md"""Now it's your turn! Try changing the values of the filter matrix and see what happens!"""
 
-# ╔═╡ ed87ff94-64e2-4fdf-ab57-cd037a9b6eea
-md""" $(@bind a1 Scrubbable(-1:0.05:1)) | $(@bind a2 Scrubbable(-1:0.05:1)) | $(@bind a3 Scrubbable(-1:0.05:1))
- 
- $(@bind b1 Scrubbable(-1:0.05:1)) | $(@bind b2 Scrubbable(-1:0.05:1)) | $(@bind b3 Scrubbable(-1:0.05:1))
+# ╔═╡ f844bca2-edb7-45ec-b860-5f1e0b8b6bc0
+begin
+	#a = fill(0.,3,3)
+	a = [0.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 0.0]
+	#a[2,2] = 1.0
+	md"""**Exercice:** Can you find the right matrix to sharpen the image?"""
+end
 
- $(@bind c1 Scrubbable(-1:0.05:1)) | $(@bind c2 Scrubbable(-1:0.05:1)) | $(@bind c3 Scrubbable(-1:0.05:1))
-
-"""
-
-# ╔═╡ b26f85aa-596d-44bd-b356-afec3077693a
-filter = [[a1, a2, a3] [b1, b2, b3] [c1, c2, c3]]
+# ╔═╡ 2cf6f933-508a-4dce-b670-578afeb64519
+@bind filter Scrubbable(a,format="+2.1f")
 
 # ╔═╡ 9d42dd93-98b4-40db-9d3f-8917d6f72354
 begin
 	own_filtered_img = Gray.(conv(test_img, filter))
 	[padded_img own_filtered_img]
+end
+
+# ╔═╡ b9959008-fbf2-48fd-9b16-d19fd5dad721
+correct(text=md"Great! You got the right answer! Let's move on to the next section.") = Markdown.MD(Markdown.Admonition("correct", "Got it!", [text]));
+
+# ╔═╡ 3ae12875-cfc1-4ffa-9965-07cf4bc07ab0
+keep_working(text=md"The answer is not quite right.") = Markdown.MD(Markdown.Admonition("danger", "Keep working on it!", [text]));
+
+# ╔═╡ a15e649f-d762-4ce2-b446-9df33c9a8e38
+almost(text) = Markdown.MD(Markdown.Admonition("warning", "Almost there!", [text]));
+
+# ╔═╡ dbf3179c-f35c-4e80-8aa8-b5093d6fde87
+hint(text) = Markdown.MD(Markdown.Admonition("hint", "Hint", [text]));
+
+# ╔═╡ 5737939b-0bb9-4ddf-8948-6356e60d79f3
+if filter == [0.0 -1.0 0.0; -1.0 5.011872336272722 -1.0; 0.0 -1.0 0.0]
+	correct(md"""**Great!** That was a tough question but you figured it out! 
+	
+	Now you know how filters in image processing work.""")
+else
+	hint(md"""The Sharpening filter is applying the edge detection filter on top of the original filter""")
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1050,20 +1114,30 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╟─04a5c6d4-f8d5-11ed-141a-35481b811ee9
 # ╠═746ff659-88ab-4ff4-8cba-43c798cacd3e
+# ╟─9be00bec-59a5-478b-ada2-854f7a52d66e
 # ╠═c4da04ab-f7e0-46fd-b352-e518e4733608
 # ╠═96a4b35a-5a3a-4ad0-9ffe-306db46d1c03
+# ╟─3f830a9b-3a78-4d18-ae3e-933778402a25
+# ╠═98919284-8099-43c8-b123-d1476d27a88d
 # ╟─eb983abe-5899-431b-84a1-7d06715d75c4
 # ╠═ef0bea69-6dfd-4526-a96e-6607771660fe
-# ╟─04bdc84a-0e3b-48d7-9129-50bc8c421e7c
 # ╟─ebb63415-2738-47f3-b0ef-0fd6e6bac259
-# ╠═fcf738bd-ab29-4ad8-a837-0fb2d0e7ed85
 # ╠═44d594ff-a25b-4455-be56-863345c67b68
-# ╟─065819eb-3697-417d-9251-d7537cd3d247
-# ╠═f2d1dbd2-2d93-4f39-9204-5b321fbe9a67
-# ╠═8ae0248f-6eba-4941-85f4-b21be3c7e725
+# ╟─d752805d-ba2c-4133-a556-46a1da734557
+# ╠═d729f8b4-05e2-4863-b8c4-39b37646c36b
+# ╟─8ae0248f-6eba-4941-85f4-b21be3c7e725
+# ╟─19b49665-0382-4eb1-9c70-8295e0aa819b
+# ╟─adc154cf-7059-4f1d-9bac-56b9a93cc47f
+# ╟─6c31cbb0-01ed-40cf-b400-3ed6b7c79ecc
+# ╟─4b560bf2-00d9-4440-9589-834cd9177f66
 # ╟─a174850b-91cc-4463-ab28-61ca0a7221c6
-# ╠═b26f85aa-596d-44bd-b356-afec3077693a
-# ╟─ed87ff94-64e2-4fdf-ab57-cd037a9b6eea
+# ╟─f844bca2-edb7-45ec-b860-5f1e0b8b6bc0
+# ╟─2cf6f933-508a-4dce-b670-578afeb64519
 # ╟─9d42dd93-98b4-40db-9d3f-8917d6f72354
+# ╟─5737939b-0bb9-4ddf-8948-6356e60d79f3
+# ╟─b9959008-fbf2-48fd-9b16-d19fd5dad721
+# ╟─3ae12875-cfc1-4ffa-9965-07cf4bc07ab0
+# ╟─a15e649f-d762-4ce2-b446-9df33c9a8e38
+# ╟─dbf3179c-f35c-4e80-8aa8-b5093d6fde87
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
