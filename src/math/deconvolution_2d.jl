@@ -115,6 +115,7 @@ Can you identify the difference between the right and left shift matrices ?"""
 	[[1, 2, 1] [2, 4, 2] [1, 2, 1]] * 0.0625 => "Gaussian Blur", 
 	[[0.111,0.111,0.111] [0.111,0.111,0.111] [0.111,0.111,0.111]] => "Box Blur",
 	[[-0.111,-0.111,-0.111] [-0.111,0.89,-0.111] [-0.111,-0.111,-0.111]] => "Details",
+	[[-1,-1,-1] [-1,8,-1] [-1,-1,-1]] => "Ridge Detection",
 	[[0,-1,0] [-1,4,-1] [0,-1,0]] => "Edge Detection",
 	[[1,2,1] [0,0,0] [-1,-2,-1]] => "Vertical Edges",
 	[[1,0,-1] [2,0,-2] [1,0,-1]] => "Horizontal Edges",
