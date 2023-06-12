@@ -1,6 +1,11 @@
 ### A Pluto.jl notebook ###
 # v0.19.25
 
+#> [frontmatter]
+#> title = "Convolution"
+#> tags = ["convolution", "filter", "signal-processing"]
+#> description = "Learn about the cool concept of convolution on continuous functions!"
+
 using Markdown
 using InteractiveUtils
 
@@ -75,7 +80,7 @@ For this, we will consider discrete values for our functions and a simple functi
 md"""To represent things more clearly, we will choose our nb of values = 8. This means we devide our space in 8 points (or more exactly: 8 equal intervals)."""
 
 # ╔═╡ 740401c0-6d51-48c4-afd6-b16102890be4
-nb_values = 16
+nb_values = 8
 
 # ╔═╡ 2b0c9835-d5ac-4e81-a325-ee56e9119003
 md"""To keep things simple, we start with a constant function. It's the light green function draw below. To see the points that belong to the function, tick the box below"""
@@ -130,15 +135,14 @@ end
 # ╔═╡ da0a4117-629e-42b5-95ae-d49f10769830
 function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
 	offset = 0
-	for j in k:k+nb_values+1
+	for index in k:k+nb_values
 		scatter!(ax3, (x_conv[k_conv], y3[k_conv]), color = colors[1])
 		
-		index = j
 		if index < 1 || index > l
 			continue
 		end
 		
-		color = colors[j % col_length + 1]
+		color = colors[index % col_length + 1]
 		if y1[index] != 0 && y2_draw[index] != 0
 			draw_point([x[index]], [y1[index]], ax1, :xcross, color, 0)
 			draw_point([x[index]], [y2_draw[index]], ax1, :circle, color, 0)
@@ -167,21 +171,18 @@ begin
 	ax3 = CairoMakie.Axis(f[3, 1])
 
 	# Set up range and constants
-	x = range(0, nb_values, length=nb_values)
+	x = range(0, nb_values, step=1)
 	l = length(x)
-	k = k_conv - nb_values
+	k = k_conv - nb_values -1
 
 	# Set up the functions
-	y1 = (x.>0.06*nb_values .&& x .<0.6*nb_values) .* 5
-	# BUGGY CODE. MUST FIX 
-	#y2_draw = (x.>0.1*nb_values+k .&& x .< 0.1*nb_values + nonzero_2*step(x) +k ) .* amp_2
-	#y2 = (x.>0.1*nb_values .&& x .< 0.1*nb_values + nonzero_2*step(x)) .* amp_2
-	y2_draw = (x.>0.06*nb_values+k .&& x .< 0.45*nb_values +k ) .* amp_2
-	y2 = (x.>0.06*nb_values .&& x .< 0.45*nb_values) .* amp_2
+	y1 = (x.>=0 .&& x .<0.5*nb_values) .* 5 
+	y2_draw = (x.>0.1*nb_values+k .&& x .< 0.1*nb_values + nonzero_2*step(x) +k ) .* amp_2
+	y2 = (x.>0.1*nb_values .&& x .< 0.1*nb_values + nonzero_2*step(x)) .* amp_2
 	y12 = y1 .* y2_draw
 
 	# Set up the final convoluted result (the final function is defined on a larger range)
-	x_conv = range(0, 2*nb_values-1, 2*nb_values-1)
+	x_conv = range(0, 2*nb_values, step = 1)
 	y3 = DSP.conv(y1,reverse(y2))
 
 	# Draw the initial setup
@@ -1703,7 +1704,7 @@ version = "3.5.0+0"
 # ╟─47cc0108-a86d-4e64-a013-8c4392e8987b
 # ╟─00358bc2-1e49-45a9-9b78-293aadd40976
 # ╟─b1f6bad6-09f6-47a7-a035-6c52ca7d106a
-# ╟─740401c0-6d51-48c4-afd6-b16102890be4
+# ╠═740401c0-6d51-48c4-afd6-b16102890be4
 # ╟─2b0c9835-d5ac-4e81-a325-ee56e9119003
 # ╟─07ee15ef-eaf3-4482-8dbd-ecb8c935b015
 # ╟─f59990f8-ecba-4d16-8b68-f3d40b044d74
@@ -1715,7 +1716,7 @@ version = "3.5.0+0"
 # ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 # ╟─ea09368f-4555-4823-91b9-4da3df59a730
 # ╟─3bbb6a89-61d5-4a57-9b75-0c3cf87af4b5
-# ╟─da0a4117-629e-42b5-95ae-d49f10769830
+# ╠═da0a4117-629e-42b5-95ae-d49f10769830
 # ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
 # ╟─c2455fae-f733-4e59-b2d0-a76913810f15
 # ╟─c4f25a29-009e-47e4-adc0-18c94e247df4
