@@ -212,8 +212,7 @@ begin
      		<span class="sidebar-toggle closed-sidebar">🕹</span>
 			Interactive Sliders
 			</header>"""),
-		md"""Here are all interactive bits of the notebook at one place.\
-		Feel free to change them!"""
+		md"""Here are all interactive bits of the notebook at one place. Feel free to change them!"""
 	], class="plutoui-sidebar aside")
 
 	
@@ -261,11 +260,11 @@ html"""
 		}
 
 		.second {
-			top: 18rem !important;
+			top: 17.5rem !important;
 		}
 
 		.third {
-			top: 22.25rem !important;
+			top: 21.75rem !important;
 		}
 		
 		div.plutoui-sidebar.aside.hide {
