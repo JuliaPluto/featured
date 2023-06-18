@@ -3,8 +3,8 @@
 
 #> [frontmatter]
 #> title = "Images and Filtering"
-#> tags = ["images", "filtering", "deconvolution ", "gaussian", "pixel"]
-#> description = "Learn about filters in image processing!"
+#> tags = ["images", "filtering", "gaussian", "pixel", "convolution"]
+#> description = "Learn about filters in image processing"
 
 using Markdown
 using InteractiveUtils
@@ -52,11 +52,20 @@ img = rand(Gray, 5, 5)
 
 # ╔═╡ eb983abe-5899-431b-84a1-7d06715d75c4
 md"""
-Now that you know how images are built. Let's get to the fun part. First let's start by getting a test image
+Now that you know how images are built. Let's get to the fun part. Below is a dropdown with popular test images. Choose the one you like and let's start learning about filters.
 """
 
+# ╔═╡ 4edbfca5-cb25-4093-9f4d-5cfa2aa8d77f
+@bind test_img_selected Select([
+	testimage("coffee") => "Coffee", 
+	testimage("house") => "House",
+	testimage("pirate") => "Pirate",
+	testimage("peppers") => "Peppers",
+	testimage("mandrill") => "Mandrill"
+	])
+
 # ╔═╡ ef0bea69-6dfd-4526-a96e-6607771660fe
-test_img = Gray.(testimage("coffee"))
+test_img = Gray.(test_img_selected)
 
 # ╔═╡ ebb63415-2738-47f3-b0ef-0fd6e6bac259
 md"""
@@ -69,21 +78,20 @@ This code basically goes over all the pixels in the image and applies the mathem
 However, it's alright if you don't understand exactly how the code works."""
 
 # ╔═╡ 44d594ff-a25b-4455-be56-863345c67b68
-# Code from "Towards Data Science": https://towardsdatascience.com/understanding-convolution-by-implementing-in-julia-3ed744e2e933
-function conv(input, filter)
-    input_row, input_col = size(input)
+function convolve(img, filter)
+    img_row, img_col = size(img)
     filter_row, filter_col = size(filter)
 
-    result = zeros(input_row-filter_row+1, input_col-filter_col+1)
-    result_row, result_col = size(result)
+    filtered = zeros(img_row-filter_row+1, img_col-filter_col+1)
+    filtered_row, filtered_col = size(filtered)
 
-    for i in 1:result_row
-        for j in 1:result_col
-            result[i,j] = sum(input[i:i+filter_row-1,j:j+filter_col-1].*filter)
+    for i in 1:filtered_row
+        for j in 1:filtered_col
+            filtered[i,j] = sum(img[i:i+filter_row-1,j:j+filter_col-1].*filter)
         end
     end
   
-    return result
+    return filtered
 end
 
 # ╔═╡ d752805d-ba2c-4133-a556-46a1da734557
@@ -92,12 +100,12 @@ md"""Now let's start with a simple filter. This is called a "Box Blur" and it ha
 Can you see it ?"""
 
 # ╔═╡ d729f8b4-05e2-4863-b8c4-39b37646c36b
-test_filter = [[0.111,0.111,0.111] [0.111,0.111,0.111] [0.111,0.111,0.111]]
+test_filter = [0.111 0.111 0.111; 0.111 0.111 0.111; 0.111 0.111 0.111]
 
 # ╔═╡ 8ae0248f-6eba-4941-85f4-b21be3c7e725
 let
 	height, width = size(test_img)
-	filtered_img = Gray.(conv(test_img, test_filter))
+	filtered_img = Gray.(convolve(test_img, test_filter))
 	padded_img = test_img[2:height-1, 2:width-1]
 	[padded_img filtered_img]
 end
@@ -111,16 +119,16 @@ Can you identify the difference between the right and left shift matrices ?"""
 
 # ╔═╡ adc154cf-7059-4f1d-9bac-56b9a93cc47f
 @bind test_filter_selected Select([
-	[[0,0,0] [0,1,0] [0,0,0]] => "Original",
-	[[1, 2, 1] [2, 4, 2] [1, 2, 1]] * 0.0625 => "Gaussian Blur", 
-	[[0.111,0.111,0.111] [0.111,0.111,0.111] [0.111,0.111,0.111]] => "Box Blur",
-	[[-0.111,-0.111,-0.111] [-0.111,0.89,-0.111] [-0.111,-0.111,-0.111]] => "Details",
-	[[-1,-1,-1] [-1,8,-1] [-1,-1,-1]] => "Ridge Detection",
-	[[0,-1,0] [-1,4,-1] [0,-1,0]] => "Edge Detection",
-	[[1,2,1] [0,0,0] [-1,-2,-1]] => "Vertical Edges",
-	[[1,0,-1] [2,0,-2] [1,0,-1]] => "Horizontal Edges",
-	[[0,0,0] [1,0,0] [0,0,0]] => "Left Shift",
-	[[0,0,0] [0,0,1] [0,0,0]] => "Right Shift"])
+	[0 0 0; 0 1 0; 0 0 0] => "Original Image",
+	[1 2 1; 2 4 2; 1 2 1] * 0.0625 => "Gaussian Blur", 
+	[0.111 0.111 0.111; 0.111 0.111 0.111; 0.111 0.111 0.111] => "Box Blur",
+	[-0.111 -0.111 -0.111; -0.111 0.89 -0.111; -0.111 -0.111 -0.111] => "Details",
+	[-1 -1 -1; -1 8 -1; -1 -1 -1] => "Ridge Detection",
+	[0 -1 0; -1 4 -1; 0 -1 0] => "Edge Detection",
+	[1 2 1; 0 0 0; -1 -2 -1] => "Vertical Edges",
+	[1 0 -1; 2 0 -2; 1 0 -1] => "Horizontal Edges",
+	[0 0 0; 1 0 0; 0 0 0] => "Left Shift",
+	[0 0 0; 0 0 1; 0 0 0] => "Right Shift"])
 
 # ╔═╡ 6c31cbb0-01ed-40cf-b400-3ed6b7c79ecc
 test_filter_selected
@@ -128,7 +136,7 @@ test_filter_selected
 # ╔═╡ 4b560bf2-00d9-4440-9589-834cd9177f66
 begin
 	height, width = size(test_img)
-	filtered_img = Gray.(conv(test_img, test_filter_selected))
+	filtered_img = Gray.(convolve(test_img, test_filter_selected))
 	padded_img = test_img[2:height-1, 2:width-1]
 	[padded_img filtered_img]
 end
@@ -149,7 +157,7 @@ end
 
 # ╔═╡ 9d42dd93-98b4-40db-9d3f-8917d6f72354
 begin
-	own_filtered_img = Gray.(conv(test_img, filter))
+	own_filtered_img = Gray.(convolve(test_img, filter))
 	[padded_img own_filtered_img]
 end
 
@@ -1121,6 +1129,7 @@ version = "17.4.0+0"
 # ╟─3f830a9b-3a78-4d18-ae3e-933778402a25
 # ╠═98919284-8099-43c8-b123-d1476d27a88d
 # ╟─eb983abe-5899-431b-84a1-7d06715d75c4
+# ╟─4edbfca5-cb25-4093-9f4d-5cfa2aa8d77f
 # ╠═ef0bea69-6dfd-4526-a96e-6607771660fe
 # ╟─ebb63415-2738-47f3-b0ef-0fd6e6bac259
 # ╠═44d594ff-a25b-4455-be56-863345c67b68
@@ -1128,7 +1137,7 @@ version = "17.4.0+0"
 # ╠═d729f8b4-05e2-4863-b8c4-39b37646c36b
 # ╟─8ae0248f-6eba-4941-85f4-b21be3c7e725
 # ╟─19b49665-0382-4eb1-9c70-8295e0aa819b
-# ╠═adc154cf-7059-4f1d-9bac-56b9a93cc47f
+# ╟─adc154cf-7059-4f1d-9bac-56b9a93cc47f
 # ╟─6c31cbb0-01ed-40cf-b400-3ed6b7c79ecc
 # ╟─4b560bf2-00d9-4440-9589-834cd9177f66
 # ╟─a174850b-91cc-4463-ab28-61ca0a7221c6
