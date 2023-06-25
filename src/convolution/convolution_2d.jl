@@ -2,6 +2,7 @@
 # v0.19.25
 
 #> [frontmatter]
+#> Author = "@ariguiba"
 #> title = "Images and Filtering"
 #> tags = ["images", "filtering", "gaussian", "pixel", "convolution"]
 #> description = "Learn about filters in image processing"
@@ -25,7 +26,9 @@ using Images,TestImages, PlutoUI
 # ╔═╡ 04a5c6d4-f8d5-11ed-141a-35481b811ee9
 md"""
 ## Images as Lists of numbers
-Hi There! Remember when you were kid and you used to play with legos? you probably would put tiny pieces of different colors to form different shapes and elements? 
+Hi There! I am Boshra (github: @ariguiba) and I am here to teach you about Images and Filters! 
+
+Remember when you were kid and you used to play with legos? you probably would put tiny pieces of different colors to form different shapes and elements? 
 
 Well images in computers work exactly the same way! Each image is made of tiny elements we call pixels. Since our computers only understand numbers, these pixels are given to the computer as a list of numbers.  
 
@@ -79,12 +82,16 @@ However, it's alright if you don't understand exactly how the code works."""
 
 # ╔═╡ 44d594ff-a25b-4455-be56-863345c67b68
 function convolve(img, filter)
+
+	# reads the sizes of the image and the filter
     img_row, img_col = size(img)
     filter_row, filter_col = size(filter)
 
+	# initialize the final image with zeros and the same size as the original image
     filtered = zeros(img_row-filter_row+1, img_col-filter_col+1)
     filtered_row, filtered_col = size(filtered)
 
+	# apply the filter to each pixel in the image by iterating over it, like iterating over a table/2D array/matrix
     for i in 1:filtered_row
         for j in 1:filtered_col
             filtered[i,j] = sum(img[i:i+filter_row-1,j:j+filter_col-1].*filter)
@@ -125,8 +132,8 @@ Can you identify the difference between the right and left shift matrices ?"""
 	[-0.111 -0.111 -0.111; -0.111 0.89 -0.111; -0.111 -0.111 -0.111] => "Details",
 	[-1 -1 -1; -1 8 -1; -1 -1 -1] => "Ridge Detection",
 	[0 -1 0; -1 4 -1; 0 -1 0] => "Edge Detection",
-	[1 2 1; 0 0 0; -1 -2 -1] => "Vertical Edges",
-	[1 0 -1; 2 0 -2; 1 0 -1] => "Horizontal Edges",
+	[1 2 1; 0 0 0; -1 -2 -1] => "Horizontal Edges",
+	[1 0 -1; 2 0 -2; 1 0 -1] => "Vertical Edges",
 	[0 0 0; 1 0 0; 0 0 0] => "Left Shift",
 	[0 0 0; 0 0 1; 0 0 0] => "Right Shift"])
 
@@ -483,10 +490,10 @@ uuid = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
 version = "1.2.1"
 
 [[deps.ImageMagick_jll]]
-deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "124626988534986113cfd876e3093e4a03890f58"
+deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "OpenJpeg_jll", "Pkg", "Zlib_jll", "libpng_jll"]
+git-tree-sha1 = "7607ad4100c75908a79ff31fabb792cd37711d70"
 uuid = "c73af94c-d91f-53ed-93a7-00f77d67a9d7"
-version = "6.9.12+3"
+version = "6.9.12+4"
 
 [[deps.ImageMetadata]]
 deps = ["AxisArrays", "ImageAxes", "ImageBase", "ImageCore"]
@@ -667,6 +674,12 @@ version = "4.4.0+0"
 deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
+[[deps.LittleCMS_jll]]
+deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg"]
+git-tree-sha1 = "110897e7db2d6836be22c18bffd9422218ee6284"
+uuid = "d3a379c0-f9a3-5b72-a4c0-6bf4d2e8af0f"
+version = "2.12.0+0"
+
 [[deps.LogExpFunctions]]
 deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
 git-tree-sha1 = "0a1b7c2863e44523180fdb3146534e265a91870b"
@@ -776,6 +789,12 @@ deps = ["Artifacts", "Imath_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
 git-tree-sha1 = "a4ca623df1ae99d09bc9868b008262d0c0ac1e4f"
 uuid = "18a262bb-aa17-5467-a713-aee519bc75cb"
 version = "3.1.4+0"
+
+[[deps.OpenJpeg_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libtiff_jll", "LittleCMS_jll", "Pkg", "libpng_jll"]
+git-tree-sha1 = "76374b6e7f632c130e78100b166e5a48464256f8"
+uuid = "643b3616-a352-519d-856d-80112ee9badc"
+version = "2.4.0+0"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1121,7 +1140,7 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─04a5c6d4-f8d5-11ed-141a-35481b811ee9
+# ╠═04a5c6d4-f8d5-11ed-141a-35481b811ee9
 # ╠═746ff659-88ab-4ff4-8cba-43c798cacd3e
 # ╟─9be00bec-59a5-478b-ada2-854f7a52d66e
 # ╠═c4da04ab-f7e0-46fd-b352-e518e4733608
@@ -1137,7 +1156,7 @@ version = "17.4.0+0"
 # ╠═d729f8b4-05e2-4863-b8c4-39b37646c36b
 # ╟─8ae0248f-6eba-4941-85f4-b21be3c7e725
 # ╟─19b49665-0382-4eb1-9c70-8295e0aa819b
-# ╟─adc154cf-7059-4f1d-9bac-56b9a93cc47f
+# ╠═adc154cf-7059-4f1d-9bac-56b9a93cc47f
 # ╟─6c31cbb0-01ed-40cf-b400-3ed6b7c79ecc
 # ╟─4b560bf2-00d9-4440-9589-834cd9177f66
 # ╟─a174850b-91cc-4463-ab28-61ca0a7221c6
