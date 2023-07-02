@@ -35,39 +35,7 @@ Hi There! If you ever came across convolutions in some certain science context, 
 """
 
 # ╔═╡ 2c4bf3d3-b79c-4dcc-b1a8-77b9b5cd4607
-md"""Let's start with a small example to get an intuition for what convolutions do. 
-
-In the following we have a noise function, a smoothing functions and the resulting convoluted functions.
-
-Choose another smoother function and see how the results changes. Can you guess what happens when we convoluted two functions? """
-
-# ╔═╡ 1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
-begin
-	n = 100
-	z = range(0, n, length=n)
-	fz2_select = @bind fz2 Select([sin.(z) => "Sin", cos.(z) => "Cos"])
-	md"""Smoothing function: $(fz2_select)"""
-end
-
-# ╔═╡ 47cc0108-a86d-4e64-a013-8c4392e8987b
-let
-	f = Figure()
-	ax1 = CairoMakie.Axis(f[1, 1])
-	ax2 = CairoMakie.Axis(f[2, 1])
-	ax3 = CairoMakie.Axis(f[3, 1])
-	
-	l = length(z)
-	z_conv = range(0, 2, 2*n-1)
-	
-	fz1 = rand(PinkGaussian(n))
-	fz3 = DSP.conv(fz1,fz2)
-
-	lines!(ax1, z, fz1, color = "red")
-	lines!(ax2, z, fz2, color = "blue")
-	lines!(ax3, z_conv, fz3, color="purple")
-
-	f
-end
+md"""Choose a smoother function and see how the results changes. Can you guess what happens when we convoluted two functions? """
 
 # ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
 md"""## Convolution Explained
@@ -87,7 +55,7 @@ md"""To keep things simple, we start with a constant function. It's the light gr
 
 # ╔═╡ 07ee15ef-eaf3-4482-8dbd-ecb8c935b015
 begin
-	show_y1_box = @bind show_y1 CheckBox()
+	show_y1_box = @bind show_y1 CheckBox(default=true)
 	md"""Show first function: $(show_y1_box) """
 end
 
@@ -114,7 +82,7 @@ And finally on the last grpah of the convoluted function, they are all summed up
 Pretty simple right?"""
 
 # ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
-k_slider = @bind k_conv PlutoUI.Slider(1:2*nb_values-1, show_value=true)
+k_slider = @bind k_conv PlutoUI.Slider(1:2*nb_values+1, show_value=true, default=9)
 
 # ╔═╡ e4a17824-0e9f-442e-82bc-62b8d46e88e5
 md"""The following code sets up our initial figure. If you're interested in drawing graphs in computer science, you can take a look but it's not necessary to understand the mathematical concept."""
@@ -145,10 +113,10 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 		color = colors[index % col_length + 1]
 		if y1[index] != 0 && y2_draw[index] != 0
 			draw_point([x[index]], [y1[index]], ax1, :xcross, color, 0)
-			draw_point([x[index]], [y2_draw[index]], ax1, :circle, color, 0)
+			draw_point([x[index]], [y2_draw[index]], ax1, :cross, color, 0)
 		end
-		draw_point([x[index]], [y12[index]], ax2, :circle, color, 0)
-		draw_point([x_conv[k_conv]], [y12[index]], ax3, :circle, color, offset)
+		draw_point([x[index]], [y12[index]], ax2, :cross, color, 0)
+		draw_point([x_conv[k_conv]], [y12[index]], ax3, :star6, color, offset)
 		
 		
 		offset += y12[index]
@@ -163,7 +131,7 @@ function draw_grey_points(x, y, ax, len, marker::Symbol)
 end
 
 # ╔═╡ ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
-begin
+let
 	# Set up Figure elements
 	f = Figure()
 	ax1 = CairoMakie.Axis(f[1, 1])
@@ -173,10 +141,10 @@ begin
 	# Set up range and constants
 	x = range(0, nb_values, step=1)
 	l = length(x)
-	k = k_conv - nb_values -1
+	k = k_conv - nb_values - 1
 
 	# Set up the functions
-	y1 = (x.>=0 .&& x .<0.5*nb_values) .* 5 
+	y1 = (x.>=3.0 .&& x .<0.5*nb_values+3.0) .* 5 
 	y2_draw = (x.>0.1*nb_values+k .&& x .< 0.1*nb_values + nonzero_2*step(x) +k ) .* amp_2
 	y2 = (x.>0.1*nb_values .&& x .< 0.1*nb_values + nonzero_2*step(x)) .* amp_2
 	y12 = y1 .* y2_draw
@@ -193,7 +161,7 @@ begin
 
 	# Show the initial grey points on the graph
 	if show_y1
-		draw_grey_points(x_conv, y3, ax3, 2*nb_values - 1, :circle )
+		draw_grey_points(x_conv, y3, ax3, 2*nb_values - 1, :star6)
 		draw_grey_points(x, y1, ax1, l, :xcross)
 	end
 
@@ -228,14 +196,6 @@ begin
 		md"""**Choose how many non-zero values should the filter have:**""",
 		nonzero_2_slider
 	], class="plutoui-sidebar aside third")
-end
-
-# ╔═╡ 0a002751-6cd8-4a32-a1dc-352ff69ce6e4
-begin
-	sidebar1 = Div([
-		md"""**Choose a smoothing function**""",
-		fz2_select
-	], class="plutoui-sidebar aside second")
 end
 
 # ╔═╡ 9ad51efd-a487-4153-ac3a-077ae99905bc
@@ -302,6 +262,52 @@ html"""
 		});
 	</script>
 	"""
+
+# ╔═╡ 09088c09-b685-476e-8df9-db7edb8ed377
+function gaussian(x::Float64, μ, σ, range_min, range_max)
+    scaled_x = ((x - μ) / σ) * ((range_max - range_min) / 4) + ((range_max + range_min) / 2)
+    coeff = 1 / (σ * sqrt(2π))
+    exponent = -((scaled_x - μ)^2) / (2σ^2)
+    return coeff * exp(exponent)
+end
+
+# ╔═╡ 1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
+begin
+	n = 100
+	z = range(0, n, length=n)
+	fz2_select = @bind fz2 Select(
+		[[gaussian(zi,50.0, 20, 0.0, 100.0) for zi in collect(z)] => "Gaussian",
+		(z.>=20 .&& z .<60) .* 5 => "Box", 
+		[(1 / (1 + exp(-(zi - 50)))) * 50 for zi in collect(z)] => "Sigmoid"])
+	md"""Smoothing function: $(fz2_select)"""
+end
+
+# ╔═╡ 47cc0108-a86d-4e64-a013-8c4392e8987b
+let
+	f = Figure()
+	ax1 = CairoMakie.Axis(f[1, 1])
+	ax2 = CairoMakie.Axis(f[2, 1])
+	ax3 = CairoMakie.Axis(f[3, 1])
+	
+	l = length(z)
+	
+	fz1 = rand(PinkGaussian(n))
+	fz3 = DSP.conv(fz1,fz2)[end÷4:end÷4*3+1]
+
+	lines!(ax1, z, fz1, color = "red")
+	lines!(ax2, z, fz2, color = "blue")
+	lines!(ax3, z, fz3, color="purple")
+
+	f
+end
+
+# ╔═╡ 0a002751-6cd8-4a32-a1dc-352ff69ce6e4
+begin
+	sidebar1 = Div([
+		md"""**Choose a smoothing function**""",
+		fz2_select
+	], class="plutoui-sidebar aside second")
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1700,10 +1706,10 @@ version = "3.5.0+0"
 # ╟─f16a932e-6667-45a8-af6f-a3a22b9cd956
 # ╟─2c4bf3d3-b79c-4dcc-b1a8-77b9b5cd4607
 # ╟─1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
-# ╟─47cc0108-a86d-4e64-a013-8c4392e8987b
+# ╠═47cc0108-a86d-4e64-a013-8c4392e8987b
 # ╟─00358bc2-1e49-45a9-9b78-293aadd40976
 # ╟─b1f6bad6-09f6-47a7-a035-6c52ca7d106a
-# ╠═740401c0-6d51-48c4-afd6-b16102890be4
+# ╟─740401c0-6d51-48c4-afd6-b16102890be4
 # ╟─2b0c9835-d5ac-4e81-a325-ee56e9119003
 # ╟─07ee15ef-eaf3-4482-8dbd-ecb8c935b015
 # ╟─f59990f8-ecba-4d16-8b68-f3d40b044d74
@@ -1715,12 +1721,13 @@ version = "3.5.0+0"
 # ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 # ╟─ea09368f-4555-4823-91b9-4da3df59a730
 # ╟─3bbb6a89-61d5-4a57-9b75-0c3cf87af4b5
-# ╠═da0a4117-629e-42b5-95ae-d49f10769830
+# ╟─da0a4117-629e-42b5-95ae-d49f10769830
 # ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
 # ╟─c2455fae-f733-4e59-b2d0-a76913810f15
 # ╟─c4f25a29-009e-47e4-adc0-18c94e247df4
 # ╟─110068f5-0433-40bc-ab9e-cafe8fa3cc68
 # ╟─0a002751-6cd8-4a32-a1dc-352ff69ce6e4
 # ╟─9ad51efd-a487-4153-ac3a-077ae99905bc
+# ╟─09088c09-b685-476e-8df9-db7edb8ed377
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
