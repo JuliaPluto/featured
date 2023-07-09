@@ -154,13 +154,31 @@ md"""Now it's your turn! Try changing the values of the filter matrix and see wh
 # ╔═╡ f844bca2-edb7-45ec-b860-5f1e0b8b6bc0
 begin
 	#a = fill(0.,3,3)
-	a = [0.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 0.0]
-	#a[2,2] = 1.0
+	#a = [0.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 0.0]
+	
+	a1 = @bind a1_s Scrubbable(0.0);
+	a2 = @bind a2_s Scrubbable(0.0);
+	a3 = @bind a3_s Scrubbable(0.0);
+
+	b1 = @bind b1_s Scrubbable(0.0);
+	b2 = @bind b2_s Scrubbable(1.0);
+	b3 = @bind b3_s Scrubbable(0.0);
+
+	c1 = @bind c1_s Scrubbable(0.0);
+	c2 = @bind c2_s Scrubbable(0.0);
+	c3 = @bind c3_s Scrubbable(0.0);
+	
 	md"""**Exercice:** Can you find the right matrix to sharpen the image?"""
 end
 
+# ╔═╡ 9edf2fce-715a-46fc-bc5f-d58e08de789b
+md""" $(a1) $(a2) $(a3)\
+ 	  $(b1) $(b2) $(b3)\
+      $(c1) $(c2) $(c3) """
+
 # ╔═╡ 2cf6f933-508a-4dce-b670-578afeb64519
-@bind filter Scrubbable(a,format="+2.1f")
+#@bind filter Scrubbable(a,format="+2.1f")
+filter = [a1_s a2_s a3_s; b1_s b2_s b3_s; c1_s c2_s c3_s]
 
 # ╔═╡ 9d42dd93-98b4-40db-9d3f-8917d6f72354
 begin
@@ -1140,8 +1158,8 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═04a5c6d4-f8d5-11ed-141a-35481b811ee9
-# ╠═746ff659-88ab-4ff4-8cba-43c798cacd3e
+# ╟─04a5c6d4-f8d5-11ed-141a-35481b811ee9
+# ╟─746ff659-88ab-4ff4-8cba-43c798cacd3e
 # ╟─9be00bec-59a5-478b-ada2-854f7a52d66e
 # ╠═c4da04ab-f7e0-46fd-b352-e518e4733608
 # ╠═96a4b35a-5a3a-4ad0-9ffe-306db46d1c03
@@ -1153,14 +1171,15 @@ version = "17.4.0+0"
 # ╟─ebb63415-2738-47f3-b0ef-0fd6e6bac259
 # ╠═44d594ff-a25b-4455-be56-863345c67b68
 # ╟─d752805d-ba2c-4133-a556-46a1da734557
-# ╠═d729f8b4-05e2-4863-b8c4-39b37646c36b
+# ╟─d729f8b4-05e2-4863-b8c4-39b37646c36b
 # ╟─8ae0248f-6eba-4941-85f4-b21be3c7e725
 # ╟─19b49665-0382-4eb1-9c70-8295e0aa819b
-# ╠═adc154cf-7059-4f1d-9bac-56b9a93cc47f
+# ╟─adc154cf-7059-4f1d-9bac-56b9a93cc47f
 # ╟─6c31cbb0-01ed-40cf-b400-3ed6b7c79ecc
 # ╟─4b560bf2-00d9-4440-9589-834cd9177f66
 # ╟─a174850b-91cc-4463-ab28-61ca0a7221c6
 # ╟─f844bca2-edb7-45ec-b860-5f1e0b8b6bc0
+# ╟─9edf2fce-715a-46fc-bc5f-d58e08de789b
 # ╟─2cf6f933-508a-4dce-b670-578afeb64519
 # ╟─9d42dd93-98b4-40db-9d3f-8917d6f72354
 # ╟─5737939b-0bb9-4ddf-8948-6356e60d79f3
