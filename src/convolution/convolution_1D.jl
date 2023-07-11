@@ -19,12 +19,9 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 854f4a43-c367-4a76-8f93-c105105e445f
-using Random
-
-# ╔═╡ ea09368f-4555-4823-91b9-4da3df59a730
+# ╔═╡ 3fd4b34c-18ed-4b07-b594-01afb377ead7
 begin
-	using PlutoUI, CairoMakie, DSP, ColorSchemes, ColorTypes, SignalAnalysis
+	using PlutoUI, CairoMakie, DSP, ColorSchemes, ColorTypes, SignalAnalysis, Random
 	using PlutoUI.ExperimentalLayout: grid, vbox, hbox, Div
 	using HypertextLiteral
 	using MakieThemes
@@ -40,46 +37,117 @@ Hi There! If you ever came across convolutions in some certain science context, 
 # ╔═╡ 2c4bf3d3-b79c-4dcc-b1a8-77b9b5cd4607
 md"""Choose a smoother function and see how the results changes. Can you guess what happens when we convoluted two functions? """
 
+# ╔═╡ 1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
+begin
+	n = 100
+	z = range(0, n, length=n)
+	fz2_select = @bind fz2_function Select(
+		[ 1 => "Gaussian", 2 => "Box"])
+	md"""Smoothing function: $(fz2_select)"""
+end
+
 # ╔═╡ 149a3384-1b45-4789-ac6b-948e7a67e296
-e_gauss = @bind e PlutoUI.Slider(10:1.0:100, default = 20)
+begin
+	e_draw = @bind e PlutoUI.Slider(10:1.0:100, default = 20)
+	md"""Index: $(e_draw)"""
+end
 
 # ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
 md"""## Convolution Explained
 
 It's alright if you can't tell how the resulting function is created. In the following part we will go through each step of the convolution process, to understand better how they work."""
 
-# ╔═╡ 740401c0-6d51-48c4-afd6-b16102890be4
-nb_values = 8
-
 # ╔═╡ f59990f8-ecba-4d16-8b68-f3d40b044d74
 md"""Use the slider below to change the amplitude of the filter function and the range on which it's defined."""
 
 # ╔═╡ 032130c4-686b-4db9-9753-9b0fe764f94e
-amp_2_slider = @bind amp_2 PlutoUI.Slider(1:1:5, show_value=true, default=2)
-
-# ╔═╡ 6ac5fe93-49c1-4297-8e94-72a1e3b80c4e
-nonzero_2_slider = @bind nonzero_2 PlutoUI.Slider(1:1:nb_values, show_value=true, default=3)
+begin
+	nb_values = 8
+	amp_2_slider = @bind amp_2 PlutoUI.Slider(1:1:5, show_value=true, default=2)
+	nonzero_2_slider = @bind nonzero_2 PlutoUI.Slider(1:1:nb_values, show_value=true, default=3)
+	md"""Amplitude: $(amp_2_slider)
+		
+	Length: $(nonzero_2_slider)"""
+end
 
 # ╔═╡ 572bd8d5-65b0-462e-a143-811f4bfa875e
 md"""Ok, now we're ready to go! Move the slider around to see how the resulting point in the convoluted function was calculated."""
 
 # ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
-k_slider = @bind k_conv PlutoUI.Slider(1:2*nb_values+1, show_value=true, default=8)
+begin
+	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb_values+1, show_value=true, default=8)
+	md"""Index: $(k_slider)"""
+end
+
+# ╔═╡ 0ccf60db-75b2-466d-935e-f39855bc36f7
+md"""## Generating Code """
 
 # ╔═╡ e4a17824-0e9f-442e-82bc-62b8d46e88e5
 md"""The following code sets up our initial figure. If you're interested in drawing graphs in computer science, you can take a look but it's not necessary to understand the mathematical concept."""
 
-# ╔═╡ 3bbb6a89-61d5-4a57-9b75-0c3cf87af4b5
+# ╔═╡ 29752f8c-df55-4abc-868a-0e7404fad540
+md"""#### Helper Functions"""
+
+# ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
+function draw_point(x::Vector, y1::Vector, ax::Axis, marker::Symbol, color::ColorTypes.RGB{Float64}, offset::Int)
+		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=50,strokewidth=1,marker=marker, strokecolor=:white, color=color) for (x,y) in zip(x,y1)]
+end
+
+# ╔═╡ 50420349-f3f7-45bb-a3ab-0ac379a067bb
+function gaussian(x::Float64, μ, σ, range_min, range_max)
+    scaled_x = ((x - μ) / σ) * ((range_max - range_min) / 4) + ((range_max + range_min) / 2)
+    coeff = 1 / (σ * sqrt(2π))
+    exponent = -((scaled_x - μ)^2) / (2σ^2)
+    return coeff * exp(exponent)
+end
+
+# ╔═╡ 47cc0108-a86d-4e64-a013-8c4392e8987b
+let
+	f = Figure()
+	ax1 = CairoMakie.Axis(f[1, 1])
+	ax2 = CairoMakie.Axis(f[2, 1])	
+	l = length(z)
+
+	# First function
+	Random.seed!(250)
+	fz1 = rand(PinkGaussian(n))
+
+	# Second function
+	if fz2_function == 1
+		fz2 = ([gaussian(zi,50, 10, 0.0, 100.0) .* 80 for zi in collect(z)], [gaussian(zi,e, 10, 0.0, 100.0) .* 80 for zi in collect(z)])
+	else
+		fz2 = ((z.>=40 .&& z .<50) .* 3, (z.>=e-10 .&& z .<e+10) .* 3) 
+	end
+	
+	# Convoluted Function
+	fz3 = DSP.conv(fz1, reverse(fz2[1]))[end÷4+5:end÷4*3+6]
+
+	# Drawn moving functions 
+	fz2_draw = fz2[2]
+	fz3_draw = [ i < e ? fz3[i] : NaN for i in eachindex(fz3) ]
+
+	# Setting axes limits
+	xlims!(ax2, (0, 100))
+	ylims!(ax2, (0, 70))
+	
+	# Plotting
+	lines!(ax1, z, fz1, color = "red")
+	lines!(ax1, z, fz2_draw, color = "blue")
+	lines!(ax2, z, fz3, color="gray")
+	lines!(ax2, z, fz3_draw, color="purple")
+
+	f
+end
+
+# ╔═╡ 0b073ebc-bd68-48b0-afd0-c04868446d71
+md"""## Appendix"""
+
+# ╔═╡ df178bb8-3b81-4c4b-ba94-3ad945e63007
 begin
 	color_grey = RGB{Float64}(0.5, 0.5, 0.5)
 	colors = [ColorSchemes.viridis[i] for i in 1:40:256]
 	col_length = length(colors)
 	md""""""
-end
-
-# ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
-function draw_point(x::Vector, y1::Vector, ax::Axis, marker::Symbol, color::ColorTypes.RGB{Float64}, offset::Int)
-		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=50,strokewidth=1,marker=marker, strokecolor=:white, color=color) for (x,y) in zip(x,y1)]
 end
 
 # ╔═╡ da0a4117-629e-42b5-95ae-d49f10769830
@@ -91,11 +159,12 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 		if index < 1 || index > l
 			continue
 		end
+
+		color = colors[(index - k)% col_length + 1]
 		
-		color = colors[index % col_length + 1]
 		if y1[index] != 0 && y2_draw[index] != 0
-			draw_point([x[index]], [y1[index]], ax1, :xcross, color, 0)
-			draw_point([x[index]], [y2_draw[index]], ax1, :cross, color, 0)
+			draw_point([x[index]], [y1[index]], ax1, :utriangle, color, 0)
+			draw_point([x[index]], [y2_draw[index]], ax1, :dtriangle, color, 0)
 		end
 		draw_point([x[index]], [y12[index]], ax2, :star6, color, 0)
 		draw_point([x_conv[k_conv]], [y12[index]], ax3, :star6, color, offset)
@@ -140,21 +209,25 @@ begin
 	stairs!(ax1, x, y2_draw, color = colors[4], step=:center)
 	stairs!(ax2, x, y12, color = colors[7], step=:center)
 	stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
-	scatter!(ax1, [1], [4.5], color=:black, marker=:xcross, markersize=60)
-	scatter!(ax2, [1], [maximum(y12)-2], color=:black, marker=:cross, markersize=60)
+
+	# Draw the + and * signs
+	max_1 = maximum(y1) > 6.5 ? maximum(y1) : 6.5
+	max_2 = maximum(y12) > 7.5 ? maximum(y12) : 7.5
+	scatter!(ax1, [1], [max_1], color=:black, marker=:xcross, markersize=60)
+	scatter!(ax2, [1], [max_2], color=:black, marker=:cross, markersize=60)
 
 	# Show the initial grey points on the graph
 	draw_grey_points(x_conv, y3, ax3, 2*nb_values -1, :star6)
-	draw_grey_points(x, y1, ax1, l, :xcross)
-	draw_grey_points(x, y2_draw, ax1, l, :cross)
+	draw_grey_points(x, y1, ax1, l, :utriangle)
+	draw_grey_points(x, y2_draw, ax1, l, :dtriangle)
 
 	# Draw the points on the graph for the point k_conv
 	draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
 
 	# Set the axes limits
-	ylims!(ax1, (0, maximum(y1) + 1))
-	ylims!(ax2, (0, maximum(y12) +2))
-	ylims!(ax3, (0, maximum(y3) +5))
+	ylims!(ax1, (0, max_1 + 1))
+	ylims!(ax2, (0, max_2 + 3))
+	ylims!(ax3, (0, maximum(y3) + 7))
 	
 end
 
@@ -184,6 +257,14 @@ begin
 		md"""**Choose how many non-zero values should the filter have:**""",
 		nonzero_2_slider
 	], class="plutoui-sidebar aside third")
+end
+
+# ╔═╡ 0a002751-6cd8-4a32-a1dc-352ff69ce6e4
+begin
+	sidebar1 = Div([
+		md"""**Choose a smoothing function**""",
+		fz2_select
+	], class="plutoui-sidebar aside second")
 end
 
 # ╔═╡ 9ad51efd-a487-4153-ac3a-077ae99905bc
@@ -250,61 +331,6 @@ html"""
 		});
 	</script>
 	"""
-
-# ╔═╡ 09088c09-b685-476e-8df9-db7edb8ed377
-function gaussian(x::Float64, μ, σ, range_min, range_max)
-    scaled_x = ((x - μ) / σ) * ((range_max - range_min) / 4) + ((range_max + range_min) / 2)
-    coeff = 1 / (σ * sqrt(2π))
-    exponent = -((scaled_x - μ)^2) / (2σ^2)
-    return coeff * exp(exponent)
-end
-
-# ╔═╡ 1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
-begin
-	n = 100
-	z = range(0, n, length=n)
-	fz2_select = @bind fz2 Select(
-		[([gaussian(zi,50, 10, 0.0, 100.0) .* 50 for zi in collect(z)], [gaussian(zi,e, 10, 0.0, 100.0) .* 50 for zi in collect(z)]) => "Gaussian",
-		((z.>=20 .&& z .<40) .* 2, (z.>=e-10 .&& z .<e+10) .* 2) => "Box",
-			])
-	md"""Smoothing function: $(fz2_select)"""
-end
-
-# ╔═╡ 47cc0108-a86d-4e64-a013-8c4392e8987b
-let
-	f = Figure()
-	ax1 = CairoMakie.Axis(f[1, 1])
-	ax2 = CairoMakie.Axis(f[2, 1])
-	
-	l = length(z)
-
-	Random.seed!(250)
-	fz1 = rand(PinkGaussian(n))
-	fz3 = DSP.conv(fz1, reverse(fz2[1]))[end÷4:end÷4*3+1]
-		#[1: end-l+1]
-		
-
-	fz2_draw = fz2[2]
-	fz3_draw = [ i < e ? fz3[i] : NaN for i in eachindex(fz3) ]
-		
-	lines!(ax1, z, fz1, color = "red")
-	lines!(ax1, z, fz2_draw, color = "blue")
-	#lines!(ax2, z, fz3, color="gray")
-	lines!(ax2, z, fz3_draw, color="purple")
-
-	xlims!(ax2, (0, 100))
-	ylims!(ax2, (0, 80))
-
-	f
-end
-
-# ╔═╡ 0a002751-6cd8-4a32-a1dc-352ff69ce6e4
-begin
-	sidebar1 = Div([
-		md"""**Choose a smoothing function**""",
-		fz2_select
-	], class="plutoui-sidebar aside second")
-end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1707,25 +1733,25 @@ version = "3.5.0+0"
 # ╟─149a3384-1b45-4789-ac6b-948e7a67e296
 # ╟─47cc0108-a86d-4e64-a013-8c4392e8987b
 # ╟─00358bc2-1e49-45a9-9b78-293aadd40976
-# ╟─740401c0-6d51-48c4-afd6-b16102890be4
 # ╟─f59990f8-ecba-4d16-8b68-f3d40b044d74
 # ╟─032130c4-686b-4db9-9753-9b0fe764f94e
-# ╟─6ac5fe93-49c1-4297-8e94-72a1e3b80c4e
 # ╟─572bd8d5-65b0-462e-a143-811f4bfa875e
 # ╟─bccfdd98-b425-4f8d-a58d-489134851ebd
 # ╟─6b243243-8f26-4f2d-8727-564f0701b302
+# ╟─0ccf60db-75b2-466d-935e-f39855bc36f7
 # ╟─e4a17824-0e9f-442e-82bc-62b8d46e88e5
 # ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
-# ╟─854f4a43-c367-4a76-8f93-c105105e445f
-# ╟─ea09368f-4555-4823-91b9-4da3df59a730
-# ╟─3bbb6a89-61d5-4a57-9b75-0c3cf87af4b5
+# ╟─29752f8c-df55-4abc-868a-0e7404fad540
 # ╟─da0a4117-629e-42b5-95ae-d49f10769830
 # ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
 # ╟─c2455fae-f733-4e59-b2d0-a76913810f15
+# ╟─50420349-f3f7-45bb-a3ab-0ac379a067bb
+# ╟─0b073ebc-bd68-48b0-afd0-c04868446d71
+# ╟─3fd4b34c-18ed-4b07-b594-01afb377ead7
+# ╟─df178bb8-3b81-4c4b-ba94-3ad945e63007
 # ╟─c4f25a29-009e-47e4-adc0-18c94e247df4
 # ╟─110068f5-0433-40bc-ab9e-cafe8fa3cc68
 # ╟─0a002751-6cd8-4a32-a1dc-352ff69ce6e4
 # ╟─9ad51efd-a487-4153-ac3a-077ae99905bc
-# ╟─09088c09-b685-476e-8df9-db7edb8ed377
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
