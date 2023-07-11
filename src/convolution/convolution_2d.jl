@@ -26,7 +26,7 @@ using Images,TestImages, PlutoUI
 # ╔═╡ 04a5c6d4-f8d5-11ed-141a-35481b811ee9
 md"""
 ## Images as Lists of numbers
-Hi There! I am Boshra (github: @ariguiba) and I am here to teach you about Images and Filters! 
+Hi There! My name is Boshra (github: @ariguiba) and I am here to teach you about Images and Filters! 
 
 Remember when you were kid and you used to play with legos? you probably would put tiny pieces of different colors to form different shapes and elements? 
 
@@ -76,7 +76,7 @@ md"""
 
 Now to make things more interesting, we will add some code that applies a filter to this image.
 
-This code basically goes over all the pixels in the image and applies the mathematical operation of convolution, that is the values of the pixel and its surrounding pixels are multipled by the value of the filter matrix. 
+A **filter** is a small matrix that describes how we can calculate the new value of the pixel. Our code will go over all the pixels in the image and apply the mathematical operation of **convolution**: the values of the pixel and its surrounding pixels are multiplied by the values in the matrix.
 
 However, it's alright if you don't understand exactly how the code works."""
 
@@ -104,18 +104,19 @@ end
 # ╔═╡ d752805d-ba2c-4133-a556-46a1da734557
 md"""Now let's start with a simple filter. This is called a "Box Blur" and it has the simple task of blurring the image.
 
+What's happening? For each pixel, the new value is calculated as the sum of:
+- The value of the pixel multiplied by the center value in the matrix
+- The value of the pixel to the top left of the pixel, multiplied by the top left value in the filter matrix
+- The value of the pixel to to the top, multiplied by the center top value in the  filter matrix
+- The value of the pixel to the left, multiplied by the center left value in the filter matrix
+- Etc...
+
+In the box blur filter, all the filter values are the same. So for each pixel, the new value is just the average value of the pixel and its neighbours!
+
 Can you see it ?"""
 
 # ╔═╡ d729f8b4-05e2-4863-b8c4-39b37646c36b
-test_filter = [0.111 0.111 0.111; 0.111 0.111 0.111; 0.111 0.111 0.111]
-
-# ╔═╡ 8ae0248f-6eba-4941-85f4-b21be3c7e725
-let
-	height, width = size(test_img)
-	filtered_img = Gray.(convolve(test_img, test_filter))
-	padded_img = test_img[2:height-1, 2:width-1]
-	[padded_img filtered_img]
-end
+box_filter = [0.111 0.111 0.111; 0.111 0.111 0.111; 0.111 0.111 0.111]
 
 # ╔═╡ 19b49665-0382-4eb1-9c70-8295e0aa819b
 md"""You can also try other filters! 
@@ -139,14 +140,6 @@ Can you identify the difference between the right and left shift matrices ?"""
 
 # ╔═╡ 6c31cbb0-01ed-40cf-b400-3ed6b7c79ecc
 test_filter_selected
-
-# ╔═╡ 4b560bf2-00d9-4440-9589-834cd9177f66
-begin
-	height, width = size(test_img)
-	filtered_img = Gray.(convolve(test_img, test_filter_selected))
-	padded_img = test_img[2:height-1, 2:width-1]
-	[padded_img filtered_img]
-end
 
 # ╔═╡ a174850b-91cc-4463-ab28-61ca0a7221c6
 md"""Now it's your turn! Try changing the values of the filter matrix and see what happens!"""
@@ -172,28 +165,34 @@ begin
 end
 
 # ╔═╡ 9edf2fce-715a-46fc-bc5f-d58e08de789b
-md""" $(a1) $(a2) $(a3)\
- 	  $(b1) $(b2) $(b3)\
-      $(c1) $(c2) $(c3) """
+begin
+	#@bind filter Scrubbable(a,format="+2.1f")
+	filter = [a1_s a2_s a3_s; b1_s b2_s b3_s; c1_s c2_s c3_s]
+	md""" $(a1) $(a2) $(a3)\
+	 	  $(b1) $(b2) $(b3)\
+	      $(c1) $(c2) $(c3) """
+end
 
-# ╔═╡ 2cf6f933-508a-4dce-b670-578afeb64519
-#@bind filter Scrubbable(a,format="+2.1f")
-filter = [a1_s a2_s a3_s; b1_s b2_s b3_s; c1_s c2_s c3_s]
+# ╔═╡ aa90424b-1514-4778-9b09-580a29a38cec
+# Since we will use this code multiple times, we wrapped it in a function 
+function demonstrate_filter(image, filter)
+	height, width = size(image)
+	filtered_img = Gray.(convolve(image, filter))
+	padded_img = image[2:height-1, 2:width-1]
+	[padded_img filtered_img]
+end
+
+# ╔═╡ 8ae0248f-6eba-4941-85f4-b21be3c7e725
+demonstrate_filter(test_img, box_filter)
+
+# ╔═╡ 4b560bf2-00d9-4440-9589-834cd9177f66
+demonstrate_filter(test_img, test_filter_selected)
 
 # ╔═╡ 9d42dd93-98b4-40db-9d3f-8917d6f72354
-begin
-	own_filtered_img = Gray.(convolve(test_img, filter))
-	[padded_img own_filtered_img]
-end
+demonstrate_filter(test_img, filter)
 
 # ╔═╡ b9959008-fbf2-48fd-9b16-d19fd5dad721
 correct(text=md"Great! You got the right answer! Let's move on to the next section.") = Markdown.MD(Markdown.Admonition("correct", "Got it!", [text]));
-
-# ╔═╡ 3ae12875-cfc1-4ffa-9965-07cf4bc07ab0
-keep_working(text=md"The answer is not quite right.") = Markdown.MD(Markdown.Admonition("danger", "Keep working on it!", [text]));
-
-# ╔═╡ a15e649f-d762-4ce2-b446-9df33c9a8e38
-almost(text) = Markdown.MD(Markdown.Admonition("warning", "Almost there!", [text]));
 
 # ╔═╡ dbf3179c-f35c-4e80-8aa8-b5093d6fde87
 hint(text) = Markdown.MD(Markdown.Admonition("hint", "Hint", [text]));
@@ -1180,12 +1179,10 @@ version = "17.4.0+0"
 # ╟─a174850b-91cc-4463-ab28-61ca0a7221c6
 # ╟─f844bca2-edb7-45ec-b860-5f1e0b8b6bc0
 # ╟─9edf2fce-715a-46fc-bc5f-d58e08de789b
-# ╟─2cf6f933-508a-4dce-b670-578afeb64519
 # ╟─9d42dd93-98b4-40db-9d3f-8917d6f72354
 # ╟─5737939b-0bb9-4ddf-8948-6356e60d79f3
+# ╟─aa90424b-1514-4778-9b09-580a29a38cec
 # ╟─b9959008-fbf2-48fd-9b16-d19fd5dad721
-# ╟─3ae12875-cfc1-4ffa-9965-07cf4bc07ab0
-# ╟─a15e649f-d762-4ce2-b446-9df33c9a8e38
 # ╟─dbf3179c-f35c-4e80-8aa8-b5093d6fde87
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
