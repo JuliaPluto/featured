@@ -1,6 +1,15 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> author_url = "https://github.com/JuliaPluto"
+#> image = "https://github.com/JuliaPluto/featured/assets/6933510/05624a1d-9688-4d63-bbda-f89a2fce2706"
+#> title = "3D Graph vs Heatmap"
+#> tags = ["basic", "plotting", "makie", "3D"]
+#> license = "Unlicense"
+#> description = "An interactive notebook"
+#> author_name = "Pluto.jl"
+
 using Markdown
 using InteractiveUtils
 
