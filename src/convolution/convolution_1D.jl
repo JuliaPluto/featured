@@ -19,6 +19,9 @@ macro bind(def, element)
     end
 end
 
+# ╔═╡ 4d3d7548-30b9-4f83-bc21-66c40e140910
+using Random
+
 # ╔═╡ ea09368f-4555-4823-91b9-4da3df59a730
 begin
 	using PlutoUI, CairoMakie, DSP, ColorSchemes, ColorTypes, SignalAnalysis
@@ -31,38 +34,25 @@ end
 # ╔═╡ f16a932e-6667-45a8-af6f-a3a22b9cd956
 md"""
 ## Convolution of functions
-Hi There! If you ever came across convolutions in some certain science context, you know they can be VERY confusing. This notebook will hopefully help you get a better intuition for convolutions. So let's get into it!
+Hi There! If you ever came across convolutions in some certain science context, you know they can be VERY confusing. This notebook will help you get a better intuition for convolutions. Let's go!
 """
 
 # ╔═╡ 2c4bf3d3-b79c-4dcc-b1a8-77b9b5cd4607
 md"""Choose a smoother function and see how the results changes. Can you guess what happens when we convoluted two functions? """
 
+# ╔═╡ 149a3384-1b45-4789-ac6b-948e7a67e296
+e_gauss = @bind e PlutoUI.Slider(10:1.0:100, default = 50)
+
 # ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
 md"""## Convolution Explained
 
-It's alright if you can't tell how the resulting function is created. In the following part we will go through each step of the convolution process, to understand better how they work. 
-
-For this, we will consider discrete values for our functions and a simple function filter which just calculated the sum of each two neighboring points."""
-
-# ╔═╡ b1f6bad6-09f6-47a7-a035-6c52ca7d106a
-md"""To represent things more clearly, we will choose our nb of values = 8. This means we devide our space in 8 points (or more exactly: 8 equal intervals)."""
+It's alright if you can't tell how the resulting function is created. In the following part we will go through each step of the convolution process, to understand better how they work."""
 
 # ╔═╡ 740401c0-6d51-48c4-afd6-b16102890be4
 nb_values = 8
 
-# ╔═╡ 2b0c9835-d5ac-4e81-a325-ee56e9119003
-md"""To keep things simple, we start with a constant function. It's the light green function draw below. To see the points that belong to the function, tick the box below"""
-
-# ╔═╡ 07ee15ef-eaf3-4482-8dbd-ecb8c935b015
-begin
-	show_y1_box = @bind show_y1 CheckBox(default=true)
-	md"""Show first function: $(show_y1_box) """
-end
-
 # ╔═╡ f59990f8-ecba-4d16-8b68-f3d40b044d74
-md"""Now let's set the filter function. To keep things simple again, we will also stick to a constant function that is exactly non-zero on a certain interval. 
-
-Use the slider below to change the amplitude of the filter function and the range on which it's defined."""
+md"""Use the slider below to change the amplitude of the filter function and the range on which it's defined."""
 
 # ╔═╡ 032130c4-686b-4db9-9753-9b0fe764f94e
 amp_2_slider = @bind amp_2 PlutoUI.Slider(1:1:5, show_value=true)
@@ -71,15 +61,7 @@ amp_2_slider = @bind amp_2 PlutoUI.Slider(1:1:5, show_value=true)
 nonzero_2_slider = @bind nonzero_2 PlutoUI.Slider(1:1:nb_values, show_value=true, default=3)
 
 # ╔═╡ 572bd8d5-65b0-462e-a143-811f4bfa875e
-md"""Ok, now we're ready to go! Move the slider around to see how the resulting point in the convoluted function was calculated. 
-
-In the first graph: both function points are draw. The ones that are multiplied together are draw in the same colors
-
-The result of the multiplication is drawn on the second graph. 
-
-And finally on the last grpah of the convoluted function, they are all summed up together.
-
-Pretty simple right?"""
+md"""Ok, now we're ready to go! Move the slider around to see how the resulting point in the convoluted function was calculated."""
 
 # ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
 k_slider = @bind k_conv PlutoUI.Slider(1:2*nb_values+1, show_value=true, default=9)
@@ -115,7 +97,7 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 			draw_point([x[index]], [y1[index]], ax1, :xcross, color, 0)
 			draw_point([x[index]], [y2_draw[index]], ax1, :cross, color, 0)
 		end
-		draw_point([x[index]], [y12[index]], ax2, :cross, color, 0)
+		draw_point([x[index]], [y12[index]], ax2, :star6, color, 0)
 		draw_point([x_conv[k_conv]], [y12[index]], ax3, :star6, color, offset)
 		
 		
@@ -134,14 +116,14 @@ end
 let
 	# Set up Figure elements
 	f = Figure()
-	ax1 = CairoMakie.Axis(f[1, 1])
-	ax2 = CairoMakie.Axis(f[2, 1])
-	ax3 = CairoMakie.Axis(f[3, 1])
+	ax1 = Axis(f[1, 1])
+	ax2 = Axis(f[1, 2])
+	ax3 = Axis(f[2,:])
 
 	# Set up range and constants
 	x = range(0, nb_values, step=1)
 	l = length(x)
-	k = k_conv - nb_values - 1
+	k = k_conv - nb_values -1
 
 	# Set up the functions
 	y1 = (x.>=3.0 .&& x .<0.5*nb_values+3.0) .* 5 
@@ -154,20 +136,26 @@ let
 	y3 = DSP.conv(y1,reverse(y2))
 
 	# Draw the initial setup
-	stairs!(ax1, x, y1, color = colors[6])
-	stairs!(ax1, x, y2_draw, color = colors[4])
-	stairs!(ax2, x, y12, color = colors[7])
-	stairs!(ax3, x_conv, y3, color=colors[1])
+	stairs!(ax1, x, y1, color = colors[6], step=:center)
+	stairs!(ax1, x, y2_draw, color = colors[4], step=:center)
+	stairs!(ax2, x, y12, color = colors[7], step=:center)
+	stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
+	scatter!(ax1, [1], [5], color=:black, marker=:xcross, markersize=60)
+	scatter!(ax2, [1], [maximum(y12)-2], color=:black, marker=:cross, markersize=60)
 
 	# Show the initial grey points on the graph
-	if show_y1
-		draw_grey_points(x_conv, y3, ax3, 2*nb_values - 1, :star6)
-		draw_grey_points(x, y1, ax1, l, :xcross)
-	end
+	draw_grey_points(x_conv, y3, ax3, 2*nb_values -1, :star6)
+	draw_grey_points(x, y1, ax1, l, :xcross)
+	draw_grey_points(x, y2_draw, ax1, l, :cross)
 
 	# Draw the points on the graph for the point k_conv
 	draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
-	
+
+	# Set the axes limits
+	ylims!(ax1, (0, maximum(y1) + 1))
+	ylims!(ax2, (0, maximum(y12) +2))
+	ylims!(ax3, (0, 70))
+
 	# Show the function f
 	f
 	
@@ -276,9 +264,9 @@ begin
 	n = 100
 	z = range(0, n, length=n)
 	fz2_select = @bind fz2 Select(
-		[[gaussian(zi,50.0, 20, 0.0, 100.0) for zi in collect(z)] => "Gaussian",
-		(z.>=20 .&& z .<60) .* 5 => "Box", 
-		[(1 / (1 + exp(-(zi - 50)))) * 50 for zi in collect(z)] => "Sigmoid"])
+		[([gaussian(zi,50, 10, 0.0, 100.0) .* 50 for zi in collect(z)], [gaussian(zi,e, 10, 0.0, 100.0) .* 50 for zi in collect(z)]) => "Gaussian",
+		((z.>=20 .&& z .<40) .* 2, (z.>=e-10 .&& z .<e+10) .* 2) => "Box",
+			])
 	md"""Smoothing function: $(fz2_select)"""
 end
 
@@ -287,16 +275,25 @@ let
 	f = Figure()
 	ax1 = CairoMakie.Axis(f[1, 1])
 	ax2 = CairoMakie.Axis(f[2, 1])
-	ax3 = CairoMakie.Axis(f[3, 1])
 	
 	l = length(z)
-	
-	fz1 = rand(PinkGaussian(n))
-	fz3 = DSP.conv(fz1,fz2)[end÷4:end÷4*3+1]
 
+	Random.seed!(250)
+	fz1 = rand(PinkGaussian(n))
+	fz3 = DSP.conv(fz1, reverse(fz2[1]))[end÷4:end÷4*3+1]
+		#[1: end-l+1]
+		
+
+	fz2_draw = fz2[2]
+	fz3_draw = [ i < e ? fz3[i] : NaN for i in eachindex(fz3) ]
+		
 	lines!(ax1, z, fz1, color = "red")
-	lines!(ax2, z, fz2, color = "blue")
-	lines!(ax3, z, fz3, color="purple")
+	lines!(ax1, z, fz2_draw, color = "blue")
+	#lines!(ax2, z, fz3, color="gray")
+	lines!(ax2, z, fz3_draw, color="purple")
+
+	xlims!(ax2, (0, 100))
+	ylims!(ax2, (0, 80))
 
 	f
 end
@@ -319,6 +316,7 @@ DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 MakieThemes = "e296ed71-da82-5faf-88ab-0034a9761098"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SignalAnalysis = "df1fea92-c066-49dd-8b36-eace3378ea47"
 
 [compat]
@@ -338,7 +336,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "94282e5bf7c31e5c0d4f8eb7f23a29323173d105"
+project_hash = "408b8e27ea748509f7887f64dca41fe667b90972"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -1705,13 +1703,12 @@ version = "3.5.0+0"
 # ╔═╡ Cell order:
 # ╟─f16a932e-6667-45a8-af6f-a3a22b9cd956
 # ╟─2c4bf3d3-b79c-4dcc-b1a8-77b9b5cd4607
+# ╟─4d3d7548-30b9-4f83-bc21-66c40e140910
 # ╟─1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
-# ╠═47cc0108-a86d-4e64-a013-8c4392e8987b
+# ╟─149a3384-1b45-4789-ac6b-948e7a67e296
+# ╟─47cc0108-a86d-4e64-a013-8c4392e8987b
 # ╟─00358bc2-1e49-45a9-9b78-293aadd40976
-# ╟─b1f6bad6-09f6-47a7-a035-6c52ca7d106a
 # ╟─740401c0-6d51-48c4-afd6-b16102890be4
-# ╟─2b0c9835-d5ac-4e81-a325-ee56e9119003
-# ╟─07ee15ef-eaf3-4482-8dbd-ecb8c935b015
 # ╟─f59990f8-ecba-4d16-8b68-f3d40b044d74
 # ╟─032130c4-686b-4db9-9753-9b0fe764f94e
 # ╟─6ac5fe93-49c1-4297-8e94-72a1e3b80c4e
@@ -1722,7 +1719,7 @@ version = "3.5.0+0"
 # ╟─ea09368f-4555-4823-91b9-4da3df59a730
 # ╟─3bbb6a89-61d5-4a57-9b75-0c3cf87af4b5
 # ╟─da0a4117-629e-42b5-95ae-d49f10769830
-# ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
+# ╠═8680db2e-3dda-4aff-a00e-130ac1f4486c
 # ╟─c2455fae-f733-4e59-b2d0-a76913810f15
 # ╟─c4f25a29-009e-47e4-adc0-18c94e247df4
 # ╟─110068f5-0433-40bc-ab9e-cafe8fa3cc68
