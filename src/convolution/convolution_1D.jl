@@ -28,55 +28,61 @@ begin
 		set_theme!(ggthemr(:flat))
 end
 
-# ╔═╡ f16a932e-6667-45a8-af6f-a3a22b9cd956
-md"""
-## Convolution of functions
-Hi There! If you ever came across convolutions in some certain science context, you know they can be VERY confusing. This notebook will help you get a better intuition for convolutions. Let's go!
-"""
-
-# ╔═╡ 2c4bf3d3-b79c-4dcc-b1a8-77b9b5cd4607
-md"""Choose a smoother function and see how the results changes. Can you guess what happens when we convoluted two functions? """
-
-# ╔═╡ 1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
-begin
-	n = 100
-	z = range(0, n, length=n)
-	fz2_select = @bind fz2_function Select(
-		[ 1 => "Gaussian", 2 => "Box"])
-	md"""Smoothing function: $(fz2_select)"""
-end
-
-# ╔═╡ 149a3384-1b45-4789-ac6b-948e7a67e296
-begin
-	e_draw = @bind e PlutoUI.Slider(10:1.0:100, default = 20)
-	md"""Index: $(e_draw)"""
-end
-
 # ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
 md"""## Convolution Explained
 
-It's alright if you can't tell how the resulting function is created. In the following part we will go through each step of the convolution process, to understand better how they work."""
+Hi There! If you ever came across convolutions in some certain science context, you know they can be VERY confusing. This notebook will help you get a better intuition for convolutions. Let's go!"""
+
+# ╔═╡ dbdbcbbe-57fd-497f-b5ba-83b61e87de0b
+md"""Let's start with an example: Suppose there is a pandemic going on and more people are getting sick every day. So, you are a doctor and you have the following **new** patients coming in each day (yes, sadly even elves and fairies can get this disease): 
+"""
+
+# ╔═╡ f9df01a1-8fb7-4337-9415-9ab56d9c696a
+md"""The patients all have the same disease that requires the following treatment: 
+- On the 1. day, the patient recieves 1 pill 
+- On the 2. day, the patient recieves 2 pills
+- On the 3. day, the patient recieves 3 pills ... etc
+
+So something that looks like this: """
+
+# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
+md"""Now as a doctor, you want to be ready for this scenario, all want to know how many pills in total you will need. So:
+
+- On day 1: you would give 1 pill to 2 patient 
+- On day 2: you would give 2 pills to 2 patients each and 1 pill to 1 patient
+- On day 3: you would give 3 pills to 2 patients and 2 pills to 1 patient and 1 pill to 3 patients ... etc 
+
+That means you would need a total of 1\*2 + (2\*2 + 1\*1) + (3\*2 + 2\*1 + 1*3) pills. 
+
+Now that is now a simple mutliplication right? That's what we call a convolution!
+"""
 
 # ╔═╡ f59990f8-ecba-4d16-8b68-f3d40b044d74
-md"""Use the slider below to change the amplitude of the filter function and the range on which it's defined."""
+md"""Now to make things more visual: Start by choosing your new patients and how many days they should take the pill."""
 
 # ╔═╡ 032130c4-686b-4db9-9753-9b0fe764f94e
 begin
 	nb_values = 8
 	amp_2_slider = @bind amp_2 PlutoUI.Slider(1:1:5, show_value=true, default=2)
-	nonzero_2_slider = @bind nonzero_2 PlutoUI.Slider(1:1:nb_values, show_value=true, default=3)
-	md"""Amplitude: $(amp_2_slider)
-		
-	Length: $(nonzero_2_slider)"""
+	len_slider = @bind len PlutoUI.Slider(1:1:nb_values, show_value=true, default=3)
+	md"""New patients: $(amp_2_slider)\
+	Days of treatment: $(len_slider)"""
 end
 
+# ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
+patients = collect(["👵","👴👵", "👧👴👴", "🧑🧝🧝🧚", "👩🧝🧚🧝🧓", "🧓👩👩👴👵👵", "👵🧝👵🧓🧚🧓🧓", "🧚🧚🧚🧚👵👵🧑🧝"])[1:len]
+
+# ╔═╡ 39bd4237-2654-4c0b-9875-3c52183ffbe4
+pills = ['💊'^i for i in 1:amp_2]
+
 # ╔═╡ 572bd8d5-65b0-462e-a143-811f4bfa875e
-md"""Ok, now we're ready to go! Move the slider around to see how the resulting point in the convoluted function was calculated."""
+md"""Now, move the slider around to see how many pills you need each day!"""
 
 # ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
 begin
-	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb_values+1, show_value=true, default=8)
-	md"""Index: $(k_slider)"""
+	# Set slider for the day (index)
+	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb_values+1, show_value=true, default=5)
+	md"""Day: $(k_slider)"""
 end
 
 # ╔═╡ 0ccf60db-75b2-466d-935e-f39855bc36f7
@@ -85,12 +91,57 @@ md"""## Generating Code """
 # ╔═╡ e4a17824-0e9f-442e-82bc-62b8d46e88e5
 md"""The following code sets up our initial figure. If you're interested in drawing graphs in computer science, you can take a look but it's not necessary to understand the mathematical concept."""
 
+# ╔═╡ 472b52d8-e787-4a93-83d8-c53e977a143c
+begin
+	# Set the number of patients array (First function)
+	numbers_patients = [length(s) for s in patients]
+	len_patients = length(numbers_patients)
+	zeros_begin = [0 for i in 1:9]
+	zeros_end = [0 for i in 1:16-len_patients]
+	y1_patients = append!(zeros_begin, numbers_patients, zeros_end)
+
+	# Set the number of pills array (Second function)
+	numbers_pills = [length(s) for s in pills]
+	len_pills = length(numbers_pills)
+	zeros_begin_pills = [0 for i in 1:9]
+	zeros_end_pills = [0 for i in 1:16-len_pills]
+	y2_pills = append!(zeros_begin_pills, numbers_pills, zeros_end_pills)
+	idx = 9 - k_conv 
+	if idx < 1 idx += 25 end
+	y2_pills_draw = y2_pills[[idx+1:end; 1:idx]]
+end
+
+# ╔═╡ e077fb50-5dd4-469a-bea2-88974c9ca2a6
+md"""
+## Convolution of functions
+
+Choose a smoother function and see how the results changes. Can you see how convolution works when using functions ? 
+"""
+
+# ╔═╡ ebb31586-219d-4463-8bf0-5ad1544d3661
+begin
+	n = 100
+	z = range(0, n, length=n)
+	fz2_select = @bind fz2_function Select(
+		[ 1 => "Gaussian", 2 => "Box"])
+	md"""Smoothing function: $(fz2_select)"""
+end
+
+# ╔═╡ 1ef731c7-68ae-4931-859b-93b26c1acfde
+begin
+	e_draw = @bind e PlutoUI.Slider(10:1.0:100, default = 20)
+	md"""Index: $(e_draw)"""
+end
+
+# ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
+md"""## Appendix"""
+
 # ╔═╡ 29752f8c-df55-4abc-868a-0e7404fad540
 md"""#### Helper Functions"""
 
 # ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
 function draw_point(x::Vector, y1::Vector, ax::Axis, marker::Symbol, color::ColorTypes.RGB{Float64}, offset::Int)
-		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=50,strokewidth=1,marker=marker, strokecolor=:white, color=color) for (x,y) in zip(x,y1)]
+		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=30,strokewidth=1,marker=marker, strokecolor=:white, color=color) for (x,y) in zip(x,y1)]
 end
 
 # ╔═╡ 50420349-f3f7-45bb-a3ab-0ac379a067bb
@@ -100,47 +151,6 @@ function gaussian(x::Float64, μ, σ, range_min, range_max)
     exponent = -((scaled_x - μ)^2) / (2σ^2)
     return coeff * exp(exponent)
 end
-
-# ╔═╡ 47cc0108-a86d-4e64-a013-8c4392e8987b
-let
-	f = Figure()
-	ax1 = CairoMakie.Axis(f[1, 1])
-	ax2 = CairoMakie.Axis(f[2, 1])	
-	l = length(z)
-
-	# First function
-	Random.seed!(250)
-	fz1 = rand(PinkGaussian(n))
-
-	# Second function
-	if fz2_function == 1
-		fz2 = ([gaussian(zi,50, 10, 0.0, 100.0) .* 80 for zi in collect(z)], [gaussian(zi,e, 10, 0.0, 100.0) .* 80 for zi in collect(z)])
-	else
-		fz2 = ((z.>=40 .&& z .<50) .* 3, (z.>=e-10 .&& z .<e+10) .* 3) 
-	end
-	
-	# Convoluted Function
-	fz3 = DSP.conv(fz1, reverse(fz2[1]))[end÷4+5:end÷4*3+6]
-
-	# Drawn moving functions 
-	fz2_draw = fz2[2]
-	fz3_draw = [ i < e ? fz3[i] : NaN for i in eachindex(fz3) ]
-
-	# Setting axes limits
-	xlims!(ax2, (0, 100))
-	ylims!(ax2, (0, 70))
-	
-	# Plotting
-	lines!(ax1, z, fz1, color = "red")
-	lines!(ax1, z, fz2_draw, color = "blue")
-	lines!(ax2, z, fz3, color="gray")
-	lines!(ax2, z, fz3_draw, color="purple")
-
-	f
-end
-
-# ╔═╡ 0b073ebc-bd68-48b0-afd0-c04868446d71
-md"""## Appendix"""
 
 # ╔═╡ df178bb8-3b81-4c4b-ba94-3ad945e63007
 begin
@@ -184,24 +194,31 @@ end
 # ╔═╡ ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 begin
 	# Set up Figure elements
-	f = Figure()
-	ax1 = Axis(f[2, 1])
-	ax2 = Axis(f[2, 2])
-	ax3 = Axis(f[1,:])
+	f = Figure(;resolution=(600,800))
+	ax1 = Axis(f[1, 1])
+	ax2 = Axis(f[2, 1])
+	ax3 = Axis(f[3, 1])
 
 	# Set up range and constants
-	x = range(0, nb_values, step=1)
+	x = range(-nb_values, 2*nb_values, step=1)
+	x_conv = range(-nb_values, 5*nb_values, step = 1) .- nb_values*1.5
 	l = length(x)
 	k = k_conv - nb_values -1
 
+	vlines!.([ax1,ax2],Ref(k+1:k+nb_values-2),color=:gray)
+	vlines!.([ax1,ax2,ax3],Ref([k+nb_values/2]))
+	
 	# Set up the functions
-	y1 = (x.>=3.0 .&& x .<0.5*nb_values+3.0) .* 5 
-	y2_draw = (x.>0.1*nb_values+k .&& x .< 0.1*nb_values + nonzero_2*step(x) +k ) .* amp_2
-	y2 = (x.>0.1*nb_values .&& x .< 0.1*nb_values + nonzero_2*step(x)) .* amp_2
+	y1 = y1_patients
+	y2 = y2_pills
+	y2_draw = y2_pills_draw
+	
+	#y1 = (x.>=3.0 .&& x .<0.5*nb_values+3.0) .* 5 
+	#y2_draw = (x.>0.1*nb_values+k .&& x .< 0.1*nb_values + len*step(x) +k ) .* amp_2
+	#y2 = (x.>0.1*nb_values .&& x .< 0.1*nb_values + len*step(x)) .* amp_2
 	y12 = y1 .* y2_draw
 
 	# Set up the final convoluted result (the final function is defined on a larger range)
-	x_conv = range(0, 2*nb_values, step = 1)
 	y3 = DSP.conv(y1,reverse(y2))
 
 	# Draw the initial setup
@@ -210,29 +227,100 @@ begin
 	stairs!(ax2, x, y12, color = colors[7], step=:center)
 	stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
 
-	# Draw the + and * signs
-	max_1 = maximum(y1) > 6.5 ? maximum(y1) : 6.5
-	max_2 = maximum(y12) > 7.5 ? maximum(y12) : 7.5
-	scatter!(ax1, [1], [max_1], color=:black, marker=:xcross, markersize=60)
-	scatter!(ax2, [1], [max_2], color=:black, marker=:cross, markersize=60)
-
 	# Show the initial grey points on the graph
-	draw_grey_points(x_conv, y3, ax3, 2*nb_values -1, :star6)
 	draw_grey_points(x, y1, ax1, l, :utriangle)
 	draw_grey_points(x, y2_draw, ax1, l, :dtriangle)
+	draw_grey_points(x_conv, y3, ax3, 4*nb_values -1, :star6)
 
 	# Draw the points on the graph for the point k_conv
-	draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
+	draw_all(l, k+nb_values, k_conv+2*nb_values, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
 
+	# Get the top value of each plot 
+	max_1 = maximum(y1) > 6.5 ? maximum(y1) : 6.5
+	max_2 = maximum(y12) > 7.5 ? maximum(y12) : 7.5
+	
 	# Set the axes limits
-	ylims!(ax1, (0, max_1 + 1))
-	ylims!(ax2, (0, max_2 + 3))
-	ylims!(ax3, (0, maximum(y3) + 7))
+	#ylims!(ax1, (-1, 10))
+	#ylims!(ax2, (-1, 10))
+	#ylims!(ax3, (-1, 30))
+	xlims!.([ax1,ax2,ax3],Ref((-4,12)))
+	
+	ylims!(ax1, (-1, max_1 + 1))
+	ylims!(ax2, (-1, max_2 + 3))
+	ylims!(ax3, (-1, maximum(y3) + 7))
+	
+
+	ax1.xticks = (1:len).+k
+	showPlus = sum(y12.>0) > 0
+	#ax1.xtickformat = x -> [L"\frac{*}{↓}" for y in x]
+	ax1.xtickformat = "*\n↓"
+
+	midpoint = [k+nb_values/2]
+	#midpoint = (findall(y12.>0).-nb_values.-1)
+	#@show midpoint
+	#if length(midpoint)>1 
+#		midpoint =  [midpoint[end÷2].+0.5] 
+#	end
+	ax2.xticks = midpoint
+	#ax2.xtickcolor=repeat([:red],10)
+	ax2.xtickformat = "+\n↓"
+	#ax2.xticklabelrotation = -π/2
+	#nnotations!(ax2,"}",midpoint,[1],rotation=-π/2,space=:clip)
+	scatter!(ax2,midpoint,[-0.5],marker='{',rotations=π/2,color=:black,markersize=Vec2f(1.5,len).*40)
+	#ax2.xticks = showPlus ? findall(y12.>0).-nb_values.-1 : [0]
+	#ax2.xtickformat = showPlus ? "+" : " "
+	ax1.xticklabelsize = 32
+	ax2.xticklabelsize = 32
+	ax1.yticklabelsize = 12
+	ax2.yticklabelsize = 12
+	ax3.yticklabelsize = 12
+	ax3.xticklabelsize = 12
 	
 end
 
 # ╔═╡ 6b243243-8f26-4f2d-8727-564f0701b302
 f
+
+# ╔═╡ bedb6849-b9f8-42e7-8fe7-6734643e8ef1
+let
+
+	f = Figure(resolution=(850, 450))
+	ax1 = Axis(f[1, 1])
+	#ax2 = CairoMakie.Axis(f[2, 1])	
+	l = length(z)
+
+	# First function
+	Random.seed!(250)
+	fz1 = rand(PinkGaussian(n))
+
+	# Second function & Scaling
+	if fz2_function == 1
+		fz2 = ([gaussian(zi,50, 10, 0.0, 100.0) .* 40 for zi in collect(z)], [gaussian(zi,e, 10, 0.0, 100.0) .* 40 for zi in collect(z)])
+	else
+		fz2 = ((z.>=40 .&& z .<50) .* 3, (z.>=e-10 .&& z .<e+10) .* 3) 
+	end
+
+	fz2[1] .= fz2[1] ./ sum(fz2[1])
+	
+	# Convoluted Function
+	fz3 = DSP.conv(fz1, reverse(fz2[1]))[end÷4+5:end÷4*3+6]
+
+	# Drawn moving functions 
+	fz2_draw = fz2[2]
+	fz3_draw = [ i < e ? fz3[i] : NaN for i in eachindex(fz3) ]
+
+	# Setting axes limits
+	xlims!(ax2, (0, 100))
+	ylims!(ax2, (0, 70))
+	
+	# Plotting
+	lines!(ax1, z, fz1, color = "red")
+	lines!(ax1, z, fz2_draw, color = "blue")
+	#lines!(ax2, z, fz3, color="gray")
+	lines!(ax1, z, fz3_draw, color="purple")
+
+	f
+end
 
 # ╔═╡ c4f25a29-009e-47e4-adc0-18c94e247df4
 begin
@@ -252,10 +340,10 @@ begin
 	sidebar2 = Div([
 		md""" **Choose a point in the graph:**""",
 		k_slider,
-		md"""**Change the amplitude of the filter function:**""",
+		md"""**Change the number of days of treatment:**""",
 		amp_2_slider,
-		md"""**Choose how many non-zero values should the filter have:**""",
-		nonzero_2_slider
+		md"""**Choose how many new patients came in:**""",
+		len_slider
 	], class="plutoui-sidebar aside third")
 end
 
@@ -1727,26 +1815,31 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─f16a932e-6667-45a8-af6f-a3a22b9cd956
-# ╟─2c4bf3d3-b79c-4dcc-b1a8-77b9b5cd4607
-# ╟─1abbf55e-7f27-4c48-a0f3-f33dbf7f9ab2
-# ╟─149a3384-1b45-4789-ac6b-948e7a67e296
-# ╟─47cc0108-a86d-4e64-a013-8c4392e8987b
 # ╟─00358bc2-1e49-45a9-9b78-293aadd40976
+# ╟─dbdbcbbe-57fd-497f-b5ba-83b61e87de0b
+# ╟─380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
+# ╟─f9df01a1-8fb7-4337-9415-9ab56d9c696a
+# ╟─39bd4237-2654-4c0b-9875-3c52183ffbe4
+# ╟─f0d08486-0086-48da-baeb-169f3812d0ea
 # ╟─f59990f8-ecba-4d16-8b68-f3d40b044d74
 # ╟─032130c4-686b-4db9-9753-9b0fe764f94e
 # ╟─572bd8d5-65b0-462e-a143-811f4bfa875e
 # ╟─bccfdd98-b425-4f8d-a58d-489134851ebd
-# ╟─6b243243-8f26-4f2d-8727-564f0701b302
+# ╠═6b243243-8f26-4f2d-8727-564f0701b302
 # ╟─0ccf60db-75b2-466d-935e-f39855bc36f7
 # ╟─e4a17824-0e9f-442e-82bc-62b8d46e88e5
+# ╠═472b52d8-e787-4a93-83d8-c53e977a143c
 # ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
+# ╟─e077fb50-5dd4-469a-bea2-88974c9ca2a6
+# ╟─ebb31586-219d-4463-8bf0-5ad1544d3661
+# ╟─1ef731c7-68ae-4931-859b-93b26c1acfde
+# ╟─bedb6849-b9f8-42e7-8fe7-6734643e8ef1
+# ╟─e63c92a5-659e-41f7-85a4-c2f3baffcef6
 # ╟─29752f8c-df55-4abc-868a-0e7404fad540
 # ╟─da0a4117-629e-42b5-95ae-d49f10769830
 # ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
 # ╟─c2455fae-f733-4e59-b2d0-a76913810f15
 # ╟─50420349-f3f7-45bb-a3ab-0ac379a067bb
-# ╟─0b073ebc-bd68-48b0-afd0-c04868446d71
 # ╟─3fd4b34c-18ed-4b07-b594-01afb377ead7
 # ╟─df178bb8-3b81-4c4b-ba94-3ad945e63007
 # ╟─c4f25a29-009e-47e4-adc0-18c94e247df4
