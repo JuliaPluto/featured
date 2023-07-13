@@ -48,11 +48,11 @@ So something that looks like this: """
 # ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
 md"""Now as a doctor, you want to be ready for this scenario, all want to know how many pills in total you will need. So:
 
-- On day 1: you would give 1 pill to 2 patient 
-- On day 2: you would give 2 pills to 2 patients each and 1 pill to 1 patient
-- On day 3: you would give 3 pills to 2 patients and 2 pills to 1 patient and 1 pill to 3 patients ... etc 
+- On day 1: you would give 1 pill to 1 patient 
+- On day 2: you would give 2 pills to 1 patient and 1 pill to 2 patients
+- On day 3: you would give 3 pills to 3 patients and 2 pills to 2 patients and 1 pill to 1 patient ... etc 
 
-That means you would need a total of 1\*2 + (2\*2 + 1\*1) + (3\*2 + 2\*1 + 1*3) pills. 
+That means you would need a total of 1\*1 + (2\*1 + 1\*2) + (3\*1 + 2\*2 + 3*1) pills. 
 
 Now that is now a simple mutliplication right? That's what we call a convolution!
 """
@@ -140,7 +140,7 @@ md"""## Appendix"""
 md"""#### Helper Functions"""
 
 # ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
-function draw_point(x::Vector, y1::Vector, ax::Axis, marker::Symbol, color::ColorTypes.RGB{Float64}, offset::Int)
+function draw_point(x::Vector, y1::Vector, ax::Axis, marker::Char, color::ColorTypes.RGB{Float64}, offset::Int)
 		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=30,strokewidth=1,marker=marker, strokecolor=:white, color=color) for (x,y) in zip(x,y1)]
 end
 
@@ -173,11 +173,11 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 		color = colors[(index - k)% col_length + 1]
 		
 		if y1[index] != 0 && y2_draw[index] != 0
-			draw_point([x[index]], [y1[index]], ax1, :utriangle, color, 0)
-			draw_point([x[index]], [y2_draw[index]], ax1, :dtriangle, color, 0)
+			draw_point([x[index]], [y1[index]], ax1, '😷', color, 0)
+			draw_point([x[index]], [y2_draw[index]], ax1, '♥', color, 0)
 		end
-		draw_point([x[index]], [y12[index]], ax2, :star6, color, 0)
-		draw_point([x_conv[k_conv]], [y12[index]], ax3, :star6, color, offset)
+		draw_point([x[index]], [y12[index]], ax2, '♥', color, 0)
+		draw_point([x_conv[k_conv]], [y12[index]], ax3, '♥', color, offset)
 		
 		
 		offset += y12[index]
@@ -185,7 +185,7 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 end
 
 # ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
-function draw_grey_points(x, y, ax, len, marker::Symbol)
+function draw_grey_points(x, y, ax, len, marker::Char)
 	for j in 1:len
 		draw_point([x[j]], [y[j]], ax, marker, color_grey, 0)
 	end
@@ -228,9 +228,9 @@ begin
 	stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
 
 	# Show the initial grey points on the graph
-	draw_grey_points(x, y1, ax1, l, :utriangle)
-	draw_grey_points(x, y2_draw, ax1, l, :dtriangle)
-	draw_grey_points(x_conv, y3, ax3, 4*nb_values -1, :star6)
+	draw_grey_points(x, y1, ax1, l, '😷')
+	draw_grey_points(x, y2_draw, ax1, l, '♥')
+	draw_grey_points(x_conv, y3, ax3, 4*nb_values -1, '♥')
 
 	# Draw the points on the graph for the point k_conv
 	draw_all(l, k+nb_values, k_conv+2*nb_values, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
