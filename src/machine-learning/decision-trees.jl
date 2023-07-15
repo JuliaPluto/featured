@@ -4,20 +4,30 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
 # ╔═╡ 11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
 using MLJ, PlutoUI, OpenML, DataFrames, MLJDecisionTreeInterface, ScientificTypes , Graphs, GraphMakie, NetworkLayout
 
 # ╔═╡ 17ab1569-0a3d-483b-99b0-b45fed4480e1
 begin
 	using CairoMakie
-	import DecisionTree: DecisionTreeClassifier,Leaf,Node,Root,depth
+	import DecisionTree: DecisionTreeClassifier,Leaf,Node,Root,depth,InfoNode
 	
 	begin
 			
 		import Base.convert
-		function Base.convert(::Type{SimpleDiGraph}, 	model::Root; maxdepth=depth(model))
+		function Base.convert(::Type{SimpleDiGraph}, 	model::InfoNode; maxdepth=depth(model))
 			if maxdepth == -1
-				maxdepth = depth(model)
+				maxdepth = depth(model.node)
 			end
 			g= SimpleDiGraph()
 			properties = Any[]
@@ -25,7 +35,7 @@ begin
 			return g,properties
 		end
 
-		Base.convert(::Type{SimpleDiGraph}, 	model::DecisionTreeClassifier;kwargs...) = Base.convert(SimpleDiGraph,model.root;kwargs...)
+		Base.convert(::Type{SimpleDiGraph}, 	model::DecisionTreeClassifier;kwargs...) = Base.convert(SimpleDiGraph,model.node;kwargs...)
 
 		function walk_tree!(node::Node, g, depthLeft, properties)
 			
@@ -42,7 +52,8 @@ begin
 			val = node.featval
 			
 			featval = isa(val,AbstractString) ? val : round(val;sigdigits=2)
-			push!(properties,(Node,"Feature $(node.featid) < $featval ?"))
+			label_node = (Node,"Feature $(node.featid) < $featval ?")
+			push!(properties,label_node)
 	    		
 			
 			child = walk_tree!(node.left,g,depthLeft,properties)
@@ -80,13 +91,13 @@ begin
 		#function Makie.plot!(dt::PlotDecisionTree{<:DecisionTreeClassifier})
 		import GraphMakie.graphplot
 		import Makie.plot!	
-		function GraphMakie.graphplot(model::Union{Root,DecisionTreeClassifier};kwargs...)
+		function GraphMakie.graphplot(model::Union{InfoNode,DecisionTreeClassifier};kwargs...)
 			f,ax,h = plotdecisiontree(model;kwargs...)
 			hidedecorations!(ax); hidespines!(ax)
 			return f
 		end
 		
-		function plot!(plt::PlotDecisionTree{<:Tuple{<:Union{Root,DecisionTreeClassifier}}};
+		function plot!(plt::PlotDecisionTree{<:Tuple{<:Union{InfoNode, DecisionTreeClassifier}}};
 				)
 		
 			@extract plt leafcolor,textcolor,nodecolormap,nodecolor,maxdepth
@@ -132,52 +143,150 @@ begin
 	end
 end
 
+# ╔═╡ 8c9b58b8-ff06-4989-8485-e046fac73a55
+md"""# Decision Trees
+
+Hi there! If you haven't been living under a rock the past years, you most likely heard the term "Machine Learning" at some point. So machine learning refers to a series of sophisticated models in computer science that allow to process huge and complex amount of data. 
+
+One such model is called "Decision Tree". It's a very simple but also very powerful method to classify data. How does it work? Well let's find out!"""
+
+# ╔═╡ 9738721f-40a8-4984-b3a8-d418967f15f8
+md"""### The Wine Quality Dataset
+
+First, let's start by getting some data. We will be using a popular dataset: the wine quality dataset that have the following propreties:
+
+- Each entry represents a wine type and its properties, namely: fixed acidity, volatile acidity, residual sugar, density, pH .. etc 
+
+- A quality score between 1 and 10. For our case we will consider all the wine instances with a score > 6.5 as good, otherwise bad. """
+
+# ╔═╡ 55dc52f6-36fd-4c48-acc6-dc20a1304cf7
+md"""### Training the model
+
+The first step to any machine learning algorithm is called: training. For our model,  we enter our dataset as an input, apply some magic inside and we get a decision tree back. The tree walks in the following way: 
+
+- We chose one element: that is we set a value for each of the columns we have
+- We start traversing the tree starting at the root: when we are at a node we check if the condition is met: if it is we go to the right side of the tree, if not, to the left side.
+- We arrive at another node and check out the new condition. Again, if it's met we move to the right side, if not to the left side and so on ..
+- We continue like this until we arrive at a leaf which tells us in which category our element is!
+
+Pretty simple right?
+
+"""
+
+# ╔═╡ be3f2d24-7381-41e0-81e3-77ff23389288
+md"""**Try it:** Choose the parameters of your tree (how complex it should be)"""
+
+# ╔═╡ 7f27327c-187e-4613-add7-d6bc73f0653e
+tree_depth = @bind tree_max_depth PlutoUI.Slider(4:1:7, show_value=true)
+
+# ╔═╡ cc048852-4b52-4cc2-8293-5acdcb74dbea
+tree_number_subfeatures = @bind subfeatures PlutoUI.Slider(2:11, show_value=true)
+
+# ╔═╡ a885743c-e418-489d-b77a-c898f9ef9e36
+md"""### Using the tree
+
+Now let's get to the cool part! Now that we've built our tree, we can use it to classify **new** wine instances, that are not in the dataset. 
+
+So suppose you are a chemist and you are developping a new wine type, you can enter the values of your wine and the tree will tell you if its quality is good or bad! """
+
+# ╔═╡ 7a17b28f-ed26-4ee8-9349-89bd38d6b4b8
+md"""**Try it:** Choose the properties of your wine:"""
+
+# ╔═╡ 3f13ab6d-0c64-41a5-af70-a879ce007224
+md"""## Appendix"""
+
 # ╔═╡ 2308737c-429c-4f40-8a2a-3cb9311b5197
 import DataFrames as DF
 
-# ╔═╡ 6189182b-e8f3-4914-921c-e134d6fffa03
-begin 
-	# Load the Mushroom Classification dataset from OpenML
-	task = OpenML.load(24) 
+# ╔═╡ 7494d37d-d211-49db-812e-36207a755393
+show_data_box = @bind show_data CheckBox()
+
+# ╔═╡ 996c9dd9-e8b3-4671-8111-b24d4d763501
+begin
+	md"""**Try it:** Toggle the checkbox to see how the data looks like: $(show_data_box)"""
+end
+
+# ╔═╡ e8bf8b58-71cc-4149-8433-c71ec41b51c9
+wine_url = "https://upload.wikimedia.org/wikipedia/commons/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
+
+# ╔═╡ 8a8b5a1a-3ffa-45c3-9a9d-e58aa21e585c
+begin
+	task = OpenML.load(287) 
 	data = DF.DataFrame(task)
-	DF.describe(data)
-	data
-	#schema(data)
-end
+	transform!(data, :quality => (x -> ifelse.(x .> 6.5, "good", "bad")) => :quality)
+	data[!, :quality] = categorical(data[!, :quality])
 
-# ╔═╡ d0c19fe9-d197-4f65-afcf-02c856071c6d
-begin	
-	# Convert categorical features to numerical using one-hot encoding
-	hot = OneHotEncoder(drop_last=true, ordered_factor=true)
-	new_data = select(data, Not(:class))
-	mach_hot = MLJ.fit!(machine(hot, new_data))
-	W = MLJ.transform(mach_hot, new_data)
-	W.class = data[!, :class]
-	W = coalesce.(W, 0)
-
-	y, X = unpack(W, ==(:class); rng=123);
+	y, X = unpack(data, ==(:quality); rng=123);
 	train, test = partition(eachindex(y), 0.8)
+	if show_data == true
+		data
+	else
+		Resource(wine_url, :width => 700, :height => 500)
+	end
 end
 
-# ╔═╡ 1c45ea21-917f-406b-89c3-db183d82d805
+# ╔═╡ 261d09ef-3907-4d1d-b69e-758ac6e43f37
 begin
 	Tree = @load DecisionTreeClassifier pkg = "DecisionTree" verbosity = false
-	model = Tree()
+	model = Tree(max_depth=tree_max_depth, n_subfeatures=subfeatures, rng=123)
 
 	mach = machine(model, X, y)
     mach = fit!(mach; rows=train)
 	tree_params = fitted_params(mach)
-	
-	
+
+	features = [(i,tree_params.features[i]) for i in 1:length(tree_params.features)]
+	graphplot(tree_params.tree, nlabels=features)
 end
 
-# ╔═╡ d9db6cdc-2486-4a66-9647-1eec2357a574
-typeof(tree_params.raw_tree)
-
-# ╔═╡ a9db2d22-5a4b-4b04-8567-7d94a7e86377
+# ╔═╡ 2647744e-d3d8-4fa5-a4b1-6a65015c16de
 begin
-	features = [ string(tree) for tree in tree_params.features]
-	graphplot(tree_params.raw_tree, nlabels=features)
+	all_features = names(data)[1:end-1]
+	mins = [minimum(data[!, feature]) for feature in all_features]
+	maxs = [maximum(data[!, feature]) for feature in all_features]
+
+	# TODO : replace this with a loop 
+	#x = zeros(length(all_features))
+	#x .=[PlutoUI.Slider(mins[1]:maxs[1], show_value=true) for i in 1:length(all_features)]
+	
+	slider_x1 = @bind x1 PlutoUI.Slider(mins[1]:maxs[1], show_value=true)
+	slider_x2 = @bind x2 PlutoUI.Slider(mins[2]:maxs[2], show_value=true)
+	slider_x3 = @bind x3 PlutoUI.Slider(mins[3]:maxs[3], show_value=true)
+	slider_x4 = @bind x4 PlutoUI.Slider(mins[4]:maxs[4], show_value=true)
+	slider_x5 = @bind x5 PlutoUI.Slider(mins[5]:maxs[5], show_value=true)
+	slider_x6 = @bind x6 PlutoUI.Slider(mins[6]:maxs[6], show_value=true)
+	slider_x7 = @bind x7 PlutoUI.Slider(mins[7]:maxs[7], show_value=true)
+	slider_x8 = @bind x8 PlutoUI.Slider(mins[8]:maxs[8], show_value=true)
+	slider_x9 = @bind x9 PlutoUI.Slider(mins[9]:maxs[9], show_value=true)
+	slider_x10 = @bind x10 PlutoUI.Slider(mins[10]:maxs[10], show_value=true)
+	slider_x11 = @bind x11 PlutoUI.Slider(mins[11]:maxs[11], show_value=true)
+
+	
+	md"""#### Features inputs
+	
+	 $(all_features[1]): $(slider_x1)  \
+	$(all_features[2]): $(slider_x2)  \
+	$(all_features[3]): $(slider_x3)  \
+	$(all_features[4]): $(slider_x4)  \
+	$(all_features[5]): $(slider_x5)  \
+	$(all_features[6]): $(slider_x6)  \
+	$(all_features[7]): $(slider_x7)  \
+	$(all_features[8]): $(slider_x8)  \
+	$(all_features[9]): $(slider_x9)   \
+	$(all_features[10]): $(slider_x10)  \
+	$(all_features[11]): $(slider_x11)  
+	"""
+end
+
+# ╔═╡ 1ef56c52-cf8b-4f56-abe5-57206b129b15
+begin
+	new_point = [x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11]
+	new_data = DataFrame(new_point, all_features)
+
+	# Tree prediction 
+	pred = string.(predict_mode(mach, new_data)[1])
+	emoji_pred = Dict("good" => "👍", "bad" => "👎")
+
+	md"""Your wine is : **$(pred)** $(emoji_pred[pred])"""
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1810,13 +1919,24 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
-# ╠═2308737c-429c-4f40-8a2a-3cb9311b5197
-# ╠═6189182b-e8f3-4914-921c-e134d6fffa03
-# ╠═d0c19fe9-d197-4f65-afcf-02c856071c6d
-# ╠═1c45ea21-917f-406b-89c3-db183d82d805
-# ╠═d9db6cdc-2486-4a66-9647-1eec2357a574
-# ╠═a9db2d22-5a4b-4b04-8567-7d94a7e86377
-# ╠═17ab1569-0a3d-483b-99b0-b45fed4480e1
+# ╟─8c9b58b8-ff06-4989-8485-e046fac73a55
+# ╟─9738721f-40a8-4984-b3a8-d418967f15f8
+# ╟─996c9dd9-e8b3-4671-8111-b24d4d763501
+# ╟─8a8b5a1a-3ffa-45c3-9a9d-e58aa21e585c
+# ╟─55dc52f6-36fd-4c48-acc6-dc20a1304cf7
+# ╟─be3f2d24-7381-41e0-81e3-77ff23389288
+# ╟─7f27327c-187e-4613-add7-d6bc73f0653e
+# ╟─cc048852-4b52-4cc2-8293-5acdcb74dbea
+# ╟─261d09ef-3907-4d1d-b69e-758ac6e43f37
+# ╟─a885743c-e418-489d-b77a-c898f9ef9e36
+# ╟─7a17b28f-ed26-4ee8-9349-89bd38d6b4b8
+# ╟─2647744e-d3d8-4fa5-a4b1-6a65015c16de
+# ╟─1ef56c52-cf8b-4f56-abe5-57206b129b15
+# ╟─3f13ab6d-0c64-41a5-af70-a879ce007224
+# ╟─11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
+# ╟─2308737c-429c-4f40-8a2a-3cb9311b5197
+# ╟─7494d37d-d211-49db-812e-36207a755393
+# ╟─e8bf8b58-71cc-4149-8433-c71ec41b51c9
+# ╟─17ab1569-0a3d-483b-99b0-b45fed4480e1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
