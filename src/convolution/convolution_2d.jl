@@ -2,7 +2,8 @@
 # v0.19.25
 
 #> [frontmatter]
-#> Author = "@ariguiba"
+#> "Author URL" = "https://github.com/ariguiba"
+#> "Author Name" = "Boshra Ariguib"
 #> title = "Images and Filtering"
 #> tags = ["images", "filtering", "gaussian", "pixel", "convolution"]
 #> description = "Learn about filters in image processing"
@@ -26,9 +27,7 @@ using Images,TestImages, PlutoUI
 # ╔═╡ 04a5c6d4-f8d5-11ed-141a-35481b811ee9
 md"""
 ## Images as Lists of numbers
-Hi There! My name is Boshra (github: @ariguiba) and I am here to teach you about Images and Filters! 
-
-Remember when you were kid and you used to play with legos? you probably would put tiny pieces of different colors to form different shapes and elements? 
+Hi There! Remember when you were kid and you used to play with legos? you probably would put tiny pieces of different colors to form different shapes and elements? 
 
 Well images in computers work exactly the same way! Each image is made of tiny elements we call pixels. Since our computers only understand numbers, these pixels are given to the computer as a list of numbers.  
 
