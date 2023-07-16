@@ -30,17 +30,34 @@ end
 
 # ╔═╡ 95d897cc-2c54-48a4-abbe-f6e5a72fec0c
 begin
-	df = DataFrames.DataFrame(CSV.File("Satellite tracking of black-capped petrels 2019-argos.csv"));
-	#df = DataFrames.DataFrame(CSV.File("African-elephants.csv"))
+	df = DataFrames.DataFrame(CSV.File("data/Satellite tracking of black-capped petrels 2019-argos.csv"));
+	#df = DataFrames.DataFrame(CSV.File("data/African-elephants.csv"))
 	rename!(df, "location-long" => "longitude", "location-lat" => "latitude", "individual-taxon-canonical-name" => "scientific")
 	df
 end
 
-# ╔═╡ 8a3b409b-af2c-4ee4-baff-a907d559026f
+# ╔═╡ d047e54b-63aa-436f-a86c-1095e47a5970
+time = @bind k PlutoUI.Slider(1:100, show_value = true) #size(df)[1]
+
+# ╔═╡ 6ab219d7-b049-45aa-a77b-721256318f33
 begin
-	#table = Shapefile.Table("afr_g2014_2013_0.shp")
-	table = Shapefile.Table("World_Countries.shp")
+	#table = Shapefile.Table("data/afr_g2014_2013_0.shp")
+	table = Shapefile.Table("data/World_Countries.shp")
 	
+	# Step 1: Create a raster layer with the shapefile (.shp)
+	layer_map = geodata(table) * 
+        mapping(:geometry) * 
+        visual(Poly, strokecolor = :black, strokewidth = 1, linestyle = :solid,
+				color = "white")    
+	
+	# Show only current datapoint
+	current_df = DataFrame(df[1:k, :])
+	# Step 2: Create a layer with points for the GPS data 
+	colors = ["Pterodroma hasitata" => colorant"#820263"]
+	layer_gps = data(current_df) * 
+        mapping(:longitude, :latitude, color = :scientific => "Species") *
+        visual(Stairs, marker = :circle, markersize = 12.5, )
+
 	# Set map theme for AlgebraOfGraphics.jl
 	set_aog_theme!() 
 	update_theme!(Axis = (xticksvisible = false,
@@ -48,57 +65,36 @@ begin
 		xlabelvisible = false,
 		yticksvisible = false,
 		yticklabelsvisible = false,
-		ylabelvisible = false))   
-end
+		ylabelvisible = false))
 
-# ╔═╡ e891d0b5-cd68-451e-8479-dd424b463fc7
-begin
-	# Step 1: Create a raster layer with the shapefile (.shp)
-	layer_map = geodata(table) * 
-        mapping(:geometry) * 
-        visual(Poly, strokecolor = :black, strokewidth = 1, linestyle = :solid,
-				color = "white")    
-	# Print empty map
-	draw(layer_map);
-end
-
-# ╔═╡ d047e54b-63aa-436f-a86c-1095e47a5970
-@bind k PlutoUI.Slider(1:100, show_value = true) #size(df)[1]
-
-# ╔═╡ 6ab219d7-b049-45aa-a77b-721256318f33
-begin
-	# Show only current datapoint
-	current_df = DataFrame(df[1:k, :])
-	# Step 2: Create a layer with points for the GPS data 
-	layer_gps = data(current_df) * 
-        mapping(:longitude, :latitude, color = :scientific => "Species") *
-        visual(Stairs, marker = :circle, markersize = 12.5, )
-	colors = ["Pterodroma hasitata" => colorant"#820263"]
 end
 
 # ╔═╡ d28a492a-f1c6-4da3-83ad-21953b61bf69
 begin
 	# Step 3: Combine layers to make map 
 	map_final = draw(
-    # Pass layer containing base layer shapefile 
-    layer_map + 
-    # Pass layer containing GPS points 
-    layer_gps, 
-    # Define x and y axis limits, axis tick range and axis labels 
-    axis = (
-        limits = ((-179, 179.5), (-89.5, 89.5)),
-		xticksvisible = false,
-		xticklabelsvisible = false,
-		xlabelvisible = false,
-		yticksvisible = false,
-		yticklabelsvisible = false,
-		ylabelvisible = false,
-        aspect = 1.5),
-    figure = (resolution = (850, 650),), 
-	# Place the legend on top of the figure (position = :top)
-    legend = (position = :top, titleposition = :left, ),
-    palettes = (color = colors, )
+    	# Pass layer containing base layer shapefile 
+    	layer_map + 
+    	# Pass layer containing GPS points 
+    	layer_gps, 
+    	# Define x and y axis limits, axis tick range and axis labels 
+	    axis = (
+	        limits = ((-179, 179.5), (-89.5, 89.5)),
+			xticksvisible = false,
+			xticklabelsvisible = false,
+			xlabelvisible = false,
+			yticksvisible = false,
+			yticklabelsvisible = false,
+			ylabelvisible = false,
+	        aspect = 1.5),
+	    figure = (resolution = (850, 650),), 
+		# Place the legend on top of the figure (position = :top)
+	    legend = (position = :top, titleposition = :left, ),
+	    palettes = (color = colors, )
 	)
+
+	# Print empty map
+	#draw(layer_map);
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1639,12 +1635,10 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═1fc82996-217e-11ee-2ee1-93d3f28f79b8
+# ╟─1fc82996-217e-11ee-2ee1-93d3f28f79b8
 # ╠═95d897cc-2c54-48a4-abbe-f6e5a72fec0c
-# ╠═8a3b409b-af2c-4ee4-baff-a907d559026f
-# ╠═e891d0b5-cd68-451e-8479-dd424b463fc7
 # ╠═6ab219d7-b049-45aa-a77b-721256318f33
-# ╠═d047e54b-63aa-436f-a86c-1095e47a5970
-# ╠═d28a492a-f1c6-4da3-83ad-21953b61bf69
+# ╟─d047e54b-63aa-436f-a86c-1095e47a5970
+# ╟─d28a492a-f1c6-4da3-83ad-21953b61bf69
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
