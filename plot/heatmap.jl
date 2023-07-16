@@ -1,14 +1,14 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.25
 
 #> [frontmatter]
-#> author_url = "https://github.com/JuliaPluto"
+#> author_url = "https://github.com/ariguiba"
 #> image = "https://github.com/JuliaPluto/featured/assets/6933510/05624a1d-9688-4d63-bbda-f89a2fce2706"
 #> title = "3D Graph vs Heatmap"
 #> tags = ["basic", "plotting", "makie", "3D"]
 #> license = "Unlicense"
 #> description = "An interactive notebook"
-#> author_name = "Pluto.jl"
+#> author_name = "Boshra Ariguib"
 
 using Markdown
 using InteractiveUtils
@@ -61,8 +61,11 @@ y = range(-5, 5, length=len)
 
 # ╔═╡ 950c9b27-3b08-4eae-bbc8-026578e61e48
 begin 
+	# Observables are a tool in Julia that work like magic code that helps us update the slider without reloading the whole feature every time
 	obs_contourH = Observable(0.0)
 	obs_contourH[] = contourH
+
+	# Draw the contour in the 3D graph
 	plane = @lift([$obs_contourH for i in 1:length(x), j in 1:length(y)])
 	contourH
 end
@@ -123,18 +126,21 @@ z = [chosen_function(x[i], y[j]) for i in 1:len, j in 1:len]
 
 # ╔═╡ b1729423-7fb2-419d-b41c-fcc96fa18d50
 begin
+	# Setup of the figure
     f = Figure(;resolution=(680,400))
     ax1 = Axis3(f[1, 1])
     ax2 = Axis(f[1, 2])
 
+	# Drawing the function and the contour on the 3G graph
 	surface!(ax1, x, y, z, colormap=:viridis)
 	surface!(ax1, x, y, plane; transparency=true, colormap=[:red,:red])
-    
+
+	# Drawing the function and the countour on the heatmap
 	hm = heatmap!(ax2, x, y, z)
 	Colorbar(f[:, 3], hm; vertical=true)
-	obs_levels = @lift([$obs_contourH])
-    contour!(ax2, x, y, z; levels=obs_levels, color=:red)
-	
+    contour!(ax2, x, y, z; levels=@lift([$obs_contourH]), color=:red)
+
+	# Displaying the function
 	f
 end
 
@@ -153,7 +159,7 @@ PlutoUI = "~0.7.51"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.3"
+julia_version = "1.8.5"
 manifest_format = "2.0"
 project_hash = "d48e084d28d40872cc5a35cec9815fecfe5dbea4"
 
@@ -291,7 +297,7 @@ version = "4.7.0"
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "0.5.2+0"
+version = "1.0.1+0"
 
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
