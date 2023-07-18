@@ -7,7 +7,7 @@
 #> title = "3D Graph vs Heatmap"
 #> tags = ["basic", "plotting", "makie", "3D"]
 #> license = "Unlicense"
-#> description = "An interactive notebook"
+#> description = "You can visualize 3D data with a 3D graph or a heatmap. How do they work, and what is the difference?"
 #> author_name = "Boshra Ariguib"
 
 using Markdown
