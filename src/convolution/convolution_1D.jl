@@ -21,7 +21,7 @@ end
 
 # ╔═╡ 3fd4b34c-18ed-4b07-b594-01afb377ead7
 begin
-	using PlutoUI, CairoMakie, DSP, ColorSchemes, ColorTypes, SignalAnalysis, Random
+	using PlutoUI, CairoMakie, DSP, ColorSchemes, Colors, ColorTypes, SignalAnalysis, Random
 	using PlutoUI.ExperimentalLayout: grid, vbox, hbox, Div
 	using HypertextLiteral
 	using MakieThemes
@@ -30,38 +30,27 @@ end
 
 # ╔═╡ 05df72e9-f45b-49c3-8015-9212f439cf72
 begin
-	# makie can't display emojis directly, so we have to grab them from github - sorry
-using PNGFiles,HTTP
-emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) |> x-> RGBA{Float64}.(x);
+	# Makie can't display emojis directly, so we have to grab them from github - sorry
+	using PNGFiles,HTTP
+	emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) |> x-> RGBA{Float64}.(x);
 end;
 
 # ╔═╡ ca75244c-69ac-45c8-aa33-59c05dc4091b
 begin
 	import CairoMakie:Polygon
 	using GeometryBasics
-	a = 8
-	r = 4
-	n = 2
-	
-	x_len, y_len = (12, 12)
-	x_rang = range(-6, 6, length=x_len)
-	y_rang = range(-4, 4, length=y_len)
-	
-	positions = [(x - a - sqrt(r*r - y*y)) * (x + a - sqrt(r*r - y*y)) * (y - r) * (y + r) - 1/10^(n) for x in x_rang, y in y_rang]
-	
-	fig = Figure()
-	ax = Axis(fig[1, 1])
+	function plot_pill(emoji_pill_pic::Matrix)
+		positions = Colors.alpha.(emoji_pill_pic).<0.5
 
-	contour_plot = contour!(x_rang, y_rang, positions, levels=1, labels = false)
-	#contour_plot = contour!(positions, levels=1, labels = false)
-	pill_points = contour_plot.plots[2].converted[1][]
-	pill_shape = Polygon(pill_points)
+		curr_fig = Figure()
+		curr_ax = Axis(curr_fig[1, 1])
+		contour_plot = contour!(curr_ax, positions, levels=1, labels = false)
+		pill_points = contour_plot.plots[2].converted[1][]./10
+		pill_points = [Point2f.(0.5 .+6 .- p.data[1] .-3.5,p.data[2] .- 3.5) for p in pill_points]
 
-	#fieldnames(typeof(pill_shape.exterior.points))
-	#pill_shape.exterior.points
-	fig
-
-	
+		pill_shape = Polygon(pill_points[1:end-1])
+		return pill_shape
+	end
 end
 
 # ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
@@ -75,7 +64,7 @@ md"""
 """
 
 # ╔═╡ dbdbcbbe-57fd-497f-b5ba-83b61e87de0b
-md"""Let's start with an example: Suppose there is a **pandemic** going on and more people are getting sick every day. So, you are a doctor and you have the following **new** patients coming in each day (yes, sadly even elves and fairies can get this disease): 
+md"""Let's start with this great example from the [**better explained blog** ](https://betterexplained.com/articles/intuitive-convolution/) : Suppose there is a **pandemic** going on and more people are getting sick every day. So, you are a doctor and you have the following **new** patients coming in each day (yes, sadly even elves and fairies can get this disease): 
 """
 
 # ╔═╡ f97f9f46-b5c7-4cee-a69f-1eb53b560952
@@ -94,20 +83,15 @@ md"""The patients all have the same disease that requires the following treatmen
 
 So something that looks like this: """
 
-# ╔═╡ 39bd4237-2654-4c0b-9875-3c52183ffbe4
-treatment_example = ['💊'^1, '💊'^2, '💊'^4, '💊'^5, '💊'^6]
-
-# ╔═╡ 187041cf-ee68-450a-94e3-01f54fdc6864
-md"""> **Try it:** Choose your own treatment plan (you can also chose 0 pills for a certain day): """
-# Choose your own number of treatment days: $(amp_2_slider)
-
 # ╔═╡ 88e4551f-9ae1-4a5f-819b-01c43a319981
 begin
-	treatment_array = [1 2 3 4 3 2 1 0]
-	 @bind treatment_in PlutoUI.Scrubbable(treatment_array)
+	treatment_array = [1 2 3 4 0 0 0 0]
+	treatment_in_scrub = @bind treatment_in PlutoUI.Scrubbable(treatment_array)
+	md"""> **Try it:** Choose your own treatment plan (you can also chose 0 pills for a certain day): 
+	$(treatment_in_scrub)"""
 end
 
-# ╔═╡ 57478c8e-7c14-4bf5-8a6e-f7ef528965d7
+# ╔═╡ 9274ed36-a28e-42f3-879f-167d5afa6fc7
 treatment = vec([repeat('💊', i) for i in treatment_in])
 
 # ╔═╡ 27bd1602-3ca0-4daf-a9ff-c76ea818ead4
@@ -135,40 +119,30 @@ md"""
 # ╔═╡ 572bd8d5-65b0-462e-a143-811f4bfa875e
 md"""Now to make things more visual, move the slider around to see how many pills you need each day!"""
 
-# ╔═╡ 883034f3-77aa-4adf-b2f5-4545b15f81cf
-show_colors = @bind with_colors CheckBox()
-
 # ╔═╡ 1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
-md"""**Hint:** In order to administer the treatment in the right order, we need to **flip** our treatment plan! So now it looks like this: 
+md"""**Hint:** In order to administer the treatment in the right order, we need to **flip** patients lists, so they get admitted to the hospital in the right order! So now it looks like this: 
 """
-
-# ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
-pills = reverse(treatment)
-
-# ╔═╡ 7a5f7bb0-117c-445d-9dee-1d6e783049ca
-begin
-emoji_pill = emoji_pill_pic
-size_marker = 25
-#emoji_pill = pill_shape
-#fieldnames(typeof(contour_plot.plots[2]))
-end
 
 # ╔═╡ 0ccf60db-75b2-466d-935e-f39855bc36f7
 md"""## Generating Code """
 
 # ╔═╡ e4a17824-0e9f-442e-82bc-62b8d46e88e5
-md"""The following code sets up our initial figure. If you're interested in drawing graphs in computer science, you can take a look but it's not necessary to understand the mathematical concept."""
+md"""The following code sets up our initial figure. If you're interested in drawing graphs in computer science, you can take a look but you don't need to understand every line."""
 
 # ╔═╡ 032130c4-686b-4db9-9753-9b0fe764f94e
 begin
-	nb = 8 # number of values
-	amp_2_slider = @bind amp_2 PlutoUI.Slider(1:1:5, show_value=true, default=2)
-	len_slider = @bind len PlutoUI.Slider(1:1:nb, show_value=true, default=3)
-	
+	# number of values
+	nb = 8 
+
+	# Slider for how long the pandemic should go 
+	len_slider = @bind len PlutoUI.Slider(1:1:nb, show_value=true, default=5)
 end;
 
 # ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
 patients = collect(["👵","👴👵", "👧👴👴", "🧑🧝🧝🧚", "👩🧝🧚🧝🧓", "🧓👩👩👴👵👵", "👵🧝👵🧓🧚🧓🧓", "🧚🧚🧚🧚👵👵🧑🧝"])[1:len]
+
+# ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
+patients_flipped = append!(["" for i in 1:8-length(patients)], reverse(patients))
 
 # ╔═╡ 9243a029-8f8d-4a28-b098-d2a2810a8786
 md"""**Try it:** How many days should the disease go on:  $(len_slider) day(s)"""
@@ -176,7 +150,7 @@ md"""**Try it:** How many days should the disease go on:  $(len_slider) day(s)""
 # ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
 begin
 	# Set slider for the day (index)
-	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb+1, show_value=true, default=5)
+	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb+1, show_value=true, default=1)
 	md"""**Try it:**: calculate up to day: $(k_slider)
 	> **Test your understanding**: On what day do you require most pills?"""
 end
@@ -184,67 +158,44 @@ end
 # ╔═╡ 472b52d8-e787-4a93-83d8-c53e977a143c
 begin
 	# Set the number of patients array (First function)
-	numbers_patients = [length(s) for s in patients]
-	len_patients = length(numbers_patients)
-	zeros_begin = [0 for i in 1:9]
-	zeros_end = [0 for i in 1:16-len_patients]
-	y1_patients = append!(zeros_begin, numbers_patients, zeros_end)
+	numbers_patients = [length(s) for s in patients_flipped]
+	y2_patients = append!([0 for i in 1:9], numbers_patients, [0 for i in 1:16-length(patients_flipped)])
 
 	# Set the number of pills array (Second function)
-	numbers_pills = [length(s) for s in pills]
-	len_pills = length(numbers_pills)
-	zeros_begin_pills = [0 for i in 1:9]
-	zeros_end_pills = [0 for i in 1:16-len_pills]
-	y2_pills = append!(zeros_begin_pills, numbers_pills, zeros_end_pills)
-	
-	idx = 9 - k_conv 
-	if idx < 1 idx += 25 end
-	y2_pills_draw = y2_pills[[idx+1:end; 1:idx]]
-end
+	numbers_pills = [length(s) for s in treatment]
+	y1_pills = append!([0 for i in 1:9], numbers_pills, [0 for i in 1:16-length(numbers_pills)])
 
-# ╔═╡ e077fb50-5dd4-469a-bea2-88974c9ca2a6
-md"""
-## Convolution of functions
+	# Set the function to draw the patients moving
+	if k_conv < 9 idx = 9 - k_conv else idx = 34 - k_conv end
+	y2_patients_draw = y2_patients[[idx+1:end; 1:idx]]
 
-Choose a smoother function and see how the results changes. Can you see how convolution works when using functions ? 
-"""
-
-# ╔═╡ ebb31586-219d-4463-8bf0-5ad1544d3661
-begin
-	nz = 100
-	z = range(0, nz, length=nz)
-	fz2_select = @bind fz2_function Select(
-		[ 1 => "Gaussian", 2 => "Box"])
-	md"""Smoothing function: $(fz2_select)"""
-end
-
-# ╔═╡ 1ef731c7-68ae-4931-859b-93b26c1acfde
-begin
-	e_draw = @bind e PlutoUI.Slider(10:1.0:100, default = 20)
-	md"""Index: $(e_draw)"""
-end
+end;
 
 # ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
 md"""## Appendix"""
 
-# ╔═╡ 29752f8c-df55-4abc-868a-0e7404fad540
-md"""#### Helper Functions"""
-
 # ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
-function draw_point(x::Vector, y1::Vector, ax::Axis, marker, color::ColorTypes.RGB{Float64}, offset::Int)
+function draw_point(x::Vector, y1::Vector, ax::Axis, marker, size_marker::Int, color::ColorTypes.RGB{Float64}, offset::Int)
 		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=size_marker,strokewidth=1,marker=repeat([marker],y), strokecolor=:white, color=color) for (x,y) in zip(x,y1)]
 end
 
-# ╔═╡ 50420349-f3f7-45bb-a3ab-0ac379a067bb
-function gaussian(x::Float64, μ, σ, range_min, range_max)
-    scaled_x = ((x - μ) / σ) * ((range_max - range_min) / 4) + ((range_max + range_min) / 2)
-    coeff = 1 / (σ * sqrt(2π))
-    exponent = -((scaled_x - μ)^2) / (2σ^2)
-    return coeff * exp(exponent)
+# ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
+function draw_grey_points(x, y, ax, len, marker, size_marker, colors::Vector)
+	for j in 1:len
+		color = colors[j % length(colors) + 1]
+		draw_point([x[j]], [y[j]], ax, marker, size_marker, color, 0)
+	end
 end
 
-# ╔═╡ 6e211a4b-1fda-438a-b709-6f79260a1f74
-md"""## Attempt to plot a pill polygon"""
+# ╔═╡ d7ce43e5-7af7-4182-9992-1501e6d2e532
+function plot_grey_pill(emoji_pill_pic::Matrix{RGBA{Float64}})
+	emoji_pill_org = deepcopy(emoji_pill_pic)
+	grey_pill = GrayA.(emoji_pill_org)
+	for k = 1:length(grey_pill)
+		grey_pill[k] = GrayA(grey_pill[k].val,grey_pill[k].alpha* 0.2)
+	end
+	return grey_pill
+end
 
 # ╔═╡ df178bb8-3b81-4c4b-ba94-3ad945e63007
 begin
@@ -255,7 +206,7 @@ begin
 end
 
 # ╔═╡ da0a4117-629e-42b5-95ae-d49f10769830
-function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
+function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker)
 	offset = 0
 	for index in k:k+nb
 		scatter!(ax3, (x_conv[k_conv], y3[k_conv]), color = colors[1])
@@ -264,26 +215,17 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 			continue
 		end
 
-		color = colors[(index - k)% col_length + 1]
+		color = colors[index % col_length + 1]
 
-		if with_colors 
-			if y1[index] != 0 && y2_draw[index] != 0
-				draw_point([x[index]], [y1[index]], ax1, '😷', color, 0)
-				draw_point([x[index]], [y2_draw[index]], ax1, '♥', color, 0)
-			end
-			draw_point([x[index]], [y12[index]], ax2, '♥', color, 0)
-			draw_point([x_conv[k_conv]], [y12[index]], ax3, '♥', color, offset)
+		if y1[index] != 0 && y2_draw[index] != 0
+			draw_point([x[index]], [y2_draw[index]], ax1,'😷' , grey_marker, color, 0)
 		end
-		draw_point([x[index]], [y12[index]], ax2, emoji_pill, color, 0)
+		draw_point([x[index]], [y12[index]], ax2, emoji_pill, color_marker, color, 0)
+		draw_point([x_conv[k_conv]], [y12[index]], ax3, emoji_pill, color_marker, color, offset)
+		
+		draw_point([x[index]], [y12[index]], ax2, emoji_pill_grey, grey_marker, color, 0)
 		
 		offset += y12[index]
-	end
-end
-
-# ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
-function draw_grey_points(x, y, ax, len, marker)
-	for j in 1:len
-		draw_point([x[j]], [y[j]], ax, marker, color_grey, 0)
 	end
 end
 
@@ -301,44 +243,56 @@ begin
 	l = length(x)
 	k = k_conv - nb +1
 
-	vlines!.([ax1,ax2],Ref(k:k+nb-2),color=:gray)
-	vlines!.([ax1,ax2,ax3],Ref([k-2+nb/2]))
-	
-	# Set up the functions
-	y1 = y1_patients
-	y2 = y2_pills
-	y2_draw = y2_pills_draw
-	y12 = y1 .* y2_draw
+	# This is to add the shape of the pill on top of the color
+	emoji_pill_grey = plot_grey_pill(emoji_pill_pic)
 
-	# Set up the final convoluted result (the final function is defined on a larger range)
+	# Set up the emojis and their sizes
+	emoji_pill = plot_pill(emoji_pill_pic) 
+	grey_marker = 25
+	color_marker = 4
+
+	# Set up the functions
+	y1 = y1_pills
+	y2 = y2_patients
+	y2_draw = y2_patients_draw
+	
+	# Intermediate step for convolution
+	y12 = y1 .* y2_draw 
+
+	# Set up the final convoluted result 
 	y3 = DSP.conv(y1,reverse(y2))
 
-	# Draw the initial setup
+	# Draw vertical lines
+	vlines!.([ax1,ax2],Ref(k:k+nb-2),color=:gray)
+	vlines!.([ax1,ax2],Ref([k_conv-1]))
+	vlines!.([ax3],Ref([k-2+nb/2]))
+	
+	# Draw the function lines
 	stairs!(ax1, x, y1, color = colors[6], step=:center)
 	stairs!(ax1, x, y2_draw, color = colors[4], step=:center)
 	stairs!(ax2, x, y12, color = colors[7], step=:center)
 	stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
-
-	# Show the initial grey points on the graph
-	draw_grey_points(x, y1, ax1, l, '😷')
-	draw_grey_points(x, y2_draw, ax1, l, emoji_pill)
-	draw_grey_points(x_conv, y3, ax3, 4*nb -1, emoji_pill)
-
-	# Draw the points on the graph for the point k_conv
-	draw_all(l, k+nb, k_conv+2*nb, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3)
-
+	
+	# Draw the points on the graph for the current day
+	draw_grey_points(x, y2_draw, ax1, l, '😷', grey_marker, [color_grey])
+	draw_grey_points(x, y1, ax1, l, emoji_pill, color_marker, colors)
+	
+	draw_all(l, k+nb, k_conv+2*nb, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker)
+	draw_grey_points(x, y1, ax1, l, emoji_pill_grey, grey_marker, [color_grey])
+	draw_grey_points(x_conv, y3, ax3, 4*nb -1, emoji_pill_grey, grey_marker, [color_grey])
+	
 	# Get the top value of each plot 
-	max_1 = maximum(y1) > 6.5 ? maximum(y1) : 6.5
-	max_2 = maximum(y12) > 7.5 ? maximum(y12) : 7.5
+	max_ax1 = maximum(y1) > 6.5 ? maximum(y1) : 6.5
+	max_ax2 = maximum(y12) > 7.5 ? maximum(y12) : 7.5
 	
 	# Set the axes limits
 	xlims!.([ax1,ax2,ax3],Ref((-4,12)))
-	ylims!(ax1, (-1, max_1 + 1))
-	ylims!(ax2, (-1, max_2 + 3))
+	ylims!(ax1, (-1, max_ax1 + 1))
+	ylims!(ax2, (-1, max_ax2 + 3))
 	ylims!(ax3, (-1, maximum(y3) + 7))
-	
+
 	# Draw * as labels
-	ax1.xticks = (1:len).+k
+	ax1.xticks = (-len:0).+k_conv.-1
 	showPlus = sum(y12.>0) > 0
 	ax1.xtickformat = "*\n↓"
 
@@ -359,52 +313,16 @@ begin
 	# a bit hacky, Makie doesnt allow specifying lineheight of ticks directly
 	ax1.xaxis.elements[:ticklabels].lineheight = 0.5
 	ax2.xaxis.elements[:ticklabels].lineheight = 0.5
-	
-end
+
+	# Add labels to axis
+	ax1.ylabel = "New patients"
+	ax2.ylabel = "New pills required"
+	ax3.ylabel = "Stockpile required"
+	ax3.xlabel = "Day"
+end;
 
 # ╔═╡ 6b243243-8f26-4f2d-8727-564f0701b302
 f
-
-# ╔═╡ bedb6849-b9f8-42e7-8fe7-6734643e8ef1
-let
-
-	f = Figure(resolution=(850, 450))
-	ax1 = Axis(f[1, 1])
-	#ax2 = CairoMakie.Axis(f[2, 1])	
-	l = length(z)
-
-	# First function
-	Random.seed!(250)
-	fz1 = rand(PinkGaussian(nz))
-
-	# Second function & Scaling
-	if fz2_function == 1
-		fz2 = ([gaussian(zi,50, 10, 0.0, 100.0) .* 40 for zi in collect(z)], [gaussian(zi,e, 10, 0.0, 100.0) .* 40 for zi in collect(z)])
-	else
-		fz2 = ((z.>=40 .&& z .<50) .* 3, (z.>=e-10 .&& z .<e+10) .* 3) 
-	end
-
-	fz2[1] .= fz2[1] ./ sum(fz2[1])
-	
-	# Convoluted Function
-	fz3 = DSP.conv(fz1, reverse(fz2[1]))[end÷4+5:end÷4*3+6]
-
-	# Drawn moving functions 
-	fz2_draw = fz2[2]
-	fz3_draw = [ i < e ? fz3[i] : NaN for i in eachindex(fz3) ]
-
-	# Setting axes limits
-	xlims!(ax2, (0, 100))
-	ylims!(ax2, (0, 70))
-	
-	# Plotting
-	lines!(ax1, z, fz1, color = "red")
-	lines!(ax1, z, fz2_draw, color = "blue")
-	#lines!(ax2, z, fz3, color="gray")
-	lines!(ax1, z, fz3_draw, color="purple")
-
-	f
-end
 
 # ╔═╡ c4f25a29-009e-47e4-adc0-18c94e247df4
 begin
@@ -422,21 +340,12 @@ end
 # ╔═╡ 110068f5-0433-40bc-ab9e-cafe8fa3cc68
 begin
 	sidebar2 = Div([
-		md""" **Choose a point in the graph:**""",
+		md""" **Choose a day:**""",
 		k_slider,
-		md"""**Change the number of days of treatment:**""",
-		amp_2_slider,
-		md"""**Choose how many new patients came in:**""",
-		len_slider
+		md"""**Choose how long the pandemic is:**""",
+		len_slider, 
+		md"""**Change the treatment:**"""
 	], class="plutoui-sidebar aside third")
-end
-
-# ╔═╡ 0a002751-6cd8-4a32-a1dc-352ff69ce6e4
-begin
-	sidebar1 = Div([
-		md"""**Choose a smoothing function**""",
-		fz2_select
-	], class="plutoui-sidebar aside second")
 end
 
 # ╔═╡ 9ad51efd-a487-4153-ac3a-077ae99905bc
@@ -465,7 +374,7 @@ html"""
 		}
 
 		.third {
-			top: 21.75rem !important;
+			top: 17.5rem !important;
 		}
 		
 		div.plutoui-sidebar.aside.hide {
@@ -510,6 +419,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
 ColorTypes = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
@@ -524,6 +434,7 @@ SignalAnalysis = "df1fea92-c066-49dd-8b36-eace3378ea47"
 CairoMakie = "~0.10.4"
 ColorSchemes = "~3.21.0"
 ColorTypes = "~0.11.4"
+Colors = "~0.12.10"
 DSP = "~0.7.8"
 GeometryBasics = "~0.4.7"
 HTTP = "~1.9.14"
@@ -540,7 +451,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "352b3c826f3f8228cd539b51fba404fb075fee73"
+project_hash = "b18773c48ec92bb67d9a63cbf8de8d3ef0e8c09b"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -1965,43 +1876,32 @@ version = "3.5.0+0"
 # ╟─9243a029-8f8d-4a28-b098-d2a2810a8786
 # ╟─adfc8467-93bf-472e-a9fc-bd502caa5daa
 # ╟─f9df01a1-8fb7-4337-9415-9ab56d9c696a
-# ╟─39bd4237-2654-4c0b-9875-3c52183ffbe4
-# ╟─187041cf-ee68-450a-94e3-01f54fdc6864
+# ╟─9274ed36-a28e-42f3-879f-167d5afa6fc7
 # ╟─88e4551f-9ae1-4a5f-819b-01c43a319981
-# ╟─57478c8e-7c14-4bf5-8a6e-f7ef528965d7
 # ╟─27bd1602-3ca0-4daf-a9ff-c76ea818ead4
 # ╟─f0d08486-0086-48da-baeb-169f3812d0ea
 # ╟─77a1da97-f4c2-45df-ae15-8f5910a076d4
 # ╟─572bd8d5-65b0-462e-a143-811f4bfa875e
-# ╟─883034f3-77aa-4adf-b2f5-4545b15f81cf
 # ╟─1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
 # ╟─a60029d5-ae8d-4704-bef1-076949712c37
 # ╟─bccfdd98-b425-4f8d-a58d-489134851ebd
-# ╟─7a5f7bb0-117c-445d-9dee-1d6e783049ca
 # ╠═6b243243-8f26-4f2d-8727-564f0701b302
 # ╟─0ccf60db-75b2-466d-935e-f39855bc36f7
 # ╟─e4a17824-0e9f-442e-82bc-62b8d46e88e5
 # ╠═032130c4-686b-4db9-9753-9b0fe764f94e
 # ╠═472b52d8-e787-4a93-83d8-c53e977a143c
 # ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
-# ╟─e077fb50-5dd4-469a-bea2-88974c9ca2a6
-# ╟─ebb31586-219d-4463-8bf0-5ad1544d3661
-# ╟─1ef731c7-68ae-4931-859b-93b26c1acfde
-# ╟─bedb6849-b9f8-42e7-8fe7-6734643e8ef1
 # ╟─e63c92a5-659e-41f7-85a4-c2f3baffcef6
-# ╠═05df72e9-f45b-49c3-8015-9212f439cf72
-# ╟─29752f8c-df55-4abc-868a-0e7404fad540
-# ╠═da0a4117-629e-42b5-95ae-d49f10769830
-# ╠═8680db2e-3dda-4aff-a00e-130ac1f4486c
-# ╠═c2455fae-f733-4e59-b2d0-a76913810f15
-# ╟─50420349-f3f7-45bb-a3ab-0ac379a067bb
-# ╟─6e211a4b-1fda-438a-b709-6f79260a1f74
-# ╠═ca75244c-69ac-45c8-aa33-59c05dc4091b
+# ╟─05df72e9-f45b-49c3-8015-9212f439cf72
+# ╟─da0a4117-629e-42b5-95ae-d49f10769830
+# ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
+# ╟─c2455fae-f733-4e59-b2d0-a76913810f15
+# ╟─ca75244c-69ac-45c8-aa33-59c05dc4091b
+# ╟─d7ce43e5-7af7-4182-9992-1501e6d2e532
 # ╟─3fd4b34c-18ed-4b07-b594-01afb377ead7
 # ╟─df178bb8-3b81-4c4b-ba94-3ad945e63007
 # ╟─c4f25a29-009e-47e4-adc0-18c94e247df4
 # ╟─110068f5-0433-40bc-ab9e-cafe8fa3cc68
-# ╟─0a002751-6cd8-4a32-a1dc-352ff69ce6e4
 # ╟─9ad51efd-a487-4153-ac3a-077ae99905bc
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
