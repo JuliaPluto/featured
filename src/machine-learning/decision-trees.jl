@@ -25,19 +25,21 @@ begin
 	begin
 			
 		import Base.convert
-		function Base.convert(::Type{SimpleDiGraph}, 	model::InfoNode; maxdepth=depth(model))
+		function Base.convert(::Type{SimpleDiGraph}, model::InfoNode; maxdepth=depth(model))
+			
 			if maxdepth == -1
 				maxdepth = depth(model.node)
 			end
 			g= SimpleDiGraph()
 			properties = Any[]
-			walk_tree!(model.node,g,maxdepth,properties)
+			features = model.info.featurenames
+			walk_tree!(model.node,g,maxdepth,properties, features)
 			return g,properties
 		end
 
 		Base.convert(::Type{SimpleDiGraph}, 	model::DecisionTreeClassifier;kwargs...) = Base.convert(SimpleDiGraph,model.node;kwargs...)
 
-		function walk_tree!(node::Node, g, depthLeft, properties)
+		function walk_tree!(node::Node, g, depthLeft, properties, features)
 			
 		    add_vertex!(g)
 			
@@ -52,26 +54,29 @@ begin
 			val = node.featval
 			
 			featval = isa(val,AbstractString) ? val : round(val;sigdigits=2)
-			label_node = (Node,"Feature $(node.featid) < $featval ?")
+			featurename = features[node.featid]
+			label_node = (Node,"$(featurename) < $featval ?")
 			push!(properties,label_node)
-	    		
 			
-			child = walk_tree!(node.left,g,depthLeft,properties)
+			child = walk_tree!(node.left,g,depthLeft,properties, features)
 			add_edge!(g,current_vertex,child)	
 			
-			child = walk_tree!(node.right,g,depthLeft,properties)
+			child = walk_tree!(node.right,g,depthLeft,properties, features)
 			add_edge!(g,current_vertex,child)
 			
 		    return current_vertex
 			
 		end
 			
-		function walk_tree!(leaf::Leaf, g, depthLeft, properties)
+		function walk_tree!(leaf::Leaf, g, depthLeft, properties, features)
 		    add_vertex!(g)
 			n_matches = count(leaf.values .== leaf.majority)
 	    	#ratio = string(n_matches, "/", length(leaf.values))
+
+			emojis_class = Dict("1" => "good", "2" => " bad")
+			leaf_class = emojis_class[string.(leaf.majority)]
 	    
-		    push!(properties,(Leaf,"$(leaf.majority)"))# : $(ratio)"))
+		    push!(properties,(Leaf,"$(leaf_class)"))# : $(ratio)"))
 		    return vertices(g)[end]
 		end
 	end
@@ -93,13 +98,13 @@ begin
 		import Makie.plot!	
 		function GraphMakie.graphplot(model::Union{InfoNode,DecisionTreeClassifier};kwargs...)
 			f,ax,h = plotdecisiontree(model;kwargs...)
-			hidedecorations!(ax); hidespines!(ax)
+			hidedecorations!(ax); hidespines!(ax); ax.aspect = DataAspect()
 			return f
 		end
 		
 		function plot!(plt::PlotDecisionTree{<:Tuple{<:Union{InfoNode, DecisionTreeClassifier}}};
 				)
-		
+			
 			@extract plt leafcolor,textcolor,nodecolormap,nodecolor,maxdepth
 			model = plt[1]
 	
@@ -109,11 +114,11 @@ begin
 			properties = @lift $tmpObs[2]
 	
 			# extract labels
-			labels = @lift [string(p[2]) for p in $properties]			
+			labels = @lift [string(p[2]) for p in $properties]	
 	
 			# set the colors, first for nodes & cutoff-nodes, then for leaves
 			nlabels_color = map(properties, labels, leafcolor,textcolor,nodecolormap) do properties,labels,leafcolor,textcolor,nodecolormap
-			
+				
 			# set colors for the individual elements
 			leaf_ix = findall([p[1] == Leaf for p in properties])
 			leafValues = [p[1] for p in split.(labels[leaf_ix]," : ")]
@@ -132,7 +137,9 @@ begin
 		# plot :)
 		graphplot!(plt,graph;layout=Buchheim(),
 	                       nlabels=labels,
-							node_size = 100,
+                     	#nlabels_distance=10,
+                     	#nlabels_fontsize=10,
+							node_size = 80,
 							node_color=nodecolor,
 							nlabels_color=nlabels_color,
 	                       nlabels_align=(:center,:center),
@@ -177,10 +184,10 @@ Pretty simple right?
 md"""**Try it:** Choose the parameters of your tree (how complex it should be)"""
 
 # ╔═╡ 7f27327c-187e-4613-add7-d6bc73f0653e
-tree_depth = @bind tree_max_depth PlutoUI.Slider(4:1:7, show_value=true)
+tree_depth = @bind tree_max_depth PlutoUI.Slider(3:1:6, show_value=true, default=4)
 
-# ╔═╡ cc048852-4b52-4cc2-8293-5acdcb74dbea
-tree_number_subfeatures = @bind subfeatures PlutoUI.Slider(2:11, show_value=true)
+# ╔═╡ 74f08a91-dc3a-4c3b-b711-907e97e573f0
+tree_min_samples_leaf = @bind min_samples_leaf PlutoUI.Slider(60:40:360, show_value=true) 
 
 # ╔═╡ a885743c-e418-489d-b77a-c898f9ef9e36
 md"""### Using the tree
@@ -228,14 +235,14 @@ end
 # ╔═╡ 261d09ef-3907-4d1d-b69e-758ac6e43f37
 begin
 	Tree = @load DecisionTreeClassifier pkg = "DecisionTree" verbosity = false
-	model = Tree(max_depth=tree_max_depth, n_subfeatures=subfeatures, rng=123)
+	model = Tree(max_depth=tree_max_depth, min_samples_leaf=min_samples_leaf, rng=123)
 
 	mach = machine(model, X, y)
     mach = fit!(mach; rows=train)
 	tree_params = fitted_params(mach)
 
 	features = [(i,tree_params.features[i]) for i in 1:length(tree_params.features)]
-	graphplot(tree_params.tree, nlabels=features)
+	g = graphplot(tree_params.tree; nlabels=tree_params.tree.info.featurenames)
 end
 
 # ╔═╡ 2647744e-d3d8-4fa5-a4b1-6a65015c16de
@@ -243,37 +250,43 @@ begin
 	all_features = names(data)[1:end-1]
 	mins = [minimum(data[!, feature]) for feature in all_features]
 	maxs = [maximum(data[!, feature]) for feature in all_features]
+	length_range = 8
+	ranges = [round((maxs[i] - mins[i]) / length_range, digits=3) for i in 1:length(all_features)]
 
 	# TODO : replace this with a loop 
 	#x = zeros(length(all_features))
 	#x .=[PlutoUI.Slider(mins[1]:maxs[1], show_value=true) for i in 1:length(all_features)]
 	
-	slider_x1 = @bind x1 PlutoUI.Slider(mins[1]:maxs[1], show_value=true)
-	slider_x2 = @bind x2 PlutoUI.Slider(mins[2]:maxs[2], show_value=true)
-	slider_x3 = @bind x3 PlutoUI.Slider(mins[3]:maxs[3], show_value=true)
-	slider_x4 = @bind x4 PlutoUI.Slider(mins[4]:maxs[4], show_value=true)
-	slider_x5 = @bind x5 PlutoUI.Slider(mins[5]:maxs[5], show_value=true)
-	slider_x6 = @bind x6 PlutoUI.Slider(mins[6]:maxs[6], show_value=true)
-	slider_x7 = @bind x7 PlutoUI.Slider(mins[7]:maxs[7], show_value=true)
-	slider_x8 = @bind x8 PlutoUI.Slider(mins[8]:maxs[8], show_value=true)
-	slider_x9 = @bind x9 PlutoUI.Slider(mins[9]:maxs[9], show_value=true)
-	slider_x10 = @bind x10 PlutoUI.Slider(mins[10]:maxs[10], show_value=true)
-	slider_x11 = @bind x11 PlutoUI.Slider(mins[11]:maxs[11], show_value=true)
+	slider_x1 = @bind x1 PlutoUI.Slider(mins[1]:ranges[1]:maxs[1], show_value=true)
+	slider_x2 = @bind x2 PlutoUI.Slider(mins[2]:ranges[2]:maxs[2], show_value=true)
+	slider_x3 = @bind x3 PlutoUI.Slider(mins[3]:ranges[3]:maxs[3], show_value=true)
+	slider_x4 = @bind x4 PlutoUI.Slider(mins[4]:ranges[4]:maxs[4], show_value=true)
+	slider_x5 = @bind x5 PlutoUI.Slider(mins[5]:ranges[5]:maxs[5], show_value=true)
+	slider_x6 = @bind x6 PlutoUI.Slider(mins[6]:ranges[6]:maxs[6], show_value=true)
+	slider_x7 = @bind x7 PlutoUI.Slider(mins[7]:ranges[7]:maxs[7], show_value=true)
+	slider_x8 = @bind x8 PlutoUI.Slider(mins[8]:ranges[8]:maxs[8], show_value=true)
+	slider_x9 = @bind x9 PlutoUI.Slider(mins[9]:ranges[9]:maxs[9], show_value=true)
+	slider_x10 = @bind x10 PlutoUI.Slider(mins[10]:ranges[10]:maxs[10], show_value=true)
+	slider_x11 = @bind x11 PlutoUI.Slider(mins[11]:ranges[11]:maxs[11], show_value=true)
 
 	
 	md"""#### Features inputs
-	
-	 $(all_features[1]): $(slider_x1)  \
-	$(all_features[2]): $(slider_x2)  \
-	$(all_features[3]): $(slider_x3)  \
-	$(all_features[4]): $(slider_x4)  \
-	$(all_features[5]): $(slider_x5)  \
-	$(all_features[6]): $(slider_x6)  \
-	$(all_features[7]): $(slider_x7)  \
-	$(all_features[8]): $(slider_x8)  \
-	$(all_features[9]): $(slider_x9)   \
-	$(all_features[10]): $(slider_x10)  \
-	$(all_features[11]): $(slider_x11)  
+	| $(all_features[1]) | $(all_features[2]) | $(all_features[3]) |
+	| :----: | :----: | :----: |
+	| $(slider_x1) | $(slider_x2) | $(slider_x3) |
+
+	| $(all_features[4]) | $(all_features[5]) | $(all_features[6]) |
+	| :----: | :----: | :----: |
+	| $(slider_x4) | $(slider_x5) | $(slider_x6) |
+
+	| $(all_features[7]) | $(all_features[8]) | $(all_features[9]) |
+	| :----: | :----: | :----: |
+	| $(slider_x7) | $(slider_x8) | $(slider_x9) |
+
+	| $(all_features[10]) | $(all_features[11]) |
+	| :----: | :----: |
+	| $(slider_x10) | $(slider_x11) |
+ 
 	"""
 end
 
@@ -1926,7 +1939,7 @@ version = "3.5.0+0"
 # ╟─55dc52f6-36fd-4c48-acc6-dc20a1304cf7
 # ╟─be3f2d24-7381-41e0-81e3-77ff23389288
 # ╟─7f27327c-187e-4613-add7-d6bc73f0653e
-# ╟─cc048852-4b52-4cc2-8293-5acdcb74dbea
+# ╟─74f08a91-dc3a-4c3b-b711-907e97e573f0
 # ╟─261d09ef-3907-4d1d-b69e-758ac6e43f37
 # ╟─a885743c-e418-489d-b77a-c898f9ef9e36
 # ╟─7a17b28f-ed26-4ee8-9349-89bd38d6b4b8
