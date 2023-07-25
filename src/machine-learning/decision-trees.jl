@@ -166,6 +166,13 @@ First, let's start by getting some data. We will be using a popular dataset: the
 
 - A quality score between 1 and 10. For our case we will consider all the wine instances with a score > 6.5 as good, otherwise bad. """
 
+# ╔═╡ 996c9dd9-e8b3-4671-8111-b24d4d763501
+begin
+	display_select = @bind display PlutoUI.Select(["show_picture" => "Picture", "show_data" => "Table", "show_plot" =>"Plot"])
+	md"""**Try it:** Choose a format to display your data: $(display_select) \
+	"""
+end
+
 # ╔═╡ 55dc52f6-36fd-4c48-acc6-dc20a1304cf7
 md"""### Training the model
 
@@ -205,14 +212,6 @@ md"""## Appendix"""
 # ╔═╡ 2308737c-429c-4f40-8a2a-3cb9311b5197
 import DataFrames as DF
 
-# ╔═╡ 7494d37d-d211-49db-812e-36207a755393
-show_data_box = @bind show_data CheckBox()
-
-# ╔═╡ 996c9dd9-e8b3-4671-8111-b24d4d763501
-begin
-	md"""**Try it:** Toggle the checkbox to see how the data looks like: $(show_data_box)"""
-end
-
 # ╔═╡ e8bf8b58-71cc-4149-8433-c71ec41b51c9
 wine_url = "https://upload.wikimedia.org/wikipedia/commons/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
 
@@ -225,9 +224,19 @@ begin
 
 	y, X = unpack(data, ==(:quality); rng=123);
 	train, test = partition(eachindex(y), 0.8)
-	if show_data == true
+
+	fig = Figure() 
+	ax = [Axis(fig[trunc(Int, i / 3), i % 3], title = names(data)[i+1]) for i in 0:10]
+	for i in 1:11
+		hist!(ax[i], data[!, i], normalization = :pdf,
+     strokewidth = 0.5, strokecolor = (:black, 0.5), color = :values)
+	end
+	
+	if display == "show_data"
 		data
-	else
+	elseif display == "show_plot"
+		fig
+	elseif display == "show_picture"
 		Resource(wine_url, :width => 700, :height => 500)
 	end
 end
@@ -1948,7 +1957,6 @@ version = "3.5.0+0"
 # ╟─3f13ab6d-0c64-41a5-af70-a879ce007224
 # ╟─11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
 # ╟─2308737c-429c-4f40-8a2a-3cb9311b5197
-# ╟─7494d37d-d211-49db-812e-36207a755393
 # ╟─e8bf8b58-71cc-4149-8433-c71ec41b51c9
 # ╟─17ab1569-0a3d-483b-99b0-b45fed4480e1
 # ╟─00000000-0000-0000-0000-000000000001
