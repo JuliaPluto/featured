@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.25
+# v0.19.27
 
 #> [frontmatter]
 #> title = "Convolution"
@@ -83,13 +83,30 @@ md"""The patients all have the same disease that requires the following treatmen
 
 So something that looks like this: """
 
+# ╔═╡ bb869b27-0bce-4314-b28f-684ccc14f7ea
+md"""> **Try it:** Choose your own treatment plan (you can also chose 0 pills for a certain day):"""
+
+# ╔═╡ faf156f0-fa3f-46f6-98d3-3bbf0690a0a4
+begin
+	a1 = @bind a1_s PlutoUI.Scrubbable(0:1:6, default=1)
+	a2 = @bind a2_s PlutoUI.Scrubbable(0:1:6, default=2)
+	a3 = @bind a3_s PlutoUI.Scrubbable(0:1:6, default=3)
+	a4 = @bind a4_s PlutoUI.Scrubbable(0:1:6, default=4)
+	a5 = @bind a5_s PlutoUI.Scrubbable(0:1:6, default=0)
+	a6 = @bind a6_s PlutoUI.Scrubbable(0:1:6, default=0)
+	a7 = @bind a7_s PlutoUI.Scrubbable(0:1:6, default=0)
+	a8 = @bind a8_s PlutoUI.Scrubbable(0:1:6, default=0)
+	
+end;
+
 # ╔═╡ 88e4551f-9ae1-4a5f-819b-01c43a319981
 begin
-	treatment_array = [1 2 3 4 0 0 0 0]
-	treatment_in_scrub = @bind treatment_in PlutoUI.Scrubbable(treatment_array)
-	md"""> **Try it:** Choose your own treatment plan (you can also chose 0 pills for a certain day): 
-	$(treatment_in_scrub)"""
+	#treatment_array = @bind treatment_in PlutoUI.Scrubbable(treatment_array)
+	md""" $(a1) $(a2) $(a3) $(a4) $(a5) $(a6) $(a7) $(a8)"""
 end
+
+# ╔═╡ 9fab3bbb-5c7f-4464-97c9-847f52754845
+treatment_in = [a1_s a2_s a3_s a4_s a5_s a6_s a7_s a8_s];
 
 # ╔═╡ 9274ed36-a28e-42f3-879f-167d5afa6fc7
 treatment = vec([repeat('💊', i) for i in treatment_in])
@@ -135,11 +152,15 @@ begin
 	nb = 8 
 
 	# Slider for how long the pandemic should go 
-	len_slider = @bind len PlutoUI.Slider(1:1:nb, show_value=true, default=5)
+	len_slider = @bind len PlutoUI.Slider(1:1:nb-1, show_value=true, default=5)
+
+	show_stairs = @bind stairs CheckBox(default=true)
+	make_exponential = @bind exponential CheckBox()
+		
 end;
 
 # ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
-patients = collect(["👵","👴👵", "👧👴👴", "🧑🧝🧝🧚", "👩🧝🧚🧝🧓", "🧓👩👩👴👵👵", "👵🧝👵🧓🧚🧓🧓", "🧚🧚🧚🧚👵👵🧑🧝"])[1:len]
+patients = exponential ? collect(["👵","👴👵", "🧑🧝🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴🧑🧝🧝🧚🧓🧚🧓🧚🧑🧝🧝🧝", "👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑", "🧚🧚🧚🧚🧚🧚🧚🧚🧚🧓🧚🧓🧚🧑🧝🧝👧👴👴👩🧝🧚👩🧓👧👴👴👩🧝🧚👩🧓👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑🧑", ""])[1:len] :  collect(["👵","👴👵", "🧑🧝🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴", "🧓🧚", "🧚", ""])[1:len] 
 
 # ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
 patients_flipped = append!(["" for i in 1:8-length(patients)], reverse(patients))
@@ -175,15 +196,16 @@ end;
 md"""## Appendix"""
 
 # ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
-function draw_point(x::Vector, y1::Vector, ax::Axis, marker, size_marker::Int, color::ColorTypes.RGB{Float64}, offset::Int)
-		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=size_marker,strokewidth=1,marker=repeat([marker],y), strokecolor=:white, color=color) for (x,y) in zip(x,y1)]
+function draw_point(x::Vector, y1::Vector, ax::Axis, marker, size_marker::Int, color::ColorTypes.RGB{Float64}, offset::Int, masked=false)
+		stroke = masked ? :black : :grey 
+		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=size_marker,strokewidth=0.45,marker=repeat([marker],y), strokecolor=stroke, color=color, overdraw=masked) for (x,y) in zip(x,y1)]
 end
 
 # ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
-function draw_grey_points(x, y, ax, len, marker, size_marker, colors::Vector)
+function draw_grey_points(x, y, ax, len, marker, size_marker, colors::Vector, masked=false)
 	for j in 1:len
 		color = colors[j % length(colors) + 1]
-		draw_point([x[j]], [y[j]], ax, marker, size_marker, color, 0)
+		draw_point([x[j]], [y[j]], ax, marker, size_marker, color, 0, masked)
 	end
 end
 
@@ -202,11 +224,12 @@ begin
 	color_grey = RGB{Float64}(0.5, 0.5, 0.5)
 	colors = [ColorSchemes.viridis[i] for i in 1:40:256]
 	col_length = length(colors)
+	color_blue = ColorSchemes.viridis[116]
 	md""""""
 end
 
 # ╔═╡ da0a4117-629e-42b5-95ae-d49f10769830
-function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker)
+function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker, masked=false)
 	offset = 0
 	for index in k:k+nb
 		scatter!(ax3, (x_conv[k_conv], y3[k_conv]), color = colors[1])
@@ -217,13 +240,15 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 
 		color = colors[index % col_length + 1]
 
-		if y1[index] != 0 && y2_draw[index] != 0
-			draw_point([x[index]], [y2_draw[index]], ax1,'😷' , grey_marker, color, 0)
-		end
+		
 		draw_point([x[index]], [y12[index]], ax2, emoji_pill, color_marker, color, 0)
 		draw_point([x_conv[k_conv]], [y12[index]], ax3, emoji_pill, color_marker, color, offset)
 		
 		draw_point([x[index]], [y12[index]], ax2, emoji_pill_grey, grey_marker, color, 0)
+
+		if y1[index] != 0 && y2_draw[index] != 0
+			draw_point([x[index]], [y2_draw[index]], ax1,'😷' , grey_marker, color, 0, masked)
+		end
 		
 		offset += y12[index]
 	end
@@ -232,7 +257,7 @@ end
 # ╔═╡ ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 begin
 	# Set up Figure elements
-	f = Figure(;resolution=(600,800))
+	f = Figure(;resolution=(650,700))
 	ax1 = Axis(f[1, 1])
 	ax2 = Axis(f[2, 1])
 	ax3 = Axis(f[3, 1])
@@ -257,50 +282,56 @@ begin
 	y2_draw = y2_patients_draw
 	
 	# Intermediate step for convolution
-	y12 = y1 .* y2_draw 
+	y12_draw = y1 .* y2_draw 
+	y12 = y1 .* y2
 
 	# Set up the final convoluted result 
 	y3 = DSP.conv(y1,reverse(y2))
 
 	# Draw vertical lines
-	vlines!.([ax1,ax2],Ref(k:k+nb-2),color=:gray)
-	vlines!.([ax1,ax2],Ref([k_conv-1]))
-	vlines!.([ax3],Ref([k-2+nb/2]))
+	#vlines!.([ax1,ax2],Ref(k:k+nb-2),color=:gray)
+	vlines!.([ax1,ax2],Ref([k_conv-1]), color = color_blue)
+	vlines!.([ax3],Ref([k-2+nb/2]), color = color_blue)
+
+	# Get the top value of each plot 
+	max_ax1 = maximum([maximum(y1) maximum(y2)]) + 2
+	max_ax2 = maximum(y1) * maximum(y2) + 2
+
+	text!(ax1,k_conv-1, max_ax1-2, text=" Current day", color = color_blue)
 	
 	# Draw the function lines
-	stairs!(ax1, x, y1, color = colors[6], step=:center)
-	stairs!(ax1, x, y2_draw, color = colors[4], step=:center)
-	stairs!(ax2, x, y12, color = colors[7], step=:center)
-	stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
+	if stairs
+		stairs!(ax1, x, y1, color = colors[6], step=:center)
+		stairs!(ax1, x, y2_draw, color = colors[4], step=:center)
+		stairs!(ax2, x, y12_draw, color = colors[7], step=:center)
+		stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
+	end
 	
 	# Draw the points on the graph for the current day
-	draw_grey_points(x, y2_draw, ax1, l, '😷', grey_marker, [color_grey])
+	draw_grey_points(x, y2_draw, ax1, l, '😷', grey_marker, [color_grey], true)
 	draw_grey_points(x, y1, ax1, l, emoji_pill, color_marker, colors)
 	
-	draw_all(l, k+nb, k_conv+2*nb, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker)
+	draw_all(l, k+nb, k_conv+2*nb, x, x_conv, y1, y2, y2_draw, y12_draw, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker, true)
 	draw_grey_points(x, y1, ax1, l, emoji_pill_grey, grey_marker, [color_grey])
 	draw_grey_points(x_conv, y3, ax3, 4*nb -1, emoji_pill_grey, grey_marker, [color_grey])
 	
-	# Get the top value of each plot 
-	max_ax1 = maximum(y1) > 6.5 ? maximum(y1) : 6.5
-	max_ax2 = maximum(y12) > 7.5 ? maximum(y12) : 7.5
 	
 	# Set the axes limits
 	xlims!.([ax1,ax2,ax3],Ref((-4,12)))
-	ylims!(ax1, (-1, max_ax1 + 1))
-	ylims!(ax2, (-1, max_ax2 + 3))
+	ylims!(ax1, (-1, max_ax1))
+	ylims!(ax2, (-1, max_ax2))
 	ylims!(ax3, (-1, maximum(y3) + 7))
 
 	# Draw * as labels
-	ax1.xticks = (-len:0).+k_conv.-1
-	showPlus = sum(y12.>0) > 0
+	ax1.xticks = (-len+1:0).+k_conv.-1
+	showPlus = sum(y12_draw.>0) > 0
 	ax1.xtickformat = "*\n↓"
 
 	# Draw + as labels
-	midpoint = [k-2+nb/2]
+	midpoint = [(2*k_conv - len - 1)/2] #[k-2+len+nb/2]
 	ax2.xticks = midpoint
 	ax2.xtickformat = "+\n↓"
-	scatter!(ax2,midpoint,[-0.5],marker='{',rotations=π/2,color=:black,markersize=Vec2f(1.5,nb).*40)
+	scatter!(ax2,midpoint,[-0.5],marker='{',rotations=π/2,color=:black,markersize=Vec2f(1.5,len).*40)
 
 	# Formatting
 	ax1.xticklabelsize = 32
@@ -309,6 +340,9 @@ begin
 	ax2.yticklabelsize = 12
 	ax3.yticklabelsize = 12
 	ax3.xticklabelsize = 12
+	ax3.xticks = (-nb:5*nb, string.(0 .+ (-nb+4:5*nb+4)))
+		#x -> x .+ 4
+	#ax3.xtickformat = range(-nb, 5*nb, step = 1) .- nb*1.5 .+ nb
 	
 	# a bit hacky, Makie doesnt allow specifying lineheight of ticks directly
 	ax1.xaxis.elements[:ticklabels].lineheight = 0.5
@@ -344,7 +378,10 @@ begin
 		k_slider,
 		md"""**Choose how long the pandemic is:**""",
 		len_slider, 
-		md"""**Change the treatment:**"""
+		md"""**Change the treatment:**""",
+		md""" $(a1) $(a2) $(a3) $(a4) $(a5) $(a6) $(a7) $(a8)""",
+		md"""**Make the pandemic exponential:** $(make_exponential)""",
+		md"""**Show the stairs** $(show_stairs)"""
 	], class="plutoui-sidebar aside third")
 end
 
@@ -1877,7 +1914,10 @@ version = "3.5.0+0"
 # ╟─adfc8467-93bf-472e-a9fc-bd502caa5daa
 # ╟─f9df01a1-8fb7-4337-9415-9ab56d9c696a
 # ╟─9274ed36-a28e-42f3-879f-167d5afa6fc7
+# ╟─bb869b27-0bce-4314-b28f-684ccc14f7ea
 # ╟─88e4551f-9ae1-4a5f-819b-01c43a319981
+# ╟─faf156f0-fa3f-46f6-98d3-3bbf0690a0a4
+# ╟─9fab3bbb-5c7f-4464-97c9-847f52754845
 # ╟─27bd1602-3ca0-4daf-a9ff-c76ea818ead4
 # ╟─f0d08486-0086-48da-baeb-169f3812d0ea
 # ╟─77a1da97-f4c2-45df-ae15-8f5910a076d4
