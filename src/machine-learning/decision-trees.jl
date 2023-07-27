@@ -14,141 +14,11 @@ macro bind(def, element)
     end
 end
 
+# ╔═╡ 655d5162-db63-4e50-908c-ef05e7dbc695
+using MakieThemes
+
 # ╔═╡ 11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
-using MLJ, PlutoUI, OpenML, DataFrames, MLJDecisionTreeInterface, ScientificTypes , Graphs, GraphMakie, NetworkLayout
-
-# ╔═╡ 17ab1569-0a3d-483b-99b0-b45fed4480e1
-begin
-	using CairoMakie
-	import DecisionTree: DecisionTreeClassifier,Leaf,Node,Root,depth,InfoNode
-	
-	begin
-			
-		import Base.convert
-		function Base.convert(::Type{SimpleDiGraph}, model::InfoNode; maxdepth=depth(model))
-			
-			if maxdepth == -1
-				maxdepth = depth(model.node)
-			end
-			g= SimpleDiGraph()
-			properties = Any[]
-			features = model.info.featurenames
-			walk_tree!(model.node,g,maxdepth,properties, features)
-			return g,properties
-		end
-
-		Base.convert(::Type{SimpleDiGraph}, 	model::DecisionTreeClassifier;kwargs...) = Base.convert(SimpleDiGraph,model.node;kwargs...)
-
-		function walk_tree!(node::Node, g, depthLeft, properties, features)
-			
-		    add_vertex!(g)
-			
-		    if depthLeft == 0
-				push!(properties,(Nothing,"..."))
-				return vertices(g)[end]
-			else
-				depthLeft -= 1
-			end
-		
-			current_vertex = vertices(g)[end]
-			val = node.featval
-			
-			featval = isa(val,AbstractString) ? val : round(val;sigdigits=2)
-			featurename = features[node.featid]
-			label_node = (Node,"$(featurename) < $featval ?")
-			push!(properties,label_node)
-			
-			child = walk_tree!(node.left,g,depthLeft,properties, features)
-			add_edge!(g,current_vertex,child)	
-			
-			child = walk_tree!(node.right,g,depthLeft,properties, features)
-			add_edge!(g,current_vertex,child)
-			
-		    return current_vertex
-			
-		end
-			
-		function walk_tree!(leaf::Leaf, g, depthLeft, properties, features)
-		    add_vertex!(g)
-			n_matches = count(leaf.values .== leaf.majority)
-	    	#ratio = string(n_matches, "/", length(leaf.values))
-
-			emojis_class = Dict("1" => "good", "2" => " bad")
-			leaf_class = emojis_class[string.(leaf.majority)]
-	    
-		    push!(properties,(Leaf,"$(leaf_class)"))# : $(ratio)"))
-		    return vertices(g)[end]
-		end
-	end
-	
-	begin
-	
-		CairoMakie.@recipe(PlotDecisionTree) do scene
-			Attributes(
-				nodecolormap = :darktest,
-				textcolor = RGBf(0.5,0.5,0.5),
-				leafcolor = :darkgreen,
-				nodecolor = :white,
-				maxdepth = -1,
-			)
-		end
-	
-		#function Makie.plot!(dt::PlotDecisionTree{<:DecisionTreeClassifier})
-		import GraphMakie.graphplot
-		import Makie.plot!	
-		function GraphMakie.graphplot(model::Union{InfoNode,DecisionTreeClassifier};kwargs...)
-			f,ax,h = plotdecisiontree(model;kwargs...)
-			hidedecorations!(ax); hidespines!(ax); ax.aspect = DataAspect()
-			return f
-		end
-		
-		function plot!(plt::PlotDecisionTree{<:Tuple{<:Union{InfoNode, DecisionTreeClassifier}}};
-				)
-			
-			@extract plt leafcolor,textcolor,nodecolormap,nodecolor,maxdepth
-			model = plt[1]
-	
-			# convert to graph
-			tmpObs = @lift convert(SimpleDiGraph,$model;maxdepth=$maxdepth)
-			graph = @lift $tmpObs[1]
-			properties = @lift $tmpObs[2]
-	
-			# extract labels
-			labels = @lift [string(p[2]) for p in $properties]	
-	
-			# set the colors, first for nodes & cutoff-nodes, then for leaves
-			nlabels_color = map(properties, labels, leafcolor,textcolor,nodecolormap) do properties,labels,leafcolor,textcolor,nodecolormap
-				
-			# set colors for the individual elements
-			leaf_ix = findall([p[1] == Leaf for p in properties])
-			leafValues = [p[1] for p in split.(labels[leaf_ix]," : ")]
-		
-			# one color per category
-			uniqueLeafValues = unique(leafValues)
-			individual_leaf_colors = resample_cmap(nodecolormap,length(uniqueLeafValues))
-			nlabels_color = Any[p[1] == Node ? textcolor : leafcolor for p in properties]
-			for (ix,uLV) = enumerate(uniqueLeafValues)
-					ixV = leafValues .== uLV
-					nlabels_color[leaf_ix[ixV]] .= individual_leaf_colors[ix]	
-			end
-			return nlabels_color
-		end
-		
-		# plot :)
-		graphplot!(plt,graph;layout=Buchheim(),
-	                       nlabels=labels,
-                     	#nlabels_distance=10,
-                     	#nlabels_fontsize=10,
-							node_size = 80,
-							node_color=nodecolor,
-							nlabels_color=nlabels_color,
-	                       nlabels_align=(:center,:center),
-	                       #tangents=((0,-1),(0,-1))
-		)
-			return plt
-		end
-	end
-end
+using MLJ, PlutoUI, OpenML, DataFrames, MLJDecisionTreeInterface, ScientificTypes , Graphs, GraphMakie, NetworkLayout, CairoMakie
 
 # ╔═╡ 8c9b58b8-ff06-4989-8485-e046fac73a55
 md"""# Decision Trees
@@ -173,6 +43,9 @@ begin
 	"""
 end
 
+# ╔═╡ 6b8d4e61-d079-419f-b2ba-4dd413375023
+set_theme!(theme_ggthemr(:fresh))
+
 # ╔═╡ 55dc52f6-36fd-4c48-acc6-dc20a1304cf7
 md"""### Training the model
 
@@ -194,7 +67,7 @@ md"""**Try it:** Choose the parameters of your tree (how complex it should be)""
 tree_depth = @bind tree_max_depth PlutoUI.Slider(3:1:6, show_value=true, default=4)
 
 # ╔═╡ 74f08a91-dc3a-4c3b-b711-907e97e573f0
-tree_min_samples_leaf = @bind min_samples_leaf PlutoUI.Slider(60:40:360, show_value=true) 
+tree_min_samples_leaf = @bind min_samples_leaf PlutoUI.Slider(60:40:360, show_value=true, default=220) 
 
 # ╔═╡ a885743c-e418-489d-b77a-c898f9ef9e36
 md"""### Using the tree
@@ -212,6 +85,9 @@ md"""## Appendix"""
 # ╔═╡ 2308737c-429c-4f40-8a2a-3cb9311b5197
 import DataFrames as DF
 
+# ╔═╡ 66d5055d-fad7-4560-8709-2dcb059d6231
+import DecisionTree: DecisionTreeClassifier,Leaf,Node,Root,depth,InfoNode
+
 # ╔═╡ e8bf8b58-71cc-4149-8433-c71ec41b51c9
 wine_url = "https://upload.wikimedia.org/wikipedia/commons/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
 
@@ -226,10 +102,10 @@ begin
 	train, test = partition(eachindex(y), 0.8)
 
 	fig = Figure() 
-	ax = [Axis(fig[trunc(Int, i / 3), i % 3], title = names(data)[i+1]) for i in 0:10]
+	ax = [Axis(fig[trunc(Int, i / 3), i % 3], title = names(data)[i+1],yticklabelsvisible=false) for i in 0:10]
 	for i in 1:11
 		hist!(ax[i], data[!, i], normalization = :pdf,
-     strokewidth = 0.5, strokecolor = (:black, 0.5), color = :values)
+     strokewidth = 0.5, strokecolor = (:black, 0.5))
 	end
 	
 	if display == "show_data"
@@ -239,19 +115,6 @@ begin
 	elseif display == "show_picture"
 		Resource(wine_url, :width => 700, :height => 500)
 	end
-end
-
-# ╔═╡ 261d09ef-3907-4d1d-b69e-758ac6e43f37
-begin
-	Tree = @load DecisionTreeClassifier pkg = "DecisionTree" verbosity = false
-	model = Tree(max_depth=tree_max_depth, min_samples_leaf=min_samples_leaf, rng=123)
-
-	mach = machine(model, X, y)
-    mach = fit!(mach; rows=train)
-	tree_params = fitted_params(mach)
-
-	features = [(i,tree_params.features[i]) for i in 1:length(tree_params.features)]
-	g = graphplot(tree_params.tree; nlabels=tree_params.tree.info.featurenames)
 end
 
 # ╔═╡ 2647744e-d3d8-4fa5-a4b1-6a65015c16de
@@ -299,6 +162,150 @@ begin
 	"""
 end
 
+# ╔═╡ a981d37a-4c85-4eef-bc22-3604fbe07198
+begin
+			
+	import Base.convert
+	function Base.convert(::Type{SimpleDiGraph}, model::InfoNode; maxdepth=depth(model))
+		
+		if maxdepth == -1
+			maxdepth = depth(model.node)
+		end
+		g= SimpleDiGraph()
+		properties = Any[]
+		features = model.info.featurenames
+		walk_tree!(model.node,g,maxdepth,properties, features)
+		return g,properties
+	end
+
+	Base.convert(::Type{SimpleDiGraph}, 	model::DecisionTreeClassifier;kwargs...) = Base.convert(SimpleDiGraph,model.node;kwargs...)
+
+	function walk_tree!(node::Node, g, depthLeft, properties, features)
+		
+		add_vertex!(g)
+		
+		if depthLeft == 0
+			push!(properties,(Nothing,"..."))
+			return vertices(g)[end]
+		else
+			depthLeft -= 1
+		end
+	
+		current_vertex = vertices(g)[end]
+		val = node.featval
+		
+		featval = isa(val,AbstractString) ? val : round(val;sigdigits=2)
+		featurename = features[node.featid]
+		label_node = (Node,"$(featurename) < $featval ?")
+		push!(properties,label_node)
+		
+		child = walk_tree!(node.left,g,depthLeft,properties, features)
+		add_edge!(g,current_vertex,child)	
+		
+		child = walk_tree!(node.right,g,depthLeft,properties, features)
+		add_edge!(g,current_vertex,child)
+		
+		return current_vertex
+	end
+	
+		function walk_tree!(leaf::Leaf, g, depthLeft, properties, features)
+		add_vertex!(g)
+		n_matches = count(leaf.values .== leaf.majority)
+		#ratio = string(n_matches, "/", length(leaf.values))
+
+		emojis_class = Dict("1" => "😊", "2" => " ☹️")
+		leaf_class = emojis_class[string.(leaf.majority)]
+	
+		push!(properties,(Leaf,"$(leaf_class)"))# : $(ratio)"))
+		return vertices(g)[end]
+	end
+
+end
+
+# ╔═╡ 17ab1569-0a3d-483b-99b0-b45fed4480e1
+begin
+	CairoMakie.@recipe(PlotDecisionTree) do scene
+		Attributes(
+			nodecolormap = :darktest,
+			textcolor = RGBf(0.5,0.5,0.5),
+			leafcolor = :darkgreen,
+			nodecolor = :white,
+			maxdepth = -1,
+		)
+	end
+end
+
+# ╔═╡ 9fa6487a-7853-4a42-bb79-3884a2369045
+begin
+	
+	import GraphMakie.graphplot
+	import Makie.plot!	
+	function GraphMakie.graphplot(model::Union{InfoNode,DecisionTreeClassifier};kwargs...)
+		f,ax,h = plotdecisiontree(model;kwargs...)
+		hidedecorations!(ax); hidespines!(ax); ax.aspect = DataAspect()
+		return f
+	end
+
+	function plot!(plt::PlotDecisionTree{<:Tuple{<:Union{InfoNode, DecisionTreeClassifier}}};
+					)
+			
+			@extract plt leafcolor,textcolor,nodecolormap,nodecolor,maxdepth
+			model = plt[1]
+	
+			# convert to graph
+			tmpObs = @lift convert(SimpleDiGraph,$model;maxdepth=$maxdepth)
+			graph = @lift $tmpObs[1]
+			properties = @lift $tmpObs[2]
+	
+			# extract labels
+			labels = @lift [string(p[2]) for p in $properties]	
+	
+			# set the colors, first for nodes & cutoff-nodes, then for leaves
+			nlabels_color = map(properties, labels, leafcolor,textcolor,nodecolormap) do properties,labels,leafcolor,textcolor,nodecolormap
+				
+			# set colors for the individual elements
+			leaf_ix = findall([p[1] == Leaf for p in properties])
+			leafValues = [p[1] for p in split.(labels[leaf_ix]," : ")]
+		
+			# one color per category
+			uniqueLeafValues = unique(leafValues)
+			individual_leaf_colors = resample_cmap(nodecolormap,length(uniqueLeafValues))
+			nlabels_color = Any[p[1] == Node ? textcolor : leafcolor for p in properties]
+			for (ix,uLV) = enumerate(uniqueLeafValues)
+					ixV = leafValues .== uLV
+					nlabels_color[leaf_ix[ixV]] .= individual_leaf_colors[ix]	
+			end
+			return nlabels_color
+		end
+
+			fontsize = @lift .- length.($labels).*0.1 .+ 14
+		graphplot!(plt,graph;layout=Buchheim(),
+						   nlabels=labels,
+						#nlabels_distance=10,
+							node_size = 80,
+							node_color=nodecolor,
+							nlabels_color=nlabels_color,
+							nlabels_fontsize=fontsize,
+						   nlabels_align=(:center,:center),
+						   #tangents=((0,-1),(0,-1))
+		)
+			return plt
+		end
+end
+
+# ╔═╡ 261d09ef-3907-4d1d-b69e-758ac6e43f37
+begin
+	Tree = @load DecisionTreeClassifier pkg = "DecisionTree" verbosity = false
+	model = Tree(max_depth=tree_max_depth, min_samples_leaf=min_samples_leaf)
+
+	mach = machine(model, X, y)
+    mach = fit!(mach; rows=train)
+	tree_params = fitted_params(mach)
+
+	features = [(i,tree_params.features[i]) for i in 1:length(tree_params.features)]
+	g = graphplot(tree_params.tree; nlabels=tree_params.tree.info.featurenames)
+end
+
 # ╔═╡ 1ef56c52-cf8b-4f56-abe5-57206b129b15
 begin
 	new_point = [x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11]
@@ -306,7 +313,7 @@ begin
 
 	# Tree prediction 
 	pred = string.(predict_mode(mach, new_data)[1])
-	emoji_pred = Dict("good" => "👍", "bad" => "👎")
+	emoji_pred = Dict("good" => "😊", "bad" => "☹️")
 
 	md"""Your wine is : **$(pred)** $(emoji_pred[pred])"""
 end
@@ -322,6 +329,7 @@ Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 MLJDecisionTreeInterface = "c6f25543-311c-4c74-83dc-3ea6d1015661"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+MakieThemes = "e296ed71-da82-5faf-88ab-0034a9761098"
 NetworkLayout = "46757867-2c16-5918-afeb-47bfcb05e46a"
 OpenML = "8b6db2d4-7670-4922-a472-f9537c81ab66"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -336,6 +344,7 @@ Graphs = "~1.8.0"
 MLJ = "~0.19.2"
 MLJDecisionTreeInterface = "~0.4.0"
 Makie = "~0.19.6"
+MakieThemes = "~0.1.0"
 NetworkLayout = "~0.4.5"
 OpenML = "~0.3.1"
 PlutoUI = "~0.7.51"
@@ -348,7 +357,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "348e9c5380bd6790370a6bf14a2e43e3febf21a1"
+project_hash = "c761b0f8f6a5994ac90e744c8a616d58e506518d"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -1183,6 +1192,12 @@ git-tree-sha1 = "9926529455a331ed73c19ff06d16906737a876ed"
 uuid = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
 version = "0.6.3"
 
+[[deps.MakieThemes]]
+deps = ["Colors", "Makie", "Random"]
+git-tree-sha1 = "22f0ac33ecb2827e21919c086a74a6a9dc7932a1"
+uuid = "e296ed71-da82-5faf-88ab-0034a9761098"
+version = "0.1.0"
+
 [[deps.MappedArrays]]
 git-tree-sha1 = "2dab0221fe2b0f2cb6754eaa743cc266339f527e"
 uuid = "dbb5928d-eab1-5f90-85c2-b9b0edb7c900"
@@ -1945,6 +1960,8 @@ version = "3.5.0+0"
 # ╟─9738721f-40a8-4984-b3a8-d418967f15f8
 # ╟─996c9dd9-e8b3-4671-8111-b24d4d763501
 # ╟─8a8b5a1a-3ffa-45c3-9a9d-e58aa21e585c
+# ╟─655d5162-db63-4e50-908c-ef05e7dbc695
+# ╟─6b8d4e61-d079-419f-b2ba-4dd413375023
 # ╟─55dc52f6-36fd-4c48-acc6-dc20a1304cf7
 # ╟─be3f2d24-7381-41e0-81e3-77ff23389288
 # ╟─7f27327c-187e-4613-add7-d6bc73f0653e
@@ -1957,7 +1974,10 @@ version = "3.5.0+0"
 # ╟─3f13ab6d-0c64-41a5-af70-a879ce007224
 # ╟─11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
 # ╟─2308737c-429c-4f40-8a2a-3cb9311b5197
+# ╟─66d5055d-fad7-4560-8709-2dcb059d6231
 # ╟─e8bf8b58-71cc-4149-8433-c71ec41b51c9
+# ╟─a981d37a-4c85-4eef-bc22-3604fbe07198
+# ╟─9fa6487a-7853-4a42-bb79-3884a2369045
 # ╟─17ab1569-0a3d-483b-99b0-b45fed4480e1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
