@@ -69,7 +69,7 @@ md"""Let's start with this great example from the [**better explained blog** ](h
 """
 
 # ╔═╡ f97f9f46-b5c7-4cee-a69f-1eb53b560952
-md"""The number of patients increases as the disease spreads"""
+md"""The number of patients increases as the disease spreads."""
 
 # ╔═╡ 796aad78-36d4-42fd-a467-707692b094a2
 
@@ -109,12 +109,6 @@ begin
 	md""" $(a1) $(a2) $(a3) $(a4) $(a5) $(a6) $(a7) $(a8)"""
 end
 
-# ╔═╡ 9fab3bbb-5c7f-4464-97c9-847f52754845
-treatment_in = [a1_s a2_s a3_s a4_s a5_s a6_s a7_s a8_s];
-
-# ╔═╡ 9274ed36-a28e-42f3-879f-167d5afa6fc7
-treatment = vec([repeat('💊', i) for i in treatment_in])
-
 # ╔═╡ 27bd1602-3ca0-4daf-a9ff-c76ea818ead4
 md"""
 ### But, how many pills do we need to stockpile?
@@ -150,20 +144,6 @@ end;
 # ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
 patients = exponential ? collect(["👵","🧑👴", "🧑🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴🧑🧝🧝🧚🧓🧚🧓🧚🧑🧝🧝🧝", "👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑", "🧚🧚🧚🧚🧚🧚🧚🧚🧚🧓🧚🧓🧚🧑🧝🧝👧👴👴👩🧝🧚👩🧓👧👴👴👩🧝🧚👩🧓👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑🧑", ""])[1:len] :  collect(["👵","👴🧑", "👩🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴", "🧓🧚", "🧚", ""])[1:len] 
 
-# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
-let
-	t = treatment
-	p = patients
-md"""Now as a doctor, you want to be ready for this scenario, at each day you want to know, how many pills you will need for your patients:
-
-- On day 1: you would give $((t[1]))  to $((p[1])) 
-- On day 2: you would give $((t[2]))  to $((p[1]))  , and $((t[1]))  to $((p[2]))  each
-- On day 3: you would give  $((t[3]))  to $(length(p[1])) , and $((t[2])) pills to $((p[2])) , and $((t[1]))  to $((p[3]))  each ... etc 
-
-Notice how we are multiplying and adding each day? We are close to performing a convolution already!
-"""
-end
-
 # ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
 patients_flipped = append!(["" for i in 1:8-length(patients)], reverse(patients))
 
@@ -176,6 +156,32 @@ begin
 	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb+1, show_value=true, default=1)
 	md"""**Try it:**: calculate up to day: $(k_slider)
 	> **Test your understanding**: On what day do you require most pills?"""
+end
+
+# ╔═╡ 25b2d0d5-f93a-4bff-9ba0-91001d7e81ba
+len
+
+# ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
+md"""## Appendix"""
+
+# ╔═╡ 9fab3bbb-5c7f-4464-97c9-847f52754845
+treatment_in = [a1_s a2_s a3_s a4_s a5_s a6_s a7_s a8_s];
+
+# ╔═╡ 9274ed36-a28e-42f3-879f-167d5afa6fc7
+treatment = vec([repeat('💊', i) for i in treatment_in])
+
+# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
+let
+	t = treatment
+	p = patients
+md"""Now as a doctor, you want to be ready for this scenario, at each day you want to know, how many pills you will need for your patients:
+
+- On day 1: you would give $((t[1]))  to $((p[1])) 
+- On day 2: you would give $((t[2]))  to $((p[1]))  , and $((t[1]))  to $((p[2]))  each
+- On day 3: you would give  $((t[3]))  to $(length(p[1])) , and $((t[2])) pills to $((p[2])) , and $((t[1]))  to $((p[3]))  each ... etc 
+
+Notice how we are multiplying and adding each day? We are close to performing a convolution already!
+"""
 end
 
 # ╔═╡ 472b52d8-e787-4a93-83d8-c53e977a143c
@@ -194,11 +200,8 @@ begin
 
 end;
 
-# ╔═╡ 25b2d0d5-f93a-4bff-9ba0-91001d7e81ba
-len
-
-# ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
-md"""## Appendix"""
+# ╔═╡ 71d6559a-4f84-485e-bf20-4f42585ab623
+happyX = findlast(treatment_in[1,:] .> 0)
 
 # ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
 function draw_point(x, y1, ax::Axis, marker, size_marker, color::ColorTypes.RGB{Float64}, offset::Int, masked=false)
@@ -209,10 +212,11 @@ function draw_point(x, y1, ax::Axis, marker, size_marker, color::ColorTypes.RGB{
 			#@show stroke,color,masked
 			#@show marker
 			if marker == '😷'
+		
 				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=40,strokewidth=0.0,marker='⚫', strokecolor=stroke, color=RGB{Float64}(1,1,1), overdraw=masked)
 				#translate!(obj[1], 0, 0, z)
 				#z += 0.1
-				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=size_marker,strokewidth=0.0,marker=marker, strokecolor=stroke, color=color, overdraw=masked)
+				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=size_marker,strokewidth=0.0,marker= x > happyX ? '😄' : marker, strokecolor=stroke, color=color, overdraw=masked)
 				#translate!(obj[1], 0, 0, z)
 				#z -= 0.3
 	
@@ -2018,8 +2022,7 @@ version = "3.5.0+0"
 # ╟─bb869b27-0bce-4314-b28f-684ccc14f7ea
 # ╟─88e4551f-9ae1-4a5f-819b-01c43a319981
 # ╟─faf156f0-fa3f-46f6-98d3-3bbf0690a0a4
-# ╟─9fab3bbb-5c7f-4464-97c9-847f52754845
-# ╠═27bd1602-3ca0-4daf-a9ff-c76ea818ead4
+# ╟─27bd1602-3ca0-4daf-a9ff-c76ea818ead4
 # ╟─f0d08486-0086-48da-baeb-169f3812d0ea
 # ╟─572bd8d5-65b0-462e-a143-811f4bfa875e
 # ╟─1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
@@ -2035,7 +2038,9 @@ version = "3.5.0+0"
 # ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 # ╟─e63c92a5-659e-41f7-85a4-c2f3baffcef6
 # ╟─05df72e9-f45b-49c3-8015-9212f439cf72
+# ╟─9fab3bbb-5c7f-4464-97c9-847f52754845
 # ╠═da0a4117-629e-42b5-95ae-d49f10769830
+# ╠═71d6559a-4f84-485e-bf20-4f42585ab623
 # ╠═8680db2e-3dda-4aff-a00e-130ac1f4486c
 # ╠═c2455fae-f733-4e59-b2d0-a76913810f15
 # ╠═ca75244c-69ac-45c8-aa33-59c05dc4091b
