@@ -19,6 +19,13 @@ macro bind(def, element)
     end
 end
 
+# ╔═╡ 05df72e9-f45b-49c3-8015-9212f439cf72
+begin
+	# Makie can't display emojis directly, so we have to grab them from github - sorry
+	using PNGFiles,HTTP
+	emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) |> x-> RGBA{Float64}.(x);
+end;
+
 # ╔═╡ 3fd4b34c-18ed-4b07-b594-01afb377ead7
 begin
 	using PlutoUI, CairoMakie, DSP, ColorSchemes, Colors, ColorTypes, SignalAnalysis, Random
@@ -27,13 +34,6 @@ begin
 	using MakieThemes
 		set_theme!(ggthemr(:flat))
 end
-
-# ╔═╡ 05df72e9-f45b-49c3-8015-9212f439cf72
-begin
-	# Makie can't display emojis directly, so we have to grab them from github - sorry
-	using PNGFiles,HTTP
-	emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) |> x-> RGBA{Float64}.(x);
-end;
 
 # ╔═╡ ca75244c-69ac-45c8-aa33-59c05dc4091b
 begin
@@ -56,6 +56,7 @@ end
 # ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
 md"""## Convolution Explained
 
+#### Introduction
 Hello there! If you ever came across convolutions in some certain science context, you know they can be VERY confusing. This notebook will help you get a better intuition for convolutions. Let's go!"""
 
 # ╔═╡ f265f5b9-d5d0-45ce-a850-f4237218cf99
@@ -69,6 +70,9 @@ md"""Let's start with this great example from the [**better explained blog** ](h
 
 # ╔═╡ f97f9f46-b5c7-4cee-a69f-1eb53b560952
 md"""The number of patients increases as the disease spreads"""
+
+# ╔═╡ 796aad78-36d4-42fd-a467-707692b094a2
+
 
 # ╔═╡ adfc8467-93bf-472e-a9fc-bd502caa5daa
 md"""
@@ -116,25 +120,9 @@ md"""
 ### But, how many pills do we need to stockpile?
 """
 
-# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
-md"""Now as a doctor, you want to be ready for this scenario, all want to know how many pills in total you will need. So for our example treatment:
-
-- On day 1: you would give 1 pill to 1 patient 
-- On day 2: you would give 2 pills to 1 patient and 1 pill to 2 patients
-- On day 3: you would give 3 pills to 3 patients and 2 pills to 2 patients and 1 pill to 1 patient ... etc 
-
-That means you would need a total of $1*1 + (2*1 + 1*2) + (3*1 + 2*2 + 3*1)$ pills. 
-
-Notice how we are multiplying and adding each day? We are close to performing a convolution already!
-"""
-
-# ╔═╡ 77a1da97-f4c2-45df-ae15-8f5910a076d4
-md"""
-#### But, how many pills per day?
-"""
-
 # ╔═╡ 572bd8d5-65b0-462e-a143-811f4bfa875e
-md"""Now to make things more visual, move the slider around to see how many pills you need each day!"""
+md"""---
+Now to make things more visual, move the slider around to see how many pills you need each day!"""
 
 # ╔═╡ 1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
 md"""**Hint:** In order to administer the treatment in the right order, we need to **flip** patients lists, so they get admitted to the hospital in the right order! So now it looks like this: 
@@ -160,7 +148,21 @@ begin
 end;
 
 # ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
-patients = exponential ? collect(["👵","👴👵", "🧑🧝🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴🧑🧝🧝🧚🧓🧚🧓🧚🧑🧝🧝🧝", "👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑", "🧚🧚🧚🧚🧚🧚🧚🧚🧚🧓🧚🧓🧚🧑🧝🧝👧👴👴👩🧝🧚👩🧓👧👴👴👩🧝🧚👩🧓👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑🧑", ""])[1:len] :  collect(["👵","👴👵", "🧑🧝🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴", "🧓🧚", "🧚", ""])[1:len] 
+patients = exponential ? collect(["👵","🧑👴", "🧑🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴🧑🧝🧝🧚🧓🧚🧓🧚🧑🧝🧝🧝", "👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑", "🧚🧚🧚🧚🧚🧚🧚🧚🧚🧓🧚🧓🧚🧑🧝🧝👧👴👴👩🧝🧚👩🧓👧👴👴👩🧝🧚👩🧓👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑🧑", ""])[1:len] :  collect(["👵","👴🧑", "👩🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴", "🧓🧚", "🧚", ""])[1:len] 
+
+# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
+let
+	t = treatment
+	p = patients
+md"""Now as a doctor, you want to be ready for this scenario, at each day you want to know, how many pills you will need for your patients:
+
+- On day 1: you would give $((t[1]))  to $((p[1])) 
+- On day 2: you would give $((t[2]))  to $((p[1]))  , and $((t[1]))  to $((p[2]))  each
+- On day 3: you would give  $((t[3]))  to $(length(p[1])) , and $((t[2])) pills to $((p[2])) , and $((t[1]))  to $((p[3]))  each ... etc 
+
+Notice how we are multiplying and adding each day? We are close to performing a convolution already!
+"""
+end
 
 # ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
 patients_flipped = append!(["" for i in 1:8-length(patients)], reverse(patients))
@@ -192,20 +194,42 @@ begin
 
 end;
 
+# ╔═╡ 25b2d0d5-f93a-4bff-9ba0-91001d7e81ba
+len
+
 # ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
 md"""## Appendix"""
 
 # ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
-function draw_point(x::Vector, y1::Vector, ax::Axis, marker, size_marker::Int, color::ColorTypes.RGB{Float64}, offset::Int, masked=false)
+function draw_point(x, y1, ax::Axis, marker, size_marker, color::ColorTypes.RGB{Float64}, offset::Int, masked=false)
 		stroke = masked ? :black : :grey 
-		[scatter!(ax,repeat([x],y),(1:y).+offset,markersize=size_marker,strokewidth=0.45,marker=repeat([marker],y), strokecolor=stroke, color=color, overdraw=masked) for (x,y) in zip(x,y1)]
+		z = 0
+	size_marker = 0.8*size_marker
+		for y = 1:y1[1]
+			#@show stroke,color,masked
+			#@show marker
+			if marker == '😷'
+				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=40,strokewidth=0.0,marker='⚫', strokecolor=stroke, color=RGB{Float64}(1,1,1), overdraw=masked)
+				#translate!(obj[1], 0, 0, z)
+				#z += 0.1
+				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=size_marker,strokewidth=0.0,marker=marker, strokecolor=stroke, color=color, overdraw=masked)
+				#translate!(obj[1], 0, 0, z)
+				#z -= 0.3
+	
+			else
+			
+				scatter!(ax,[x.-0.2],[y.+offset], markersize=size_marker,strokewidth=0.0,marker=marker, strokecolor=stroke, color=color, overdraw=masked)
+			end
+		end
 end
 
 # ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
-function draw_grey_points(x, y, ax, len, marker, size_marker, colors::Vector, masked=false)
+function draw_grey_points(x, y, ax, len, marker, size_marker, colors, masked=false)
+	
 	for j in 1:len
-		color = colors[j % length(colors) + 1]
-		draw_point([x[j]], [y[j]], ax, marker, size_marker, color, 0, masked)
+			color = colors[j % length(colors) + 1]
+			draw_point(x[j], y[j], ax, marker, size_marker, color, 0, masked)
+		
 	end
 end
 
@@ -241,13 +265,13 @@ function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, a
 		color = colors[index % col_length + 1]
 
 		
-		draw_point([x[index]], [y12[index]], ax2, emoji_pill, color_marker, color, 0)
-		draw_point([x_conv[k_conv]], [y12[index]], ax3, emoji_pill, color_marker, color, offset)
+		draw_point(x[index], y12[index], ax2, emoji_pill, color_marker, color, 0)
+		draw_point(x_conv[k_conv], y12[index], ax3, emoji_pill, color_marker, color, offset)
 		
-		draw_point([x[index]], [y12[index]], ax2, emoji_pill_grey, grey_marker, color, 0)
+		draw_point(x[index], y12[index], ax2, emoji_pill_grey, grey_marker, color, 0)
 
 		if y1[index] != 0 && y2_draw[index] != 0
-			draw_point([x[index]], [y2_draw[index]], ax1,'😷' , grey_marker, color, 0, masked)
+			draw_point(x[index], y2_draw[index], ax1,'😷' , grey_marker, color, 0, masked)
 		end
 		
 		offset += y12[index]
@@ -257,14 +281,28 @@ end
 # ╔═╡ ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 begin
 	# Set up Figure elements
-	f = Figure(;resolution=(650,700))
-	ax1 = Axis(f[1, 1])
-	ax2 = Axis(f[2, 1])
-	ax3 = Axis(f[3, 1])
+
+	f = Figure(;resolution= (650,700))
+	
+	ax1 = Axis(f[1, 1];
+			xticklabelsize = 32,
+			yticklabelsize = 12,
+			ylabel="New patients")
+	
+	ax2 = Axis(f[2, 1];
+			xticklabelsize = 32,
+			yticklabelsize = 12,
+			ylabel = "New pills required")
+	
+	ax3 = Axis(f[3, 1];
+			xticklabelsize = 12,
+			yticklabelsize = 12,
+			ylabel = "Stockpile required",
+			xlabel = "Day")
 
 	# Set up range and constants
 	x = range(-nb, 2*nb, step=1)
-	x_conv = range(-nb, 5*nb, step = 1) .- nb*1.5
+	x_conv = range(-nb, 5*nb, step = 1) .- nb*1.5 .+4
 	l = length(x)
 	k = k_conv - nb +1
 
@@ -291,7 +329,7 @@ begin
 	# Draw vertical lines
 	#vlines!.([ax1,ax2],Ref(k:k+nb-2),color=:gray)
 	vlines!.([ax1,ax2],Ref([k_conv-1]), color = color_blue)
-	vlines!.([ax3],Ref([k-2+nb/2]), color = color_blue)
+	vlines!.([ax3],Ref([k-2+nb/2].+4), color = color_blue)
 
 	# Get the top value of each plot 
 	max_ax1 = maximum([maximum(y1) maximum(y2)]) + 2
@@ -308,7 +346,9 @@ begin
 	end
 	
 	# Draw the points on the graph for the current day
-	draw_grey_points(x, y2_draw, ax1, l, '😷', grey_marker, [color_grey], true)
+	#draw_grey_points(x, y2_draw, ax1, l, , 40, [RGB{Float64}(1,1,1)], true)
+	draw_grey_points(x, y2_draw, ax1, l, '😷', [grey_marker], [color_grey], true)
+	
 	draw_grey_points(x, y1, ax1, l, emoji_pill, color_marker, colors)
 	
 	draw_all(l, k+nb, k_conv+2*nb, x, x_conv, y1, y2, y2_draw, y12_draw, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker, true)
@@ -318,8 +358,9 @@ begin
 	
 	# Set the axes limits
 	xlims!.([ax1,ax2,ax3],Ref((-4,12)))
+	#xlims!.(ax3,-8,12)
 	ylims!(ax1, (-1, max_ax1))
-	ylims!(ax2, (-1, max_ax2))
+	ylims!(ax2, (-0.2*max_ax2, max_ax2))
 	ylims!(ax3, (-1, maximum(y3) + 7))
 
 	# Draw * as labels
@@ -331,15 +372,9 @@ begin
 	midpoint = [(2*k_conv - len - 1)/2] #[k-2+len+nb/2]
 	ax2.xticks = midpoint
 	ax2.xtickformat = "+\n↓"
-	scatter!(ax2,midpoint,[-0.5],marker='{',rotations=π/2,color=:black,markersize=Vec2f(1.5,len).*40)
-
-	# Formatting
-	ax1.xticklabelsize = 32
-	ax2.xticklabelsize = 32
-	ax1.yticklabelsize = 12
-	ax2.yticklabelsize = 12
-	ax3.yticklabelsize = 12
-	ax3.xticklabelsize = 12
+	#scatter!(ax2,midpoint,[-0.5],marker='{',rotations=π/2,color=:black,markersize=Vec2f(1.5,len).*40)
+	bracket!(ax2,midpoint.-len/2,[-0.5],midpoint.+len/2,[-0.5];orientation=:down)
+	
 	ax3.xticks = (-nb:5*nb, string.(0 .+ (-nb+4:5*nb+4)))
 		#x -> x .+ 4
 	#ax3.xtickformat = range(-nb, 5*nb, step = 1) .- nb*1.5 .+ nb
@@ -348,15 +383,14 @@ begin
 	ax1.xaxis.elements[:ticklabels].lineheight = 0.5
 	ax2.xaxis.elements[:ticklabels].lineheight = 0.5
 
-	# Add labels to axis
-	ax1.ylabel = "New patients"
-	ax2.ylabel = "New pills required"
-	ax3.ylabel = "Stockpile required"
-	ax3.xlabel = "Day"
+	
 end;
 
 # ╔═╡ 6b243243-8f26-4f2d-8727-564f0701b302
 f
+
+# ╔═╡ 0a650430-ee2b-4a50-ba92-07db2a962042
+max_ax2
 
 # ╔═╡ c4f25a29-009e-47e4-adc0-18c94e247df4
 begin
@@ -486,15 +520,19 @@ SignalAnalysis = "~0.5.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.5"
+julia_version = "1.9.2"
 manifest_format = "2.0"
 project_hash = "b18773c48ec92bb67d9a63cbf8de8d3ef0e8c09b"
 
 [[deps.AbstractFFTs]]
-deps = ["ChainRulesCore", "LinearAlgebra"]
+deps = ["LinearAlgebra"]
 git-tree-sha1 = "cad4c758c0038eea30394b1b671526921ca85b21"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "1.4.0"
+weakdeps = ["ChainRulesCore"]
+
+    [deps.AbstractFFTs.extensions]
+    AbstractFFTsChainRulesCoreExt = "ChainRulesCore"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -512,6 +550,10 @@ deps = ["LinearAlgebra", "Requires"]
 git-tree-sha1 = "76289dc51920fdc6e0013c872ba9551d54961c24"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 version = "3.6.2"
+weakdeps = ["StaticArrays"]
+
+    [deps.Adapt.extensions]
+    AdaptStaticArraysExt = "StaticArrays"
 
 [[deps.Animations]]
 deps = ["Colors"]
@@ -597,10 +639,14 @@ uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 version = "1.16.0"
 
 [[deps.ChangesOfVariables]]
-deps = ["InverseFunctions", "LinearAlgebra", "Test"]
+deps = ["LinearAlgebra", "Test"]
 git-tree-sha1 = "2fba81a302a7be671aefe194f0525ef231104e7f"
 uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
 version = "0.1.8"
+weakdeps = ["InverseFunctions"]
+
+    [deps.ChangesOfVariables.extensions]
+    ChangesOfVariablesInverseFunctionsExt = "InverseFunctions"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -639,15 +685,19 @@ uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.10"
 
 [[deps.Compat]]
-deps = ["Dates", "LinearAlgebra", "UUIDs"]
+deps = ["UUIDs"]
 git-tree-sha1 = "4e88377ae7ebeaf29a047aa1ee40826e0b708a5d"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
 version = "4.7.0"
+weakdeps = ["Dates", "LinearAlgebra"]
+
+    [deps.Compat.extensions]
+    CompatLinearAlgebraExt = "LinearAlgebra"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.1+0"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -660,6 +710,11 @@ deps = ["LinearAlgebra"]
 git-tree-sha1 = "738fec4d684a9a6ee9598a8bfee305b26831f28c"
 uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
 version = "1.5.2"
+weakdeps = ["IntervalSets", "StaticArrays"]
+
+    [deps.ConstructionBase.extensions]
+    ConstructionBaseIntervalSetsExt = "IntervalSets"
+    ConstructionBaseStaticArraysExt = "StaticArrays"
 
 [[deps.Contour]]
 git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
@@ -703,10 +758,15 @@ deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.Distributions]]
-deps = ["ChainRulesCore", "DensityInterface", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
+deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
 git-tree-sha1 = "e76a3281de2719d7c81ed62c6ea7057380c87b1d"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
 version = "0.25.98"
+weakdeps = ["ChainRulesCore", "DensityInterface"]
+
+    [deps.Distributions.extensions]
+    DistributionsChainRulesCoreExt = "ChainRulesCore"
+    DistributionsDensityInterfaceExt = "DensityInterface"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -1138,14 +1198,20 @@ uuid = "38a345b3-de98-5d2b-a5d3-14cd9215e700"
 version = "2.36.0+0"
 
 [[deps.LinearAlgebra]]
-deps = ["Libdl", "libblastrampoline_jll"]
+deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LogExpFunctions]]
-deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
+deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
 git-tree-sha1 = "c3ce8e7420b3a6e071e0fe4745f5d4300e37b13f"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
 version = "0.3.24"
+weakdeps = ["ChainRulesCore", "ChangesOfVariables", "InverseFunctions"]
+
+    [deps.LogExpFunctions.extensions]
+    LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
+    LogExpFunctionsChangesOfVariablesExt = "ChangesOfVariables"
+    LogExpFunctionsInverseFunctionsExt = "InverseFunctions"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -1220,7 +1286,7 @@ version = "1.1.7"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.0+0"
+version = "2.28.2+0"
 
 [[deps.MetaArrays]]
 deps = ["Requires"]
@@ -1251,7 +1317,7 @@ version = "0.3.4"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2022.2.1"
+version = "2022.10.11"
 
 [[deps.MutableArithmetics]]
 deps = ["LinearAlgebra", "SparseArrays", "Test"]
@@ -1295,7 +1361,7 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.20+0"
+version = "0.3.21+4"
 
 [[deps.OpenEXR]]
 deps = ["Colors", "FileIO", "OpenEXR_jll"]
@@ -1346,7 +1412,7 @@ version = "1.6.0"
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.40.0+0"
+version = "10.42.0+0"
 
 [[deps.PDMats]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
@@ -1391,9 +1457,9 @@ uuid = "30392449-352a-5448-841d-b1acce4e97dc"
 version = "0.42.2+0"
 
 [[deps.Pkg]]
-deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.8.0"
+version = "1.9.2"
 
 [[deps.PkgVersion]]
 deps = ["Pkg"]
@@ -1419,10 +1485,16 @@ uuid = "647866c9-e3ac-4575-94e7-e3d426903924"
 version = "0.1.2"
 
 [[deps.Polynomials]]
-deps = ["ChainRulesCore", "LinearAlgebra", "MakieCore", "MutableArithmetics", "RecipesBase"]
+deps = ["LinearAlgebra", "RecipesBase"]
 git-tree-sha1 = "3aa2bb4982e575acd7583f01531f241af077b163"
 uuid = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 version = "3.2.13"
+weakdeps = ["ChainRulesCore", "MakieCore", "MutableArithmetics"]
+
+    [deps.Polynomials.extensions]
+    PolynomialsChainRulesCoreExt = "ChainRulesCore"
+    PolynomialsMakieCoreExt = "MakieCore"
+    PolynomialsMutableArithmeticsExt = "MutableArithmetics"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -1488,6 +1560,10 @@ deps = ["Requires"]
 git-tree-sha1 = "1342a47bf3260ee108163042310d26f2be5ec90b"
 uuid = "c84ed2f1-dad5-54f0-aa8e-dbefe2724439"
 version = "0.4.5"
+weakdeps = ["FixedPointNumbers"]
+
+    [deps.Ratios.extensions]
+    RatiosFixedPointNumbersExt = "FixedPointNumbers"
 
 [[deps.RecipesBase]]
 deps = ["PrecompileTools"]
@@ -1610,14 +1686,18 @@ uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
 version = "1.1.1"
 
 [[deps.SparseArrays]]
-deps = ["LinearAlgebra", "Random"]
+deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.SpecialFunctions]]
-deps = ["ChainRulesCore", "IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
+deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
 git-tree-sha1 = "7beb031cf8145577fbccacd94b8a8f4ce78428d3"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "2.3.0"
+weakdeps = ["ChainRulesCore"]
+
+    [deps.SpecialFunctions.extensions]
+    SpecialFunctionsChainRulesCoreExt = "ChainRulesCore"
 
 [[deps.StableHashTraits]]
 deps = ["CRC32c", "Compat", "Dates", "SHA", "Tables", "TupleTools", "UUIDs"]
@@ -1632,10 +1712,14 @@ uuid = "cae243ae-269e-4f55-b966-ac2d0dc13c15"
 version = "0.1.1"
 
 [[deps.StaticArrays]]
-deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
+deps = ["LinearAlgebra", "Random", "StaticArraysCore"]
 git-tree-sha1 = "0da7e6b70d1bb40b1ace3b576da9ea2992f76318"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
 version = "1.6.0"
+weakdeps = ["Statistics"]
+
+    [deps.StaticArrays.extensions]
+    StaticArraysStatisticsExt = "Statistics"
 
 [[deps.StaticArraysCore]]
 git-tree-sha1 = "6b7ba252635a5eff6a0b0664a41ee140a1c9e72a"
@@ -1645,6 +1729,7 @@ version = "1.4.0"
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+version = "1.9.0"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
@@ -1659,10 +1744,15 @@ uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.33.21"
 
 [[deps.StatsFuns]]
-deps = ["ChainRulesCore", "HypergeometricFunctions", "InverseFunctions", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
+deps = ["HypergeometricFunctions", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
 git-tree-sha1 = "f625d686d5a88bcd2b15cd81f18f98186fdc0c9a"
 uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 version = "1.3.0"
+weakdeps = ["ChainRulesCore", "InverseFunctions"]
+
+    [deps.StatsFuns.extensions]
+    StatsFunsChainRulesCoreExt = "ChainRulesCore"
+    StatsFunsInverseFunctionsExt = "InverseFunctions"
 
 [[deps.StructArrays]]
 deps = ["Adapt", "DataAPI", "GPUArraysCore", "StaticArraysCore", "Tables"]
@@ -1674,10 +1764,15 @@ version = "0.6.15"
 deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
 uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 
+[[deps.SuiteSparse_jll]]
+deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
+uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
+version = "5.10.1+6"
+
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
-version = "1.0.0"
+version = "1.0.3"
 
 [[deps.TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
@@ -1694,7 +1789,7 @@ version = "1.10.1"
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
-version = "1.10.1"
+version = "1.10.0"
 
 [[deps.TensorCore]]
 deps = ["LinearAlgebra"]
@@ -1752,10 +1847,15 @@ uuid = "1cfade01-22cf-5700-b092-accc4b62d6e1"
 version = "0.4.1"
 
 [[deps.Unitful]]
-deps = ["ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "Random"]
+deps = ["Dates", "LinearAlgebra", "Random"]
 git-tree-sha1 = "c4d2a349259c8eba66a00a540d550f122a3ab228"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
 version = "1.15.0"
+weakdeps = ["ConstructionBase", "InverseFunctions"]
+
+    [deps.Unitful.extensions]
+    ConstructionBaseUnitfulExt = "ConstructionBase"
+    InverseFunctionsUnitfulExt = "InverseFunctions"
 
 [[deps.WAV]]
 deps = ["Base64", "FileIO", "Libdl", "Logging"]
@@ -1832,7 +1932,7 @@ version = "1.5.0+0"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.12+3"
+version = "1.2.13+0"
 
 [[deps.isoband_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1853,9 +1953,9 @@ uuid = "0ac62f75-1d6f-5e53-bd7c-93b484bb37c0"
 version = "0.15.1+0"
 
 [[deps.libblastrampoline_jll]]
-deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
+deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.1.1+0"
+version = "5.8.0+0"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1911,6 +2011,7 @@ version = "3.5.0+0"
 # ╟─380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
 # ╟─f97f9f46-b5c7-4cee-a69f-1eb53b560952
 # ╟─9243a029-8f8d-4a28-b098-d2a2810a8786
+# ╟─796aad78-36d4-42fd-a467-707692b094a2
 # ╟─adfc8467-93bf-472e-a9fc-bd502caa5daa
 # ╟─f9df01a1-8fb7-4337-9415-9ab56d9c696a
 # ╟─9274ed36-a28e-42f3-879f-167d5afa6fc7
@@ -1918,9 +2019,8 @@ version = "3.5.0+0"
 # ╟─88e4551f-9ae1-4a5f-819b-01c43a319981
 # ╟─faf156f0-fa3f-46f6-98d3-3bbf0690a0a4
 # ╟─9fab3bbb-5c7f-4464-97c9-847f52754845
-# ╟─27bd1602-3ca0-4daf-a9ff-c76ea818ead4
+# ╠═27bd1602-3ca0-4daf-a9ff-c76ea818ead4
 # ╟─f0d08486-0086-48da-baeb-169f3812d0ea
-# ╟─77a1da97-f4c2-45df-ae15-8f5910a076d4
 # ╟─572bd8d5-65b0-462e-a143-811f4bfa875e
 # ╟─1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
 # ╟─a60029d5-ae8d-4704-bef1-076949712c37
@@ -1930,13 +2030,15 @@ version = "3.5.0+0"
 # ╟─e4a17824-0e9f-442e-82bc-62b8d46e88e5
 # ╠═032130c4-686b-4db9-9753-9b0fe764f94e
 # ╠═472b52d8-e787-4a93-83d8-c53e977a143c
+# ╠═25b2d0d5-f93a-4bff-9ba0-91001d7e81ba
+# ╠═0a650430-ee2b-4a50-ba92-07db2a962042
 # ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 # ╟─e63c92a5-659e-41f7-85a4-c2f3baffcef6
 # ╟─05df72e9-f45b-49c3-8015-9212f439cf72
-# ╟─da0a4117-629e-42b5-95ae-d49f10769830
-# ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
-# ╟─c2455fae-f733-4e59-b2d0-a76913810f15
-# ╟─ca75244c-69ac-45c8-aa33-59c05dc4091b
+# ╠═da0a4117-629e-42b5-95ae-d49f10769830
+# ╠═8680db2e-3dda-4aff-a00e-130ac1f4486c
+# ╠═c2455fae-f733-4e59-b2d0-a76913810f15
+# ╠═ca75244c-69ac-45c8-aa33-59c05dc4091b
 # ╟─d7ce43e5-7af7-4182-9992-1501e6d2e532
 # ╟─3fd4b34c-18ed-4b07-b594-01afb377ead7
 # ╟─df178bb8-3b81-4c4b-ba94-3ad945e63007
