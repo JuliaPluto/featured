@@ -45,8 +45,9 @@ jobs:
 
 
             - name: Run & export Pluto notebooks
+            
               run: |
-                julia -e '
+                 DISPLAY=:0 xvfb-run -s '-screen 0 1024x768x24' julia -e '
                   import Pkg
                   Pkg.activate("pluto-deployment-environment")
                   Pkg.instantiate()
