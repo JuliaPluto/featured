@@ -43,7 +43,7 @@ When drawing a **contour** in the 3D graph for a certain value `k`, we cut our p
 Now it's your turn! Start by **choosing a function** (Fun fact: These are common testing functions in computer science :)) And move the slider slowly to see how the change happend in all representations!"""
 
 # ╔═╡ 503aa0a0-ece8-4acc-b437-3119055d22bc
-k = @bind contourH PlutoUI.Slider(-1:0.1:1; default=0, show_value=true)
+k = @bind height PlutoUI.Slider(-1:0.1:1; default=0, show_value=true)
 
 # ╔═╡ 2dab2fcd-77bf-4651-8223-6854863f425a
 md"""
@@ -58,17 +58,6 @@ x = range(-5, 5, length=len)
 
 # ╔═╡ 1096dd0e-0940-4ebb-97ab-ff6aa1f67a5b
 y = range(-5, 5, length=len)
-
-# ╔═╡ 950c9b27-3b08-4eae-bbc8-026578e61e48
-begin 
-	# Observables are a tool in Julia that work like magic code that helps us update the slider without reloading the whole feature every time
-	obs_contourH = Observable(0.0)
-	obs_contourH[] = contourH
-
-	# Draw the contour in the 3D graph
-	plane = @lift([$obs_contourH for i in 1:length(x), j in 1:length(y)])
-	contourH
-end
 
 # ╔═╡ 02e62e50-3372-422b-9bea-06566f0f4bb5
 md"""
@@ -124,13 +113,16 @@ end
 # ╔═╡ ec5de533-f6bb-4b1b-9f3a-d8b19aea52e9
 z = [chosen_function(x[i], y[j]) for i in 1:len, j in 1:len]
 
-# ╔═╡ b1729423-7fb2-419d-b41c-fcc96fa18d50
+# ╔═╡ e39373bd-8e12-469f-bd66-2d005ff6cff2
 begin
 	# Setup of the figure
     f = Figure(;resolution=(680,400))
     ax1 = Axis3(f[1, 1])
     ax2 = Axis(f[1, 2])
 
+	# Draw the contour in the 3D graph
+	plane = [height for i in 1:length(x), j in 1:length(y)];
+	
 	# Drawing the function and the contour on the 3G graph
 	surface!(ax1, x, y, z, colormap=:viridis)
 	surface!(ax1, x, y, plane; transparency=true, colormap=[:red,:red])
@@ -138,11 +130,12 @@ begin
 	# Drawing the function and the countour on the heatmap
 	hm = heatmap!(ax2, x, y, z)
 	Colorbar(f[:, 3], hm; vertical=true)
-    contour!(ax2, x, y, z; levels=@lift([$obs_contourH]), color=:red)
+    contour!(ax2, x, y, z; levels=[height], color=:red)
+end;
 
-	# Displaying the function
-	f
-end
+# ╔═╡ 9c17c0d8-e4cb-41c0-b180-b18a3c87e265
+# Displaying the function
+f
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -190,6 +183,7 @@ version = "0.4.1"
 
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
+version = "1.1.1"
 
 [[Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -292,6 +286,7 @@ version = "4.7.0"
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
+version = "1.0.1+0"
 
 [[ConstructionBase]]
 deps = ["LinearAlgebra"]
@@ -347,8 +342,9 @@ uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.9.3"
 
 [[Downloads]]
-deps = ["ArgTools", "LibCURL", "NetworkOptions"]
+deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+version = "1.6.0"
 
 [[DualNumbers]]
 deps = ["Calculus", "NaNMath", "SpecialFunctions"]
@@ -402,6 +398,9 @@ deps = ["Pkg", "Requires", "UUIDs"]
 git-tree-sha1 = "299dc33549f68299137e51e6d49a13b5b1da9673"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 version = "1.16.1"
+
+[[FileWatching]]
+uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
@@ -716,10 +715,12 @@ version = "0.3.1"
 [[LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
+version = "0.6.3"
 
 [[LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
+version = "7.84.0+0"
 
 [[LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -728,6 +729,7 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 [[LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
+version = "1.10.2+0"
 
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
@@ -775,7 +777,7 @@ uuid = "38a345b3-de98-5d2b-a5d3-14cd9215e700"
 version = "2.36.0+0"
 
 [[LinearAlgebra]]
-deps = ["Libdl"]
+deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[LogExpFunctions]]
@@ -839,6 +841,7 @@ version = "0.5.6"
 [[MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
+version = "2.28.0+0"
 
 [[MeshIO]]
 deps = ["ColorTypes", "FileIO", "GeometryBasics", "Printf"]
@@ -875,6 +878,7 @@ version = "0.3.4"
 
 [[MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
+version = "2022.2.1"
 
 [[NaNMath]]
 deps = ["OpenLibm_jll"]
@@ -890,6 +894,7 @@ version = "1.1.0"
 
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
+version = "1.2.0"
 
 [[Observables]]
 git-tree-sha1 = "6862738f9796b3edc1c09d0890afce4eca9e7e93"
@@ -908,6 +913,11 @@ git-tree-sha1 = "887579a3eb005446d514ab7aeac5d1d027658b8f"
 uuid = "e7412a2a-1a6e-54c0-be00-318e2571c051"
 version = "1.3.5+1"
 
+[[OpenBLAS_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
+uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
+version = "0.3.20+0"
+
 [[OpenEXR]]
 deps = ["Colors", "FileIO", "OpenEXR_jll"]
 git-tree-sha1 = "327f53360fdb54df7ecd01e96ef1983536d1e633"
@@ -923,6 +933,7 @@ version = "3.1.4+0"
 [[OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
+version = "0.8.1+0"
 
 [[OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -950,6 +961,7 @@ version = "1.6.0"
 [[PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
+version = "10.40.0+0"
 
 [[PDMats]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
@@ -990,6 +1002,7 @@ version = "0.42.2+0"
 [[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+version = "1.8.0"
 
 [[PkgVersion]]
 deps = ["Pkg"]
@@ -1065,7 +1078,7 @@ deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[Random]]
-deps = ["Serialization"]
+deps = ["SHA", "Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[RangeArrays]]
@@ -1110,6 +1123,7 @@ version = "0.4.0+0"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+version = "0.7.0"
 
 [[SIMD]]
 deps = ["PrecompileTools"]
@@ -1249,6 +1263,7 @@ uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 [[TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+version = "1.0.0"
 
 [[TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
@@ -1265,6 +1280,7 @@ version = "1.10.1"
 [[Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
+version = "1.10.1"
 
 [[TensorCore]]
 deps = ["LinearAlgebra"]
@@ -1420,6 +1436,7 @@ version = "1.5.0+0"
 [[Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
+version = "1.2.12+3"
 
 [[isoband_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1438,6 +1455,11 @@ deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "HarfBuzz_jll"
 git-tree-sha1 = "5982a94fcba20f02f42ace44b9894ee2b140fe47"
 uuid = "0ac62f75-1d6f-5e53-bd7c-93b484bb37c0"
 version = "0.15.1+0"
+
+[[libblastrampoline_jll]]
+deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
+uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
+version = "5.1.1+0"
 
 [[libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1466,10 +1488,12 @@ version = "1.3.7+1"
 [[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
+version = "1.48.0+0"
 
 [[p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
+version = "17.4.0+0"
 
 [[x264_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1488,8 +1512,8 @@ version = "3.5.0+0"
 # ╟─e8ecddef-0f94-48b8-9fd2-41aeadb320cf
 # ╟─6faa6ae7-5679-4ed5-8db2-3a9bec0449b4
 # ╟─503aa0a0-ece8-4acc-b437-3119055d22bc
-# ╟─b1729423-7fb2-419d-b41c-fcc96fa18d50
-# ╟─950c9b27-3b08-4eae-bbc8-026578e61e48
+# ╟─9c17c0d8-e4cb-41c0-b180-b18a3c87e265
+# ╠═e39373bd-8e12-469f-bd66-2d005ff6cff2
 # ╟─2dab2fcd-77bf-4651-8223-6854863f425a
 # ╠═ca18be6d-8a9b-4c53-bd2e-553ea01ebb13
 # ╟─58d43864-9a74-42da-96d5-afb59f22cd0f
