@@ -2,14 +2,15 @@
 # v0.19.26
 
 #> [frontmatter]
+#> author_image = "https://www.s-ccs.de/assets/icn/title_logo.svg"
 #> author_url = "https://github.com/s-ccs/"
-#> image = "https://www.s-ccs.de/assets/icn/title_logo.svg"
+#> image = "https://github.com/JuliaPluto/featured/assets/6933510/f8bec040-bb45-45c5-bedc-b2528e175c4c"
 #> title = "Fun with 🌒Emojis and Julia"
 #> date = "2023-07-25"
 #> tags = ["PlutoUI", "animation", "simple", "clock", "Unicode"]
 #> description = "Making use of 🌒 emojis and PlutoUI.clock for a simple animation"
-#> author_name = "Maanik, Boschra, Benedikt"
 #> license = "Unlicense"
+#> author_name = "Maanik, Boshra, Benedikt"
 
 using Markdown
 using InteractiveUtils
@@ -25,10 +26,10 @@ macro bind(def, element)
 end
 
 # ╔═╡ 74aee166-2ae3-11ee-2eae-03b413b9e6d9
-using PlutoUI,HypertextLiteral
+using PlutoUI, HypertextLiteral
 
 # ╔═╡ 2e148e61-8090-483c-b52c-0b1a4631e51a
-# Authors: Boschra, Maanik, Benedikt
+# Authors: Boshra, Maanik, Benedikt from https://www.s-ccs.de/
 
 # ╔═╡ 37acb7bc-0045-4515-b770-94960ddb7cba
 moonphases = '🌑':'🌘'
