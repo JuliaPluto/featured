@@ -38,11 +38,13 @@ moonphases = '🌑':'🌘'
 # ╔═╡ 5f5b8de0-096f-4546-a7f0-0d468f3a73e4
 @bind clock PlutoUI.Clock(;start_running=true,interval=0.5)
 
+# ╔═╡ 09070d82-f05f-4829-b403-873a51867582
+index = Int(mod(clock,length(moonphases))+1)
+
 # ╔═╡ 467aad45-8708-41bb-a916-5a795bce960d
 @htl """
-<span style="font-size: 10rem;">$(moonphases[Int(mod(clock,length(moonphases))+1)])</span>
+<span style="font-size: 10rem;">$(moonphases[index])</span>
 """
-
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -323,5 +325,6 @@ version = "17.4.0+0"
 # ╠═37acb7bc-0045-4515-b770-94960ddb7cba
 # ╠═5f5b8de0-096f-4546-a7f0-0d468f3a73e4
 # ╠═467aad45-8708-41bb-a916-5a795bce960d
+# ╠═09070d82-f05f-4829-b403-873a51867582
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
