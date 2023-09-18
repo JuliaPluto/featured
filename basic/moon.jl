@@ -7,7 +7,7 @@
 #> image = "https://github.com/JuliaPluto/featured/assets/6933510/f8bec040-bb45-45c5-bedc-b2528e175c4c"
 #> title = "Fun with 🌒Emojis and Julia"
 #> date = "2023-07-25"
-#> tags = ["PlutoUI", "animation", "simple", "clock", "Unicode"]
+#> tags = ["PlutoUI", "animation", "basic", "clock", "Unicode"]
 #> description = "Making use of 🌒 emojis and PlutoUI.clock for a simple animation"
 #> license = "Unlicense"
 #> author_name = "Maanik, Boshra, Benedikt"
