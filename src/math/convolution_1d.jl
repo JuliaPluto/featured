@@ -508,14 +508,14 @@ SignalAnalysis = "df1fea92-c066-49dd-8b36-eace3378ea47"
 
 [compat]
 CairoMakie = "~0.10.4"
-ColorSchemes = "~3.21.0"
+ColorSchemes = "~3.23.0"
 ColorTypes = "~0.11.4"
 Colors = "~0.12.10"
 DSP = "~0.7.8"
 GeometryBasics = "~0.4.7"
 HypertextLiteral = "~0.9.4"
 MakieThemes = "~0.1.0"
-PNGFiles = "~0.3.17"
+PNGFiles = "~0.4.0"
 PlutoUI = "~0.7.51"
 SignalAnalysis = "~0.5.0"
 """
@@ -661,9 +661,9 @@ version = "0.4.0"
 
 [[ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
-git-tree-sha1 = "be6ab11021cd29f0344d5c4357b163af05a48cba"
+git-tree-sha1 = "d9a8f86737b665e15a9641ecbac64deef9ce6724"
 uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
-version = "3.21.0"
+version = "3.23.0"
 
 [[ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
@@ -1443,9 +1443,9 @@ version = "0.11.17"
 
 [[PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
-git-tree-sha1 = "f809158b27eba0c18c269cf2a2be6ed751d3e81d"
+git-tree-sha1 = "9b02b27ac477cad98114584ff964e3052f656a0f"
 uuid = "f57f5aa1-a3ce-4bc8-8ab9-96f992907883"
-version = "0.3.17"
+version = "0.4.0"
 
 [[Packing]]
 deps = ["GeometryBasics"]
