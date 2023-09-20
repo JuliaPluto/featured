@@ -15,6 +15,11 @@
             "tags": ["math"]
         },
         {
+            "title": "Visualisation",
+            "description": "Pluto is a great tool to visualise your results! Here are some examples.",
+            "tags": ["visualisation", "plotting"]
+        },
+        {
             "title": "Machine learning",
             "description": "Learn about using ML in Julia with these examples.",
             "tags": ["machine learning"]
