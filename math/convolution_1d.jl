@@ -2,11 +2,11 @@
 # v0.19.27
 
 #> [frontmatter]
-#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png/238px-Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
-#> title = "Decision Trees"
-#> tags = ["machine learning", "data", "decision tree", "classification", "OpenML", "DataFrames", "Makie"]
+#> image = "https://github.com/JuliaPluto/featured/assets/6933510/65dadde7-6381-4cda-ad71-7bbba4b1db97"
+#> title = "Convolutions"
+#> tags = ["convolution", "filter", "signal-processing", "math", "signal processing"]
 #> date = "2023-09-20"
-#> description = "We are going to use a simple model called \"Decision Tree\" to do a classification task."
+#> description = "Learn about the cool concept of convolution on continuous functions!"
 #> license = "Unlicense"
 #> 
 #>     [[frontmatter.author]]
@@ -26,432 +26,503 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
+# ╔═╡ 3fd4b34c-18ed-4b07-b594-01afb377ead7
 begin
-	using MLJ, PlutoUI, OpenML, DataFrames, MLJDecisionTreeInterface, ScientificTypes , Graphs, GraphMakie, NetworkLayout, CairoMakie
-	
+	# packages for convolution:
+	using DSP, SignalAnalysis, Random
+
+	# plotting:
+	using CairoMakie, ColorSchemes, Colors, ColorTypes
 	using MakieThemes
-	set_theme!(theme_ggthemr(:fresh))
+	set_theme!(ggthemr(:flat))
+
+	# widgets and layout:
+	using PlutoUI
+	using PlutoUI.ExperimentalLayout: grid, vbox, hbox, Div
+	using HypertextLiteral
 end
 
-# ╔═╡ 8c9b58b8-ff06-4989-8485-e046fac73a55
-md"""# Decision Trees
-
-Hi there! If you haven't been living under a rock the past years, you most likely heard the term "Machine Learning" at some point. So machine learning refers to a series of sophisticated models in computer science that allow to process huge and complex amount of data. 
-
-One such task we can solve using machine learning is the classification of data samples into certain categories. It's a very simple task but the models to solve it can get quite complicated.
-
-Here, we are going to use a simple model called "Decision Tree" to do the classification. Let's get to it!"""
-
-# ╔═╡ 87360178-a662-4272-bb0f-b97719e64c25
-
-
-# ╔═╡ 9738721f-40a8-4984-b3a8-d418967f15f8
-md"""### The Wine Quality Dataset
-
-First, let's start by getting some data. We will be using a popular dataset: the wine quality dataset that have the following propreties:
-
-- Each entry represents a wine type and its properties, namely: fixed acidity, volatile acidity, residual sugar, density, pH .. etc 
-
-- A quality score between 1 and 10. For our case we will consider all the wine instances with a score > 6.5 as good, otherwise bad. 
-
-To understand our data better, we can look the raw values in the table or we can use some plots to display the features of the dataset."""
-
-# ╔═╡ 996c9dd9-e8b3-4671-8111-b24d4d763501
+# ╔═╡ ca75244c-69ac-45c8-aa33-59c05dc4091b
 begin
-	display_select = @bind display PlutoUI.Select(["show_picture" => "Picture", "show_data" => "Table", "show_plot" =>"Plot"])
-	md"""**Try it:** Choose a format to display your data: $(display_select) \
-	"""
+	import CairoMakie:Polygon
+	using GeometryBasics
+	function plot_pill(emoji_pill_pic::Matrix)
+		positions = Colors.alpha.(emoji_pill_pic).<0.5
+
+		curr_fig = Figure()
+		curr_ax = Axis(curr_fig[1, 1])
+		contour_plot = contour!(curr_ax, positions, levels=1, labels = false)
+		pill_points = contour_plot.plots[2].converted[1][]./10
+		pill_points = [Point2f.(0.5 .+6 .- p.data[1] .-3.5,p.data[2] .- 3.5) for p in pill_points]
+
+		pill_shape = Polygon(pill_points[1:end-1])
+		return pill_shape
+	end
 end
 
-# ╔═╡ d90e6b57-c41a-49a7-9084-2f36d7d016d8
+# ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
+md"""## Convolutions *Explained*
 
+#### Introduction
+Hello there! If you ever came across convolutions in some certain science context, you know they can be VERY confusing. This notebook will help you get a better intuition for convolutions. Let's go!"""
 
-# ╔═╡ 55dc52f6-36fd-4c48-acc6-dc20a1304cf7
-md"""### Training the model?
-
-Now that we have our data, the first step to do is to train our model. But what does that even mean? 
-
-To train a classification model we need three things:
-
-| | |
-|---|:---|
-| 📋 |data 
-| ⬛ |black box (the decision tree model) 
-| 🧙🏼‍♀️ |magic (the training algorithm) |
-
-Let the training commence!
-
-📋 => ⬛ + 🧙🏼‍♀️ => 🎉 *decision tree* 🎉
-
-
-We won't discuss magic today. But let's look at how the actual decision tree works!
-"""
-
-# ╔═╡ 6540bd7f-5d29-4fcd-a8e3-d79b9771b951
-
-
-# ╔═╡ cb4a1c7a-ed28-4c2c-980b-a3a78a48ddca
+# ╔═╡ f265f5b9-d5d0-45ce-a850-f4237218cf99
 md"""
-
-### The decision tree
-Once we have a tree (think family tree, not real tree!), we can ask it the question: 
-
-Is this 🍷 from our list any good?
-
-
-A decision tree consists of `nodes`, with every node connected to two nodes - except for the lowest ones, which are called `leaf`. At each node, you get asked a question, and depending on the properties of the wine, you go left or right, until you reach a leaf, which holds the answer you seek.
-
-Ok summarized:
-
-1. We select the properties of the wine from the table.
-2. We start traversing the tree starting at the root-node (surprisingly, the root is on top 🤷🏼‍♀️) and enter a loop 🔄
-
-3. Is the node-condition met? If yes, follow right, if not follow left
-4. Do we arrive at a new node? 
-   - **YES**: hooray! Let's go to 3 and continue
-   - **NO**: also hooray! We have an answer!
-
-
+#### A new disease appears - oh no
 """
 
-# ╔═╡ f8b0c51a-0327-468c-a783-93f10093bd9a
+# ╔═╡ dbdbcbbe-57fd-497f-b5ba-83b61e87de0b
+md"""Let's start with this great example from the [**better explained blog** ](https://betterexplained.com/articles/intuitive-convolution/) : Suppose there is a **pandemic** going on and more people are getting sick every day. So, you are a doctor and you have the following **new** patients coming in each day (yes, sadly even elves and fairies can get this disease): 
+"""
+
+# ╔═╡ f97f9f46-b5c7-4cee-a69f-1eb53b560952
+md"""The number of patients increases as the disease spreads."""
+
+# ╔═╡ 796aad78-36d4-42fd-a467-707692b094a2
+
+
+# ╔═╡ adfc8467-93bf-472e-a9fc-bd502caa5daa
 md"""
-Now that you have an intuition, you can modify the tree. But be warned, more complicated trees don't necessarily give you better predictions! You have only limited data to train your tree!
-
-`tree_depth` changes how deep a tree is - whereas `tree_min_samples_leaf` defines the minimum number of samples needed in each category (GOOD or BAD) to divide the tree into two branches.
+#### But we have a treatment, puh!
 """
 
-# ╔═╡ a4bc06f1-33b1-4c09-9427-69facd193354
-md"""**Try it:** Choose the parameters of your tree (how complex it should be)"""
+# ╔═╡ f9df01a1-8fb7-4337-9415-9ab56d9c696a
+md"""The patients all have the same disease that requires the following treatment: 
+- On the 1st day, the patient recieves 1 pill 
+- On the 2nd day, the patient recieves 2 pills
+- On the nth day, the patient recieves n pills
 
-# ╔═╡ 7f27327c-187e-4613-add7-d6bc73f0653e
-tree_depth = @bind tree_max_depth PlutoUI.Slider(3:1:6, show_value=true, default=4)
+So something that looks like this: """
 
-# ╔═╡ 74f08a91-dc3a-4c3b-b711-907e97e573f0
-tree_min_samples_leaf = @bind min_samples_leaf PlutoUI.Slider(60:40:360, show_value=true, default=220) 
+# ╔═╡ bb869b27-0bce-4314-b28f-684ccc14f7ea
+md"""> **Try it:** Choose your own treatment plan (you can also chose 0 pills for a certain day):"""
 
-# ╔═╡ 1c741a73-5d76-4297-a783-cbf0d4b6deaf
+# ╔═╡ faf156f0-fa3f-46f6-98d3-3bbf0690a0a4
+begin
+	a1 = @bind a1_s PlutoUI.Scrubbable(0:1:6, default=1)
+	a2 = @bind a2_s PlutoUI.Scrubbable(0:1:6, default=2)
+	a3 = @bind a3_s PlutoUI.Scrubbable(0:1:6, default=3)
+	a4 = @bind a4_s PlutoUI.Scrubbable(0:1:6, default=4)
+	a5 = @bind a5_s PlutoUI.Scrubbable(0:1:6, default=0)
+	a6 = @bind a6_s PlutoUI.Scrubbable(0:1:6, default=0)
+	a7 = @bind a7_s PlutoUI.Scrubbable(0:1:6, default=0)
+	a8 = @bind a8_s PlutoUI.Scrubbable(0:1:6, default=0)
+	
+end;
 
+# ╔═╡ 88e4551f-9ae1-4a5f-819b-01c43a319981
+begin
+	#treatment_array = @bind treatment_in PlutoUI.Scrubbable(treatment_array)
+	md""" $(a1) $(a2) $(a3) $(a4) $(a5) $(a6) $(a7) $(a8)"""
+end
 
-# ╔═╡ a885743c-e418-489d-b77a-c898f9ef9e36
-md"""### Brewing your own wine!
+# ╔═╡ 27bd1602-3ca0-4daf-a9ff-c76ea818ead4
+md"""
+### But, how many pills do we need to stockpile?
+"""
 
-One more fun bit! Now that we've built our tree, we can use it to classify **new** wine instances, that are not in the dataset. 
+# ╔═╡ 572bd8d5-65b0-462e-a143-811f4bfa875e
+md"""---
+Now to make things more visual, move the slider around to see how many pills you need each day!"""
 
-So suppose you are a alchemist and you are brewing together a new wine type, you can enter the values of your wine and the tree will tell you if its quality is good or bad! """
+# ╔═╡ 1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
+md"""**Hint:** In order to administer the treatment in the right order, we need to **flip** patients lists, so they get admitted to the hospital in the right order! So now it looks like this: 
+"""
 
-# ╔═╡ 7a17b28f-ed26-4ee8-9349-89bd38d6b4b8
-md"""**Challenge:** Can you brew a good wine?"""
+# ╔═╡ 0ccf60db-75b2-466d-935e-f39855bc36f7
+md"""## Generating Code """
 
-# ╔═╡ 3f13ab6d-0c64-41a5-af70-a879ce007224
+# ╔═╡ e4a17824-0e9f-442e-82bc-62b8d46e88e5
+md"""The following code sets up our initial figure. If you're interested in drawing graphs in computer science, you can take a look but you don't need to understand every line."""
+
+# ╔═╡ 032130c4-686b-4db9-9753-9b0fe764f94e
+begin
+	# Number of time steps
+	nb = 8 
+
+	# Slider for how long the pandemic should go 
+	len_slider = @bind len PlutoUI.Slider(3:1:nb-1, show_value=true, default=5)
+
+	# Checkboxes for more options
+	show_stairs = @bind stairs CheckBox(default=true)
+	make_exponential = @bind exponential CheckBox()
+		
+end;
+
+# ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
+patients = exponential ? collect(["👵","🧑👴", "🧑🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴🧑🧝🧝🧚🧓🧚🧓🧚🧑🧝🧝🧝", "👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑", "🧚🧚🧚🧚🧚🧚🧚🧚🧚🧓🧚🧓🧚🧑🧝🧝👧👴👴👩🧝🧚👩🧓👧👴👴👩🧝🧚👩🧓👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑🧑", ""])[1:len] :  collect(["👵","👴🧑", "👩🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴", "🧓🧚", "🧚", ""])[1:len] 
+
+# ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
+patients_flipped = append!(["" for i in 1:8-length(patients)], reverse(patients))
+
+# ╔═╡ 9243a029-8f8d-4a28-b098-d2a2810a8786
+md"""**Try it:** How many days should the disease go on:  $(len_slider) day(s)"""
+
+# ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
+begin
+	# Set slider for the day (index)
+	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb+1, show_value=true, default=1)
+	md"""**Try it:**: calculate up to day: $(k_slider)
+	> **Test your understanding**: On what day do you require most pills?"""
+end
+
+# ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
 md"""## Appendix"""
 
-# ╔═╡ 2308737c-429c-4f40-8a2a-3cb9311b5197
-import DataFrames as DF
+# ╔═╡ 05df72e9-f45b-49c3-8015-9212f439cf72
+begin
+	# Makie can't display emojis directly, so we have to grab them from github - sorry
+	import PNGFiles
+	emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) .|> RGBA{Float64};
+end;
 
-# ╔═╡ 66d5055d-fad7-4560-8709-2dcb059d6231
-import DecisionTree: DecisionTreeClassifier,Leaf,Node,Root,depth,InfoNode
+# ╔═╡ 9fab3bbb-5c7f-4464-97c9-847f52754845
+treatment_in = [a1_s a2_s a3_s a4_s a5_s a6_s a7_s a8_s];
 
-# ╔═╡ f8cd1689-6c87-4331-994a-66c85850f7e2
-md"""
-### Data structures
+# ╔═╡ 9274ed36-a28e-42f3-879f-167d5afa6fc7
+treatment = vec([repeat('💊', i) for i in treatment_in])
+
+# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
+let
+	t = treatment
+	p = patients
+md"""Now as a doctor, you want to be ready for this scenario, at each day you want to know, how many pills you will need for your patients:
+
+- On day 1: you would give $((t[1]))  to $((p[1])) 
+- On day 2: you would give $((t[2]))  to $((p[1]))  , and $((t[1]))  to $((p[2]))  each
+- On day 3: you would give  $((t[3]))  to $(length(p[1])) , and $((t[2])) pills to $((p[2])) , and $((t[1]))  to $((p[3]))  each ... etc 
+
+Notice how we are multiplying and adding each day? We are close to performing a convolution already!
 """
+end
 
-# ╔═╡ e8bf8b58-71cc-4149-8433-c71ec41b51c9
-wine_url = "https://upload.wikimedia.org/wikipedia/commons/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
-
-# ╔═╡ 8a8b5a1a-3ffa-45c3-9a9d-e58aa21e585c
+# ╔═╡ 472b52d8-e787-4a93-83d8-c53e977a143c
 begin
-	task = OpenML.load(287) 
-	data = DF.DataFrame(task)
-	transform!(data, :quality => (x -> ifelse.(x .> 6.5, "good", "bad")) => :quality)
-	data[!, :quality] = categorical(data[!, :quality])
+	# Set the number of patients array (First function)
+	numbers_patients = [length(s) for s in patients_flipped]
+	y2_patients = append!([0 for i in 1:9], numbers_patients, [0 for i in 1:16-length(patients_flipped)])
 
-	y, X = unpack(data, ==(:quality); rng=123);
-	train, test = partition(eachindex(y), 0.8)
+	# Set the number of pills array (Second function)
+	numbers_pills = [length(s) for s in treatment]
+	y1_pills = append!([0 for i in 1:9], numbers_pills, [0 for i in 1:16-length(numbers_pills)])
 
-	fig = Figure() 
-	ax = [Axis(fig[trunc(Int, i / 3), i % 3], title = names(data)[i+1],yticklabelsvisible=false) for i in 0:10]
-	for i in 1:11
-		hist!(ax[i], data[!, i], normalization = :pdf,
-     strokewidth = 0.5, strokecolor = (:black, 0.5))
+	# Set the function to draw the patients moving
+	if k_conv < 9 idx = 9 - k_conv else idx = 34 - k_conv end
+	y2_patients_draw = y2_patients[[idx+1:end; 1:idx]]
+
+end;
+
+# ╔═╡ d7ce43e5-7af7-4182-9992-1501e6d2e532
+function plot_grey_pill(emoji_pill_pic::Matrix{RGBA{Float64}})
+	emoji_pill_org = deepcopy(emoji_pill_pic)
+	grey_pill = GrayA.(emoji_pill_org)
+	for k = 1:length(grey_pill)
+		grey_pill[k] = GrayA(grey_pill[k].val,grey_pill[k].alpha* 0.2)
 	end
-	
-	if display == "show_data"
-		data
-	elseif display == "show_plot"
-		fig
-	elseif display == "show_picture"
-		Resource(wine_url, :width => 700, :height => 500)
-	end
+	return grey_pill
 end
 
-# ╔═╡ 2647744e-d3d8-4fa5-a4b1-6a65015c16de
-begin
-	all_features = names(data)[1:end-1]
-	mins = [minimum(data[!, feature]) for feature in all_features]
-	maxs = [maximum(data[!, feature]) for feature in all_features]
-	length_range = 8
-	ranges = [round((maxs[i] - mins[i]) / length_range, digits=3) for i in 1:length(all_features)]
+# ╔═╡ 0dd8235c-c09b-49ae-b02a-4bbb285970a6
+happyX = findlast(treatment_in[1,:] .> 0)
 
-	# TODO : replace this with a loop 
-	#x = zeros(length(all_features))
-	#x .=[PlutoUI.Slider(mins[1]:maxs[1], show_value=true) for i in 1:length(all_features)]
+# ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
+function draw_point(x, y1, ax::Axis, marker, size_marker, color::ColorTypes.RGB{Float64}, offset::Int, masked=false)
+		stroke = masked ? :black : :grey 
+		z = 0
+	size_marker = 0.8*size_marker
+		for y = 1:y1[1]
+			#@show stroke,color,masked
+			#@show marker
+			if marker == '😷'
+		
+				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=40,strokewidth=0.0,marker='⚫', strokecolor=stroke, color=RGB{Float64}(1,1,1), overdraw=masked)
+				#translate!(obj[1], 0, 0, z)
+				#z += 0.1
+				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=size_marker,strokewidth=0.0,marker= x > happyX ? '😄' : marker, strokecolor=stroke, color=color, overdraw=masked)
+				#translate!(obj[1], 0, 0, z)
+				#z -= 0.3
 	
-	slider_x1 = @bind x1 PlutoUI.Slider(mins[1]:ranges[1]:maxs[1], show_value=true)
-	slider_x2 = @bind x2 PlutoUI.Slider(mins[2]:ranges[2]:maxs[2], show_value=true)
-	slider_x3 = @bind x3 PlutoUI.Slider(mins[3]:ranges[3]:maxs[3], show_value=true)
-	slider_x4 = @bind x4 PlutoUI.Slider(mins[4]:ranges[4]:maxs[4], show_value=true)
-	slider_x5 = @bind x5 PlutoUI.Slider(mins[5]:ranges[5]:maxs[5], show_value=true)
-	slider_x6 = @bind x6 PlutoUI.Slider(mins[6]:ranges[6]:maxs[6], show_value=true)
-	slider_x7 = @bind x7 PlutoUI.Slider(mins[7]:ranges[7]:maxs[7], show_value=true)
-	slider_x8 = @bind x8 PlutoUI.Slider(mins[8]:ranges[8]:maxs[8], show_value=true)
-	slider_x9 = @bind x9 PlutoUI.Slider(mins[9]:ranges[9]:maxs[9], show_value=true)
-	slider_x10 = @bind x10 PlutoUI.Slider(mins[10]:ranges[10]:maxs[10], show_value=true)
-	slider_x11 = @bind x11 PlutoUI.Slider(mins[11]:ranges[11]:maxs[11], show_value=true)
-
-	
-	md"""#### Features inputs
-	| $(all_features[1]) | $(all_features[2]) | $(all_features[3]) |
-	| :----: | :----: | :----: |
-	| $(slider_x1) | $(slider_x2) | $(slider_x3) |
-
-	| $(all_features[4]) | $(all_features[5]) | $(all_features[6]) |
-	| :----: | :----: | :----: |
-	| $(slider_x4) | $(slider_x5) | $(slider_x6) |
-
-	| $(all_features[7]) | $(all_features[8]) | $(all_features[9]) |
-	| :----: | :----: | :----: |
-	| $(slider_x7) | $(slider_x8) | $(slider_x9) |
-
-	| $(all_features[10]) | $(all_features[11]) |
-	| :----: | :----: |
-	| $(slider_x10) | $(slider_x11) |
- 
-	"""
-end
-
-# ╔═╡ 66dd92e2-ff25-4f84-9366-e1c367d9b148
-function walk_tree!(node::Node, g, depthLeft, properties, features)
-
-	add_vertex!(g)
-
-	if depthLeft == 0
-		push!(properties, (Nothing, "..."))
-		return vertices(g)[end]
-	else
-		depthLeft -= 1
-	end
-
-	current_vertex = vertices(g)[end]
-	val = node.featval
-
-	featval = isa(val, AbstractString) ? val : round(val; sigdigits = 2)
-	featurename = features[node.featid]
-	label_node = (Node, "$(featurename) < $featval ?")
-	push!(properties, label_node)
-
-	child = walk_tree!(node.left, g, depthLeft, properties, features)
-	add_edge!(g, current_vertex, child)
-
-	child = walk_tree!(node.right, g, depthLeft, properties, features)
-	add_edge!(g, current_vertex, child)
-
-	return current_vertex
-end
-
-# ╔═╡ 3b58ac62-ce34-40c2-9acb-067b541864da
-function walk_tree!(leaf::Leaf, g, depthLeft, properties, features)
-	add_vertex!(g)
-	n_matches = count(leaf.values .== leaf.majority)
-	#ratio = string(n_matches, "/", length(leaf.values))
-
-	emojis_class = Dict("1" => "😊", "2" => " ☹️")
-	leaf_class = emojis_class[string.(leaf.majority)]
-
-	push!(properties, (Leaf, "$(leaf_class)"))# : $(ratio)"))
-	return vertices(g)[end]
-end
-
-# ╔═╡ 238941f9-4e8a-4eb7-a79c-405e796967e9
-function Base.convert(::Type{SimpleDiGraph}, model::InfoNode; maxdepth = depth(model))
-
-	if maxdepth == -1
-		maxdepth = depth(model.node)
-	end
-	g = SimpleDiGraph()
-	properties = Any[]
-	features = model.info.featurenames
-	walk_tree!(model.node, g, maxdepth, properties, features)
-	return g, properties
-end
-
-# ╔═╡ 7d533fa8-7b74-4d76-a216-f85b26a0be62
-Base.convert(::Type{SimpleDiGraph}, model::DecisionTreeClassifier; kwargs...) =
-	Base.convert(SimpleDiGraph, model.node; kwargs...)
-
-# ╔═╡ 502f5bf9-29f5-4f9a-b081-a1434a41c317
-md"""
-### Plotting
-
-Here, we tell Makie how to plot a `DecisionTreeClassifier`.
-"""
-
-# ╔═╡ 3113c376-8c8a-44b2-86f9-b50d4d04f0df
-import CairoMakie: @recipe
-
-# ╔═╡ 0d579bad-d53d-49ee-b05f-68bf83f82d25
-begin
-	@recipe(PlotDecisionTree) do scene
-		Attributes(
-			nodecolormap = :darktest,
-			textcolor = RGBf(0.5,0.5,0.5),
-			leafcolor = :darkgreen,
-			nodecolor = :white,
-			maxdepth = -1,
-		)
-	end
-	
-	function Makie.plot!(
-		plt::PlotDecisionTree{<:Tuple{<:Union{InfoNode,DecisionTreeClassifier}}},
-	)
-	
-		@extract plt leafcolor, textcolor, nodecolormap, nodecolor, maxdepth
-		model = plt[1]
-	
-		# convert to graph
-		tmpObs = @lift convert(SimpleDiGraph, $model; maxdepth = $maxdepth)
-		graph = @lift $tmpObs[1]
-		properties = @lift $tmpObs[2]
-	
-		# extract labels
-		labels = @lift [string(p[2]) for p in $properties]
-	
-		# set the colors, first for nodes & cutoff-nodes, then for leaves
-		nlabels_color = map(
-			properties,
-			labels,
-			leafcolor,
-			textcolor,
-			nodecolormap,
-		) do properties, labels, leafcolor, textcolor, nodecolormap
-	
-			# set colors for the individual elements
-			leaf_ix = findall([p[1] == Leaf for p in properties])
-			leafValues = [p[1] for p in split.(labels[leaf_ix], " : ")]
-	
-			# one color per category
-			uniqueLeafValues = unique(leafValues)
-			individual_leaf_colors =
-				resample_cmap(nodecolormap, length(uniqueLeafValues))
-			nlabels_color =
-				Any[p[1] == Node ? textcolor : leafcolor for p in properties]
-			for (ix, uLV) in enumerate(uniqueLeafValues)
-				ixV = leafValues .== uLV
-				nlabels_color[leaf_ix[ixV]] .= individual_leaf_colors[ix]
+			else
+			
+				scatter!(ax,[x.-0.2],[y.+offset], markersize=size_marker,strokewidth=0.0,marker=marker, strokecolor=stroke, color=color, overdraw=masked)
 			end
-			return nlabels_color
 		end
+end
+
+# ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
+function draw_grey_points(x, y, ax, len, marker, size_marker, colors, masked=false)
 	
-		fontsize = @lift .-length.($labels) .* 0.1 .+ 14
-		graphplot!(
-			plt,
-			graph;
-			layout = Buchheim(),
-			nlabels = labels,
-			#nlabels_distance=10,
-			node_size = 80,
-			node_color = nodecolor,
-			nlabels_color = nlabels_color,
-			nlabels_fontsize = fontsize,
-			nlabels_align = (:center, :center),
-			#tangents=((0,-1),(0,-1))
-		)
-		return plt
+	for j in 1:len
+			color = colors[j % length(colors) + 1]
+			draw_point(x[j], y[j], ax, marker, size_marker, color, 0, masked)
+		
+	end
+end
+
+# ╔═╡ df178bb8-3b81-4c4b-ba94-3ad945e63007
+begin
+	color_grey = RGB{Float64}(0.5, 0.5, 0.5)
+	colors = [ColorSchemes.viridis[i] for i in 1:40:256]
+	col_length = length(colors)
+	color_blue = ColorSchemes.viridis[116]
+end;
+
+# ╔═╡ da0a4117-629e-42b5-95ae-d49f10769830
+function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker, masked=false)
+	offset = 0
+	for index in k:k+nb
+		scatter!(ax3, (x_conv[k_conv], y3[k_conv]), color = colors[1])
+		
+		if index < 1 || index > l
+			continue
+		end
+
+		color = colors[index % col_length + 1]
+
+		
+		draw_point(x[index], y12[index], ax2, emoji_pill, color_marker, color, 0)
+		draw_point(x_conv[k_conv], y12[index], ax3, emoji_pill, color_marker, color, offset)
+		
+		draw_point(x[index], y12[index], ax2, emoji_pill_grey, grey_marker, color, 0)
+
+		if y1[index] != 0 && y2_draw[index] != 0
+			draw_point(x[index], y2_draw[index], ax1,'😷' , grey_marker, color, 0, masked)
+		end
+		
+		offset += y12[index]
+	end
+end
+
+# ╔═╡ ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
+begin
+	# Set up Figure elements
+	f = Figure(;resolution= (650,700))
+	
+	ax1 = Axis(f[1, 1];
+			xticklabelsize = 32,
+			yticklabelsize = 12,
+			ylabel="New patients")
+	
+	ax2 = Axis(f[2, 1];
+			xticklabelsize = 32,
+			yticklabelsize = 12,
+			ylabel = "New pills required")
+	
+	ax3 = Axis(f[3, 1];
+			xticklabelsize = 12,
+			yticklabelsize = 12,
+			ylabel = "Stockpile required",
+			xlabel = "Day")
+
+	# Set up range and constants
+	x = range(-nb, 2*nb, step=1)
+	x_conv = range(-nb, 5*nb, step = 1) .- nb*1.5 .+4
+	l = length(x)
+	k = k_conv - nb +1
+
+	# This is to add the shape of the pill on top of the color
+	emoji_pill_grey = plot_grey_pill(emoji_pill_pic)
+
+	# Set up the emojis and their sizes
+	emoji_pill = plot_pill(emoji_pill_pic) 
+	grey_marker = 25
+	color_marker = 4
+
+	# Set up the functions
+	y1 = y1_pills
+	y2 = y2_patients
+	y2_draw = y2_patients_draw
+	
+	# Intermediate step for convolution
+	y12_draw = y1 .* y2_draw 
+	y12 = y1 .* y2
+
+	# Set up the final convoluted result 
+	y3 = DSP.conv(y1,reverse(y2))
+
+	# Draw vertical lines
+	vlines!.([ax1,ax2],Ref([k_conv-1]), color = color_blue)
+	vlines!.([ax3],Ref([k-2+nb/2].+4), color = color_blue)
+
+	# Get the top value of each plot and add day line
+	max_ax1 = maximum([maximum(y1) maximum(y2)]) + 2
+	max_ax2 = maximum(y1) * maximum(y2) + 2
+	text!(ax1,k_conv-1, max_ax1-2, text=" Current day", color = color_blue)
+	
+	# Draw the function lines
+	if stairs
+		stairs!(ax1, x, y1, color = colors[6], step=:center)
+		stairs!(ax1, x, y2_draw, color = colors[4], step=:center)
+		stairs!(ax2, x, y12_draw, color = colors[7], step=:center)
+		stairs!(ax3, x_conv, y3, color=colors[1], step=:center)
 	end
 	
-	recipe_defined = true
-end
+	# Draw the points on the graph for the current day
+	draw_grey_points(x, y2_draw, ax1, l, '😷', [grey_marker], [color_grey], true)
+	draw_grey_points(x, y1, ax1, l, emoji_pill, color_marker, colors)
+	
+	draw_all(l, k+nb, k_conv+2*nb, x, x_conv, y1, y2, y2_draw, y12_draw, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker, true)
+	
+	draw_grey_points(x, y1, ax1, l, emoji_pill_grey, grey_marker, [color_grey])
+	draw_grey_points(x_conv, y3, ax3, 4*nb -1, emoji_pill_grey, grey_marker, [color_grey])
+	
+	
+	# Set the axes limits
+	xlims!.([ax1,ax2,ax3],Ref((-4,12)))
+	ylims!(ax1, (-1, max_ax1))
+	ylims!(ax2, (-0.2*max_ax2, max_ax2))
+	ylims!(ax3, (-1, maximum(y3) + 7))
 
-# ╔═╡ 45d484d4-f36f-4dc3-89f3-96f668f28423
-function GraphMakie.graphplot(model::Union{InfoNode,DecisionTreeClassifier}; kwargs...)
-	f, ax, h = plotdecisiontree(model; kwargs...)
-	hidedecorations!(ax)
-	hidespines!(ax)
-	ax.aspect = DataAspect()
-	return f
-end
+	# Draw * as labels
+	ax1.xticks = (-len+1:0).+k_conv.-1
+	showPlus = sum(y12_draw.>0) > 0
+	ax1.xtickformat = "*\n↓"
 
-# ╔═╡ 261d09ef-3907-4d1d-b69e-758ac6e43f37
-begin
-	# We reference this variable to make a dependency visible to Pluto: the PlotDecisionTree recipe must be defined to make this plot work.
-	PlotDecisionTree
+	# Draw + as labels
+	midpoint = [(2*k_conv - len - 1)/2]
+	ax2.xticks = midpoint
+	ax2.xtickformat = "+\n↓"
+	bracket!(ax2,midpoint.-len/2,[-0.5],midpoint.+len/2,[-0.5];orientation=:down)
+	ax3.xticks = (-nb:5*nb, string.(0 .+ (-nb+4:5*nb+4)))
+	
+	# a bit hacky, Makie doesnt allow specifying lineheight of ticks directly
+	ax1.xaxis.elements[:ticklabels].lineheight = 0.5
+	ax2.xaxis.elements[:ticklabels].lineheight = 0.5
 
 	
-	Tree = @load DecisionTreeClassifier pkg = "DecisionTree" verbosity = false
-	model = Tree(max_depth=tree_max_depth, min_samples_leaf=min_samples_leaf)
+end;
 
-	mach = machine(model, X, y)
-    mach = fit!(mach; rows=train)
-	tree_params = fitted_params(mach)
+# ╔═╡ 6b243243-8f26-4f2d-8727-564f0701b302
+f
 
-	features = [(i,tree_params.features[i]) for i in 1:length(tree_params.features)]
-	g = GraphMakie.graphplot(tree_params.tree; nlabels=tree_params.tree.info.featurenames)
-end
+# ╔═╡ c4f25a29-009e-47e4-adc0-18c94e247df4
+sidebar = Div([
+	@htl("""
+	<header>
+	<span class="sidebar-toggle open-sidebar">🕹</span>
+	<span class="sidebar-toggle closed-sidebar">🕹</span>
+	Interactive Sliders
+	</header>
+	"""),
+	md"""
+	Here are all interactive bits of the notebook at one place. Feel free to change them!
+	"""
+], class="plutoui-sidebar aside")
 
-# ╔═╡ 1ef56c52-cf8b-4f56-abe5-57206b129b15
-begin
-	new_point = [x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11]
-	new_data = DataFrame(new_point, all_features)
+# ╔═╡ 110068f5-0433-40bc-ab9e-cafe8fa3cc68
+sidebar2 = Div([
+	md""" **Choose a day:**""",
+	k_slider,
+	md"""**Choose how long the pandemic is:**""",
+	len_slider, 
+	md"""**Change the treatment:**""",
+	md""" $(a1) $(a2) $(a3) $(a4) $(a5) $(a6) $(a7) $(a8)""",
+	md"""**Make the pandemic exponential:** $(make_exponential)""",
+	md"""**Show the stairs** $(show_stairs)"""
+], class="plutoui-sidebar aside third")
 
-	# Tree prediction 
-	pred = string.(predict_mode(mach, new_data)[1])
-	emoji_pred = Dict("good" => "😊", "bad" => "☹️")
+# ╔═╡ 9ad51efd-a487-4153-ac3a-077ae99905bc
+html"""
+<style>
+	div.plutoui-sidebar.aside {
+		position: fixed;
+		right: 1rem;
+		top: 10rem;
+		width: min(80vw, 300px);
+		padding: 10px;
+		border: 3px solid rgba(0, 0, 0, 0.15);
+		border-radius: 10px;
+		box-shadow: 0 0 11px 0px #00000010;
+		max-height: calc(100vh - 5rem - 56px);
+		overflow: auto;
+		z-index: 40;
+		background: white;
+		transition: transform 300ms cubic-bezier(0.18, 0.89, 0.45, 1.12);
+		color: var(--pluto-output-color);
+		background-color: var(--main-bg-color);
+	}
 
-	md"""Your wine is : **$(pred)** $(emoji_pred[pred])"""
-end
+	.second {
+		top: 17.5rem !important;
+	}
+
+	.third {
+		top: 17.5rem !important;
+	}
+	
+	div.plutoui-sidebar.aside.hide {
+		transform: translateX(calc(100% - 28px));
+	}
+	
+	.plutoui-sidebar header {
+		display: block;
+		font-size: 1.5em;
+		margin-top: -0.1em;
+		margin-bottom: 0.4em;
+		padding-bottom: 0.4em;
+		margin-left: 0;
+		margin-right: 0;
+		font-weight: bold;
+		border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+	}
+	
+	.plutoui-sidebar.aside.hide .open-sidebar, .plutoui-sidebar.aside:not(.hide) .closed-sidebar, .plutoui-sidebar:not(.aside) .closed-sidebar {
+		display: none;
+	}
+
+	.sidebar-toggle {
+		cursor: pointer;
+	}
+	
+</style>
+<script>
+	let listener = event => {
+		if (event.target.classList.contains("sidebar-toggle")) {
+			document.querySelectorAll('.plutoui-sidebar').forEach(function(el) {
+				el.classList.toggle("hide");
+			});
+		}
+	}
+	document.addEventListener('click', listener);
+	invalidation.then(() => {
+		document.removeEventListener('click', listener);
+	})
+</script>
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-DecisionTree = "7806a523-6efd-50cb-b5f6-3fa6f1930dbb"
-GraphMakie = "1ecd5474-83a3-4783-bb4f-06765db800d2"
-Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
-MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
-MLJDecisionTreeInterface = "c6f25543-311c-4c74-83dc-3ea6d1015661"
+ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
+ColorTypes = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 MakieThemes = "e296ed71-da82-5faf-88ab-0034a9761098"
-NetworkLayout = "46757867-2c16-5918-afeb-47bfcb05e46a"
-OpenML = "8b6db2d4-7670-4922-a472-f9537c81ab66"
+PNGFiles = "f57f5aa1-a3ce-4bc8-8ab9-96f992907883"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-ScientificTypes = "321657f4-b219-11e9-178b-2701a2544e81"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SignalAnalysis = "df1fea92-c066-49dd-8b36-eace3378ea47"
 
 [compat]
-CairoMakie = "~0.10.6"
-DataFrames = "~1.6.1"
-DecisionTree = "~0.12.3"
-GraphMakie = "~0.5.4"
-Graphs = "~1.8.0"
-MLJ = "~0.19.2"
-MLJDecisionTreeInterface = "~0.4.0"
+CairoMakie = "~0.10.4"
+ColorSchemes = "~3.23.0"
+ColorTypes = "~0.11.4"
+Colors = "~0.12.10"
+DSP = "~0.7.8"
+GeometryBasics = "~0.4.7"
+HypertextLiteral = "~0.9.4"
 MakieThemes = "~0.1.0"
-NetworkLayout = "~0.4.5"
-OpenML = "~0.3.1"
+PNGFiles = "~0.4.0"
 PlutoUI = "~0.7.51"
-ScientificTypes = "~3.0.2"
+SignalAnalysis = "~0.5.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
-
-[[ARFFFiles]]
-deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
-git-tree-sha1 = "e8c8e0a2be6eb4f56b1672e46004463033daa409"
-uuid = "da404889-ca92-49ff-9e8b-0aa6b4d38dc8"
-version = "1.4.1"
 
 [[AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra", "Test"]
@@ -490,12 +561,6 @@ version = "0.4.1"
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 
-[[ArnoldiMethod]]
-deps = ["LinearAlgebra", "Random", "StaticArrays"]
-git-tree-sha1 = "62e51b39331de8911e4a7ff6f5aaf38a5f4cc0ae"
-uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
-version = "0.2.0"
-
 [[ArrayInterface]]
 deps = ["Adapt", "LinearAlgebra", "Requires", "SparseArrays", "SuiteSparse"]
 git-tree-sha1 = "f83ec24f76d4c8f525099b2ac475fc098138ec31"
@@ -525,11 +590,6 @@ version = "0.4.7"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-
-[[BitFlags]]
-git-tree-sha1 = "43b1a4a8f797c1cddadf60499a8a077d4af2cd2d"
-uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
-version = "0.1.7"
 
 [[Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -581,18 +641,6 @@ git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
 uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 version = "0.5.1"
 
-[[CategoricalArrays]]
-deps = ["DataAPI", "Future", "Missings", "Printf", "Requires", "Statistics", "Unicode"]
-git-tree-sha1 = "1568b28f91293458345dabba6a5ea3f183250a61"
-uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
-version = "0.10.8"
-
-[[CategoricalDistributions]]
-deps = ["CategoricalArrays", "Distributions", "Missings", "OrderedCollections", "Random", "ScientificTypes", "UnicodePlots"]
-git-tree-sha1 = "ed760a4fde49997ff9360a780abe6e20175162aa"
-uuid = "af321ab8-2d2e-40a6-b165-3d674595d28e"
-version = "0.1.11"
-
 [[ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
 git-tree-sha1 = "e30f2f4e20f7f186dc36529910beaedc60cfa644"
@@ -604,12 +652,6 @@ deps = ["InverseFunctions", "LinearAlgebra", "Test"]
 git-tree-sha1 = "2fba81a302a7be671aefe194f0525ef231104e7f"
 uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
 version = "0.1.8"
-
-[[CodecZlib]]
-deps = ["TranscodingStreams", "Zlib_jll"]
-git-tree-sha1 = "02aa26a4cf76381be7f66e020a3eddeb27b0a092"
-uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
-version = "0.7.2"
 
 [[ColorBrewer]]
 deps = ["Colors", "JSON", "Test"]
@@ -662,17 +704,6 @@ version = "4.9.0"
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 
-[[ComputationalResources]]
-git-tree-sha1 = "52cb3ec90e8a8bea0e62e275ba577ad0f74821f7"
-uuid = "ed09eef8-17a6-5b46-8889-db040fac31e3"
-version = "0.3.2"
-
-[[ConcurrentUtilities]]
-deps = ["Serialization", "Sockets"]
-git-tree-sha1 = "5372dbbf8f0bdb8c700db5367132925c0771ef7e"
-uuid = "f0e56b4a-5159-44fe-b623-3e5288b988bb"
-version = "2.2.1"
-
 [[ConstructionBase]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "c53fc348ca4d40d7b371e71fd52251839080cbc9"
@@ -684,21 +715,16 @@ git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
-[[Crayons]]
-git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
-uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "4.1.1"
+[[DSP]]
+deps = ["Compat", "FFTW", "IterTools", "LinearAlgebra", "Polynomials", "Random", "Reexport", "SpecialFunctions", "Statistics"]
+git-tree-sha1 = "f7f4319567fe769debfcf7f8c03d8da1dd4e2fb0"
+uuid = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+version = "0.7.9"
 
 [[DataAPI]]
 git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.15.0"
-
-[[DataFrames]]
-deps = ["Compat", "DataAPI", "DataStructures", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrecompileTools", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SentinelArrays", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "04c738083f29f86e62c8afc341f0967d8717bdb8"
-uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "1.6.1"
 
 [[DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -715,21 +741,11 @@ version = "1.0.0"
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
-[[DecisionTree]]
-deps = ["AbstractTrees", "DelimitedFiles", "LinearAlgebra", "Random", "ScikitLearnBase", "Statistics"]
-git-tree-sha1 = "c6475a3ccad06cb1c2ebc0740c1bb4fe5a0731b7"
-uuid = "7806a523-6efd-50cb-b5f6-3fa6f1930dbb"
-version = "0.12.3"
-
 [[DelaunayTriangulation]]
 deps = ["DataStructures", "EnumX", "ExactPredicates", "Random", "SimpleGraphs"]
 git-tree-sha1 = "bea7984f7e09aeb28a3b071c420a0186cb4fabad"
 uuid = "927a84f5-c5f4-47a5-9785-b46e178433df"
 version = "0.8.8"
-
-[[DelimitedFiles]]
-deps = ["Mmap"]
-uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 
 [[DensityInterface]]
 deps = ["InverseFunctions", "Test"]
@@ -748,12 +764,6 @@ deps = ["IrrationalConstants", "LogExpFunctions", "NaNMath", "Random", "SpecialF
 git-tree-sha1 = "23163d55f885173722d1e4cf0f6110cdbaf7e272"
 uuid = "b552c78f-8df3-52c6-915a-8e097449b14b"
 version = "1.15.1"
-
-[[Distances]]
-deps = ["LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "b6def76ffad15143924a2199f72a5cd883a2e8a9"
-uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
-version = "0.10.9"
 
 [[Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -787,12 +797,6 @@ git-tree-sha1 = "e3290f2d49e661fbd94046d7e3726ffcb2d41053"
 uuid = "5ae413db-bbd1-5e63-b57d-d24a61df00f5"
 version = "2.2.4+0"
 
-[[EarlyStopping]]
-deps = ["Dates", "Statistics"]
-git-tree-sha1 = "98fdf08b707aaf69f524a6cd0a67858cefe0cfb6"
-uuid = "792122b4-ca99-40de-a6bc-6742525f08b6"
-version = "0.3.0"
-
 [[EnumX]]
 git-tree-sha1 = "bdb1942cd4c45e3c678fd11569d5cccd80976237"
 uuid = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
@@ -808,12 +812,6 @@ deps = ["IntervalArithmetic", "Random", "StaticArraysCore", "Test"]
 git-tree-sha1 = "276e83bc8b21589b79303b9985c321024ffdf59c"
 uuid = "429591f6-91af-11e9-00e2-59fbe8cec110"
 version = "2.2.5"
-
-[[ExceptionUnwrapping]]
-deps = ["Test"]
-git-tree-sha1 = "e90caa41f5a86296e014e148ee061bd6c3edec96"
-uuid = "460bff9d-24e4-43bc-9d9f-a8973cb893f4"
-version = "0.1.9"
 
 [[Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -855,12 +853,6 @@ deps = ["Pkg", "Requires", "UUIDs"]
 git-tree-sha1 = "299dc33549f68299137e51e6d49a13b5b1da9673"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 version = "1.16.1"
-
-[[FilePathsBase]]
-deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
-git-tree-sha1 = "e27c4ebe80e8699540f2d6c805cc12203b614f12"
-uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
-version = "0.9.20"
 
 [[FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
@@ -956,12 +948,6 @@ git-tree-sha1 = "e94c92c7bf4819685eb80186d51c43e71d4afa17"
 uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
 version = "2.76.5+0"
 
-[[GraphMakie]]
-deps = ["DataStructures", "GeometryBasics", "Graphs", "LinearAlgebra", "Makie", "NetworkLayout", "PolynomialRoots", "SimpleTraits", "StaticArrays"]
-git-tree-sha1 = "005289c1020e55641af09a38e95e098b7ba0ca18"
-uuid = "1ecd5474-83a3-4783-bb4f-06765db800d2"
-version = "0.5.6"
-
 [[Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
 git-tree-sha1 = "d61890399bc535850c4bf08e4e0d3a7ad0f21cbd"
@@ -974,12 +960,6 @@ git-tree-sha1 = "344bf40dcab1073aca04aa0df4fb092f920e4011"
 uuid = "3b182d85-2403-5c21-9c21-1e1f0cc25472"
 version = "1.3.14+0"
 
-[[Graphs]]
-deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
-git-tree-sha1 = "1cf1d7dcb4bc32d7b4a5add4232db3750c27ecb4"
-uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
-version = "1.8.0"
-
 [[GridLayoutBase]]
 deps = ["GeometryBasics", "InteractiveUtils", "Observables"]
 git-tree-sha1 = "f57a64794b336d4990d90f80b147474b869b1bc4"
@@ -990,12 +970,6 @@ version = "0.9.2"
 git-tree-sha1 = "53bb909d1151e57e2484c3d1b53e19552b887fb2"
 uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
 version = "1.0.2"
-
-[[HTTP]]
-deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "ExceptionUnwrapping", "Logging", "LoggingExtras", "MbedTLS", "NetworkOptions", "OpenSSL", "Random", "SimpleBufferStream", "Sockets", "URIs", "UUIDs"]
-git-tree-sha1 = "5eab648309e2e060198b45820af1a37182de3cce"
-uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "1.10.0"
 
 [[HarfBuzz_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg"]
@@ -1073,12 +1047,6 @@ git-tree-sha1 = "5cd07aab533df5170988219191dfad0519391428"
 uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
 version = "0.1.3"
 
-[[InlineStrings]]
-deps = ["Parsers"]
-git-tree-sha1 = "9cc2baf75c6d09f9da536ddf58eb2f29dedaf461"
-uuid = "842dd82b-1e85-43dc-bf29-5d0ee9dffc48"
-version = "1.4.0"
-
 [[IntegerMathUtils]]
 git-tree-sha1 = "b8ffb903da9f7b8cf695a8bead8e01814aa24b30"
 uuid = "18e54dd8-cb9d-406c-a71d-865a43cbb235"
@@ -1118,11 +1086,6 @@ git-tree-sha1 = "68772f49f54b479fa88ace904f6127f0a3bb2e46"
 uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
 version = "0.1.12"
 
-[[InvertedIndices]]
-git-tree-sha1 = "0dc7b50b8d436461be01300fd8cd45aa0274b038"
-uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
-version = "1.3.0"
-
 [[IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
 uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
@@ -1138,12 +1101,6 @@ version = "0.1.1"
 git-tree-sha1 = "fa6287a4469f5e048d763df38279ee729fbd44e5"
 uuid = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 version = "1.4.0"
-
-[[IterationControl]]
-deps = ["EarlyStopping", "InteractiveUtils"]
-git-tree-sha1 = "d7df9a6fdd82a8cfdfe93a94fcce35515be634da"
-uuid = "b3c1a2ee-3fec-4384-bf48-272ea71de57c"
-version = "0.5.3"
 
 [[IteratorInterfaceExtensions]]
 git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
@@ -1202,12 +1159,6 @@ version = "2.10.1+0"
 git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 version = "1.3.0"
-
-[[LatinHypercubeSampling]]
-deps = ["Random", "StableRNGs", "StatsBase", "Test"]
-git-tree-sha1 = "825289d43c753c7f1bf9bed334c253e9913997f8"
-uuid = "a5e1c1ea-c99a-51d3-a14d-a9a37257b02d"
-version = "1.9.0"
 
 [[LazyArtifacts]]
 deps = ["Artifacts", "Pkg"]
@@ -1304,18 +1255,6 @@ version = "0.3.26"
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
-[[LoggingExtras]]
-deps = ["Dates", "Logging"]
-git-tree-sha1 = "0d097476b6c381ab7906460ef1ef1638fbce1d91"
-uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
-version = "1.0.2"
-
-[[LossFunctions]]
-deps = ["Markdown", "Requires", "Statistics"]
-git-tree-sha1 = "df9da07efb9b05ca7ef701acec891ee8f73c99e2"
-uuid = "30fc2ffe-d236-52d8-8643-a9d8f7c094a7"
-version = "0.11.1"
-
 [[MIMEs]]
 git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
@@ -1326,66 +1265,6 @@ deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl",
 git-tree-sha1 = "eb006abbd7041c28e0d16260e50a24f8f9104913"
 uuid = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
 version = "2023.2.0+0"
-
-[[MLFlowClient]]
-deps = ["Dates", "FilePathsBase", "HTTP", "JSON", "ShowCases", "URIs", "UUIDs"]
-git-tree-sha1 = "32cee10a6527476bef0c6484ff4c60c2cead5d3e"
-uuid = "64a0f543-368b-4a9a-827a-e71edb2a0b83"
-version = "0.4.4"
-
-[[MLJ]]
-deps = ["CategoricalArrays", "ComputationalResources", "Distributed", "Distributions", "LinearAlgebra", "MLJBase", "MLJEnsembles", "MLJFlow", "MLJIteration", "MLJModels", "MLJTuning", "OpenML", "Pkg", "ProgressMeter", "Random", "Reexport", "ScientificTypes", "Statistics", "StatsBase", "Tables"]
-git-tree-sha1 = "193f1f1ac77d91eabe1ac81ff48646b378270eef"
-uuid = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
-version = "0.19.5"
-
-[[MLJBase]]
-deps = ["CategoricalArrays", "CategoricalDistributions", "ComputationalResources", "Dates", "DelimitedFiles", "Distributed", "Distributions", "InteractiveUtils", "InvertedIndices", "LinearAlgebra", "LossFunctions", "MLJModelInterface", "Missings", "OrderedCollections", "Parameters", "PrettyTables", "ProgressMeter", "Random", "ScientificTypes", "Serialization", "StatisticalTraits", "Statistics", "StatsBase", "Tables"]
-git-tree-sha1 = "0b7307d1a7214ec3c0ba305571e713f9492ea984"
-uuid = "a7f614a8-145f-11e9-1d2a-a57a1082229d"
-version = "0.21.14"
-
-[[MLJDecisionTreeInterface]]
-deps = ["CategoricalArrays", "DecisionTree", "MLJModelInterface", "Random", "Tables"]
-git-tree-sha1 = "8059d088428cbe215ea0eb2199a58da2d806d446"
-uuid = "c6f25543-311c-4c74-83dc-3ea6d1015661"
-version = "0.4.0"
-
-[[MLJEnsembles]]
-deps = ["CategoricalArrays", "CategoricalDistributions", "ComputationalResources", "Distributed", "Distributions", "MLJBase", "MLJModelInterface", "ProgressMeter", "Random", "ScientificTypesBase", "StatsBase"]
-git-tree-sha1 = "95b306ef8108067d26dfde9ff3457d59911cc0d6"
-uuid = "50ed68f4-41fd-4504-931a-ed422449fee0"
-version = "0.3.3"
-
-[[MLJFlow]]
-deps = ["MLFlowClient", "MLJBase", "MLJModelInterface"]
-git-tree-sha1 = "bceeeb648c9aa2fc6f65f957c688b164d30f2905"
-uuid = "7b7b8358-b45c-48ea-a8ef-7ca328ad328f"
-version = "0.1.1"
-
-[[MLJIteration]]
-deps = ["IterationControl", "MLJBase", "Random", "Serialization"]
-git-tree-sha1 = "be6d5c71ab499a59e82d65e00a89ceba8732fcd5"
-uuid = "614be32b-d00c-4edb-bd02-1eb411ab5e55"
-version = "0.5.1"
-
-[[MLJModelInterface]]
-deps = ["Random", "ScientificTypesBase", "StatisticalTraits"]
-git-tree-sha1 = "03ae109be87f460fe3c96b8a0dbbf9c7bf840bd5"
-uuid = "e80e1ace-859a-464e-9ed9-23947d8ae3ea"
-version = "1.9.2"
-
-[[MLJModels]]
-deps = ["CategoricalArrays", "CategoricalDistributions", "Combinatorics", "Dates", "Distances", "Distributions", "InteractiveUtils", "LinearAlgebra", "MLJModelInterface", "Markdown", "OrderedCollections", "Parameters", "Pkg", "PrettyPrinting", "REPL", "Random", "RelocatableFolders", "ScientificTypes", "StatisticalTraits", "Statistics", "StatsBase", "Tables"]
-git-tree-sha1 = "da9f2bfefa08d1a63167cbd9bdd862a44a1b3d9d"
-uuid = "d491faf4-2d78-11e9-2867-c94bc002c0b7"
-version = "0.16.11"
-
-[[MLJTuning]]
-deps = ["ComputationalResources", "Distributed", "Distributions", "LatinHypercubeSampling", "MLJBase", "ProgressMeter", "Random", "RecipesBase"]
-git-tree-sha1 = "02688098bd77827b64ed8ad747c14f715f98cfc4"
-uuid = "03970b2e-30c4-11ea-3135-d1576263f10f"
-version = "0.7.4"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
@@ -1416,12 +1295,6 @@ git-tree-sha1 = "2dab0221fe2b0f2cb6754eaa743cc266339f527e"
 uuid = "dbb5928d-eab1-5f90-85c2-b9b0edb7c900"
 version = "0.4.2"
 
-[[MarchingCubes]]
-deps = ["PrecompileTools", "StaticArrays"]
-git-tree-sha1 = "c8e29e2bacb98c9b6f10445227a8b0402f2f173a"
-uuid = "299715c1-40a9-479a-aaf9-4a633d36f717"
-version = "0.1.8"
-
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
@@ -1437,15 +1310,15 @@ git-tree-sha1 = "8f52dbaa1351ce4cb847d95568cb29e62a307d93"
 uuid = "0a4f8689-d25c-4efe-a92b-7142dfc1aa53"
 version = "0.5.6"
 
-[[MbedTLS]]
-deps = ["Dates", "MbedTLS_jll", "MozillaCACerts_jll", "Random", "Sockets"]
-git-tree-sha1 = "03a9b9718f5682ecb107ac9f7308991db4ce395b"
-uuid = "739be429-bea8-5141-9913-cc70e7f3736d"
-version = "1.1.7"
-
 [[MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
+
+[[MetaArrays]]
+deps = ["Requires"]
+git-tree-sha1 = "6647f7d45a9153162d6561957405c12088caf537"
+uuid = "36b8f3f0-b776-11e8-061f-1f20094e1fc8"
+version = "0.2.10"
 
 [[Missings]]
 deps = ["DataAPI"]
@@ -1493,12 +1366,6 @@ git-tree-sha1 = "d92b107dbb887293622df7697a2223f9f8176fcd"
 uuid = "f09324ee-3d7c-5217-9330-fc30815ba969"
 version = "1.1.1"
 
-[[NetworkLayout]]
-deps = ["GeometryBasics", "LinearAlgebra", "Random", "Requires", "SparseArrays", "StaticArrays"]
-git-tree-sha1 = "2bfd8cd7fba3e46ce48139ae93904ee848153660"
-uuid = "46757867-2c16-5918-afeb-47bfcb05e46a"
-version = "0.4.5"
-
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 
@@ -1534,18 +1401,6 @@ version = "3.1.4+0"
 [[OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
-
-[[OpenML]]
-deps = ["ARFFFiles", "HTTP", "JSON", "Markdown", "Pkg", "Scratch"]
-git-tree-sha1 = "6efb039ae888699d5a74fb593f6f3e10c7193e33"
-uuid = "8b6db2d4-7670-4922-a472-f9537c81ab66"
-version = "0.3.1"
-
-[[OpenSSL]]
-deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
-git-tree-sha1 = "51901a49222b09e3743c65b8847687ae5fc78eb2"
-uuid = "4d8831e6-92b7-49fb-bdf8-b643e874388c"
-version = "1.4.1"
 
 [[OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1661,22 +1516,11 @@ git-tree-sha1 = "77b3d3605fc1cd0b42d95eba87dfcd2bf67d5ff6"
 uuid = "647866c9-e3ac-4575-94e7-e3d426903924"
 version = "0.1.2"
 
-[[PolynomialRoots]]
-git-tree-sha1 = "5f807b5345093487f733e520a1b7395ee9324825"
-uuid = "3a141323-8675-5d76-9d11-e1df1406c778"
-version = "1.0.0"
-
 [[Polynomials]]
 deps = ["LinearAlgebra", "MakieCore", "RecipesBase", "Setfield", "SparseArrays"]
 git-tree-sha1 = "ea78a2764f31715093de7ab495e12c0187f231d1"
 uuid = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 version = "4.0.4"
-
-[[PooledArrays]]
-deps = ["DataAPI", "Future"]
-git-tree-sha1 = "36d8b4b899628fb92c2749eb488d884a926614d3"
-uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
-version = "1.4.3"
 
 [[PositiveFactorizations]]
 deps = ["LinearAlgebra"]
@@ -1695,17 +1539,6 @@ deps = ["TOML"]
 git-tree-sha1 = "7eb1686b4f04b82f96ed7a4ea5890a4f0c7a09f1"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
 version = "1.4.0"
-
-[[PrettyPrinting]]
-git-tree-sha1 = "22a601b04a154ca38867b991d5017469dc75f2db"
-uuid = "54e16d92-306c-5ea0-a30b-337be88ac337"
-version = "0.4.1"
-
-[[PrettyTables]]
-deps = ["Crayons", "LaTeXStrings", "Markdown", "Printf", "Reexport", "StringManipulation", "Tables"]
-git-tree-sha1 = "ee094908d720185ddbdc58dbe0c1cbe35453ec7a"
-uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "2.2.7"
 
 [[Primes]]
 deps = ["IntegerMathUtils"]
@@ -1803,34 +1636,11 @@ version = "0.2.1"
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
-[[ScientificTypes]]
-deps = ["CategoricalArrays", "ColorTypes", "Dates", "Distributions", "PrettyTables", "Reexport", "ScientificTypesBase", "StatisticalTraits", "Tables"]
-git-tree-sha1 = "75ccd10ca65b939dab03b812994e571bf1e3e1da"
-uuid = "321657f4-b219-11e9-178b-2701a2544e81"
-version = "3.0.2"
-
-[[ScientificTypesBase]]
-git-tree-sha1 = "a8e18eb383b5ecf1b5e6fc237eb39255044fd92b"
-uuid = "30f210dd-8aff-4c5f-94ba-8e64358c1161"
-version = "3.0.0"
-
-[[ScikitLearnBase]]
-deps = ["LinearAlgebra", "Random", "Statistics"]
-git-tree-sha1 = "7877e55c1523a4b336b433da39c8e8c08d2f221f"
-uuid = "6e75b9c4-186b-50bd-896f-2d2496a4843e"
-version = "0.5.0"
-
 [[Scratch]]
 deps = ["Dates"]
 git-tree-sha1 = "30449ee12237627992a99d5e30ae63e4d78cd24a"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
 version = "1.2.0"
-
-[[SentinelArrays]]
-deps = ["Dates", "Random"]
-git-tree-sha1 = "04bdff0b09c65ff3e06a05e3eb7b120223da3d39"
-uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.4.0"
 
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -1856,27 +1666,29 @@ version = "0.3.0"
 deps = ["Distributed", "Mmap", "Random", "Serialization"]
 uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
-[[ShowCases]]
-git-tree-sha1 = "7f534ad62ab2bd48591bdeac81994ea8c445e4a5"
-uuid = "605ecd9f-84a6-4c9e-81e2-4798472b76a3"
-version = "0.1.0"
-
 [[Showoff]]
 deps = ["Dates", "Grisu"]
 git-tree-sha1 = "91eddf657aca81df9ae6ceb20b959ae5653ad1de"
 uuid = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
 version = "1.0.3"
 
+[[SignalAnalysis]]
+deps = ["DSP", "Distributions", "DocStringExtensions", "FFTW", "LinearAlgebra", "MetaArrays", "PaddedViews", "Random", "Requires", "SignalBase", "Statistics", "WAV"]
+git-tree-sha1 = "04392c481018ff6a213f11b241c29cf482c47acb"
+uuid = "df1fea92-c066-49dd-8b36-eace3378ea47"
+version = "0.5.1"
+
+[[SignalBase]]
+deps = ["Unitful"]
+git-tree-sha1 = "14cb05cba5cc89d15e6098e7bb41dcef2606a10a"
+uuid = "00c44e92-20f5-44bc-8f45-a1dcef76ba38"
+version = "0.1.2"
+
 [[SignedDistanceFields]]
 deps = ["Random", "Statistics", "Test"]
 git-tree-sha1 = "d263a08ec505853a5ff1c1ebde2070419e3f28e9"
 uuid = "73760f76-fbc4-59ce-8f25-708e95d2df96"
 version = "0.4.0"
-
-[[SimpleBufferStream]]
-git-tree-sha1 = "874e8867b33a00e784c8a7e4b60afe9e037b74e1"
-uuid = "777ac1f9-54b0-4bf8-805c-2214025038e7"
-version = "1.1.0"
 
 [[SimpleGraphs]]
 deps = ["AbstractLattices", "Combinatorics", "DataStructures", "IterTools", "LightXML", "LinearAlgebra", "LinearAlgebraX", "Optim", "Primes", "Random", "RingLists", "SimplePartitions", "SimplePolynomials", "SimpleRandom", "SparseArrays", "Statistics"]
@@ -1939,12 +1751,6 @@ git-tree-sha1 = "19df33ca14f24a3ad2df9e89124bd5f5cc8467a2"
 uuid = "c5dd0088-6c3f-4803-b00e-f31a60c170fa"
 version = "1.0.1"
 
-[[StableRNGs]]
-deps = ["Random", "Test"]
-git-tree-sha1 = "3be7d49667040add7ee151fefaf1f8c04c8c8276"
-uuid = "860ef19b-820b-49d6-a774-d7a799459cd3"
-version = "1.0.0"
-
 [[StackViews]]
 deps = ["OffsetArrays"]
 git-tree-sha1 = "46e589465204cd0c08b4bd97385e4fa79a0c770c"
@@ -1961,12 +1767,6 @@ version = "1.6.3"
 git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
 uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 version = "1.4.2"
-
-[[StatisticalTraits]]
-deps = ["ScientificTypesBase"]
-git-tree-sha1 = "30b9236691858e13f167ce829490a68e1a597782"
-uuid = "64bff920-2084-43da-a3e6-9bb72801c0c9"
-version = "3.2.0"
 
 [[Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -1989,12 +1789,6 @@ deps = ["ChainRulesCore", "HypergeometricFunctions", "InverseFunctions", "Irrati
 git-tree-sha1 = "f625d686d5a88bcd2b15cd81f18f98186fdc0c9a"
 uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 version = "1.3.0"
-
-[[StringManipulation]]
-deps = ["PrecompileTools"]
-git-tree-sha1 = "a04cabe79c5f01f4d723cc6704070ada0b9d46d5"
-uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
-version = "0.3.4"
 
 [[StructArrays]]
 deps = ["Adapt", "ConstructionBase", "DataAPI", "GPUArraysCore", "StaticArraysCore", "Tables"]
@@ -2086,11 +1880,17 @@ git-tree-sha1 = "53915e50200959667e78a92a418594b428dffddf"
 uuid = "1cfade01-22cf-5700-b092-accc4b62d6e1"
 version = "0.4.1"
 
-[[UnicodePlots]]
-deps = ["ColorSchemes", "ColorTypes", "Contour", "Crayons", "Dates", "LinearAlgebra", "MarchingCubes", "NaNMath", "PrecompileTools", "Printf", "Requires", "SparseArrays", "StaticArrays", "StatsBase"]
-git-tree-sha1 = "b96de03092fe4b18ac7e4786bee55578d4b75ae8"
-uuid = "b8865327-cd53-5732-bb35-84acbb429228"
-version = "3.6.0"
+[[Unitful]]
+deps = ["ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "Random"]
+git-tree-sha1 = "a72d22c7e13fe2de562feda8645aa134712a87ee"
+uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
+version = "1.17.0"
+
+[[WAV]]
+deps = ["Base64", "FileIO", "Libdl", "Logging"]
+git-tree-sha1 = "7e7e1b4686995aaf4ecaaf52f6cd824fa6bd6aa5"
+uuid = "8149f6b0-98f6-5db9-b78f-408fbbb8ef88"
+version = "1.2.0"
 
 [[WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -2226,38 +2026,44 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─8c9b58b8-ff06-4989-8485-e046fac73a55
-# ╟─87360178-a662-4272-bb0f-b97719e64c25
-# ╟─9738721f-40a8-4984-b3a8-d418967f15f8
-# ╟─996c9dd9-e8b3-4671-8111-b24d4d763501
-# ╠═8a8b5a1a-3ffa-45c3-9a9d-e58aa21e585c
-# ╟─d90e6b57-c41a-49a7-9084-2f36d7d016d8
-# ╟─55dc52f6-36fd-4c48-acc6-dc20a1304cf7
-# ╟─6540bd7f-5d29-4fcd-a8e3-d79b9771b951
-# ╟─cb4a1c7a-ed28-4c2c-980b-a3a78a48ddca
-# ╟─261d09ef-3907-4d1d-b69e-758ac6e43f37
-# ╟─f8b0c51a-0327-468c-a783-93f10093bd9a
-# ╟─a4bc06f1-33b1-4c09-9427-69facd193354
-# ╠═7f27327c-187e-4613-add7-d6bc73f0653e
-# ╟─74f08a91-dc3a-4c3b-b711-907e97e573f0
-# ╟─1c741a73-5d76-4297-a783-cbf0d4b6deaf
-# ╟─a885743c-e418-489d-b77a-c898f9ef9e36
-# ╟─7a17b28f-ed26-4ee8-9349-89bd38d6b4b8
-# ╟─2647744e-d3d8-4fa5-a4b1-6a65015c16de
-# ╟─1ef56c52-cf8b-4f56-abe5-57206b129b15
-# ╟─3f13ab6d-0c64-41a5-af70-a879ce007224
-# ╠═11b334ed-1e3c-4ca5-8a86-97bde3ad8c7e
-# ╠═2308737c-429c-4f40-8a2a-3cb9311b5197
-# ╠═66d5055d-fad7-4560-8709-2dcb059d6231
-# ╟─f8cd1689-6c87-4331-994a-66c85850f7e2
-# ╟─e8bf8b58-71cc-4149-8433-c71ec41b51c9
-# ╠═238941f9-4e8a-4eb7-a79c-405e796967e9
-# ╠═7d533fa8-7b74-4d76-a216-f85b26a0be62
-# ╠═66dd92e2-ff25-4f84-9366-e1c367d9b148
-# ╠═3b58ac62-ce34-40c2-9acb-067b541864da
-# ╟─502f5bf9-29f5-4f9a-b081-a1434a41c317
-# ╠═45d484d4-f36f-4dc3-89f3-96f668f28423
-# ╠═0d579bad-d53d-49ee-b05f-68bf83f82d25
-# ╠═3113c376-8c8a-44b2-86f9-b50d4d04f0df
+# ╟─00358bc2-1e49-45a9-9b78-293aadd40976
+# ╟─f265f5b9-d5d0-45ce-a850-f4237218cf99
+# ╟─dbdbcbbe-57fd-497f-b5ba-83b61e87de0b
+# ╟─380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
+# ╟─f97f9f46-b5c7-4cee-a69f-1eb53b560952
+# ╟─9243a029-8f8d-4a28-b098-d2a2810a8786
+# ╟─796aad78-36d4-42fd-a467-707692b094a2
+# ╟─adfc8467-93bf-472e-a9fc-bd502caa5daa
+# ╟─f9df01a1-8fb7-4337-9415-9ab56d9c696a
+# ╟─9274ed36-a28e-42f3-879f-167d5afa6fc7
+# ╟─bb869b27-0bce-4314-b28f-684ccc14f7ea
+# ╟─88e4551f-9ae1-4a5f-819b-01c43a319981
+# ╟─faf156f0-fa3f-46f6-98d3-3bbf0690a0a4
+# ╟─27bd1602-3ca0-4daf-a9ff-c76ea818ead4
+# ╟─f0d08486-0086-48da-baeb-169f3812d0ea
+# ╟─572bd8d5-65b0-462e-a143-811f4bfa875e
+# ╟─1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
+# ╟─a60029d5-ae8d-4704-bef1-076949712c37
+# ╟─bccfdd98-b425-4f8d-a58d-489134851ebd
+# ╠═6b243243-8f26-4f2d-8727-564f0701b302
+# ╟─0ccf60db-75b2-466d-935e-f39855bc36f7
+# ╟─e4a17824-0e9f-442e-82bc-62b8d46e88e5
+# ╠═032130c4-686b-4db9-9753-9b0fe764f94e
+# ╠═472b52d8-e787-4a93-83d8-c53e977a143c
+# ╠═ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
+# ╟─e63c92a5-659e-41f7-85a4-c2f3baffcef6
+# ╠═3fd4b34c-18ed-4b07-b594-01afb377ead7
+# ╠═05df72e9-f45b-49c3-8015-9212f439cf72
+# ╠═9fab3bbb-5c7f-4464-97c9-847f52754845
+# ╟─da0a4117-629e-42b5-95ae-d49f10769830
+# ╟─8680db2e-3dda-4aff-a00e-130ac1f4486c
+# ╟─c2455fae-f733-4e59-b2d0-a76913810f15
+# ╟─ca75244c-69ac-45c8-aa33-59c05dc4091b
+# ╟─d7ce43e5-7af7-4182-9992-1501e6d2e532
+# ╟─0dd8235c-c09b-49ae-b02a-4bbb285970a6
+# ╠═df178bb8-3b81-4c4b-ba94-3ad945e63007
+# ╠═c4f25a29-009e-47e4-adc0-18c94e247df4
+# ╠═110068f5-0433-40bc-ab9e-cafe8fa3cc68
+# ╠═9ad51efd-a487-4153-ac3a-077ae99905bc
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
