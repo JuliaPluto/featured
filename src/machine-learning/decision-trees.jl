@@ -2,10 +2,12 @@
 # v0.19.27
 
 #> [frontmatter]
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png/238px-Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
 #> title = "Decision Trees"
 #> tags = ["machine learning", "data", "decision tree", "classification", "OpenML", "DataFrames", "Makie"]
 #> date = "2023-09-20"
 #> description = "We are going to use a simple model called \"Decision Tree\" to do a classification task."
+#> license = "Unlicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Boshra Ariguib"
@@ -2210,7 +2212,7 @@ version = "3.5.0+0"
 # ╟─87360178-a662-4272-bb0f-b97719e64c25
 # ╟─9738721f-40a8-4984-b3a8-d418967f15f8
 # ╟─996c9dd9-e8b3-4671-8111-b24d4d763501
-# ╟─8a8b5a1a-3ffa-45c3-9a9d-e58aa21e585c
+# ╠═8a8b5a1a-3ffa-45c3-9a9d-e58aa21e585c
 # ╟─d90e6b57-c41a-49a7-9084-2f36d7d016d8
 # ╟─55dc52f6-36fd-4c48-acc6-dc20a1304cf7
 # ╟─6540bd7f-5d29-4fcd-a8e3-d79b9771b951
