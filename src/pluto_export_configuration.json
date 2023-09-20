@@ -10,6 +10,11 @@
             "tags": ["basic"]
         },
         {
+            "title": "Mathematics",
+            "description": "Math is cool!!",
+            "tags": ["math"]
+        },
+        {
             "title": "Machine learning",
             "description": "Learn about using ML in Julia with these examples.",
             "tags": ["machine learning"]
