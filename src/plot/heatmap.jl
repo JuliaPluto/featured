@@ -34,7 +34,7 @@ When given 3D data, we can visualize it by using **Heatmaps** or **3D graphs**.
 
 When using **3D graphs**, the value of the data is just plotted along the third axis. The value `z` at a point `(x,y)` becomes the height of the surface.
 
-When using **Heatmaps**, the different values are defined as a scale of colors. The value `z` at the point `(x,y)` is representated as the corresponding color drawn in the cell in the 2D space.
+When using **Heatmaps**, the different values are defined as a scale of colors. The value `z` at the point `(x,y)` is represented as the corresponding color drawn in the cell in the 2D space.
 
 ---
 
