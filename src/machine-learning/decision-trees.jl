@@ -49,7 +49,7 @@ Here, we are going to use a simple model called "Decision Tree" to do the classi
 # ╔═╡ 9738721f-40a8-4984-b3a8-d418967f15f8
 md"""### The Wine Quality Dataset
 
-First, let's start by getting some data. We will be using a popular dataset: the wine quality dataset that have the following propreties:
+First, let's start by getting some data. We will be using a popular dataset: the wine quality dataset that have the following properties:
 
 - Each entry represents a wine type and its properties, namely: fixed acidity, volatile acidity, residual sugar, density, pH .. etc 
 
