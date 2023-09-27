@@ -88,9 +88,9 @@ md"""
 
 # ╔═╡ f9df01a1-8fb7-4337-9415-9ab56d9c696a
 md"""The patients all have the same disease that requires the following treatment: 
-- On the 1st day, the patient recieves 1 pill 
-- On the 2nd day, the patient recieves 2 pills
-- On the nth day, the patient recieves n pills
+- On the 1st day, the patient receives 1 pill 
+- On the 2nd day, the patient receives 2 pills
+- On the nth day, the patient receives n pills
 
 So something that looks like this: """
 
