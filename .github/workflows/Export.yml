@@ -60,7 +60,8 @@ jobs:
                     Export_output_dir="output",
                     Export_cache_dir="pluto_state_cache",
                     # more parameters can go here
-                  )'
+                  )
+                  cp("netlify.toml", joinpath("output", "netlify.toml"))'
 
 
             - name: Deploy to dist
