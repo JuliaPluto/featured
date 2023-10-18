@@ -3,4 +3,5 @@ baked_notebookfile=false
 baked_state=false
 create_index=true
 create_pluto_featured_index=true
+slider_server_url="https://fonsi.armada.silentech.gr"
 # more parameters can go here
