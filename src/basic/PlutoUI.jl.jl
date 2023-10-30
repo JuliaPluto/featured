@@ -2,13 +2,15 @@
 # v0.19.27
 
 #> [frontmatter]
-#> author_url = "https://github.com/JuliaPluto"
 #> image = "https://user-images.githubusercontent.com/6933510/174067690-50c8128d-748b-4f50-8a76-2ce18166642b.png"
 #> order = "3"
 #> tags = ["basic", "interactivity", "classic"]
-#> author_name = "Pluto.jl"
-#> description = "Slider, buttons, dropdowns and more from PlutoUI.jl!"
 #> license = "Unlicense"
+#> description = "Slider, buttons, dropdowns and more from PlutoUI.jl!"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
 
 using Markdown
 using InteractiveUtils

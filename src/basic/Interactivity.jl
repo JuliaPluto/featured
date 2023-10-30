@@ -2,12 +2,14 @@
 # v0.19.27
 
 #> [frontmatter]
-#> author_url = "https://github.com/JuliaPluto"
 #> image = "https://user-images.githubusercontent.com/6933510/174067982-904951c4-4bba-42c7-a340-102ceb7e8e10.png"
 #> tags = ["interactivity", "basic", "classic"]
-#> author_name = "Pluto.jl"
-#> description = "Learn the basics of interactivity in Pluto."
 #> license = "Unlicense"
+#> description = "Learn the basics of interactivity in Pluto."
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
 
 using Markdown
 using InteractiveUtils

@@ -2,13 +2,15 @@
 # v0.19.27
 
 #> [frontmatter]
-#> author_url = "https://github.com/ariguiba"
 #> image = "https://github.com/JuliaPluto/featured/assets/6933510/05624a1d-9688-4d63-bbda-f89a2fce2706"
 #> title = "3D Graph vs Heatmap"
 #> tags = ["plotting", "makie", "3D"]
 #> license = "Unlicense"
 #> description = "You can visualize 3D data with a 3D graph or a heatmap. How do they work, and what is the difference?"
-#> author_name = "Boshra Ariguib"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Boshra Ariguib"
+#>     url = "https://github.com/ariguiba"
 
 using Markdown
 using InteractiveUtils
