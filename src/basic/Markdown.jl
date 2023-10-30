@@ -2,8 +2,16 @@
 # v0.19.30
 
 #> [frontmatter]
-#> title = "Formatting text cells"
-#> description = "Learn to format text cells with markdown"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/a/a0/Textformatting.svg"
+#> order = "1.5"
+#> title = "Markdown"
+#> tags = ["markdown", "basic"]
+#> license = "Unlicense"
+#> description = "Learn to write text cells with Markdown."
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
 
 using Markdown
 using InteractiveUtils
