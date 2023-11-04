@@ -260,21 +260,14 @@ save("C:/Users/luka/Pictures/my_beautiful_artworks/pluto.png", my_art)
 # ╔═╡ e864f9a9-e703-40f7-9f7c-0bdeff011723
 md"""
 The tricky thing about `save` is that you have to enter the filepath. If you want anyone using the notebook to pick where to save the file, PlutoUI's `DownloadButton` does exactly that!
-
-The input to `DownloadButton` should be the binary data, though, so we need to write small function to convert the image.
 """
 
-# ╔═╡ 18d25e0c-1117-48c2-81a5-8eb9c77625cd
-function to_bytes(image)
-	 repr(MIME("image/png"), image)
-end
-
 # ╔═╡ 0c163ed2-fa9c-4bf7-b894-9868c6a26c0e
-DownloadButton(to_bytes(my_art), "pluto2.png")
+DownloadButton(my_art, "pluto.png")
 
 # ╔═╡ e58febb4-4d97-42aa-988a-3e9403a5c649
 md"""
-That's it!
+That's it! Have fun working with images! ✨
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1382,7 +1375,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═f52c8999-47e1-4a99-b8c0-82978426b4a9
 # ╟─e864f9a9-e703-40f7-9f7c-0bdeff011723
 # ╠═0c163ed2-fa9c-4bf7-b894-9868c6a26c0e
-# ╠═18d25e0c-1117-48c2-81a5-8eb9c77625cd
 # ╟─e58febb4-4d97-42aa-988a-3e9403a5c649
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
