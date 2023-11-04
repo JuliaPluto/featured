@@ -1,6 +1,18 @@
 ### A Pluto.jl notebook ###
 # v0.19.32
 
+#> [frontmatter]
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/480px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg"
+#> title = "Images"
+#> date = "2023-11-04"
+#> tags = ["basic", "images", "markdown"]
+#> description = "Learn how to import and display images!"
+#> license = "Unlicense"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
+
 using Markdown
 using InteractiveUtils
 
@@ -16,7 +28,7 @@ md"""
 
 Pictures are great! Adding a few illustrations to your explanations is a great way to bring a notebook to life, or to explain a complicated idea.
 
-Or perhaps you want to do something cool with images in your code! Even cooler! Pluto is a great environment to handle images, because you can easily see your results in action as you work.
+Or perhaps you want to do something cool with images in your code! Pluto is a great environment to handle images, because you can easily see your results in action as you work.
 
 This notebook is a simple introduction to how you can include images in a notebook. There are a few different ways - which one works depends on how you want to use the image in your notebook. Let's get started!
 """
@@ -30,15 +42,9 @@ If you just want to include an image in your text, the easiest way is to write i
 For example, here is a nice picture:
 """
 
-# ╔═╡ ee848129-3aa4-494f-946b-c13f55518570
+# ╔═╡ 8da421ba-781d-4b00-bffd-a579f770e72b
 md"""
-![european robin](https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/European_Robin_2023-10-10.jpg/1024px-European_Robin_2023-10-10.jpg)
-"""
-
-# ╔═╡ eea3f475-0681-4e57-9017-f956ebc604c9
-md"""
-!!! info "Image credit"
-	This picture by Alexis Lours is [available on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:European_Robin_2023-10-10.jpg), shared under a [CC-BY 4.0 license](https://creativecommons.org/licenses/by/4.0/deed.en)
+![Pluto (dwarf planet)](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg)
 """
 
 # ╔═╡ a4e2a4b1-5111-44cb-b967-479c7d9c265a
@@ -81,11 +87,11 @@ One option is to use HTML instead of markdown:
 
 # ╔═╡ f0e45555-8d9c-41fb-88a8-eb23ab42b730
 html"""
-<p>Small bird, small picture:</p>
+<p>Small planet, small picture:</p>
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/European_Robin_2023-10-10.jpg/1024px-European_Robin_2023-10-10.jpg"
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg"
 	width="200"
-	alt="European Robin">
+	alt="Pluto (dwarf planet)">
 """
 
 # ╔═╡ 3654ac80-eb87-4f2e-80e4-66a6a35f6490
@@ -95,8 +101,8 @@ If you are not used to working with HTML, this can be a bit of a hassle, and it 
 
 # ╔═╡ 2dec646f-3170-434d-b192-c86c98d467d2
 Resource(
-	"https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/European_Robin_2023-10-10.jpg/1024px-European_Robin_2023-10-10.jpg",
-	:alt => "European robin",
+	"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg",
+	:alt => "Pluto (dwarf planet)",
 	:width => 200
 )
 
@@ -115,13 +121,13 @@ What if we want to do something with the image in the code? We can use the `Imag
 """
 
 # ╔═╡ 3d8a4c8f-d0d8-40f4-959c-9f14d163285c
-robin_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/European_Robin_2023-10-10.jpg/1024px-European_Robin_2023-10-10.jpg";
+image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg";
 
 # ╔═╡ d841917b-4075-44f4-bd07-b24d1062f5a9
-robin_file = download(robin_url)
+image_file = download(image_url)
 
 # ╔═╡ d973f222-ea16-498c-b1dc-1e70b8e4760f
-robin = load(robin_file)
+image = load(image_file)
 
 # ╔═╡ b30b7dd6-dca0-4903-af2e-df45547f05f3
 md"""
@@ -135,21 +141,30 @@ md"""
 	The output of `download()` is the path to a local file (in a folder for temporary files). If you want to load an image from a local file instead of a URL, you can use the path as input for `load()`.
 """
 
+# ╔═╡ be2feb76-334d-4958-b1e9-6928223c00d9
+md"""
+### When to use Images.jl
+
+As you've seen already, if you just want to *show* an image, you do not need to import the `Images` package! You can put the URL directly in the markdown. That's nice, because Images.jl is a pretty big package to import.
+
+If you want to use the image *in your code*, it's time to load `Images`!
+"""
+
 # ╔═╡ 59c4cee6-a83b-42fe-ba9b-25102245ec08
 md"""
 ### Image objects
 
-We've loaded the image as `robin`, and Pluto is showing us the picture. Nice, but now we want to *do* something with it. Let's take a quick look under the hood and see how we can use the image.
+We've loaded the image as `image`, and Pluto is showing us the picture. Nice, but now we want to *do* something with it. Let's take a quick look under the hood and see how we can use the image.
 """
 
 # ╔═╡ 4b7f55ac-0a28-413e-9a89-732f64b6edb9
-typeof(robin)
+typeof(image)
 
 # ╔═╡ 993dee72-a557-4b0e-92fb-685cb5c1a320
 md"""
 If you're still getting used to Julia types, this output tells us a few things:
 
-- `robin` is a matrix (a grid of values)
+- `image` is a matrix (a grid of values)
 - Each value of the matrix is an `RGB` type
 - The `RGB` values are somehow based on numbers.
 """
@@ -160,7 +175,7 @@ Okay, so an image is a matrix. This is essentially the grid of pixels in the ima
 """
 
 # ╔═╡ 88d054d6-f484-4ad3-9248-35de9861dee7
-size(robin)
+size(image)
 
 # ╔═╡ 2d5243b9-960a-491b-b884-7b91655e54a6
 md"""
@@ -168,7 +183,7 @@ We can take slices of it like any other matrix:
 """
 
 # ╔═╡ 7b93ef46-27b2-4b40-a196-bce49fe1e38c
-robin[50:250, 500:700]
+image[500:600, 300:400]
 
 # ╔═╡ 2279a3b5-6b0d-415a-a960-43f7746ec62a
 md"""
@@ -176,7 +191,7 @@ An element of the matrix is a pixel, i.e. a colour:
 """
 
 # ╔═╡ d24eb69d-b8ec-4576-a119-d9e0624d6aea
-pixel = robin[150, 600]
+pixel = image[550, 350]
 
 # ╔═╡ 1812fea8-94e5-4b8f-a8aa-8c1113da73bc
 md"""
@@ -1336,8 +1351,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╔═╡ Cell order:
 # ╟─1bdc7a62-7afe-11ee-1e46-b772907bfa5c
 # ╟─39c573ac-cbe6-46ce-9424-4b510842d39e
-# ╠═ee848129-3aa4-494f-946b-c13f55518570
-# ╟─eea3f475-0681-4e57-9017-f956ebc604c9
+# ╠═8da421ba-781d-4b00-bffd-a579f770e72b
 # ╟─a4e2a4b1-5111-44cb-b967-479c7d9c265a
 # ╟─cd0e3521-0600-4b32-9605-96caec71e713
 # ╟─b75b0436-637a-4f19-8a3b-7d3ad113c18f
@@ -1354,6 +1368,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═d973f222-ea16-498c-b1dc-1e70b8e4760f
 # ╟─b30b7dd6-dca0-4903-af2e-df45547f05f3
 # ╟─da53fcb4-bf38-461d-ae90-c2114a381f96
+# ╟─be2feb76-334d-4958-b1e9-6928223c00d9
 # ╟─59c4cee6-a83b-42fe-ba9b-25102245ec08
 # ╠═4b7f55ac-0a28-413e-9a89-732f64b6edb9
 # ╟─993dee72-a557-4b0e-92fb-685cb5c1a320
