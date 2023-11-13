@@ -3,9 +3,10 @@
 
 #> [frontmatter]
 #> image = "https://user-images.githubusercontent.com/6933510/174067982-904951c4-4bba-42c7-a340-102ceb7e8e10.png"
-#> tags = ["interactivity", "basic", "classic"]
+#> title = "Interactivity with HTML"
+#> tags = ["interactivity", "classic", "web"]
 #> license = "Unlicense"
-#> description = "Learn the basics of interactivity in Pluto."
+#> description = "Write your own interactive controls with HTML!"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Pluto.jl"
@@ -119,7 +120,7 @@ html"""
 	Let's make something interactive here!
 	
 	<script>
-		div = currentScript.parentElement;
+		const div = currentScript.parentElement;
 	</script>
 </div>
 """
@@ -306,13 +307,13 @@ Once you've written some neat interactive element, you may want to use it a few 
 """
 
 # ╔═╡ 2d8661f1-6f78-4161-a306-982e3ddf3646
-slider = html"""<input type="range" min=50 max=100 step=5 style="width: 100%">""";
+myslider = html"""<input type="range" min=50 max=100 step=5 style="width: 100%">""";
 
 # ╔═╡ c5a5e243-39d6-43d9-8de7-887661ba99cd
-@bind x1 slider
+@bind x1 myslider
 
 # ╔═╡ 3b6dc6d5-ce96-40f6-97f7-511ea6d49122
-@bind x2 slider
+@bind x2 myslider
 
 # ╔═╡ 3297233b-9567-4d5e-8138-93ebe20fed48
 x1, x2
@@ -333,7 +334,7 @@ md"""
 md"""
 This is is how the `PlutoUI` package works - it defines HTML literals - sometimes with their own scripts.
 
-If you've written some cool HTML inputs and you want to share them with others, you can also make a UI package! Just put those definitions in a Julia package and you're done! ✨
+If you've written some cool HTML inputs and you want to share them with others, you can also make a UI package! Just publish those definitions as a Julia package and you're done! ✨
 """
 
 # ╔═╡ 582769e6-7eb1-11ea-077d-d9b4a3226aac
