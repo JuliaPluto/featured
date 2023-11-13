@@ -3,6 +3,7 @@
 
 #> [frontmatter]
 #> image = "https://user-images.githubusercontent.com/6933510/174067982-904951c4-4bba-42c7-a340-102ceb7e8e10.png"
+#> order = "1"
 #> title = "Interactivity with HTML"
 #> tags = ["interactivity", "classic", "web"]
 #> license = "Unlicense"
