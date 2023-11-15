@@ -6,6 +6,7 @@
 #> order = "1"
 #> title = "Solving ciphers (part 1)"
 #> tags = ["optimization", "machine learning", "encryption", "ceasar cipher", "natural-language-processing"]
+#> license = "Unlicense"
 #> description = "Learn about optimisation by solving ceasar ciphers!"
 #> 
 #>     [[frontmatter.author]]

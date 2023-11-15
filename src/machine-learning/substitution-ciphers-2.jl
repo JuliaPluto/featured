@@ -6,6 +6,7 @@
 #> order = "2"
 #> title = "Solving ciphers (part 2)"
 #> tags = ["optimization", "machine learning", "encryption", "simulated annealing", "natural-language-processing"]
+#> license = "Unlicense"
 #> description = "Learn about optimisation by solving substitution ciphers!"
 #> 
 #>     [[frontmatter.author]]
