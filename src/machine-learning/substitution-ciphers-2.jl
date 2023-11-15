@@ -1,21 +1,32 @@
 ### A Pluto.jl notebook ###
 # v0.19.32
 
+#> [frontmatter]
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/ROT13.png/800px-ROT13.png?20051026101042"
+#> order = "2"
+#> title = "Solving ciphers (part 2)"
+#> tags = ["optimization", "machine learning", "encryption", "simulated annealing", "natural-language-processing"]
+#> description = "Learn about optimisation by solving substitution ciphers!"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
+
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 27456042-f00a-11ec-3ffc-0b298d4b25ea
-using Random, PlutoUI, StatsBase, Plots, PlutoTest;
+using Random, PlutoUI, StatsBase, Plots;
 
 # ╔═╡ 469032ca-003f-4e82-b03a-b4401f79e971
 md"""
-# Replacement ciphers (part 2)
+# Solving ciphers (part 2)
 
-This notebook is about _replacement ciphers_: a type of code where you replace each character in your message with another, like replacing every _A_ with an _F_, every _B_ with a _Q_, et cetera.
+This notebook is about _substitution ciphers_: a type of code where you replace each character in your message with another, like replacing every _A_ with an _F_, every _B_ with a _Q_, et cetera.
 
-In part 1 of this notebook, we introduced replacement ciphers and considered what it takes to find the key for an encoded message. We did this by looking at a simpler version of the problem, namely ceasar ciphers.
+In part 1 of this notebook, we introduced substitution ciphers and considered what it takes to find the key for an encoded message. We did this by looking at a simpler version of the problem, namely ceasar ciphers.
 
-In this notebook, we will write a program designed to solve any replacement cipher. The notebook is less linear than part 1: we will set up a basic algorithm, and then you are invited to try and make it work.
+In this notebook, we will write a program designed to solve any substitution cipher. The notebook is less linear than part 1: we will set up a basic algorithm, and then you are invited to try and make it work.
 
 Let's get into it!
 """
@@ -34,11 +45,11 @@ alphabet = collect('A':'Z')
 
 # ╔═╡ d6a05df7-2243-4d62-b0ef-182df747de74
 function randomkey()
-	# shuffle alphabet to get replacements for each character
-	replacements = shuffle(alphabet)
+	# shuffle alphabet to get substitutions for each character
+	substitutions = shuffle(alphabet)
 
 	# combine alphabet and replacements
-	(collect ∘ zip)(alphabet, replacements)
+	(collect ∘ zip)(alphabet, substitutions)
 end
 
 # ╔═╡ fb170781-e2ae-49d5-a65b-ab56b4fd42f8
@@ -49,7 +60,7 @@ end
 # ╔═╡ 803b6284-e969-4c97-8ac1-c416db4361b0
 function encrypt(message, key)
 	# make a dictionary from the key for easy retrieval
-	replacement_dict = Dict(key)
+	substitution_dict = Dict(key)
 
 	# prepare the message and make an array of characters
 	characters = (collect ∘ prepare)(message)
@@ -58,7 +69,7 @@ function encrypt(message, key)
 	newcharacters = map(characters) do character
 		if character in alphabet
 			# replace using the key
-			replacement_dict[character]
+			substitution_dict[character]
 		else
 			# for characters not in the alphabet, return them unchanged
 			character
@@ -84,7 +95,7 @@ md"""
 
 In part 1, we found that we could compare character frequencies between a possible solution and a reference text, and this was a pretty reliable way to find the right solution.
 
-Sadly, this will not be sufficient for replacement ciphers, but it's a start. We'll include it here.
+Sadly, this will not be sufficient for substitution ciphers in general, but it's a start. We'll include it here.
 
 (The code below is slightly adapted from part 1, mostly to streamline it a bit, since we won't be going over the reasoning steps.)
 """
@@ -2586,13 +2597,10 @@ reference_character_frequencies = character_percentages(reference_text)
 # ╔═╡ cc408079-7196-4dad-9430-d3afc0d8350e
 function evaluate_character_frequency(message)
 	frequencies = character_percentages(message)
-	
-	side_by_side = zip(frequencies, reference_character_frequencies)
-	difference((f1, f2)) = abs(f1 - f2)
-	differences = map(difference, side_by_side)
+
+	differences = abs.(frequencies .- reference_character_frequencies)
 
 	norm = sum(frequencies) + sum(reference_character_frequencies)
-
 	sum(differences) / norm
 end
 
@@ -2646,7 +2654,7 @@ features = [
 
 # ╔═╡ e1a12bcf-a8e4-443b-ad0f-880661dff570
 md"""
-👉 In later parts of the notebook, we will be writing new feature. When you have completed a feature, add it to the list here!
+👉 In later parts of the notebook, you will be writing new features. When you have completed a feature, add it to the list here!
 """
 
 # ╔═╡ 28b9b60e-2db6-4da8-a667-af0ccba358bf
@@ -2996,6 +3004,15 @@ md"""
 	Do you recognise short, common words from the reference text?
 """
 
+# ╔═╡ 27438e51-79fc-40b0-bda2-c9c8bbb758bb
+md"""
+!!! tip
+
+	It's often useful to compare statistics with the long reference text, like we did for character frequencies. If you write a function like that, make sure that it does not go through the reference text every time it's used. That will make the optimisation a lot slower!
+
+	Instead, go through the reference text once to gather the statistics you need (like we did with `reference_character_frequencies`).
+"""
+
 # ╔═╡ 215d4443-6bc7-4b1b-849b-6e57d45b7458
 md"""
 ### Helper code
@@ -3013,60 +3030,6 @@ function without_interpunction(message)
 		character in alphabet || isspace(character)
 	end
 end
-
-# ╔═╡ e4b0da7f-545f-4705-9c8c-e7eee34f7f20
-md"""
-### Helper tests
-
-If you want, you can use these tests to make sure your feature functions behave like they should.
-
-For each test, I include an example of how to use it on the `evaluate_character_frequency` function. For your own features, you may need to use different test cases.
-
-First, a test that your feature function returns 0 for some "perfect" text. If your feature is comparing messages to the reference text (like our character frequency function), it should return 0 for the text itself.
-"""
-
-# ╔═╡ 6b5ab556-d121-489e-b57e-ba4da7a9b4ec
-function test_feature_returns_zero(feature, perfect_message = reference_text)
-	score = feature ∘ prepare
-	@test score(perfect_message) == 0
-end
-
-# ╔═╡ ca2bd784-8652-47a0-92d6-e9f4245b28f0
-test_feature_returns_zero(evaluate_character_frequency)
-
-# ╔═╡ 0291b129-41b6-421c-a785-41195e3e33d8
-md"""
-Next, a test for the "worst-case scenario" - which should give a score of 1.
-
-In our character frequency function, this is a text full of characters that never occurred in the reference text. But the word case scenario may look different for different features!
-"""
-
-# ╔═╡ 5cf2153c-1f44-4378-b7c8-cc9bbe3cd799
-function test_feature_returns_one(feature, horrible_message = "XXXXX"; 
-	precision = 2)
-	score = feature ∘ prepare
-	@test round(score(horrible_message), digits = precision) == 1
-end
-
-# ╔═╡ fe48d5ba-61a0-4de7-8836-ecfcbe3cce8b
-test_feature_returns_one(evaluate_character_frequency, "xxxx")
-
-# ╔═╡ 9da45462-169c-4acc-922f-97565f407285
-md"""
-Finally, a test that takes two messages, where we expect one to score better than another. The default value gives a message and an encrypted message, but you can come up with your own pairs as well.
-"""
-
-# ╔═╡ bca8c6fb-73be-4afc-94ee-6e28d8fd6b7d
-function test_feature_in_right_direction(feature, 
-	better_message = "TO BE OR NOT TO BE, THAT IS THE QUESTION.",
-	worse_message = "QN KE NU FNQ QN KE, QLTQ HS QLE CBESQHNF."
-)
-	score = feature ∘ prepare
-	@test score(better_message) < score(worse_message)
-end
-
-# ╔═╡ e9fb7bc5-7169-431b-9ca2-cac13f0f61be
-test_feature_in_right_direction(evaluate_character_frequency)
 
 # ╔═╡ 8bda929e-f9cc-49fd-9784-21da17701d24
 md"""
@@ -3122,12 +3085,6 @@ LNNS GM DGMW R PRPNNK’Y PSNNA.
 MWHK MWH LWRVZ GY UGVZ RKA CNNA.
 """
 
-# ╔═╡ 5dc38649-b07e-4898-b202-7aba5382bf98
-# ╠═╡ disabled = true
-#=╠═╡
-show_solution(secret_1)
-  ╠═╡ =#
-
 # ╔═╡ 2d3fe163-83e3-4fb7-8294-98036693611d
 secret_2 = "YTOSQC YCICQ DQTKCA T LPKTY’N HCTQO
 PD FQPSACQ NOSDD OHTY OHTO PD VCTOQZWC;
@@ -3138,20 +3095,8 @@ TXX KTOOCQ CXNC NCCKN LCTE. NHC WTYYPO XPIC,
 YPQ OTEC YP NHTFC YPQ FQPBCWO PD TDDCWOZPY,
 NHC ZN NP NCXD-CYACTQCA."
 
-# ╔═╡ f5a60e57-917b-45f0-9327-84ae291e3edc
-# ╠═╡ disabled = true
-#=╠═╡
-show_solution(secret_2)
-  ╠═╡ =#
-
 # ╔═╡ 8497c6e1-7bb5-40b4-b8a8-03f8f4e8010d
 secret_3 = """MZ MXYM VFLBTXQ’V OZ XWV MFWV’TZV OZ MXHE X OFHHFUW, HXSBM’V XY ON HULLZL, OUQG’V XY ON BXFWL, LQUTWZV ON WXYFUW, YMCXTYZV ON IXTBXFWL, QUUHZV ON ETFZWVL, MZXYZV OFWZ ZWZOFZL. XWV CMXY’L MFL TZXLUW? F XO X KZC. MXYM WUY X KZC ZNZL? MXYM WUY X KZC MXWVL, UTBXWL, VFOZWLFUWL, LZWLZL, XEEZQYFUWL, JXLLFUWL? EZV CFYM YMZ LXOZ EUUV, MSTY CFYM YMZ LXOZ CZXJUWL, LSIKZQY YU YMZ LXOZ VFLZXLZL, MZXHZV IN YMZ LXOZ OZXWL, CXTOZV XWV QUUHZV IN YMZ LXOZ CFWYZT XWV LSOOZT XL X QMTFLYFXW FL? FE NUS JTFQG SL, VU CZ WUY IHZZV? FE NUS YFQGHZ SL, VU CZ WUY HXSBM? FE NUS JUFLUW SL, VU CZ WUY VFZ? XWV FE NUS CTUWB SL, LMXHH CZ WUY TZPZWBZ?"""
-
-# ╔═╡ 217e3ae5-8dee-4396-939a-f16833673a0a
-# ╠═╡ disabled = true
-#=╠═╡
-show_solution(secret_3)
-  ╠═╡ =#
 
 # ╔═╡ 3953509a-704b-417d-989d-a075de60a614
 secret_4 = """
@@ -3171,17 +3116,35 @@ KDWA D AIVE SIYKE, IFB PDMM, IFB KWXEFNWA, IFB JEIFK
 WH BH’W.
 """
 
-# ╔═╡ ba93240d-c4e0-41c6-8735-181e987e03f8
-# ╠═╡ disabled = true
-#=╠═╡
-show_solution(secret_4)
-  ╠═╡ =#
-
 # ╔═╡ 512a9ca6-48f5-4723-90a7-02b747572913
 function show_solution(message)
 	solution, scores = find_optimal_solution(message)
 	Text(solution)
 end
+
+# ╔═╡ 5dc38649-b07e-4898-b202-7aba5382bf98
+# ╠═╡ disabled = true
+#=╠═╡
+show_solution(secret_1)
+  ╠═╡ =#
+
+# ╔═╡ f5a60e57-917b-45f0-9327-84ae291e3edc
+# ╠═╡ disabled = true
+#=╠═╡
+show_solution(secret_2)
+  ╠═╡ =#
+
+# ╔═╡ 217e3ae5-8dee-4396-939a-f16833673a0a
+# ╠═╡ disabled = true
+#=╠═╡
+show_solution(secret_3)
+  ╠═╡ =#
+
+# ╔═╡ ba93240d-c4e0-41c6-8735-181e987e03f8
+# ╠═╡ disabled = true
+#=╠═╡
+show_solution(secret_4)
+  ╠═╡ =#
 
 # ╔═╡ 2eaf1aba-3601-44c1-b366-bb33d42e7c54
 secret_5 = """DUH JFAHK UEZCHRS EC UBFJCH
@@ -3203,18 +3166,28 @@ KBJ UHFAHK YHHY DUJBVXU DUH PRFKLHD BS DUH IFJL
 DB MJW, “UBRI, UBRI!”
 """
 
+# ╔═╡ f696c25c-df64-4f1a-b979-01b70a904a1e
+md"""
+That's it for this notebook!
+
+A few final remarks:
+
+- All the quotes in this notebook are from works of William Shakespeare.
+- This notebook implemented simulated annealing "from scratch" so we could go over it step by step. This isn't a good idea for solving real problems, though. If you're excited to use simulated annealing yourself, you should a package like [Optim.jl](https://julianlsolvers.github.io/Optim.jl/stable/#algo/simulated_annealing/).
+- I was inspired to write this notebook after playing [Prose & Codes](https://herogameco.itch.io/proseandcodes). If solving substitution ciphers from classic literature is something you're into, you should check out that game!
+
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 Plots = "~1.36.6"
-PlutoTest = "~0.2.2"
 PlutoUI = "~0.7.39"
 StatsBase = "~0.33.21"
 """
@@ -3754,12 +3727,6 @@ git-tree-sha1 = "6a9521b955b816aa500462951aa67f3e4467248a"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 version = "1.36.6"
 
-[[deps.PlutoTest]]
-deps = ["HypertextLiteral", "InteractiveUtils", "Markdown", "Test"]
-git-tree-sha1 = "17aa9b81106e661cffa1c4c36c17ee1c50a86eda"
-uuid = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
-version = "0.2.2"
-
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
 git-tree-sha1 = "8d1f54886b9037091edf146b517989fc4a09efec"
@@ -4227,18 +4194,10 @@ version = "1.4.1+1"
 # ╟─c4bd321b-fc60-4b12-b4b6-320876ff7ff2
 # ╟─7b01dc50-8a1c-4bf6-a09c-54af1571a9a3
 # ╟─87914ebe-1522-47b3-84dd-c2d4fd14a06b
+# ╟─27438e51-79fc-40b0-bda2-c9c8bbb758bb
 # ╟─215d4443-6bc7-4b1b-849b-6e57d45b7458
 # ╠═fae6b2e1-34b3-4a8c-bbe2-4770226d7740
 # ╠═0b9e8ca1-8edf-4af5-a245-5df2c2712376
-# ╟─e4b0da7f-545f-4705-9c8c-e7eee34f7f20
-# ╠═6b5ab556-d121-489e-b57e-ba4da7a9b4ec
-# ╠═ca2bd784-8652-47a0-92d6-e9f4245b28f0
-# ╟─0291b129-41b6-421c-a785-41195e3e33d8
-# ╠═5cf2153c-1f44-4378-b7c8-cc9bbe3cd799
-# ╠═fe48d5ba-61a0-4de7-8836-ecfcbe3cce8b
-# ╟─9da45462-169c-4acc-922f-97565f407285
-# ╠═bca8c6fb-73be-4afc-94ee-6e28d8fd6b7d
-# ╠═e9fb7bc5-7169-431b-9ca2-cac13f0f61be
 # ╟─8bda929e-f9cc-49fd-9784-21da17701d24
 # ╠═19c239fa-3a8d-4e75-8f80-98e6bc34968d
 # ╠═5dc38649-b07e-4898-b202-7aba5382bf98
@@ -4251,5 +4210,6 @@ version = "1.4.1+1"
 # ╠═512a9ca6-48f5-4723-90a7-02b747572913
 # ╠═2eaf1aba-3601-44c1-b366-bb33d42e7c54
 # ╠═27456042-f00a-11ec-3ffc-0b298d4b25ea
+# ╟─f696c25c-df64-4f1a-b979-01b70a904a1e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

@@ -1,5 +1,16 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.32
+
+#> [frontmatter]
+#> image = "https://upload.wikimedia.org/wikipedia/commons/7/75/Caesar_substition_cipher.png?20160930042235"
+#> order = "1"
+#> title = "Solving ciphers (part 1)"
+#> tags = ["optimization", "machine learning", "encryption", "ceasar cipher", "natural-language-processing"]
+#> description = "Learn about optimisation by solving ceasar ciphers!"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
 
 using Markdown
 using InteractiveUtils
@@ -20,41 +31,32 @@ using Random, PlutoUI, Plots;
 
 # ╔═╡ 0fa3c6d0-ee3d-11ec-0bb4-a944807ba0ed
 md"""
-# Replacement ciphers (part 1)
+# Solving ciphers (part 1)
 
-This notebook is about _replacement ciphers_. A replacement cipher is a kind of code where we replace each letter in a message with another. For example, replace every _A_ with an _F_, every _B_ with a _Q_, etc.
+This notebook is about _substitution ciphers_. A substitution cipher is a kind of code where we replace each letter in a message with another. For example, replace every _A_ with an _F_, every _B_ with a _Q_, etc.
 
 Here is an example. Try it out!
 """
 
-# ╔═╡ 9f8955ea-d994-48c2-9547-55d443885243
-
-
 # ╔═╡ 1bf7875f-9a22-4ddb-8493-e6415d7ff0b0
 @bind test_message TextField((40, 4), default="Let's do some encryption!")
 
-# ╔═╡ 1754093a-a7e5-4aff-b4d7-816a21937855
-
-
 # ╔═╡ fbbaac1b-53b1-4eb2-82b2-a0ec481f58e7
 md"""
-(More specifically, we will look at one-to-one replacement ciphers. This means that every letter in the original message has only one target, and every target has only one original.)
+(More specifically, we will look at one-to-one substitution ciphers. This means that every letter in the original message has only one target, and every target has only one original.)
 
 In this notebook, we will define such ciphers, and make a start with solving them. Since solving ciphers is pretty hard, we will look at a simpler case: ceasar ciphers. We will see what it takes to write a program that solves these simpler ciphers.
 
-Part 2 of this notebook is about solving replacement ciphers. The two notebooks are intended to provide a gradual introduction into the topic, but you can skip ahead if you're feeling very confident.
+Part 2 of this notebook is about solving substitution ciphers. The two notebooks are intended to provide a gradual introduction into the topic, but you can skip ahead if you're feeling very confident.
 
-The exercises in this notebook will not require any knowledge about ciphers, but some understanding of strings in Julia is recommended.
+The exercises in this notebook will not require any knowledge about ciphers, but some understanding of handling strings in Julia is recommended.
 """
-
-# ╔═╡ edfa02ac-22ba-4252-8608-0e2ef8adc4f7
-
 
 # ╔═╡ 6917f83f-a6aa-4cbc-89da-ba0f448acaa0
 md"""
 ## Defining ciphers
 
-To solve ciphers, we first need some basic code to encrypt a piece of text, and to decrypt it once we know the key.
+To solve ciphers, we first need some basic functions to encrypt a piece of text, and to decrypt it once we know the key.
 
 ### The alphabet
 
@@ -82,11 +84,11 @@ Here is a function that will make a random key.
 
 # ╔═╡ cb1e5f06-39a5-4b60-9e69-53772de4e8ce
 function randomkey()
-	# shuffle alphabet to get replacements for each character
-	replacements = shuffle(alphabet)
+	# shuffle alphabet to get substitutions for each character
+	substitutions = shuffle(alphabet)
 
-	# combine alphabet and replacements
-	(collect ∘ zip)(alphabet, replacements)
+	# combine alphabet and substitutions
+	(collect ∘ zip)(alphabet, substitutions)
 end
 
 # ╔═╡ c16adf04-a392-4f41-851b-3204e96c1c46
@@ -106,7 +108,7 @@ let
 	md"""
 	This gives our a list of replacements. For example, every _$firstchar_ should be replaced with a _$secondchar_.
 	
-	If you know the key, encrypting and decrypting messages is pretty straightforward. Trying to decrypt a message without the key is a puzzle.
+	If you know the key, encrypting and decrypting messages is pretty straightforward. Trying to decrypt a message _without_ the key is a puzzle.
 	"""
 end
 
@@ -114,7 +116,7 @@ end
 md"""
 ### Encryption
 
-Let's try using that key. But before we can start replacing, there is one thing we need to do. You may have noticed that our alphabet only uses uppercase characters. If we want to use the key on a message, we need to use _uppercase_ characters only.
+Let's try using that key. But before we can make substitutions, there is one thing we need to do. You may have noticed that our alphabet only uses uppercase characters. If we want to use the key on a message, we need to use _uppercase_ characters only.
 """
 
 # ╔═╡ 806509f4-9bab-4bf0-a8c5-40900f337f11
@@ -135,15 +137,15 @@ prepare(hamlet)
 
 # ╔═╡ 47851e6c-ed25-4ad4-bd5c-c1f622a8ac51
 md"""
-For real secret communication, you might consider doing more in this preparation, such as obscuring the interpunction a bit, or stripping diacritics (`é`, `ö` and so on). But we'll leave it at this for now.
+You could do more in this preparation, such as obscuring the interpunction a bit, or stripping diacritics (`é`, `ö` and so on). But we'll leave it at this for now.
 
-Now, let's encrypt that message. Here is a function that will apply a replacement cipher for a message and a key.
+Now, let's encrypt that message. Here is a function that will apply a substitution cipher for a message and a key.
 """
 
 # ╔═╡ a868d8db-fdab-4941-b733-ef5435ba5659
 function encrypt(message, key)
 	# make a dictionary from the key for easy retrieval
-	replacement_dict = Dict(key)
+	substitution_dict = Dict(key)
 
 	# prepare the message and make an array of characters
 	characters = (collect ∘ prepare)(message)
@@ -152,7 +154,7 @@ function encrypt(message, key)
 	newcharacters = map(characters) do character
 		if character in alphabet
 			# replace using the key
-			replacement_dict[character]
+			substitution_dict[character]
 		else
 			# for characters not in the alphabet, return them unchanged
 			character
@@ -185,7 +187,7 @@ let
 	
 	Now that we have encrypted our message, we can safely send it to all our friends. If they know the key, they can *decrypt* the message.
 	
-	For one-to-one replacement ciphers, decryption is just like encryption. We just need to apply our encryption function, but inverse the key. The original key said to replace _$firstchar_ with _$secondchar_, so now we want to replace _$secondchar_ with _$firstchar_.
+	For one-to-one substitution ciphers, decryption is just like encryption. We just need to apply our encryption function, but inverse the key. The original key said to replace _$firstchar_ with _$secondchar_, so now we want to replace _$secondchar_ with _$firstchar_.
 	"""
 end
 
@@ -217,7 +219,7 @@ md"""
 
 It's straightforward enough to decrypt a message when you know the key, but the real fun is in decrypting a message where you _don't_ know the key. And by fun, I mean that it's difficult.
 
-We'll start with a simpler version of the puzzle, using the _ceasar cipher_. Ceasar ciphers (also known as shift ciphers) are a kind of replacement cipher where the replacement for each character always has the same distance in the alphabet. For example, if _A_ is replaced by _D_, then _B_ is replaced by _E_, _C_ by _F_, and so forth.
+We'll start with a simpler version of the puzzle, using the _ceasar cipher_. Ceasar ciphers (also known as shift ciphers) are a kind of substitution cipher where the replacement for each character always has the same distance in the alphabet. For example, if _A_ is replaced by _D_, then _B_ is replaced by _E_, _C_ by _F_, and so forth.
 
 Ceasar ciphers are easier to crack because they only have 26 possible keys (in a 26-character alphabet). 
 """
@@ -319,7 +321,7 @@ secret_key = missing # fill in your solution here
 
 # ╔═╡ a8871358-7e16-41e1-a8a9-99bf46a3aab7
 md"""
-This list of solutions only had 26 options. But with a "normal" replacement cipher, there are way too many options to go over them by hand like this.
+This list of solutions only had 26 options But with a "normal" replacement cipher, there are way too many options to go over them by hand like this.
 
 Instead of letting the computer generate solutions and picking the right one by hand, we should let the computer pick out the best solution as well.
 """
@@ -337,8 +339,6 @@ There are lots of properties that distinguish real English text from random gibb
 Let's start by thinking about how you are able to recognise a solution as real text. A big part of that is that you will recognise the words.
 
 Sadly, recognising words is a good strategy for _verifying_ a solution, but not for _finding_ one. If we are even a little bit off from the real solution, we won't end up with real English words. With this method, it is very difficult to tell if we are getting close at all. Often, the only way to tell which solution is the right one is to consider every single one.
-
-(Another problem with recognising words is that you need to know a _lot_ of words before it works reliably.)
 
 Instead, we will start by using a very different kind of knowledge: the frequency of different characters. Some characters, like 'E', are very frequent in English text, while others, like 'X', are not frequent at all. So the most frequent character in your encrypted message is more likely to have been an 'E' than 'X'.
 
@@ -595,9 +595,7 @@ function compare_frequencies(message_1, message_2)
 	percentages_2 = character_percentages(message_2)
 
 	# calculate the difference for each character
-	differences = map(zip(percentages_1, percentages_2)) do (p1, p2)
-		abs(p1 - p2)
-	end
+	differences = abs.(percentages_1 .- percentages_2)
 
 	# take the sum
 	sum(differences)
@@ -671,7 +669,7 @@ md"""
 
 That's it for this notebook!
 
-To wrap everything up: we introduced _replacement ciphers_. Decrypting a message is straightforward if you don't know the _key_, but difficult if you don't. We solved an easier version of the problem by focusing on a more resctricted kind of replacement ciphers, namely _ceasar ciphers_.
+To wrap everything up: we introduced _substitution ciphers_. Decrypting a message is straightforward if you don't know the _key_, but difficult if you don't. We solved an easier version of the problem by focusing on a more resctricted kind of substitution ciphers, namely _ceasar ciphers_.
 
 Ceasar ciphers are easier to solve because they don't have many keys, which is why you can check every single solution.
 
@@ -684,7 +682,7 @@ The _part 2_ to this notebook will get into the more complex case of solving any
 hint(text) = Markdown.MD(Markdown.Admonition("hint", "Hint", [text]));
 
 # ╔═╡ bef18c5f-7a9c-475e-bd2c-9d3338257ac1
-hint(md"Each way to shift the alphabet is characterised by a shift key. You need to generate the decrypted message for every single one.")
+hint(md"Each way to shift the alphabet is characterised by a shift key. For each of those keys, you need to show what the decrypted message would look like.")
 
 # ╔═╡ 1beb64fe-5554-4a6e-8c59-998c4a34369c
 almost(text) = Markdown.MD(Markdown.Admonition("warning", "Almost there!", [text]));
@@ -1783,19 +1781,16 @@ version = "3.5.0+0"
 
 [[deps.xkbcommon_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Wayland_jll", "Wayland_protocols_jll", "Xorg_libxcb_jll", "Xorg_xkeyboard_config_jll"]
-git-tree-sha1 = "9ebfc140cc56e8c2156a15ceac2f0302e327ac0a"
+git-tree-sha1 = "9c304562909ab2bab0262639bd4f444d7bc2be37"
 uuid = "d8fb68d0-12a3-5cfd-a85a-d49703b185fd"
-version = "1.4.1+0"
+version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
 # ╟─0fa3c6d0-ee3d-11ec-0bb4-a944807ba0ed
-# ╟─9f8955ea-d994-48c2-9547-55d443885243
 # ╟─1bf7875f-9a22-4ddb-8493-e6415d7ff0b0
 # ╟─17c4d571-768e-451c-8596-34d791b83846
-# ╟─1754093a-a7e5-4aff-b4d7-816a21937855
-# ╠═fbbaac1b-53b1-4eb2-82b2-a0ec481f58e7
-# ╠═edfa02ac-22ba-4252-8608-0e2ef8adc4f7
+# ╟─fbbaac1b-53b1-4eb2-82b2-a0ec481f58e7
 # ╟─6917f83f-a6aa-4cbc-89da-ba0f448acaa0
 # ╠═ee221dd4-d072-4679-992f-0d3657e90cd4
 # ╟─ed619597-5d98-49a0-b015-7d832366ef9c
