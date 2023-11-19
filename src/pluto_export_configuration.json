@@ -25,6 +25,11 @@
             "tags": ["machine learning"]
         },
         {
+            "title": "Language",
+            "description": "Learn about working with natural language in Julia.",
+            "tags": ["language"]
+        },
+        {
             "title": "Pluto and the Web",
             "description": "Pluto is a fantastic tool for connecting Julia to the web! Learn more about using HTML, CSS and JavaScript in Pluto to take your visualization skills to the next level.",
             "tags": ["web"]
