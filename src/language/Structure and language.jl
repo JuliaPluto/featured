@@ -2,14 +2,23 @@
 # v0.19.32
 
 #> [frontmatter]
-#> chapter = 1
-#> section = 6.5
-#> order = 6.5
-#> homework_number = 3
+#> image = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 #> title = "Structure and language"
-#> layout = "layout.jlhtml"
-#> tags = ["homework", "module1", "track_julia", "track_math", "track_climate", "linguistics", "programming", "interactive", "type", "structure", "data", "artificial intelligence"]
+#> tags = ["language"]
 #> description = "Automatically detect the language of a piece of text, and generate realistic-looking random text!"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Alan Edelman"
+#>     url = "https://github.com/alanedelman"
+#>     [[frontmatter.author]]
+#>     name = "David P. Sanders"
+#>     url = "https://github.com/dpsanders"
+#>     [[frontmatter.author]]
+#>     name = "Fons van der Plas"
+#>     url = "https://github.com/fonsp"
+#>     [[frontmatter.author]]
+#>     name = "Luka van der Plas"
+#>     url = "https://github.com/lukavdplas"
 
 using Markdown
 using InteractiveUtils
@@ -32,20 +41,22 @@ begin
 	using LinearAlgebra
 end
 
-# ╔═╡ bbde6300-7bfb-4b0b-a60d-32c6499ff903
+# ╔═╡ f0ebf845-3a6b-42f1-963d-7c6c5cf396c8
 md"""
-_homework 3, version 7_
+!!! info "Attribution"
+
+	This notebook is adapted from [Homework 3 of the course "Computational Thinking"](https://github.com/mitmath/computational-thinking/blob/8e8e7281cef00aa888175fd0f23a841f17cc1d99/src/homework/hw3.jl) by Alan Edelman, David P. Sanders, and Fons van der Plas.
+
+	The code is shared under an [MIT licence](https://opensource.org/license/mit/). The text of the course is shared under a [Creative Commons Attribution-ShareAlike 4.0 licence ](https://creativecommons.org/licenses/by-sa/4.0), and has been adapted for this notebook.
 """
 
 # ╔═╡ 85cfbd10-f384-11ea-31dc-b5693630a4c5
 md"""
 
-# **Homework 3**: _Structure and Language_
-`18.S191`, Fall 2023
+# Structure and Language
 
-This notebook contains _built-in, live answer checks_! In some exercises you will see a coloured box, which runs a test case on your code, and provides feedback based on the result. Simply edit the code, run it, and the check runs again.
+👉 This notebook contains _built-in, live answer checks_! In some exercises you will see a coloured box, which runs a test case on your code, and provides feedback based on the result. Simply edit the code, run it, and the check runs again.
 
-Feel free to ask questions!
 """
 
 # ╔═╡ 938185ec-f384-11ea-21dc-b56b7469f798
@@ -61,20 +72,32 @@ md"""
 
 # ╔═╡ c9a8b35d-2183-4da1-ae35-d2552020e8a8
 md"""
-So far in the class the **data** that we have been dealing with has mainly been in the form of images. But, of course, we know that data comes in many other forms too, as we briefly discussed in the first lecture.
+In this notebook, we will look at a particular type of data: **written text** in **natural language**. (The word "natural" here is to distinguish human (natural) languages from computer languages.)
 
-In this homework we will look at another very important data source: **written text** in **natural language**. (The word "natural" here is to distinguish human (natural) languages from computer languages.) 
+In computational fields, dealing with data often means finding structure. Human speech or text is a big, complicated mess that we understand intuitively, but which is very difficult to explain to a computer.
 
-We will both analyse actual text and try to generate random text that looks like natural language. Both the analysis and synthesis of natural language are key components of artificial intelligence and are the subject of [much current research](https://en.wikipedia.org/wiki/GPT-3).
+One approach is to create a **grammar**: a formal system of rules that describes things like what order words can appear in, and how that translates to meaning. Those rules have to be written by humans, which turns out to be very difficult.
+
+The other approach is to rely on **statistics**: we use a lot of real text as our starting point, and try to identify quantitative patterns in the text. Or preferably, we let our computer identify patterns for us 😉
+
+Statistical approaches have made huge advances over the past few decades, and are a key component of state-of-the-art developments in artificial intelligence.
+
+In this notebook, we'll use statistical patterns to analyse text, as well as generate some text of our own. To do this, we'll need to find some sort of structure in all those words...
 """
 
-# ╔═╡ 6f9df800-f92d-11ea-2d49-c1aaabd2d012
+# ╔═╡ e8976562-d92b-4a58-adb8-3250486887b7
 md"""
-## **Exercise 1:** _Language detection_
+!!! info "A bit of theory: what is a language model?"
 
-In this exercise we will create a very simple _Artificial Intelligence_. Natural language can be quite messy, but hidden in this mess is _structure_, which we will  look for today.
+	What does it mean to make a model of a language?
 
-Let's start with some obvious structure in English text: the set of characters that we write the language in. If we generate random text by sampling (choosing) random characters (`Char` in Julia), it does not look like English:
+	Formally, we usually define a [language model](https://en.wikipedia.org/wiki/Language_model) as something that gives you a _probability_ for a piece of text. That is to say, if we've built a model of the English language, we can give it a piece of text like `"I'm drinking tea"`, and it will tell us how likely it is that a random piece of English text is that exact sequence of characters.
+	
+	That may seem a bit limited: shouldn't a model be about other things, too? Shouldn't it describe grammar, or tell you what words mean?
+	
+	Well, a really advanced probabilistic model should do all of that. It should tell you that `"drinking tea I'm"` is less likely, because that is not a valid word order in English. And it should also know that `"I'm drinking pizza"` is less likely, because pizza isn't something you can drink.
+	
+	And importantly, such a model turns out to be quite useful. Technologies like language detection and spelling checkers essentially need to say: does this bit of text look like normal English text? When we want to generate text, we can use the model to ask: what is the most likely text here?
 """
 
 # ╔═╡ 3206c771-495a-43a9-b707-eaeb828a8545
@@ -130,7 +153,7 @@ filter(isodd, [6, 7, 8, 9, -5])
 
 # ╔═╡ f2a4edfa-f996-11ea-1a24-1ba78fd92233
 md"""
-`filter` takes two arguments: a **function** and a **collection**. The function is applied to each element of the collection, and it must return either `true` or `false` for each element. [Such a function is often called a **predicate**.] If the result is `true`, then that element is included in the final collection.
+`filter` takes two arguments: a **function** and a **collection**. The function is applied to each element of the collection, and it must return either `true` or `false` for each element. If the result is `true`, then that element is included in the final collection.
 
 Did you notice something cool? Functions are also just _objects_ in Julia, and you can use them as arguments to other functions! _(Fons thinks this is super cool.)_
 
@@ -140,6 +163,9 @@ We have written a function `isinalphabet`, which takes a character and returns a
 """
 
 # ╔═╡ 5c74a052-f92e-11ea-2c5b-0f1a3a14e313
+"""
+Checks if a character is in our pre-defined alphabet.
+"""
 function isinalphabet(character)
 	character ∈ alphabet
 end
@@ -162,7 +188,7 @@ $(html"<br>")
 
 We are not interested in the capitalization of letters (i.e. `'A'` vs `'a'`), so we want to *map* these to lower case _before_ we apply our filter. If we don't, all upper case letters would get deleted.
 
-Julia has a `map` function to do exactly this. Like `filter`, its first argument is the function we want to map over the vector in the second argument.
+Julia has a `map` function to do exactly this. Like `filter`, its first argument is the function we want to apply to each element of the second argument.
 
 """
 
@@ -234,8 +260,13 @@ clean("Crème brûlée est mon plat préféré.")
 first_sample = clean(first(samples))
 
 # ╔═╡ 571d28d6-f960-11ea-1b2e-d5977ecbbb11
+"""
+Returns the (relative) frequencies of all letters in a text
+"""
 function letter_frequencies(txt)
-	ismissing(txt) && return missing
+	if ismissing(txt)
+		return missing
+	end
 	f = count.(string.(alphabet), txt)
 	f ./ sum(f)
 end
@@ -300,13 +331,24 @@ end
 
 # ╔═╡ fbb7c04e-f92d-11ea-0b81-0be20da242c8
 function transition_counts(cleaned_sample)
-	[count(string(a, b), cleaned_sample)
-		for a in alphabet,
-			b in alphabet]
+	if ismissing(cleaned_sample)
+		return missing
+	end
+	
+	[
+		count(string(a, b), cleaned_sample)
+		for a in alphabet, b in alphabet
+	]
 end
 
 # ╔═╡ 80118bf8-f931-11ea-34f3-b7828113ffd8
-normalize_array(x) = x ./ sum(x)
+function normalize_array(x)
+	if ismissing(x)
+		return missing
+	end
+
+	x ./ sum(x)
+end
 
 # ╔═╡ 7f4f6ce4-f931-11ea-15a4-b3bec6a7e8b6
 transition_frequencies = normalize_array ∘ transition_counts;
@@ -329,14 +371,6 @@ Answer the following questions with respect to the **cleaned English sample text
 
 # ╔═╡ 6896fef8-f9af-11ea-0065-816a70ba9670
 sample_freq_matrix = transition_frequencies(first_sample);
-
-# ╔═╡ 39152104-fc49-11ea-04dd-bb34e3600f2f
-if first_sample === missing
-	md"""
-	!!! danger "Don't worry!"
-	    👆 These errors will disappear automatically once you have completed the earlier exercises!
-	"""
-end
 
 # ╔═╡ e91c6fd8-f930-11ea-01ac-476bbde79079
 md"""👉 What is the frequency of the combination `"th"`?"""
@@ -388,12 +422,6 @@ row_sums = missing
 
 # ╔═╡ 4a0314a6-7dc0-4ee9-842b-3f9bd4d61fb1
 col_sums = missing
-
-# ╔═╡ cc62929e-f9af-11ea-06b9-439ac08dcb52
-row_col_answer = md"""
-
-Blablabla
-"""
 
 # ╔═╡ 2f8dedfc-fb98-11ea-23d7-2159bdb6a299
 md"""
@@ -497,7 +525,7 @@ end
 md"""
 ## **Exercise 2** - _Language generation_
 
-Our model from Exercise 1 has the property that it can easily be 'reversed' to _generate_ text. While this is useful to demonstrate its structure, the produced text is mostly meaningless: it fails to model words, let alone sentence structure.
+Our model from Exercise 1 has the property that it can easily be 'reversed' to _generate_ text. While this is useful to demonstrate its structure, the produced text is mostly meaningless: it fails to generate real words, let alone sentences.
 
 To take our model one step further, we are going to _generalize_ what we have done so far. Instead of looking at _letter combinations_, we will model _word combinations_.  And instead of analyzing the frequencies of bigrams (combinations of two letters), we are going to analyze _$n$-grams_.
 
@@ -510,7 +538,8 @@ We will train our model on the novel [_Emma_ (1815), by Jane Austen](https://en.
 # ╔═╡ b7601048-fb57-11ea-0754-97dc4e0623a1
 emma = let
 	raw_text = read(download("https://ia800303.us.archive.org/24/items/EmmaJaneAusten_753/emma_pdf_djvu.txt"), String)
-	
+
+	# remove preamble / postamble
 	first_words = "Emma Woodhouse"
 	last_words = "THE END"
 	start_index = findfirst(first_words, raw_text)[1]
@@ -520,6 +549,11 @@ emma = let
 end;
 
 # ╔═╡ cc42de82-fb5a-11ea-3614-25ef961729ab
+"""
+Split a text into a list of words.
+
+Returns a vector of the words (strings) in the text, in order. Punctuation marks like `"."` and `","` are listed as separate words.
+"""
 function splitwords(text)
 	# clean up whitespace
 	cleantext = replace(text, r"\s+" => " ")
@@ -551,7 +585,7 @@ gives
 [[1,2], [2,3], [3,42]]
 ```
 
-(We used integers as "words" in this example, but our function works with any type of word.)
+(We used integers as "words" in this example, but our function works with any type of value.)
 """
 
 # ╔═╡ 91e87974-fb78-11ea-3ce4-5f64e506b9d2
@@ -621,9 +655,17 @@ _Emma_ consists of $(
 md"""
 $(html"<br>")
 
-Although the frequency array would be very large, *most entries are zero*. For example, _"Emma"_ is a common word, but the sequence of words _"Emma Emma Emma"_ never occurs in the novel. We  about the  _sparsity_ of the non-zero entries in a matrix. When a matrix is sparse in this way, we can **store the same information in a more efficient structure**. 
+Although the frequency array would be very large, it is also **sparse**, meaning *most entries are zero*. For example, _"Emma"_ is a common word, but the sequence of words _"Emma Emma Emma"_ never occurs in the novel.
 
-Julia's [`SparseArrays.jl` package](https://docs.julialang.org/en/v1/stdlib/SparseArrays/index.html) might sound like a logical choice, but the arrays from that package support only 1D and 2D types, and we also want to directly index using strings, not just integers. So instead we will use a **dictionary**, or `Dict` in Julia.
+When a matrix is sparse in this way, we can **store the same information in a more efficient structure**. We don't need to store every combination of words that never occurred - just the ones that do!
+
+To do this, we will use a **dictionary**, or `Dict` in Julia.
+
+!!! info "SparseArrays?"
+
+	Julia's [`SparseArrays.jl` package](https://docs.julialang.org/en/v1/stdlib/SparseArrays/index.html) might sound like a logical choice, but the arrays from that package support only 1D and 2D types.
+
+	Dictionaries are also designed to make things easy when you want to look up values by, say, a word or a sequence of words, rather than a numeric index. This will be convenient for us!
 
 Take a close look at the next example. Note that you can click on the output to expand the data viewer.
 """
@@ -683,13 +725,16 @@ Great! Let's get back to our n-grams. For the purpose of generating text, we are
 
 ```julia
 let
-	trigrams = ngrams(split("to be or not to be that is the question", " "), 3)
+	words = splitwords("to be or not to be that is the question")
+	trigrams = ngrams(words, 3)
 	cache = completions_cache(trigrams)
 	cache == Dict(
 		["to", "be"] => ["or", "that"],
 		["be", "or"] => ["not"],
 		["or", "not"] => ["to"],
-		...
+		["be", "that"] => ["is"],
+		["that", "is"] => ["the"],
+		["is", "the"] => ["question"]
 	)
 end
 ```
@@ -716,10 +761,22 @@ let
 	completion_cache(trigrams)
 end
 
+# ╔═╡ 13be7476-d87c-46c6-ba04-f8da13ccb483
+md"""
+!!! hint
+
+	Start by making a list of ngrams, and then go over them one by one, updating your completions cache as you go.
+	
+	What should happen if the first words are already in the cache? What should happen if they aren't?
+"""
+
 # ╔═╡ 472687be-995a-4cf9-b9f6-6b56ae159539
 md"""
 What is this cache telling us? In our sample text, the words "to be" were followed by "or" and by "that". So if we are generating text, and the last two words we wrote are "to be", we can look at the cache, and see that the next word can be either "or" or "that".
 """
+
+# ╔═╡ abe2b862-fb69-11ea-08d9-ebd4ba3437d5
+completion_cache(ngrams(forest_words, 3))
 
 # ╔═╡ 3d105742-fb8d-11ea-09b0-cd2e77efd15c
 md"""
@@ -735,35 +792,30 @@ We have everything we need to generate our own novel! The final step is to sampl
 Given an array of ngrams (i.e. an array of arrays of words), generate a sequence of `num_words` words by sampling random ngrams.
 """
 function generate_from_ngrams(grams, num_words)
+	if ismissing(grams)
+		return missing
+	end
+	
 	n = length(first(grams))
 	cache = completion_cache(grams)
 	
 	# we need to start the sequence with at least n-1 words.
 	# a simple way to do so is to pick a random ngram!
-	sequence = [rand(grams)...]
+	sequence = rand(grams)
 	
 	# we iteratively add one more word at a time
 	for i ∈ n+1:num_words
 		# the previous n-1 words
 		tail = sequence[end-(n-2):end]
 		
-		# possible next words
-		completions = cache[tail]
+		# possible next words ; as a fallback, pick a random word
+		completions = get(cache, tail, rand(grams))
 		
 		choice = rand(completions)
 		push!(sequence, choice)
 	end
 	sequence
 end
-
-# ╔═╡ f83991c0-fb7c-11ea-0e6f-1f80709d00c1
-"Compute the ngrams of an array of words, but add the first n-1 at the end, to ensure that every ngram ends in the the beginning of another ngram."
-function ngrams_circular(words, n)
-	ngrams([words..., words[1:n-1]...], n)
-end
-
-# ╔═╡ abe2b862-fb69-11ea-08d9-ebd4ba3437d5
-completion_cache(ngrams_circular(forest_words, 3))
 
 # ╔═╡ 4b27a89a-fb8d-11ea-010b-671eba69364e
 """
@@ -782,9 +834,12 @@ function generate(source_text::AbstractString, s; n=3, use_words=true)
 	if length(words) < n
 		""
 	else
-		grams = ngrams_circular(words, n)
+		grams = ngrams(words, n)
 		result = generate_from_ngrams(grams, s)
-		if use_words
+
+		if ismissing(result)
+			missing
+		elseif use_words
 			join(result, " ")
 		else
 			String(result)
@@ -845,23 +900,6 @@ String(rand(alphabet, 400)) |> Quote
 # ╔═╡ 489b03d4-f9b0-11ea-1de0-11d4fe4e7c69
 String([rand_sample_letter(letter_frequencies(ex23_sample)) for _ in 1:400]) |> Quote
 
-# ╔═╡ fd202410-f936-11ea-1ad6-b3629556b3e0
-sample_text(transition_frequencies(clean(ex23_sample)), 400) |> Quote
-
-# ╔═╡ b5dff8b8-fb6c-11ea-10fc-37d2a9adae8c
-generate(
-	generate_demo_sample, 400; 
-	n=generate_sample_n_letters, 
-	use_words=false
-) |> Quote
-
-# ╔═╡ ee8c5808-fb5f-11ea-19a1-3d58217f34dc
-generate(
-	generate_demo_sample, 100; 
-	n=generate_sample_n_words, 
-	use_words=true
-) |> Quote
-
 # ╔═╡ ddef9c94-fb96-11ea-1f17-f173a4ff4d89
 function compimg(img, labels=[c*d for c in replace(alphabet, ' ' => "_"), d in replace(alphabet, ' ' => "_")])
 	xmax, ymax = size(img)
@@ -882,6 +920,10 @@ end
 
 # ╔═╡ b7803a28-fb96-11ea-3e30-d98eb322d19a
 function show_pair_frequencies(A)
+	if ismissing(A)
+		return missing
+	end
+	
 	imshow = let
 		to_rgb(x) = RGB(0.36x, 0.82x, 0.8x)
 		to_rgb.(A ./ maximum(abs.(A)))
@@ -909,6 +951,43 @@ almost(text) = Markdown.MD(Markdown.Admonition("warning", "Almost there!", [text
 
 # ╔═╡ ffceaed6-f380-11ea-3c63-8132d270b83f
 still_missing(text=md"Replace `missing` with your answer.") = Markdown.MD(Markdown.Admonition("warning", "Here we go!", [text]))
+
+# ╔═╡ fd202410-f936-11ea-1ad6-b3629556b3e0
+if ismissing(transition_frequencies(clean(ex23_sample)))
+	still_missing(md"Complete the previous exercises to see the result!")
+else
+	sample_text(transition_frequencies(clean(ex23_sample)), 400) |> Quote
+end
+
+# ╔═╡ b5dff8b8-fb6c-11ea-10fc-37d2a9adae8c
+let
+	result = generate(
+		generate_demo_sample, 400; 
+		n=generate_sample_n_letters, 
+		use_words=false
+	)
+
+	if ismissing(result)
+		still_missing(md"Complete the previous exercises to see the result!")
+	else
+		Quote(result)
+	end
+end
+
+# ╔═╡ ee8c5808-fb5f-11ea-19a1-3d58217f34dc
+let
+	result = generate(
+		generate_demo_sample, 100; 
+		n=generate_sample_n_words, 
+		use_words=true
+	)
+
+	if ismissing(result)
+		still_missing(md"Complete the previous exercises to see the result!")
+	else
+		Quote(result)
+	end
+end
 
 # ╔═╡ ffde44ae-f380-11ea-29fb-2dfcc9cda8b4
 keep_working(text=md"The answer is not quite right.") = Markdown.MD(Markdown.Admonition("danger", "Keep working on it!", [text]))
@@ -1073,7 +1152,9 @@ if !@isdefined(double_letters)
 else
 	let
 		result = double_letters
-		if result isa Missing
+		if sample_freq_matrix isa Missing
+			still_missing(md"Make sure you complete the earlier exercises first! `sample_freq_matrix` is still missing.")
+		elseif result isa Missing
 			still_missing()
 		elseif result isa String
 			keep_working(md"Use `collect` to turn a string into an array of characters.")
@@ -1095,13 +1176,19 @@ if !@isdefined(most_likely_to_follow_w)
 else
 	let
 		result = most_likely_to_follow_w
-		if result isa Missing
+		if sample_freq_matrix isa Missing
+			still_missing(md"Make sure you complete the earlier exercises first! `sample_freq_matrix` is still missing.")
+		elseif result isa Missing
 			still_missing()
 		elseif !(result isa Char)
 			keep_working(md"Make sure that you return a `Char`. You might want to use the `alphabet` to index a character.")
-		elseif result == alphabet[map(alphabet) do c
-			sample_freq_matrix[index_of_letter('w'), index_of_letter(c)]
-				end |> argmax #= =#]
+		elseif let 
+			transition_frequency(c) = sample_freq_matrix[
+				index_of_letter('w'), index_of_letter(c)
+			]
+			most_frequent_index = argmax(transition_frequency, alphabet)
+			result == alphabet[most_frequent_index]
+		end
 			correct()
 		else
 			keep_working()
@@ -1115,13 +1202,19 @@ if !@isdefined(most_likely_to_precede_w)
 else
 	let
 		result = most_likely_to_precede_w
-		if result isa Missing
+		if sample_freq_matrix isa Missing
+			still_missing(md"Make sure you complete the earlier exercises first! `sample_freq_matrix` is still missing.")
+		elseif result isa Missing
 			still_missing()
 		elseif !(result isa Char)
 			keep_working(md"Make sure that you return a `Char`. You might want to use the `alphabet` to index a character.")
-		elseif result == alphabet[map(alphabet) do c
-			sample_freq_matrix[index_of_letter(c), index_of_letter('w')]
-				end |> argmax #= =#]
+		elseif let 
+			transition_frequency(c) = sample_freq_matrix[
+				index_of_letter(c), index_of_letter('w')
+			]
+			most_frequent_index = argmax(transition_frequency, alphabet)
+			result == alphabet[most_frequent_index]
+		end
 			correct()
 		else
 			keep_working()
@@ -1174,6 +1267,15 @@ bigbreak = html"<br><br><br><br><br>";
 # ╔═╡ c086bd1e-f384-11ea-3b26-2da9e24360ca
 bigbreak
 
+# ╔═╡ 6f9df800-f92d-11ea-2d49-c1aaabd2d012
+md"""
+$bigbreak
+
+## **Exercise 1:** _Language detection_
+
+Let's start with some obvious structure in English text: the set of characters that we write the language in. If we generate random text by sampling (choosing) random characters (`Char` in Julia), it does not look like English:
+"""
+
 # ╔═╡ eaa8c79e-f9a2-11ea-323f-8bb2bd36e11c
 md"""
 $(bigbreak)
@@ -1214,9 +1316,6 @@ $(bigbreak)
 # ╔═╡ 8c7606f0-fb93-11ea-0c9c-45364892cbb8
 md"""
 We have written a cell that selects the language with the _smallest distance_ to the mystery language. Make sure sure that `matrix_distance` is working correctly, and [scroll up](#mystery-detect) to the mystery text to see it in action!
-
-#### Further reading
-It turns out that the SVD of the transition matrix can mysteriously group the alphabet into vowels and consonants, without any extra information. See [this paper](http://languagelog.ldc.upenn.edu/myl/Moler1983.pdf) if you want to try it yourself! We found that removing the space from `alphabet` (to match the paper) gave better results.
 
 $(bigbreak)
 """
@@ -1519,13 +1618,14 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
-# ╟─bbde6300-7bfb-4b0b-a60d-32c6499ff903
+# ╟─f0ebf845-3a6b-42f1-963d-7c6c5cf396c8
 # ╟─85cfbd10-f384-11ea-31dc-b5693630a4c5
 # ╟─938185ec-f384-11ea-21dc-b56b7469f798
 # ╠═a4937996-f314-11ea-2ff9-615c888afaa8
 # ╟─c086bd1e-f384-11ea-3b26-2da9e24360ca
 # ╟─c75856a8-1f36-4659-afb2-7edb14894ea1
 # ╟─c9a8b35d-2183-4da1-ae35-d2552020e8a8
+# ╟─e8976562-d92b-4a58-adb8-3250486887b7
 # ╟─6f9df800-f92d-11ea-2d49-c1aaabd2d012
 # ╠═3206c771-495a-43a9-b707-eaeb828a8545
 # ╠═b61722cc-f98f-11ea-22ae-d755f61f78c3
@@ -1590,7 +1690,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─aa2a73f6-0c1d-4be1-a414-05a6f8ce04bd
 # ╟─0b67789c-f931-11ea-113c-35e5edafcbbf
 # ╠═6896fef8-f9af-11ea-0065-816a70ba9670
-# ╟─39152104-fc49-11ea-04dd-bb34e3600f2f
 # ╟─e91c6fd8-f930-11ea-01ac-476bbde79079
 # ╠═1b4c0c28-f9ab-11ea-03a6-69f69f7f90ed
 # ╟─1f94e0a2-f9ab-11ea-1347-7dd906ebb09d
@@ -1598,7 +1697,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─489fe282-f931-11ea-3dcb-35d4f2ac8b40
 # ╟─1dd1e2f4-f930-11ea-312c-5ff9e109c7f6
 # ╠═65c92cac-f930-11ea-20b1-6b8f45b3f262
-# ╠═671525cc-f930-11ea-0e71-df9d4aae1c05
+# ╟─671525cc-f930-11ea-0e71-df9d4aae1c05
 # ╟─7711ecc5-9132-4223-8ed4-4d0417b5d5c1
 # ╟─4582ebf4-f930-11ea-03b2-bf4da1a8f8df
 # ╠═7898b76a-f930-11ea-2b7e-8126ec2b8ffd
@@ -1609,7 +1708,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─45c20988-f930-11ea-1d12-b782d2c01c11
 # ╠═58428158-84ac-44e4-9b38-b991728cd98a
 # ╠═4a0314a6-7dc0-4ee9-842b-3f9bd4d61fb1
-# ╠═cc62929e-f9af-11ea-06b9-439ac08dcb52
 # ╟─d3d7bd9c-f9af-11ea-1570-75856615eb5d
 # ╟─2f8dedfc-fb98-11ea-23d7-2159bdb6a299
 # ╟─b7446f34-f9b1-11ea-0f39-a3c17ba740e5
@@ -1662,16 +1760,16 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─294b6f50-fb84-11ea-1382-03e9ab029a2d
 # ╠═b726f824-fb5e-11ea-328e-03a30544037f
 # ╠═18355314-fb86-11ea-0738-3544e2e3e816
+# ╟─13be7476-d87c-46c6-ba04-f8da13ccb483
 # ╟─472687be-995a-4cf9-b9f6-6b56ae159539
 # ╠═abe2b862-fb69-11ea-08d9-ebd4ba3437d5
 # ╟─3d105742-fb8d-11ea-09b0-cd2e77efd15c
 # ╟─a72fcf5a-fb62-11ea-1dcc-11451d23c085
-# ╟─f83991c0-fb7c-11ea-0e6f-1f80709d00c1
 # ╟─4b27a89a-fb8d-11ea-010b-671eba69364e
 # ╟─d7b7a14a-fb90-11ea-3e2b-2fd8f379b4d8
 # ╟─1939dbea-fb63-11ea-0bc2-2d06b2d4b26c
 # ╟─70169682-fb8c-11ea-27c0-2dad2ff3080f
-# ╠═b5dff8b8-fb6c-11ea-10fc-37d2a9adae8c
+# ╟─b5dff8b8-fb6c-11ea-10fc-37d2a9adae8c
 # ╟─402562b0-fb63-11ea-0769-375572cc47a8
 # ╟─ee8c5808-fb5f-11ea-19a1-3d58217f34dc
 # ╟─2521bac8-fb8f-11ea-04a4-0b077d77529e
