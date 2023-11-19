@@ -2,9 +2,9 @@
 # v0.19.32
 
 #> [frontmatter]
-#> image = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+#> image = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d"
 #> title = "Structure and language"
-#> tags = ["language"]
+#> tags = ["language", "natural language processing", "language modelling", "natural language generation"]
 #> description = "Automatically detect the language of a piece of text, and generate realistic-looking random text!"
 #> 
 #>     [[frontmatter.author]]
