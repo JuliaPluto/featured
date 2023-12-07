@@ -40,7 +40,7 @@ Notebooks are licensed individually. Each notebook specifies a license in the fr
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 ```
 
-This means that the notebook is authored by Pluto.jl, and it is shared under the _Unlicense_, and the full text is available at the linked url. This link leads to the [LICENSES/Unlicense](/LICENSES/Unlicense) file in this repository.
+In this case, the notebook is authored by Pluto.jl, it is shared under the _Unlicense_, and the full text is available at the linked url. This link leads to the [LICENSES/Unlicense](/LICENSES/Unlicense) file in this repository.
 
 If you're adding a notebook of your own, see [CONTRIBUTING](/CONTRIBUTING.md) for more information about licensing.
 
