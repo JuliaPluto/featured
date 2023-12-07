@@ -42,7 +42,7 @@ Notebooks are licensed individually. Each notebook specifies a license in the fr
 
 This means that the notebook is authored by Pluto.jl, and it is shared under the _Unlicense_, and the full text is available at the linked url. This link leads to the [LICENSES/Unlicense](/LICENSES/Unlicense) file in this repository.
 
-The Unlicense is the one we use most often for Pluto.jl's sample notebooks. It allows people to copy code snippets and use them freely.  If you're adding an notebook and you also want to use the `Unlicense`, great! If not, then also write a clear paragraph stating the license in the notebook itself.
+If you're adding a notebook of your own, see [CONTRIBUTING](/CONTRIBUTING.md) for more information about licensing.
 
 ### Interactivity
 The current *featured* system distributes notebook *statefiles*, which work the same way as Pluto's HTML export: people can read the notebook instantly, without having to wait for it to run. There is a button to *Edit and Run* a notebook that users can press to use the featured notebook as a template.
