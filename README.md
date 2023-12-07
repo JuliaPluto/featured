@@ -26,7 +26,23 @@ To add a notebook, simply add the file to this repository! It will be picked up 
 All notebook files in this repository will be rendered by PlutoSliderServer, but they will only show up in Pluto's main menu if they belong to a collection. 
 
 ### License
-All current Pluto sample notebooks have had the `Unlicense` license, which means that people can copy code snippets from sample notebooks and use them freely. If you also want to use the `Unlicense`, great! If not, then also write a clear paragraph stating the license in the notebook itself.
+
+Notebooks are licensed individually. Each notebook specifies a license in the frontmatter. Here is an example of what that looks like:
+
+```julia
+### A Pluto.jl notebook ###
+# v0.19.27
+
+#> [frontmatter]
+#> author_url = "https://github.com/JuliaPluto"
+#> author_name = "Pluto.jl"
+#> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
+```
+
+This means that the notebook is authored by Pluto.jl, and it is shared under the _Unlicense_, and the full text is available at the linked url. This link leads to the [LICENSES/Unlicense](/LICENSES/Unlicense) file in this repository.
+
+The Unlicense is the one we use most often for Pluto.jl's sample notebooks. It allows people to copy code snippets and use them freely.  If you're adding an notebook and you also want to use the `Unlicense`, great! If not, then also write a clear paragraph stating the license in the notebook itself.
 
 ### Interactivity
 The current *featured* system distributes notebook *statefiles*, which work the same way as Pluto's HTML export: people can read the notebook instantly, without having to wait for it to run. There is a button to *Edit and Run* a notebook that users can press to use the featured notebook as a template.
