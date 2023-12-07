@@ -7,6 +7,7 @@
 #> title = "Interactivity with HTML"
 #> tags = ["interactivity", "classic", "web"]
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Write your own interactive controls with HTML!"
 #> 
 #>     [[frontmatter.author]]

@@ -10,6 +10,7 @@
 #> tags = ["PlutoUI", "animation", "visualisation", "clock", "Unicode"]
 #> description = "Making use of 🌒 emojis and PlutoUI.clock for a simple animation"
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> author_name = "Maanik, Boshra, Benedikt"
 
 using Markdown

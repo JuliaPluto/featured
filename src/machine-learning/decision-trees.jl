@@ -8,6 +8,7 @@
 #> date = "2023-09-20"
 #> description = "We are going to use a simple model called \"Decision Tree\" to do a classification task."
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Boshra Ariguib"

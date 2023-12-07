@@ -6,6 +6,7 @@
 #> order = "2"
 #> tags = ["basic", "classic"]
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Learn mathematics in Julia using pizzas! 🍕"
 #> 
 #>     [[frontmatter.author]]
