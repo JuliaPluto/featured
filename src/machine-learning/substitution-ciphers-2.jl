@@ -2,6 +2,7 @@
 # v0.19.32
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/ROT13.png/800px-ROT13.png?20051026101042"
 #> order = "2"
 #> title = "Solving ciphers (part 2)"
