@@ -33,3 +33,5 @@ for n in all_notebooks
     @info "Updating" n
     Pluto.update_notebook_environment(n; backup=false, level)
 end
+
+@info "All notebooks done!"

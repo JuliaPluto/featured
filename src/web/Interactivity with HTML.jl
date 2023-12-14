@@ -389,21 +389,6 @@ This makes it super easy to create nice HTML/JS-based interaction elements - a p
 
 _If you want to learn more about using Javascript in Pluto, check out the [JavaScript sample notebook](https://featured.plutojl.org/web/javascript)!_"
 
-# ╔═╡ 00000000-0000-0000-0000-000000000001
-PLUTO_PROJECT_TOML_CONTENTS = """
-[deps]
-"""
-
-# ╔═╡ 00000000-0000-0000-0000-000000000002
-PLUTO_MANIFEST_TOML_CONTENTS = """
-# This file is machine-generated - editing it directly is not advised
-
-julia_version = "1.7.0"
-manifest_format = "2.0"
-
-[deps]
-"""
-
 # ╔═╡ Cell order:
 # ╟─73c8532e-09a6-429b-b8f6-530c00d92428
 # ╟─db24490e-7eac-11ea-094e-9d3fc8f22784
@@ -453,5 +438,3 @@ manifest_format = "2.0"
 # ╟─582769e6-7eb1-11ea-077d-d9b4a3226aac
 # ╟─8f829274-7eb1-11ea-3888-13c00b3ba70f
 # ╟─ced18648-7eb2-11ea-2052-07795685f0da
-# ╟─00000000-0000-0000-0000-000000000001
-# ╟─00000000-0000-0000-0000-000000000002
