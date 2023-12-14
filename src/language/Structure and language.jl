@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.19.36
 
 #> [frontmatter]
 #> image = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d"
@@ -43,6 +43,7 @@ end
 
 # ╔═╡ f0ebf845-3a6b-42f1-963d-7c6c5cf396c8
 md"""
+
 !!! info "Attribution"
 
 	This notebook is adapted from [Homework 3](https://computationalthinking.mit.edu/Fall23/homework/hw3/) of the course ["Computational Thinking"](https://computationalthinking.mit.edu/) by Alan Edelman, David P. Sanders, and Fons van der Plas.
@@ -942,125 +943,13 @@ end
 # ╔═╡ ace3dc76-f9ae-11ea-2bee-3d0bfa57cfbc
 show_pair_frequencies(transition_frequencies(first_sample))
 
-# ╔═╡ ffc17f40-f380-11ea-30ee-0fe8563c0eb1
-hint(text) = Markdown.MD(Markdown.Admonition("hint", "Hint", [text]))
+# ╔═╡ 20c0bfc0-a6ce-4290-95e1-d01264114cb1
+todo(text) = HTML("""<div
+	style="background: rgb(220, 200, 255); padding: 2em; border-radius: 1em;"
+	><h1>TODO</h1>$(repr(MIME"text/html"(), text))</div>""")
 
-# ╔═╡ 7df7ab82-f9ad-11ea-2243-21685d660d71
-hint(md"You can answer this question without writing any code: have a look at the values of `sample_freqs`.")
-
-# ╔═╡ 7711ecc5-9132-4223-8ed4-4d0417b5d5c1
-hint(md"First answer this question by looking at the pair frequency image.")
-
-# ╔═╡ e467c1c6-fbf2-11ea-0d20-f5798237c0a6
-hint(md"Start out with the same code as `bigrams`, and use the Julia documentation to learn how it works. How can we generalize the `bigram` function into the `ngram` function? It might help to do this on paper first.")
-
-# ╔═╡ ffc40ab2-f380-11ea-2136-63542ff0f386
-almost(text) = Markdown.MD(Markdown.Admonition("warning", "Almost there!", [text]))
-
-# ╔═╡ ffceaed6-f380-11ea-3c63-8132d270b83f
-still_missing(text=md"Replace `missing` with your answer.") = Markdown.MD(Markdown.Admonition("warning", "Here we go!", [text]))
-
-# ╔═╡ fd202410-f936-11ea-1ad6-b3629556b3e0
-if ismissing(transition_frequencies(clean(ex23_sample)))
-	still_missing(md"Complete the previous exercises to see the result!")
-else
-	sample_text(transition_frequencies(clean(ex23_sample)), 400) |> Quote
-end
-
-# ╔═╡ b5dff8b8-fb6c-11ea-10fc-37d2a9adae8c
-let
-	result = generate(
-		generate_demo_sample, 400; 
-		n=generate_sample_n_letters, 
-		use_words=false
-	)
-
-	if ismissing(result)
-		still_missing(md"Complete the previous exercises to see the result!")
-	else
-		Quote(result)
-	end
-end
-
-# ╔═╡ ee8c5808-fb5f-11ea-19a1-3d58217f34dc
-let
-	result = generate(
-		generate_demo_sample, 100; 
-		n=generate_sample_n_words, 
-		use_words=true
-	)
-
-	if ismissing(result)
-		still_missing(md"Complete the previous exercises to see the result!")
-	else
-		Quote(result)
-	end
-end
-
-# ╔═╡ ffde44ae-f380-11ea-29fb-2dfcc9cda8b4
-keep_working(text=md"The answer is not quite right.") = Markdown.MD(Markdown.Admonition("danger", "Keep working on it!", [text]))
-
-# ╔═╡ ffe326e0-f380-11ea-3619-61dd0592d409
-yays = [md"Fantastic!", md"Splendid!", md"Great!", md"Yay ❤", md"Great! 🎉", md"Well done!", md"Keep it up!", md"Good job!", md"Awesome!", md"You got the right answer!", md"Let's move on to the next section."]
-
-# ╔═╡ fff5aedc-f380-11ea-2a08-99c230f8fa32
-correct(text=rand(yays)) = Markdown.MD(Markdown.Admonition("correct", "Got it!", [text]))
-
-# ╔═╡ 954fc466-fb7b-11ea-2724-1f938c6b93c6
-let
-	output = ngrams([1, 2, 3, 42], 2)
-
-	if output isa Missing
-		still_missing()
-	elseif !(output isa Vector{<:Vector})
-		keep_working(md"Make sure that `ngrams` returns an array of arrays.")
-	elseif output == [[1,2], [2,3], [3,42]]
-		if ngrams([1,2,3], 1) == [[1],[2],[3]]
-			if ngrams([1,2,3], 3) == [[1,2,3]]
-				if ngrams(["a"],1) == [["a"]]
-					correct()
-				else
-					keep_working(md"`ngrams` should work with any type, not just integers!")
-				end
-			else
-				keep_working(md"`ngrams(x, 3)` did not give a correct result.")
-			end
-		else
-			keep_working(md"`ngrams(x, 1)` did not give a correct result.")			
-		end
-	else
-		keep_working(md"`ngrams(x, 2)` did not give the correct bigrams. Start out with the same code as `bigrams`.")
-	end
-end
-
-# ╔═╡ a9ffff9a-fb83-11ea-1efd-2fc15538e52f
-let
-	output = word_counts(["to", "be", "or", "not", "to", "be"])
-
-	if output === nothing
-		keep_working(md"Did you forget to write `return`?")
-	elseif output == Dict()
-		still_missing(md"Write your function `word_counts` above.")
-	elseif !(output isa Dict)
-		keep_working(md"Make sure that `word_counts` returns a `Dict`.")
-	elseif output == Dict("to" => 2, "be" => 2, "or" => 1, "not" => 1)
-		correct()
-	else
-		keep_working()
-	end
-end
-
-# ╔═╡ b8af4d06-b38a-4675-9399-81fb5977f077
-if emma_count isa Missing
-	still_missing()
-elseif emma_count == 865
-	correct()
-else
-	keep_working()
-end
-
-# ╔═╡ 00026442-f381-11ea-2b41-bde1fff66011
-not_defined(variable_name) = Markdown.MD(Markdown.Admonition("danger", "Oopsie!", [md"Make sure that you define a variable called **$(Markdown.Code(string(variable_name)))**"]))
+# ╔═╡ deba983b-5422-4033-9d61-09138abf59ac
+import PlutoTeachingTools: still_missing, almost, hint, keep_working, correct, not_defined
 
 # ╔═╡ 6fe693c8-f9a1-11ea-1983-f159131880e9
 if !@isdefined(messy_sentence_1)
@@ -1137,6 +1026,9 @@ else
 	end
 end
 
+# ╔═╡ 7df7ab82-f9ad-11ea-2243-21685d660d71
+hint(md"You can answer this question without writing any code: have a look at the values of `sample_freqs`.")
+
 # ╔═╡ 489fe282-f931-11ea-3dcb-35d4f2ac8b40
 if !@isdefined(th_frequency)
 	not_defined(:th_frequency)
@@ -1177,6 +1069,9 @@ else
 		end
 	end
 end
+
+# ╔═╡ 7711ecc5-9132-4223-8ed4-4d0417b5d5c1
+hint(md"First answer this question by looking at the pair frequency image.")
 
 # ╔═╡ a5fbba46-f931-11ea-33e1-054be53d986c
 if !@isdefined(most_likely_to_follow_w)
@@ -1230,6 +1125,13 @@ else
 	end
 end
 
+# ╔═╡ fd202410-f936-11ea-1ad6-b3629556b3e0
+if ismissing(transition_frequencies(clean(ex23_sample)))
+	still_missing(md"Complete the previous exercises to see the result!")
+else
+	sample_text(transition_frequencies(clean(ex23_sample)), 400) |> Quote
+end
+
 # ╔═╡ b09f5512-fb58-11ea-2527-31bea4cee823
 if !@isdefined(matrix_distance)
 	not_defined(:matrix_distance)
@@ -1264,10 +1166,91 @@ else
 	end
 end
 
-# ╔═╡ 20c0bfc0-a6ce-4290-95e1-d01264114cb1
-todo(text) = HTML("""<div
-	style="background: rgb(220, 200, 255); padding: 2em; border-radius: 1em;"
-	><h1>TODO</h1>$(repr(MIME"text/html"(), text))</div>""")
+# ╔═╡ 954fc466-fb7b-11ea-2724-1f938c6b93c6
+let
+	output = ngrams([1, 2, 3, 42], 2)
+
+	if output isa Missing
+		still_missing()
+	elseif !(output isa Vector{<:Vector})
+		keep_working(md"Make sure that `ngrams` returns an array of arrays.")
+	elseif output == [[1,2], [2,3], [3,42]]
+		if ngrams([1,2,3], 1) == [[1],[2],[3]]
+			if ngrams([1,2,3], 3) == [[1,2,3]]
+				if ngrams(["a"],1) == [["a"]]
+					correct()
+				else
+					keep_working(md"`ngrams` should work with any type, not just integers!")
+				end
+			else
+				keep_working(md"`ngrams(x, 3)` did not give a correct result.")
+			end
+		else
+			keep_working(md"`ngrams(x, 1)` did not give a correct result.")			
+		end
+	else
+		keep_working(md"`ngrams(x, 2)` did not give the correct bigrams. Start out with the same code as `bigrams`.")
+	end
+end
+
+# ╔═╡ e467c1c6-fbf2-11ea-0d20-f5798237c0a6
+hint(md"Start out with the same code as `bigrams`, and use the Julia documentation to learn how it works. How can we generalize the `bigram` function into the `ngram` function? It might help to do this on paper first.")
+
+# ╔═╡ a9ffff9a-fb83-11ea-1efd-2fc15538e52f
+let
+	output = word_counts(["to", "be", "or", "not", "to", "be"])
+
+	if output === nothing
+		keep_working(md"Did you forget to write `return`?")
+	elseif output == Dict()
+		still_missing(md"Write your function `word_counts` above.")
+	elseif !(output isa Dict)
+		keep_working(md"Make sure that `word_counts` returns a `Dict`.")
+	elseif output == Dict("to" => 2, "be" => 2, "or" => 1, "not" => 1)
+		correct()
+	else
+		keep_working()
+	end
+end
+
+# ╔═╡ b8af4d06-b38a-4675-9399-81fb5977f077
+if emma_count isa Missing
+	still_missing()
+elseif emma_count == 865
+	correct()
+else
+	keep_working()
+end
+
+# ╔═╡ b5dff8b8-fb6c-11ea-10fc-37d2a9adae8c
+let
+	result = generate(
+		generate_demo_sample, 400; 
+		n=generate_sample_n_letters, 
+		use_words=false
+	)
+
+	if ismissing(result)
+		still_missing(md"Complete the previous exercises to see the result!")
+	else
+		Quote(result)
+	end
+end
+
+# ╔═╡ ee8c5808-fb5f-11ea-19a1-3d58217f34dc
+let
+	result = generate(
+		generate_demo_sample, 100; 
+		n=generate_sample_n_words, 
+		use_words=true
+	)
+
+	if ismissing(result)
+		still_missing(md"Complete the previous exercises to see the result!")
+	else
+		Quote(result)
+	end
+end
 
 # ╔═╡ 00115b6e-f381-11ea-0bc6-61ca119cb628
 bigbreak = html"<br><br><br><br><br>";
@@ -1337,12 +1320,14 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
 Compose = "a81c6b42-2e10-5240-aca2-a61377ecd94b"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Unicode = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
 [compat]
 Colors = "~0.12.8"
 Compose = "~0.9.4"
+PlutoTeachingTools = "~0.2.14"
 PlutoUI = "~0.7.48"
 """
 
@@ -1350,277 +1335,334 @@ PlutoUI = "~0.7.48"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.7.0"
-manifest_format = "2.0"
-
-[[deps.AbstractPlutoDingetjes]]
+[[AbstractPlutoDingetjes]]
 deps = ["Pkg"]
-git-tree-sha1 = "91bd53c39b9cbfb5ef4b015e8b582d344532bd0a"
+git-tree-sha1 = "793501dcd3fa7ce8d375a2c878dca2296232686e"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
-version = "1.2.0"
+version = "1.2.2"
 
-[[deps.ArgTools]]
+[[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 
-[[deps.Artifacts]]
+[[Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
-[[deps.Base64]]
+[[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
-[[deps.ColorTypes]]
+[[CodeTracking]]
+deps = ["InteractiveUtils", "UUIDs"]
+git-tree-sha1 = "c0216e792f518b39b22212127d4a84dc31e4e386"
+uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
+version = "1.3.5"
+
+[[ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
 git-tree-sha1 = "eb7f0f8307f71fac7c606984ea5fb2817275d6e4"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
 version = "0.11.4"
 
-[[deps.Colors]]
+[[Colors]]
 deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
 git-tree-sha1 = "fc08e5930ee9a4e03f84bfb5211cb54e7769758a"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.10"
 
-[[deps.Compat]]
+[[Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
-git-tree-sha1 = "8a62af3e248a8c4bad6b32cbbe663ae02275e32c"
+git-tree-sha1 = "886826d76ea9e72b35fcd000e535588f7b60f21d"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.10.0"
+version = "4.10.1"
 
-[[deps.CompilerSupportLibraries_jll]]
-deps = ["Artifacts", "Libdl"]
-uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-
-[[deps.Compose]]
+[[Compose]]
 deps = ["Base64", "Colors", "DataStructures", "Dates", "IterTools", "JSON", "LinearAlgebra", "Measures", "Printf", "Random", "Requires", "Statistics", "UUIDs"]
 git-tree-sha1 = "bf6570a34c850f99407b494757f5d7ad233a7257"
 uuid = "a81c6b42-2e10-5240-aca2-a61377ecd94b"
 version = "0.9.5"
 
-[[deps.DataStructures]]
+[[DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
 git-tree-sha1 = "3dbd312d370723b6bb43ba9d02fc36abade4518d"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 version = "0.18.15"
 
-[[deps.Dates]]
+[[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
-[[deps.Downloads]]
+[[Distributed]]
+deps = ["Random", "Serialization", "Sockets"]
+uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+
+[[Downloads]]
 deps = ["ArgTools", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 
-[[deps.FixedPointNumbers]]
+[[FileWatching]]
+uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
+
+[[FixedPointNumbers]]
 deps = ["Statistics"]
 git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.4"
 
-[[deps.Hyperscript]]
+[[Formatting]]
+deps = ["Printf"]
+git-tree-sha1 = "8339d61043228fdd3eb658d86c926cb282ae72a8"
+uuid = "59287772-0a20-5a39-b81b-1366585eb4c0"
+version = "0.4.2"
+
+[[Hyperscript]]
 deps = ["Test"]
 git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
 uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
 version = "0.0.4"
 
-[[deps.HypertextLiteral]]
+[[HypertextLiteral]]
 deps = ["Tricks"]
 git-tree-sha1 = "7134810b1afce04bbc1045ca1985fbe81ce17653"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 version = "0.9.5"
 
-[[deps.IOCapture]]
+[[IOCapture]]
 deps = ["Logging", "Random"]
 git-tree-sha1 = "d75853a0bdbfb1ac815478bacd89cd27b550ace6"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.3"
 
-[[deps.InteractiveUtils]]
+[[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
-[[deps.IterTools]]
+[[IterTools]]
 git-tree-sha1 = "fa6287a4469f5e048d763df38279ee729fbd44e5"
 uuid = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 version = "1.4.0"
 
-[[deps.JSON]]
+[[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
 git-tree-sha1 = "31e996f0a15c7b280ba9f76636b3ff9e2ae58c9a"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.4"
 
-[[deps.LibCURL]]
+[[JuliaInterpreter]]
+deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
+git-tree-sha1 = "e49bce680c109bc86e3e75ebcb15040d6ad9e1d3"
+uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
+version = "0.9.27"
+
+[[LaTeXStrings]]
+git-tree-sha1 = "50901ebc375ed41dbf8058da26f9de442febbbec"
+uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+version = "1.3.1"
+
+[[Latexify]]
+deps = ["Formatting", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "OrderedCollections", "Printf", "Requires"]
+git-tree-sha1 = "f428ae552340899a935973270b8d98e5a31c49fe"
+uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
+version = "0.16.1"
+
+[[LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
 
-[[deps.LibCURL_jll]]
+[[LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
 
-[[deps.LibGit2]]
+[[LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 
-[[deps.LibSSH2_jll]]
+[[LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
 
-[[deps.Libdl]]
+[[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
-[[deps.LinearAlgebra]]
-deps = ["Libdl", "libblastrampoline_jll"]
+[[LinearAlgebra]]
+deps = ["Libdl"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
-[[deps.Logging]]
+[[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
-[[deps.MIMEs]]
+[[LoweredCodeUtils]]
+deps = ["JuliaInterpreter"]
+git-tree-sha1 = "0b8cf121228f7dae022700c1c11ac1f04122f384"
+uuid = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
+version = "2.3.2"
+
+[[MIMEs]]
 git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
 version = "0.1.4"
 
-[[deps.Markdown]]
+[[MacroTools]]
+deps = ["Markdown", "Random"]
+git-tree-sha1 = "9ee1618cbf5240e6d4e0371d6f24065083f60c48"
+uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+version = "0.5.11"
+
+[[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
-[[deps.MbedTLS_jll]]
+[[MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 
-[[deps.Measures]]
+[[Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
 uuid = "442fdcdd-2543-5da2-b0f3-8c86c306513e"
 version = "0.3.2"
 
-[[deps.Mmap]]
+[[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
-[[deps.MozillaCACerts_jll]]
+[[MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 
-[[deps.NetworkOptions]]
+[[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 
-[[deps.OpenBLAS_jll]]
-deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
-uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-
-[[deps.OrderedCollections]]
-git-tree-sha1 = "2e73fe17cac3c62ad1aebe70d44c963c3cfdc3e3"
+[[OrderedCollections]]
+git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.6.2"
+version = "1.6.3"
 
-[[deps.Parsers]]
+[[Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
 git-tree-sha1 = "a935806434c9d4c506ba941871b327b96d41f2bf"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
 version = "2.8.0"
 
-[[deps.Pkg]]
+[[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
-[[deps.PlutoUI]]
-deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "db8ec28846dbf846228a32de5a6912c63e2052e3"
-uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.53"
+[[PlutoHooks]]
+deps = ["InteractiveUtils", "Markdown", "UUIDs"]
+git-tree-sha1 = "072cdf20c9b0507fdd977d7d246d90030609674b"
+uuid = "0ff47ea0-7a50-410d-8455-4348d5de0774"
+version = "0.0.5"
 
-[[deps.PrecompileTools]]
+[[PlutoLinks]]
+deps = ["FileWatching", "InteractiveUtils", "Markdown", "PlutoHooks", "Revise", "UUIDs"]
+git-tree-sha1 = "8f5fa7056e6dcfb23ac5211de38e6c03f6367794"
+uuid = "0ff47ea0-7a50-410d-8455-4348d5de0420"
+version = "0.1.6"
+
+[[PlutoTeachingTools]]
+deps = ["Downloads", "HypertextLiteral", "LaTeXStrings", "Latexify", "Markdown", "PlutoLinks", "PlutoUI", "Random"]
+git-tree-sha1 = "89f57f710cc121a7f32473791af3d6beefc59051"
+uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
+version = "0.2.14"
+
+[[PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "bd7c69c7f7173097e7b5e1be07cee2b8b7447f51"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.54"
+
+[[PrecompileTools]]
 deps = ["Preferences"]
 git-tree-sha1 = "03b4c25b43cb84cee5c90aa9b5ea0a78fd848d2f"
 uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 version = "1.2.0"
 
-[[deps.Preferences]]
+[[Preferences]]
 deps = ["TOML"]
 git-tree-sha1 = "00805cd429dcb4870060ff49ef443486c262e38e"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
 version = "1.4.1"
 
-[[deps.Printf]]
+[[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
-[[deps.REPL]]
+[[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
-[[deps.Random]]
-deps = ["SHA", "Serialization"]
+[[Random]]
+deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
-[[deps.Reexport]]
+[[Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
 
-[[deps.Requires]]
+[[Requires]]
 deps = ["UUIDs"]
 git-tree-sha1 = "838a3a4188e2ded87a4f9f184b4b0d78a1e91cb7"
 uuid = "ae029012-a4dd-5104-9daa-d747884805df"
 version = "1.3.0"
 
-[[deps.SHA]]
+[[Revise]]
+deps = ["CodeTracking", "Distributed", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "Pkg", "REPL", "Requires", "UUIDs", "Unicode"]
+git-tree-sha1 = "6990168abf3fe9a6e34ebb0e05aaaddf6572189e"
+uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
+version = "3.5.10"
+
+[[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
-[[deps.Serialization]]
+[[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
-[[deps.Sockets]]
+[[Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
-[[deps.SparseArrays]]
+[[SparseArrays]]
 deps = ["LinearAlgebra", "Random"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
-[[deps.Statistics]]
+[[Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
-[[deps.TOML]]
+[[TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 
-[[deps.Tar]]
+[[Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 
-[[deps.Test]]
+[[Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
-[[deps.Tricks]]
+[[Tricks]]
 git-tree-sha1 = "eae1bb484cd63b36999ee58be2de6c178105112f"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.8"
 
-[[deps.URIs]]
+[[URIs]]
 git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
 version = "1.5.1"
 
-[[deps.UUIDs]]
+[[UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
-[[deps.Unicode]]
+[[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
-[[deps.Zlib_jll]]
+[[Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
 
-[[deps.libblastrampoline_jll]]
-deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
-uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-
-[[deps.nghttp2_jll]]
+[[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
 
-[[deps.p7zip_jll]]
+[[p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
@@ -1787,14 +1829,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─54b1e236-fb53-11ea-3769-b382ef8b25d6
 # ╟─b7803a28-fb96-11ea-3e30-d98eb322d19a
 # ╟─ddef9c94-fb96-11ea-1f17-f173a4ff4d89
-# ╟─ffc17f40-f380-11ea-30ee-0fe8563c0eb1
-# ╟─ffc40ab2-f380-11ea-2136-63542ff0f386
-# ╟─ffceaed6-f380-11ea-3c63-8132d270b83f
-# ╟─ffde44ae-f380-11ea-29fb-2dfcc9cda8b4
-# ╟─ffe326e0-f380-11ea-3619-61dd0592d409
-# ╟─fff5aedc-f380-11ea-2a08-99c230f8fa32
-# ╟─00026442-f381-11ea-2b41-bde1fff66011
 # ╟─20c0bfc0-a6ce-4290-95e1-d01264114cb1
-# ╟─00115b6e-f381-11ea-0bc6-61ca119cb628
+# ╠═deba983b-5422-4033-9d61-09138abf59ac
+# ╠═00115b6e-f381-11ea-0bc6-61ca119cb628
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
