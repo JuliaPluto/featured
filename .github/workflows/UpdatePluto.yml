@@ -4,9 +4,9 @@ on:
     workflow_dispatch:
         inputs:
           plutocommitsha:
-            description: 'Commit SHA'     
+            description: 'Commit SHA or version number'     
             required: true
-            default: '3df8390a'
+            default: '3df8390a or 0.19.36'
 
 concurrency:
     group: updatepluto
@@ -37,7 +37,12 @@ jobs:
                   Pkg.instantiate()
                   Pkg.resolve()
                   Pkg.rm("Pluto")
-                  Pkg.add([Pkg.PackageSpec(name="Pluto", rev="${{ github.event.inputs.plutocommitsha }}")])
+                  input = "${{ github.event.inputs.plutocommitsha }}"
+                  if occursin(".", input)
+                      Pkg.add([Pkg.PackageSpec(name="Pluto", version=parse(VersionNumber, input))])
+                  else
+                      Pkg.add([Pkg.PackageSpec(name="Pluto", rev=input)])
+                  end
                   Pkg.update()
                   '
 
