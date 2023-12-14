@@ -5,6 +5,7 @@
 #> image = "https://upload.wikimedia.org/wikipedia/commons/0/07/Tower_of_Hanoi.jpeg"
 #> tags = ["basic", "classic"]
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "An interactive Julia puzzle about stacking disks."
 #> 
 #>     [[frontmatter.author]]

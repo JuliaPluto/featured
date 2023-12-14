@@ -6,6 +6,7 @@
 #> title = "Images and Filtering"
 #> tags = ["images", "filtering", "gaussian", "pixel", "convolution", "math"]
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Learn how convolutions are used as filters in image processing!"
 #> date = "2023-07-09"
 #> 

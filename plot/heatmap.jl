@@ -6,6 +6,7 @@
 #> title = "3D Graph vs Heatmap"
 #> tags = ["plotting", "makie", "3D"]
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "You can visualize 3D data with a 3D graph or a heatmap. How do they work, and what is the difference?"
 #> 
 #>     [[frontmatter.author]]
