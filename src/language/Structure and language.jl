@@ -45,9 +45,17 @@ end
 md"""
 !!! info "Attribution"
 
-	This notebook is adapted from [Homework 3 of the course "Computational Thinking"](https://github.com/mitmath/computational-thinking/blob/8e8e7281cef00aa888175fd0f23a841f17cc1d99/src/homework/hw3.jl) by Alan Edelman, David P. Sanders, and Fons van der Plas.
+	This notebook is adapted from [Homework 3](https://computationalthinking.mit.edu/Fall23/homework/hw3/) of the course ["Computational Thinking"](https://computationalthinking.mit.edu/) by Alan Edelman, David P. Sanders, and Fons van der Plas.
 
 	The code is shared under an [MIT licence](https://opensource.org/license/mit/). The text of the course is shared under a [Creative Commons Attribution-ShareAlike 4.0 licence ](https://creativecommons.org/licenses/by-sa/4.0), and has been adapted for this notebook.
+
+	---
+	
+	If you use or are inspired by any material, would you be so kind to prominently display:
+		
+	> Some material on this website is based on:
+	> **Computational Thinking**, a live online Julia/Pluto textbook. ([computationalthinking.mit.edu](https://computationalthinking.mit.edu))
+
 """
 
 # ╔═╡ 85cfbd10-f384-11ea-31dc-b5693630a4c5
