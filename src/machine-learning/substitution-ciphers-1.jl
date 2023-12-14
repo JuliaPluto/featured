@@ -44,7 +44,7 @@ Here is an example. Try it out!
 """
 
 # ╔═╡ 1bf7875f-9a22-4ddb-8493-e6415d7ff0b0
-@bind test_message TextField((40, 4), default="Let's do some encryption!")
+@bind test_message TextField((40, 4), default="Let's do some encryption! Yayyy")
 
 # ╔═╡ ab028285-df3c-43d8-a4b2-9b063650ba66
 
