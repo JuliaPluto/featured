@@ -278,22 +278,6 @@ pluto_icon_style = html"""
 </style>
 """
 
-# ╔═╡ 00000000-0000-0000-0000-000000000001
-PLUTO_PROJECT_TOML_CONTENTS = """
-[deps]
-"""
-
-# ╔═╡ 00000000-0000-0000-0000-000000000002
-PLUTO_MANIFEST_TOML_CONTENTS = """
-# This file is machine-generated - editing it directly is not advised
-
-julia_version = "1.8.3"
-manifest_format = "2.0"
-project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
-
-[deps]
-"""
-
 # ╔═╡ Cell order:
 # ╟─ce092665-e18d-4314-a43e-51a04e25cd30
 # ╟─02b26da6-40d1-4b3c-a594-aff8016b0945
@@ -337,5 +321,3 @@ project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
 # ╟─e392d442-5c83-4711-bc45-c2dbedf62b7f
 # ╟─d6def1a3-cc96-4eb9-bfce-949d29ffe31f
 # ╟─58eb1225-6521-45ef-827a-78cdafbaf784
-# ╟─00000000-0000-0000-0000-000000000001
-# ╟─00000000-0000-0000-0000-000000000002
