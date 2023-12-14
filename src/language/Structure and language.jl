@@ -4,15 +4,12 @@
 #> [frontmatter]
 #> image = "https://images.unsplash.com/photo-1457369804613-52c61a468e7d"
 #> title = "Structure and language"
-#> tags = ["language", "natural language processing", "language modelling", "natural language generation"]
+#> tags = ["language", "natural language processing", "language modelling", "natural language generation", "homework"]
 #> description = "Automatically detect the language of a piece of text, and generate realistic-looking random text!"
 #> 
 #>     [[frontmatter.author]]
-#>     name = "Alan Edelman"
-#>     url = "https://github.com/alanedelman"
-#>     [[frontmatter.author]]
-#>     name = "David P. Sanders"
-#>     url = "https://github.com/dpsanders"
+#>     name = "MIT Computational Thinking"
+#>     url = "https://github.com/mitmath"
 #>     [[frontmatter.author]]
 #>     name = "Fons van der Plas"
 #>     url = "https://github.com/fonsp"
