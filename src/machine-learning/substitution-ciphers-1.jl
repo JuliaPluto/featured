@@ -29,7 +29,10 @@ end
 
 # ╔═╡ 1f522768-ff6f-4f27-8f16-75bf5b5e6f9e
 # ╠═╡ show_logs = false
-using Random, PlutoUI, Plots;
+using Random, PlutoUI, Plots
+
+# ╔═╡ 19ac84ba-367f-4aca-99bc-83a1f6ff122a
+using PlutoTeachingTools: hint, almost, keep_working, correct
 
 # ╔═╡ 0fa3c6d0-ee3d-11ec-0bb4-a944807ba0ed
 md"""
@@ -680,17 +683,8 @@ We then evaluated solutions based on character frequencies, and selected the one
 The _part 2_ to this notebook will get into the more complex case of solving any replacement cipher.
 """
 
-# ╔═╡ 416802ea-9e46-4e4a-8091-9c26da687614
-hint(text) = Markdown.MD(Markdown.Admonition("hint", "Hint", [text]));
-
 # ╔═╡ bef18c5f-7a9c-475e-bd2c-9d3338257ac1
 hint(md"Each way to shift the alphabet is characterised by a shift key. For each of those keys, you need to show what the decrypted message would look like.")
-
-# ╔═╡ 1beb64fe-5554-4a6e-8c59-998c4a34369c
-almost(text) = Markdown.MD(Markdown.Admonition("warning", "Almost there!", [text]));
-
-# ╔═╡ 5fe264ca-c102-4f12-af55-bb29e7d8b1d9
-keep_working(text=md"The answer is not quite right.") = Markdown.MD(Markdown.Admonition("danger", "Keep working on it!", [text]));
 
 # ╔═╡ 9e1ffcf6-de14-463b-b6a9-fc9a393a3d8c
 let
@@ -706,9 +700,6 @@ let
 		""")
 	end
 end
-
-# ╔═╡ b1acbd5d-be00-4638-882b-d4022874dd75
-correct(text=md"Great! You got the right answer! Let's move on to the next section.") = Markdown.MD(Markdown.Admonition("correct", "Got it!", [text]));
 
 # ╔═╡ f7ab9713-f36f-4c9c-9165-1bdd785c0926
 let
@@ -1874,7 +1865,7 @@ version = "1.4.1+1"
 # ╠═95c0b0d9-5d45-4254-88f5-2765b6c99810
 # ╟─82077381-611b-4084-ac9b-b51b684681dd
 # ╟─0643922e-6fd7-40b3-8469-3076e1b7b9aa
-# ╟─ce51b0bd-f3f4-4aba-b750-32277ad85cb3
+# ╠═ce51b0bd-f3f4-4aba-b750-32277ad85cb3
 # ╟─d7c37c08-0aae-4a59-9a42-541fe459325e
 # ╟─40e44098-2ffa-4cf2-bb38-cf61285b06f7
 # ╠═3874cac0-2eaf-41c5-9ed9-d11e219ede1e
@@ -1894,9 +1885,6 @@ version = "1.4.1+1"
 # ╟─be369d7a-b3da-442b-aaf5-0d71caf0b69a
 # ╟─7654a2e4-daf0-4e21-918f-4931c22045cf
 # ╟─1f522768-ff6f-4f27-8f16-75bf5b5e6f9e
-# ╟─416802ea-9e46-4e4a-8091-9c26da687614
-# ╟─1beb64fe-5554-4a6e-8c59-998c4a34369c
-# ╟─5fe264ca-c102-4f12-af55-bb29e7d8b1d9
-# ╟─b1acbd5d-be00-4638-882b-d4022874dd75
+# ╠═19ac84ba-367f-4aca-99bc-83a1f6ff122a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
