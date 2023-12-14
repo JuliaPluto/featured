@@ -2,13 +2,13 @@
 # v0.19.30
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://github.com/JuliaPluto/featured/assets/6933510/65dadde7-6381-4cda-ad71-7bbba4b1db97"
 #> title = "Convolutions"
 #> tags = ["convolution", "filter", "signal-processing", "math", "signal processing"]
 #> date = "2023-09-20"
 #> description = "Learn about the cool concept of convolution on continuous functions!"
 #> license = "Unlicense"
-#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Boshra Ariguib"
@@ -27,40 +27,6 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 3fd4b34c-18ed-4b07-b594-01afb377ead7
-begin
-	# packages for convolution:
-	using DSP, SignalAnalysis, Random
-
-	# plotting:
-	using CairoMakie, ColorSchemes, Colors, ColorTypes
-	using MakieThemes
-	set_theme!(ggthemr(:flat))
-
-	# widgets and layout:
-	using PlutoUI
-	using PlutoUI.ExperimentalLayout: grid, vbox, hbox, Div
-	using HypertextLiteral
-end
-
-# ╔═╡ ca75244c-69ac-45c8-aa33-59c05dc4091b
-begin
-	import CairoMakie:Polygon
-	using GeometryBasics
-	function plot_pill(emoji_pill_pic::Matrix)
-		positions = Colors.alpha.(emoji_pill_pic).<0.5
-
-		curr_fig = Figure()
-		curr_ax = Axis(curr_fig[1, 1])
-		contour_plot = contour!(curr_ax, positions, levels=1, labels = false)
-		pill_points = contour_plot.plots[2].converted[1][]./10
-		pill_points = [Point2f.(0.5 .+6 .- p.data[1] .-3.5,p.data[2] .- 3.5) for p in pill_points]
-
-		pill_shape = Polygon(pill_points[1:end-1])
-		return pill_shape
-	end
-end
-
 # ╔═╡ 00358bc2-1e49-45a9-9b78-293aadd40976
 md"""## Convolutions *Explained*
 
@@ -76,8 +42,14 @@ md"""
 md"""Let's start with this great example from the [**better explained blog** ](https://betterexplained.com/articles/intuitive-convolution/) : Suppose there is a **pandemic** going on and more people are getting sick every day. So, you are a doctor and you have the following **new** patients coming in each day (yes, sadly even elves and fairies can get this disease): 
 """
 
+# ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
+patients = exponential ? collect(["👵","🧑👴", "🧑🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴🧑🧝🧝🧚🧓🧚🧓🧚🧑🧝🧝🧝", "👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑", "🧚🧚🧚🧚🧚🧚🧚🧚🧚🧓🧚🧓🧚🧑🧝🧝👧👴👴👩🧝🧚👩🧓👧👴👴👩🧝🧚👩🧓👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑🧑", ""])[1:len] :  collect(["👵","👴🧑", "👩🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴", "🧓🧚", "🧚", ""])[1:len] 
+
 # ╔═╡ f97f9f46-b5c7-4cee-a69f-1eb53b560952
 md"""The number of patients increases as the disease spreads."""
+
+# ╔═╡ 9243a029-8f8d-4a28-b098-d2a2810a8786
+md"""**Try it:** How many days should the disease go on:  $(len_slider) day(s)"""
 
 # ╔═╡ 796aad78-36d4-42fd-a467-707692b094a2
 
@@ -95,8 +67,17 @@ md"""The patients all have the same disease that requires the following treatmen
 
 So something that looks like this: """
 
+# ╔═╡ 9274ed36-a28e-42f3-879f-167d5afa6fc7
+treatment = vec([repeat('💊', i) for i in treatment_in])
+
 # ╔═╡ bb869b27-0bce-4314-b28f-684ccc14f7ea
 md"""> **Try it:** Choose your own treatment plan (you can also chose 0 pills for a certain day):"""
+
+# ╔═╡ 88e4551f-9ae1-4a5f-819b-01c43a319981
+begin
+	#treatment_array = @bind treatment_in PlutoUI.Scrubbable(treatment_array)
+	md""" $(a1) $(a2) $(a3) $(a4) $(a5) $(a6) $(a7) $(a8)"""
+end
 
 # ╔═╡ faf156f0-fa3f-46f6-98d3-3bbf0690a0a4
 begin
@@ -111,16 +92,24 @@ begin
 	
 end;
 
-# ╔═╡ 88e4551f-9ae1-4a5f-819b-01c43a319981
-begin
-	#treatment_array = @bind treatment_in PlutoUI.Scrubbable(treatment_array)
-	md""" $(a1) $(a2) $(a3) $(a4) $(a5) $(a6) $(a7) $(a8)"""
-end
-
 # ╔═╡ 27bd1602-3ca0-4daf-a9ff-c76ea818ead4
 md"""
 ### But, how many pills do we need to stockpile?
 """
+
+# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
+let
+	t = treatment
+	p = patients
+md"""Now as a doctor, you want to be ready for this scenario, at each day you want to know, how many pills you will need for your patients:
+
+- On day 1: you would give $((t[1]))  to $((p[1])) 
+- On day 2: you would give $((t[2]))  to $((p[1]))  , and $((t[1]))  to $((p[2]))  each
+- On day 3: you would give  $((t[3]))  to $(length(p[1])) , and $((t[2])) pills to $((p[2])) , and $((t[1]))  to $((p[3]))  each ... etc 
+
+Notice how we are multiplying and adding each day? We are close to performing a convolution already!
+"""
+end
 
 # ╔═╡ 572bd8d5-65b0-462e-a143-811f4bfa875e
 md"""---
@@ -129,6 +118,20 @@ Now to make things more visual, move the slider around to see how many pills you
 # ╔═╡ 1fd4973b-8a25-4ddb-ac6d-3fb444a5ed2c
 md"""**Hint:** In order to administer the treatment in the right order, we need to **flip** patients lists, so they get admitted to the hospital in the right order! So now it looks like this: 
 """
+
+# ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
+patients_flipped = append!(["" for i in 1:8-length(patients)], reverse(patients))
+
+# ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
+begin
+	# Set slider for the day (index)
+	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb+1, show_value=true, default=1)
+	md"""**Try it:**: calculate up to day: $(k_slider)
+	> **Test your understanding**: On what day do you require most pills?"""
+end
+
+# ╔═╡ 6b243243-8f26-4f2d-8727-564f0701b302
+f
 
 # ╔═╡ 0ccf60db-75b2-466d-935e-f39855bc36f7
 md"""## Generating Code """
@@ -150,53 +153,6 @@ begin
 		
 end;
 
-# ╔═╡ 380ba7f0-76e6-47ec-98e2-e6c6a3b7f2d5
-patients = exponential ? collect(["👵","🧑👴", "🧑🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴🧑🧝🧝🧚🧓🧚🧓🧚🧑🧝🧝🧝", "👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑", "🧚🧚🧚🧚🧚🧚🧚🧚🧚🧓🧚🧓🧚🧑🧝🧝👧👴👴👩🧝🧚👩🧓👧👴👴👩🧝🧚👩🧓👵🧝🧑👴🧑👵🧝🧑👴🧑🧓🧚👩🧝🧚👩👩🧝🧚👩👴👴👩🧝🧚🧓🧚🧓👴👵🧑🧑🧑", ""])[1:len] :  collect(["👵","👴🧑", "👩🧔🏼🧝🧚", "👧👴👴👩🧝🧚👩🧓", "👵🧝🧑👴", "🧓🧚", "🧚", ""])[1:len] 
-
-# ╔═╡ a60029d5-ae8d-4704-bef1-076949712c37
-patients_flipped = append!(["" for i in 1:8-length(patients)], reverse(patients))
-
-# ╔═╡ 9243a029-8f8d-4a28-b098-d2a2810a8786
-md"""**Try it:** How many days should the disease go on:  $(len_slider) day(s)"""
-
-# ╔═╡ bccfdd98-b425-4f8d-a58d-489134851ebd
-begin
-	# Set slider for the day (index)
-	k_slider = @bind k_conv PlutoUI.Slider(1:2*nb+1, show_value=true, default=1)
-	md"""**Try it:**: calculate up to day: $(k_slider)
-	> **Test your understanding**: On what day do you require most pills?"""
-end
-
-# ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
-md"""## Appendix"""
-
-# ╔═╡ 05df72e9-f45b-49c3-8015-9212f439cf72
-begin
-	# Makie can't display emojis directly, so we have to grab them from github - sorry
-	import PNGFiles
-	emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) .|> RGBA{Float64};
-end;
-
-# ╔═╡ 9fab3bbb-5c7f-4464-97c9-847f52754845
-treatment_in = [a1_s a2_s a3_s a4_s a5_s a6_s a7_s a8_s];
-
-# ╔═╡ 9274ed36-a28e-42f3-879f-167d5afa6fc7
-treatment = vec([repeat('💊', i) for i in treatment_in])
-
-# ╔═╡ f0d08486-0086-48da-baeb-169f3812d0ea
-let
-	t = treatment
-	p = patients
-md"""Now as a doctor, you want to be ready for this scenario, at each day you want to know, how many pills you will need for your patients:
-
-- On day 1: you would give $((t[1]))  to $((p[1])) 
-- On day 2: you would give $((t[2]))  to $((p[1]))  , and $((t[1]))  to $((p[2]))  each
-- On day 3: you would give  $((t[3]))  to $(length(p[1])) , and $((t[2])) pills to $((p[2])) , and $((t[1]))  to $((p[3]))  each ... etc 
-
-Notice how we are multiplying and adding each day? We are close to performing a convolution already!
-"""
-end
-
 # ╔═╡ 472b52d8-e787-4a93-83d8-c53e977a143c
 begin
 	# Set the number of patients array (First function)
@@ -212,87 +168,6 @@ begin
 	y2_patients_draw = y2_patients[[idx+1:end; 1:idx]]
 
 end;
-
-# ╔═╡ d7ce43e5-7af7-4182-9992-1501e6d2e532
-function plot_grey_pill(emoji_pill_pic::Matrix{RGBA{Float64}})
-	emoji_pill_org = deepcopy(emoji_pill_pic)
-	grey_pill = GrayA.(emoji_pill_org)
-	for k = 1:length(grey_pill)
-		grey_pill[k] = GrayA(grey_pill[k].val,grey_pill[k].alpha* 0.2)
-	end
-	return grey_pill
-end
-
-# ╔═╡ 0dd8235c-c09b-49ae-b02a-4bbb285970a6
-happyX = findlast(treatment_in[1,:] .> 0)
-
-# ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
-function draw_point(x, y1, ax::Axis, marker, size_marker, color::ColorTypes.RGB{Float64}, offset::Int, masked=false)
-		stroke = masked ? :black : :grey 
-		z = 0
-	size_marker = 0.8*size_marker
-		for y = 1:y1[1]
-			#@show stroke,color,masked
-			#@show marker
-			if marker == '😷'
-		
-				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=40,strokewidth=0.0,marker='⚫', strokecolor=stroke, color=RGB{Float64}(1,1,1), overdraw=masked)
-				#translate!(obj[1], 0, 0, z)
-				#z += 0.1
-				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=size_marker,strokewidth=0.0,marker= x > happyX ? '😄' : marker, strokecolor=stroke, color=color, overdraw=masked)
-				#translate!(obj[1], 0, 0, z)
-				#z -= 0.3
-	
-			else
-			
-				scatter!(ax,[x.-0.2],[y.+offset], markersize=size_marker,strokewidth=0.0,marker=marker, strokecolor=stroke, color=color, overdraw=masked)
-			end
-		end
-end
-
-# ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
-function draw_grey_points(x, y, ax, len, marker, size_marker, colors, masked=false)
-	
-	for j in 1:len
-			color = colors[j % length(colors) + 1]
-			draw_point(x[j], y[j], ax, marker, size_marker, color, 0, masked)
-		
-	end
-end
-
-# ╔═╡ df178bb8-3b81-4c4b-ba94-3ad945e63007
-begin
-	color_grey = RGB{Float64}(0.5, 0.5, 0.5)
-	colors = [ColorSchemes.viridis[i] for i in 1:40:256]
-	col_length = length(colors)
-	color_blue = ColorSchemes.viridis[116]
-end;
-
-# ╔═╡ da0a4117-629e-42b5-95ae-d49f10769830
-function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker, masked=false)
-	offset = 0
-	for index in k:k+nb
-		scatter!(ax3, (x_conv[k_conv], y3[k_conv]), color = colors[1])
-		
-		if index < 1 || index > l
-			continue
-		end
-
-		color = colors[index % col_length + 1]
-
-		
-		draw_point(x[index], y12[index], ax2, emoji_pill, color_marker, color, 0)
-		draw_point(x_conv[k_conv], y12[index], ax3, emoji_pill, color_marker, color, offset)
-		
-		draw_point(x[index], y12[index], ax2, emoji_pill_grey, grey_marker, color, 0)
-
-		if y1[index] != 0 && y2_draw[index] != 0
-			draw_point(x[index], y2_draw[index], ax1,'😷' , grey_marker, color, 0, masked)
-		end
-		
-		offset += y12[index]
-	end
-end
 
 # ╔═╡ ceb05a23-93b8-4423-a5f9-f6e3d961d0c6
 begin
@@ -393,8 +268,133 @@ begin
 	
 end;
 
-# ╔═╡ 6b243243-8f26-4f2d-8727-564f0701b302
-f
+# ╔═╡ e63c92a5-659e-41f7-85a4-c2f3baffcef6
+md"""## Appendix"""
+
+# ╔═╡ 3fd4b34c-18ed-4b07-b594-01afb377ead7
+begin
+	# packages for convolution:
+	using DSP, SignalAnalysis, Random
+
+	# plotting:
+	using CairoMakie, ColorSchemes, Colors, ColorTypes
+	using MakieThemes
+	set_theme!(ggthemr(:flat))
+
+	# widgets and layout:
+	using PlutoUI
+	using PlutoUI.ExperimentalLayout: grid, vbox, hbox, Div
+	using HypertextLiteral
+end
+
+# ╔═╡ 05df72e9-f45b-49c3-8015-9212f439cf72
+begin
+	# Makie can't display emojis directly, so we have to grab them from github - sorry
+	import PNGFiles
+	emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) .|> RGBA{Float64};
+end;
+
+# ╔═╡ 9fab3bbb-5c7f-4464-97c9-847f52754845
+treatment_in = [a1_s a2_s a3_s a4_s a5_s a6_s a7_s a8_s];
+
+# ╔═╡ da0a4117-629e-42b5-95ae-d49f10769830
+function draw_all(l, k, k_conv, x, x_conv, y1, y2, y2_draw, y12, y3, ax1, ax2, ax3, emoji_pill_grey, emoji_pill, grey_marker, color_marker, masked=false)
+	offset = 0
+	for index in k:k+nb
+		scatter!(ax3, (x_conv[k_conv], y3[k_conv]), color = colors[1])
+		
+		if index < 1 || index > l
+			continue
+		end
+
+		color = colors[index % col_length + 1]
+
+		
+		draw_point(x[index], y12[index], ax2, emoji_pill, color_marker, color, 0)
+		draw_point(x_conv[k_conv], y12[index], ax3, emoji_pill, color_marker, color, offset)
+		
+		draw_point(x[index], y12[index], ax2, emoji_pill_grey, grey_marker, color, 0)
+
+		if y1[index] != 0 && y2_draw[index] != 0
+			draw_point(x[index], y2_draw[index], ax1,'😷' , grey_marker, color, 0, masked)
+		end
+		
+		offset += y12[index]
+	end
+end
+
+# ╔═╡ 8680db2e-3dda-4aff-a00e-130ac1f4486c
+function draw_point(x, y1, ax::Axis, marker, size_marker, color::ColorTypes.RGB{Float64}, offset::Int, masked=false)
+		stroke = masked ? :black : :grey 
+		z = 0
+	size_marker = 0.8*size_marker
+		for y = 1:y1[1]
+			#@show stroke,color,masked
+			#@show marker
+			if marker == '😷'
+		
+				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=40,strokewidth=0.0,marker='⚫', strokecolor=stroke, color=RGB{Float64}(1,1,1), overdraw=masked)
+				#translate!(obj[1], 0, 0, z)
+				#z += 0.1
+				obj = scatter!(ax,[x.+0.1],[y.+offset], markersize=size_marker,strokewidth=0.0,marker= x > happyX ? '😄' : marker, strokecolor=stroke, color=color, overdraw=masked)
+				#translate!(obj[1], 0, 0, z)
+				#z -= 0.3
+	
+			else
+			
+				scatter!(ax,[x.-0.2],[y.+offset], markersize=size_marker,strokewidth=0.0,marker=marker, strokecolor=stroke, color=color, overdraw=masked)
+			end
+		end
+end
+
+# ╔═╡ c2455fae-f733-4e59-b2d0-a76913810f15
+function draw_grey_points(x, y, ax, len, marker, size_marker, colors, masked=false)
+	
+	for j in 1:len
+			color = colors[j % length(colors) + 1]
+			draw_point(x[j], y[j], ax, marker, size_marker, color, 0, masked)
+		
+	end
+end
+
+# ╔═╡ ca75244c-69ac-45c8-aa33-59c05dc4091b
+begin
+	import CairoMakie:Polygon
+	using GeometryBasics
+	function plot_pill(emoji_pill_pic::Matrix)
+		positions = Colors.alpha.(emoji_pill_pic).<0.5
+
+		curr_fig = Figure()
+		curr_ax = Axis(curr_fig[1, 1])
+		contour_plot = contour!(curr_ax, positions, levels=1, labels = false)
+		pill_points = contour_plot.plots[2].converted[1][]./10
+		pill_points = [Point2f.(0.5 .+6 .- p.data[1] .-3.5,p.data[2] .- 3.5) for p in pill_points]
+
+		pill_shape = Polygon(pill_points[1:end-1])
+		return pill_shape
+	end
+end
+
+# ╔═╡ d7ce43e5-7af7-4182-9992-1501e6d2e532
+function plot_grey_pill(emoji_pill_pic::Matrix{RGBA{Float64}})
+	emoji_pill_org = deepcopy(emoji_pill_pic)
+	grey_pill = GrayA.(emoji_pill_org)
+	for k = 1:length(grey_pill)
+		grey_pill[k] = GrayA(grey_pill[k].val,grey_pill[k].alpha* 0.2)
+	end
+	return grey_pill
+end
+
+# ╔═╡ 0dd8235c-c09b-49ae-b02a-4bbb285970a6
+happyX = findlast(treatment_in[1,:] .> 0)
+
+# ╔═╡ df178bb8-3b81-4c4b-ba94-3ad945e63007
+begin
+	color_grey = RGB{Float64}(0.5, 0.5, 0.5)
+	colors = [ColorSchemes.viridis[i] for i in 1:40:256]
+	col_length = length(colors)
+	color_blue = ColorSchemes.viridis[116]
+end;
 
 # ╔═╡ c4f25a29-009e-47e4-adc0-18c94e247df4
 sidebar = Div([
@@ -514,9 +514,9 @@ ColorTypes = "~0.11.4"
 Colors = "~0.12.10"
 DSP = "~0.7.8"
 GeometryBasics = "~0.4.7"
-HypertextLiteral = "~0.9.4"
+HypertextLiteral = "~0.9.5"
 MakieThemes = "~0.1.0"
-PNGFiles = "~0.4.1"
+PNGFiles = "~0.4.3"
 PlutoUI = "~0.7.51"
 SignalAnalysis = "~0.5.0"
 """
@@ -532,15 +532,15 @@ uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "1.5.0"
 
 [[AbstractLattices]]
-git-tree-sha1 = "f35684b7349da49fcc8a9e520e30e45dbb077166"
+git-tree-sha1 = "222ee9e50b98f51b5d78feb93dd928880df35f06"
 uuid = "398f06c4-4d28-53ec-89ca-5b2656b7603d"
-version = "0.2.1"
+version = "0.3.0"
 
 [[AbstractPlutoDingetjes]]
 deps = ["Pkg"]
-git-tree-sha1 = "91bd53c39b9cbfb5ef4b015e8b582d344532bd0a"
+git-tree-sha1 = "793501dcd3fa7ce8d375a2c878dca2296232686e"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
-version = "1.2.0"
+version = "1.2.2"
 
 [[AbstractTrees]]
 git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
@@ -549,9 +549,9 @@ version = "0.4.4"
 
 [[Adapt]]
 deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "02f731463748db57cc2ebfbd9fbc9ce8280d3433"
+git-tree-sha1 = "cde29ddf7e5726c9fb511f340244ea3481267608"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "3.7.1"
+version = "3.7.2"
 
 [[Animations]]
 deps = ["Colors"]
@@ -564,18 +564,18 @@ uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 
 [[ArrayInterface]]
 deps = ["Adapt", "LinearAlgebra", "Requires", "SparseArrays", "SuiteSparse"]
-git-tree-sha1 = "eba0af42241f0cb648806604222bab1e064edb67"
+git-tree-sha1 = "16267cf279190ca7c1b30d020758ced95db89cd0"
 uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
-version = "7.5.0"
+version = "7.5.1"
 
 [[Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[Automa]]
-deps = ["TranscodingStreams"]
-git-tree-sha1 = "ef9997b3d5547c48b41c7bd8899e812a917b409d"
+deps = ["PrecompileTools", "TranscodingStreams"]
+git-tree-sha1 = "0da671c730d79b8f9a88a391556ec695ea921040"
 uuid = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
-version = "0.8.4"
+version = "1.0.2"
 
 [[AxisAlgorithms]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "WoodburyMatrices"]
@@ -599,9 +599,9 @@ uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
 version = "1.0.8+0"
 
 [[CEnum]]
-git-tree-sha1 = "eb4cb44a499229b3b8426dcfb5dd85333951ff90"
+git-tree-sha1 = "389ad5c84de1ae7cf0e28e381131c98ea87d54fc"
 uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
-version = "0.4.2"
+version = "0.5.0"
 
 [[CRC32c]]
 uuid = "8bf52ea8-c179-5cab-976a-9e18b702a9bc"
@@ -626,9 +626,9 @@ version = "1.0.5"
 
 [[CairoMakie]]
 deps = ["Base64", "Cairo", "Colors", "FFTW", "FileIO", "FreeType", "GeometryBasics", "LinearAlgebra", "Makie", "PrecompileTools", "SHA"]
-git-tree-sha1 = "74384dc4aba2b377e22703e849154252930c434d"
+git-tree-sha1 = "5e21a254d82c64b1a4ed9dbdc7e87c5d9cf4a686"
 uuid = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-version = "0.10.11"
+version = "0.10.12"
 
 [[Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
@@ -697,9 +697,9 @@ version = "0.3.0"
 
 [[Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
-git-tree-sha1 = "8a62af3e248a8c4bad6b32cbbe663ae02275e32c"
+git-tree-sha1 = "886826d76ea9e72b35fcd000e535588f7b60f21d"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.10.0"
+version = "4.10.1"
 
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -744,9 +744,9 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[DelaunayTriangulation]]
 deps = ["DataStructures", "EnumX", "ExactPredicates", "Random", "SimpleGraphs"]
-git-tree-sha1 = "bea7984f7e09aeb28a3b071c420a0186cb4fabad"
+git-tree-sha1 = "26eb8e2331b55735c3d305d949aabd7363f07ba7"
 uuid = "927a84f5-c5f4-47a5-9785-b46e178433df"
-version = "0.8.8"
+version = "0.8.11"
 
 [[DensityInterface]]
 deps = ["InverseFunctions", "Test"]
@@ -772,9 +772,9 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[Distributions]]
 deps = ["ChainRulesCore", "DensityInterface", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
-git-tree-sha1 = "3d5873f811f582873bb9871fc9c451784d5dc8c7"
+git-tree-sha1 = "9242eec9b7e2e14f9952e8ea1c7e31a50501d587"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.102"
+version = "0.25.104"
 
 [[DocStringExtensions]]
 deps = ["LibGit2"]
@@ -833,9 +833,9 @@ version = "4.4.4+1"
 
 [[FFTW]]
 deps = ["AbstractFFTs", "FFTW_jll", "LinearAlgebra", "MKL_jll", "Preferences", "Reexport"]
-git-tree-sha1 = "b4fbdd20c889804969571cc589900803edda16b7"
+git-tree-sha1 = "ec22cbbcd01cba8f41eecd7d44aac1f23ee985e3"
 uuid = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
-version = "1.7.1"
+version = "1.7.2"
 
 [[FFTW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -856,10 +856,10 @@ uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 version = "1.16.1"
 
 [[FillArrays]]
-deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "35f0c0f345bff2c6d636f95fdb136323b5a796ef"
+deps = ["LinearAlgebra", "PDMats", "Random", "SparseArrays", "Statistics"]
+git-tree-sha1 = "5b93957f6dcd33fc343044af3d48c215be2562f1"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.7.0"
+version = "1.9.3"
 
 [[FiniteDiff]]
 deps = ["ArrayInterface", "LinearAlgebra", "Requires", "Setfield", "SparseArrays", "StaticArrays"]
@@ -893,9 +893,9 @@ version = "0.10.36"
 
 [[FreeType]]
 deps = ["CEnum", "FreeType2_jll"]
-git-tree-sha1 = "50351f83f95282cf903e968d7c6e8d44a5f83d0b"
+git-tree-sha1 = "907369da0f8e80728ab49c1c7e09327bf0d6d999"
 uuid = "b38be410-82b0-50bf-ab77-7b57e271db43"
-version = "4.1.0"
+version = "4.1.1"
 
 [[FreeType2_jll]]
 deps = ["Artifacts", "Bzip2_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
@@ -992,9 +992,9 @@ version = "0.0.4"
 
 [[HypertextLiteral]]
 deps = ["Tricks"]
-git-tree-sha1 = "c47c5fa4c5308f27ccaac35504858d8914e102f9"
+git-tree-sha1 = "7134810b1afce04bbc1045ca1985fbe81ce17653"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.4"
+version = "0.9.5"
 
 [[IOCapture]]
 deps = ["Logging", "Random"]
@@ -1054,10 +1054,10 @@ uuid = "18e54dd8-cb9d-406c-a71d-865a43cbb235"
 version = "0.1.2"
 
 [[IntelOpenMP_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "ad37c091f7d7daf900963171600d7c1c5c3ede32"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "31d6adb719886d4e32e38197aae466e98881320b"
 uuid = "1d5cc7b8-4909-519e-a0f8-d0f5ad9712d0"
-version = "2023.2.0+0"
+version = "2024.0.0+0"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -1122,15 +1122,15 @@ version = "0.21.4"
 
 [[JpegTurbo]]
 deps = ["CEnum", "FileIO", "ImageCore", "JpegTurbo_jll", "TOML"]
-git-tree-sha1 = "d65930fa2bc96b07d7691c652d701dcbe7d9cf0b"
+git-tree-sha1 = "fa6d0bcff8583bac20f1ffa708c3913ca605c611"
 uuid = "b835a17e-a41a-41e7-81f0-2f016b05efe0"
-version = "0.1.4"
+version = "0.1.5"
 
 [[JpegTurbo_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "6f2675ef130a300a112286de91973805fcc5ffbc"
+git-tree-sha1 = "60b1194df0a3298f460063de985eae7b01bc011a"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
-version = "2.1.91+0"
+version = "3.0.1+0"
 
 [[KernelDensity]]
 deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
@@ -1157,9 +1157,9 @@ uuid = "dd4b983a-f0e5-5f8d-a1b7-129d4a5fb1ac"
 version = "2.10.1+0"
 
 [[LaTeXStrings]]
-git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
+git-tree-sha1 = "50901ebc375ed41dbf8058da26f9de442febbbec"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-version = "1.3.0"
+version = "1.3.1"
 
 [[LazyArtifacts]]
 deps = ["Artifacts", "Pkg"]
@@ -1227,9 +1227,9 @@ version = "2.36.0+0"
 
 [[LightXML]]
 deps = ["Libdl", "XML2_jll"]
-git-tree-sha1 = "e129d9391168c677cd4800f5c0abb1ed8cb3794f"
+git-tree-sha1 = "3a994404d3f6709610701c7dabfc03fed87a81f8"
 uuid = "9c8b4983-aa76-5018-a973-4c85ecc9e179"
-version = "0.9.0"
+version = "0.9.1"
 
 [[LineSearches]]
 deps = ["LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "Printf"]
@@ -1243,9 +1243,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[LinearAlgebraX]]
 deps = ["LinearAlgebra", "Mods", "Permutations", "Primes", "SimplePolynomials"]
-git-tree-sha1 = "558a338f1eeabe933f9c2d4052aa7c2c707c3d52"
+git-tree-sha1 = "89ed93300377e0742ae8a7423f7543c8f5eb73a4"
 uuid = "9b3f67b0-2d00-526e-9884-9e4938f8fb88"
-version = "0.1.12"
+version = "0.2.5"
 
 [[LogExpFunctions]]
 deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
@@ -1262,10 +1262,10 @@ uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
 version = "0.1.4"
 
 [[MKL_jll]]
-deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
-git-tree-sha1 = "eb006abbd7041c28e0d16260e50a24f8f9104913"
+deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl"]
+git-tree-sha1 = "72dc3cf284559eb8f53aa593fe62cb33f83ed0c0"
 uuid = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
-version = "2023.2.0+0"
+version = "2024.0.0+0"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
@@ -1274,16 +1274,16 @@ uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 version = "0.5.11"
 
 [[Makie]]
-deps = ["Animations", "Base64", "CRC32c", "ColorBrewer", "ColorSchemes", "ColorTypes", "Colors", "Contour", "DelaunayTriangulation", "Distributions", "DocStringExtensions", "Downloads", "FFMPEG_jll", "FileIO", "FixedPointNumbers", "Formatting", "FreeType", "FreeTypeAbstraction", "GeometryBasics", "GridLayoutBase", "ImageIO", "InteractiveUtils", "IntervalSets", "Isoband", "KernelDensity", "LaTeXStrings", "LinearAlgebra", "MacroTools", "MakieCore", "Markdown", "Match", "MathTeXEngine", "Observables", "OffsetArrays", "Packing", "PlotUtils", "PolygonOps", "PrecompileTools", "Printf", "REPL", "Random", "RelocatableFolders", "Setfield", "ShaderAbstractions", "Showoff", "SignedDistanceFields", "SparseArrays", "StableHashTraits", "Statistics", "StatsBase", "StatsFuns", "StructArrays", "TriplotBase", "UnicodeFun"]
-git-tree-sha1 = "1d16d20279a145119899b4205258332f0fbeaa94"
+deps = ["Animations", "Base64", "CRC32c", "ColorBrewer", "ColorSchemes", "ColorTypes", "Colors", "Contour", "DelaunayTriangulation", "Distributions", "DocStringExtensions", "Downloads", "FFMPEG_jll", "FileIO", "FixedPointNumbers", "Formatting", "FreeType", "FreeTypeAbstraction", "GeometryBasics", "GridLayoutBase", "ImageIO", "InteractiveUtils", "IntervalSets", "Isoband", "KernelDensity", "LaTeXStrings", "LinearAlgebra", "MacroTools", "MakieCore", "Markdown", "MathTeXEngine", "Observables", "OffsetArrays", "Packing", "PlotUtils", "PolygonOps", "PrecompileTools", "Printf", "REPL", "Random", "RelocatableFolders", "Setfield", "ShaderAbstractions", "Showoff", "SignedDistanceFields", "SparseArrays", "StableHashTraits", "Statistics", "StatsBase", "StatsFuns", "StructArrays", "TriplotBase", "UnicodeFun"]
+git-tree-sha1 = "35fa3c150cd96fd77417a23965b7037b90d6ffc9"
 uuid = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
-version = "0.19.11"
+version = "0.19.12"
 
 [[MakieCore]]
 deps = ["Observables", "REPL"]
-git-tree-sha1 = "a94bf3fef9c690a2a4ac1d09d86a59ab89c7f8e4"
+git-tree-sha1 = "9b11acd07f21c4d035bd4156e789532e8ee2cc70"
 uuid = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
-version = "0.6.8"
+version = "0.6.9"
 
 [[MakieThemes]]
 deps = ["Colors", "Makie", "Random"]
@@ -1300,16 +1300,11 @@ version = "0.4.2"
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
-[[Match]]
-git-tree-sha1 = "1d9bc5c1a6e7ee24effb93f175c9342f9154d97f"
-uuid = "7eb4fadd-790c-5f42-8a69-bfa0b872bfbf"
-version = "1.2.0"
-
 [[MathTeXEngine]]
-deps = ["AbstractTrees", "Automa", "DataStructures", "FreeTypeAbstraction", "GeometryBasics", "LaTeXStrings", "REPL", "RelocatableFolders", "Test", "UnicodeFun"]
-git-tree-sha1 = "8f52dbaa1351ce4cb847d95568cb29e62a307d93"
+deps = ["AbstractTrees", "Automa", "DataStructures", "FreeTypeAbstraction", "GeometryBasics", "LaTeXStrings", "REPL", "RelocatableFolders", "UnicodeFun"]
+git-tree-sha1 = "96ca8a313eb6437db5ffe946c457a401bbb8ce1d"
 uuid = "0a4f8689-d25c-4efe-a92b-7142dfc1aa53"
-version = "0.5.6"
+version = "0.5.7"
 
 [[MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1331,9 +1326,9 @@ version = "1.1.0"
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[Mods]]
-git-tree-sha1 = "61be59e4daffff43a8cec04b5e0dc773cbb5db3a"
+git-tree-sha1 = "9d292c7fb23e9a756094f8617a0f10e3b9582f47"
 uuid = "7475f97c-0381-53b1-977b-4c60186c8d62"
-version = "1.3.3"
+version = "2.2.0"
 
 [[MosaicViews]]
 deps = ["MappedArrays", "OffsetArrays", "PaddedViews", "StackViews"]
@@ -1371,9 +1366,9 @@ version = "1.1.1"
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 
 [[Observables]]
-git-tree-sha1 = "6862738f9796b3edc1c09d0890afce4eca9e7e93"
+git-tree-sha1 = "7438a59546cf62428fc9d1bc94729146d37a7225"
 uuid = "510215fc-4207-5dde-b226-833fc4488ee2"
-version = "0.5.4"
+version = "0.5.5"
 
 [[OffsetArrays]]
 deps = ["Adapt"]
@@ -1428,9 +1423,9 @@ uuid = "91d4177d-7536-5919-b921-800302f37372"
 version = "1.3.2+0"
 
 [[OrderedCollections]]
-git-tree-sha1 = "2e73fe17cac3c62ad1aebe70d44c963c3cfdc3e3"
+git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.6.2"
+version = "1.6.3"
 
 [[PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1438,15 +1433,15 @@ uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
 
 [[PDMats]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
-git-tree-sha1 = "66b2fcd977db5329aa35cac121e5b94dd6472198"
+git-tree-sha1 = "949347156c25054de2db3b166c52ac4728cbad65"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
-version = "0.11.28"
+version = "0.11.31"
 
 [[PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
-git-tree-sha1 = "5ded86ccaf0647349231ed6c0822c10886d4a1ee"
+git-tree-sha1 = "67186a2bc9a90f9f85ff3cc8277868961fb57cbd"
 uuid = "f57f5aa1-a3ce-4bc8-8ab9-96f992907883"
-version = "0.4.1"
+version = "0.4.3"
 
 [[Packing]]
 deps = ["GeometryBasics"]
@@ -1474,15 +1469,15 @@ version = "0.12.3"
 
 [[Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
+git-tree-sha1 = "a935806434c9d4c506ba941871b327b96d41f2bf"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.7.2"
+version = "2.8.0"
 
 [[Permutations]]
 deps = ["Combinatorics", "LinearAlgebra", "Random"]
-git-tree-sha1 = "25e2bb0973689836bf164ecb960762f1bb8794dd"
+git-tree-sha1 = "c7745750b8a829bc6039b7f1f0981bcda526a946"
 uuid = "2ae35dd2-176d-5d53-8349-f30d82d94d4f"
-version = "0.4.17"
+version = "0.4.19"
 
 [[Pixman_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "LLVMOpenMP_jll", "Libdl"]
@@ -1508,9 +1503,9 @@ version = "1.3.5"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "e47cd150dbe0443c3a3651bc5b9cbd5576ab75b7"
+git-tree-sha1 = "bd7c69c7f7173097e7b5e1be07cee2b8b7447f51"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.52"
+version = "0.7.54"
 
 [[PolygonOps]]
 git-tree-sha1 = "77b3d3605fc1cd0b42d95eba87dfcd2bf67d5ff6"
@@ -1519,9 +1514,9 @@ version = "0.1.2"
 
 [[Polynomials]]
 deps = ["LinearAlgebra", "MakieCore", "RecipesBase", "Setfield", "SparseArrays"]
-git-tree-sha1 = "ea78a2764f31715093de7ab495e12c0187f231d1"
+git-tree-sha1 = "a9c7a523d5ed375be3983db190f6a5874ae9286d"
 uuid = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
-version = "4.0.4"
+version = "4.0.6"
 
 [[PositiveFactorizations]]
 deps = ["LinearAlgebra"]
@@ -1543,9 +1538,9 @@ version = "1.4.1"
 
 [[Primes]]
 deps = ["IntegerMathUtils"]
-git-tree-sha1 = "4c9f306e5d6603ae203c2000dd460d81a5251489"
+git-tree-sha1 = "1d05623b5952aed1307bf8b43bec8b8d1ef94b6e"
 uuid = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
-version = "0.5.4"
+version = "0.5.5"
 
 [[Printf]]
 deps = ["Unicode"]
@@ -1639,9 +1634,9 @@ uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [[Scratch]]
 deps = ["Dates"]
-git-tree-sha1 = "30449ee12237627992a99d5e30ae63e4d78cd24a"
+git-tree-sha1 = "3bac05bc7e74a75fd9cba4295cde4045d9fe2386"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
-version = "1.2.0"
+version = "1.2.1"
 
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -1693,21 +1688,21 @@ version = "0.4.0"
 
 [[SimpleGraphs]]
 deps = ["AbstractLattices", "Combinatorics", "DataStructures", "IterTools", "LightXML", "LinearAlgebra", "LinearAlgebraX", "Optim", "Primes", "Random", "RingLists", "SimplePartitions", "SimplePolynomials", "SimpleRandom", "SparseArrays", "Statistics"]
-git-tree-sha1 = "b608903049d11cc557c45e03b3a53e9260579c19"
+git-tree-sha1 = "f65caa24a622f985cc341de81d3f9744435d0d0f"
 uuid = "55797a34-41de-5266-9ec1-32ac4eb504d3"
-version = "0.8.4"
+version = "0.8.6"
 
 [[SimplePartitions]]
 deps = ["AbstractLattices", "DataStructures", "Permutations"]
-git-tree-sha1 = "dcc02923a53f316ab97da8ef3136e80b4543dbf1"
+git-tree-sha1 = "e9330391d04241eafdc358713b48396619c83bcb"
 uuid = "ec83eff0-a5b5-5643-ae32-5cbf6eedec9d"
-version = "0.3.0"
+version = "0.3.1"
 
 [[SimplePolynomials]]
 deps = ["Mods", "Multisets", "Polynomials", "Primes"]
-git-tree-sha1 = "d537c31cf9995236166e3e9afc424a5a1c59ff9d"
+git-tree-sha1 = "7063828369cafa93f3187b3d0159f05582011405"
 uuid = "cc47b68c-3164-5771-a705-2bc0097375a0"
-version = "0.2.14"
+version = "0.2.17"
 
 [[SimpleRandom]]
 deps = ["Distributions", "LinearAlgebra", "Random"]
@@ -1748,9 +1743,9 @@ version = "2.3.1"
 
 [[StableHashTraits]]
 deps = ["Compat", "SHA", "Tables", "TupleTools"]
-git-tree-sha1 = "30edbce1c797dc7d4c74bc07b2b6a57b891bead3"
+git-tree-sha1 = "5a26dfe46e2cb5f5eca78114c7d49548b9597e71"
 uuid = "c5dd0088-6c3f-4803-b00e-f31a60c170fa"
-version = "1.1.0"
+version = "1.1.3"
 
 [[StackViews]]
 deps = ["OffsetArrays"]
@@ -1759,10 +1754,10 @@ uuid = "cae243ae-269e-4f55-b966-ac2d0dc13c15"
 version = "0.1.1"
 
 [[StaticArrays]]
-deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "0adf069a2a490c47273727e029371b31d44b72b2"
+deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore", "Statistics"]
+git-tree-sha1 = "5ef59aea6f18c25168842bded46b16662141ab87"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.6.5"
+version = "1.7.0"
 
 [[StaticArraysCore]]
 git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
@@ -1839,9 +1834,9 @@ version = "0.6.8"
 
 [[TranscodingStreams]]
 deps = ["Random", "Test"]
-git-tree-sha1 = "9a6ae7ed916312b41236fcef7e0af564ef934769"
+git-tree-sha1 = "1fbeaaca45801b4ba17c251dd8603ef24801dd84"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.9.13"
+version = "0.10.2"
 
 [[Tricks]]
 git-tree-sha1 = "eae1bb484cd63b36999ee58be2de6c178105112f"
@@ -1883,9 +1878,9 @@ version = "0.4.1"
 
 [[Unitful]]
 deps = ["ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "Random"]
-git-tree-sha1 = "a72d22c7e13fe2de562feda8645aa134712a87ee"
+git-tree-sha1 = "3c793be6df9dd77a0cf49d80984ef9ff996948fa"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.17.0"
+version = "1.19.0"
 
 [[WAV]]
 deps = ["Base64", "FileIO", "Libdl", "Logging"]
@@ -1895,15 +1890,15 @@ version = "1.2.0"
 
 [[WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "de67fa59e33ad156a590055375a30b23c40299d3"
+git-tree-sha1 = "5f24e158cf4cee437052371455fe361f526da062"
 uuid = "efce3f68-66dc-5838-9240-27a6d6f5f9b6"
-version = "0.5.5"
+version = "0.5.6"
 
 [[XML2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Zlib_jll"]
-git-tree-sha1 = "24b81b59bd35b3c42ab84fa589086e19be919916"
+git-tree-sha1 = "801cbe47eae69adc50f36c3caec4758d2650741b"
 uuid = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
-version = "2.11.5+0"
+version = "2.12.2+0"
 
 [[XSLT_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgcrypt_jll", "Libgpg_error_jll", "Libiconv_jll", "Pkg", "XML2_jll", "Zlib_jll"]
@@ -1988,10 +1983,10 @@ uuid = "f638f0a6-7fb0-5443-88ba-1cc74229b280"
 version = "2.0.2+0"
 
 [[libpng_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "94d180a6d2b5e55e447e2d27a29ed04fe79eb30c"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Zlib_jll"]
+git-tree-sha1 = "93284c28274d9e75218a416c65ec49d0e0fcdf3d"
 uuid = "b53b4c65-9356-5827-b1ea-8c7a1a84506f"
-version = "1.6.38+0"
+version = "1.6.40+0"
 
 [[libsixel_jll]]
 deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Pkg", "libpng_jll"]

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.36
+# v0.19.30
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -16,9 +16,6 @@
 
 using Markdown
 using InteractiveUtils
-
-# ╔═╡ 27456042-f00a-11ec-3ffc-0b298d4b25ea
-using Random, PlutoUI, StatsBase, Plots
 
 # ╔═╡ 469032ca-003f-4e82-b03a-b4401f79e971
 md"""
@@ -3167,6 +3164,9 @@ DUFD ZW LHHK LKESH CHH KBD DUH QBVKI ED ZFLHC,
 KBJ UHFAHK YHHY DUJBVXU DUH PRFKLHD BS DUH IFJL
 DB MJW, “UBRI, UBRI!”
 """
+
+# ╔═╡ 27456042-f00a-11ec-3ffc-0b298d4b25ea
+using Random, PlutoUI, StatsBase, Plots
 
 # ╔═╡ f696c25c-df64-4f1a-b979-01b70a904a1e
 md"""

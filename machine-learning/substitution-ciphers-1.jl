@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.36
+# v0.19.30
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -27,13 +27,6 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 1f522768-ff6f-4f27-8f16-75bf5b5e6f9e
-# ╠═╡ show_logs = false
-using Random, PlutoUI, Plots
-
-# ╔═╡ 19ac84ba-367f-4aca-99bc-83a1f6ff122a
-using PlutoTeachingTools: hint, almost, keep_working, correct
-
 # ╔═╡ 0fa3c6d0-ee3d-11ec-0bb4-a944807ba0ed
 md"""
 # Solving ciphers (part 1)
@@ -46,6 +39,9 @@ Here is an example. Try it out!
 # ╔═╡ 1bf7875f-9a22-4ddb-8493-e6415d7ff0b0
 @bind test_message TextField((40, 4), default="Let's do some encryption! Yayyy")
 
+# ╔═╡ 17c4d571-768e-451c-8596-34d791b83846
+example_encrypted = encrypt(test_message, example_key)
+
 # ╔═╡ ab028285-df3c-43d8-a4b2-9b063650ba66
 
 
@@ -55,6 +51,9 @@ Ciphers are used to **communicate in secret**.
 
 Without knowing the cipher, the encrypted text is impossible to read. But if you know the cipher used to encrypt a message, you can **decrypt** a message from someone else.
 """
+
+# ╔═╡ 81421e82-2679-417c-ba97-15e6ffa8c4d4
+decrypt(example_encrypted, example_key)
 
 # ╔═╡ 7cee42ae-fa54-451f-a254-5871f22e5e11
 
@@ -67,6 +66,9 @@ Imagine that you intercepted a message that was encrypted using a cipher. The on
 
 
 """
+
+# ╔═╡ 8abce95f-7163-4043-8a20-340ead77f462
+example_encrypted
 
 # ╔═╡ 45242ec9-b815-483c-8ef9-6c6cfdd52e7d
 md"""
@@ -200,12 +202,6 @@ function encrypt(message, key)
 	String(newcharacters)
 end
 
-# ╔═╡ 17c4d571-768e-451c-8596-34d791b83846
-example_encrypted = encrypt(test_message, example_key)
-
-# ╔═╡ 8abce95f-7163-4043-8a20-340ead77f462
-example_encrypted
-
 # ╔═╡ c2a77d46-2d79-4993-96e4-a7d4a8ee5e6e
 md"""
 Let's try it out!
@@ -237,9 +233,6 @@ function decrypt(message, key)
 
 	encrypt(message, inverse_key)
 end
-
-# ╔═╡ 81421e82-2679-417c-ba97-15e6ffa8c4d4
-decrypt(example_encrypted, example_key)
 
 # ╔═╡ a3a4d43f-3b53-4d85-9721-923f2a62e9a1
 md"""
@@ -838,6 +831,13 @@ We then evaluated solutions based on character frequencies, and selected the one
 
 The _part 2_ to this notebook will get into the more complex case of solving any replacement cipher.
 """
+
+# ╔═╡ 1f522768-ff6f-4f27-8f16-75bf5b5e6f9e
+# ╠═╡ show_logs = false
+using Random, PlutoUI, Plots
+
+# ╔═╡ 19ac84ba-367f-4aca-99bc-83a1f6ff122a
+using PlutoTeachingTools: hint, almost, keep_working, correct
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
