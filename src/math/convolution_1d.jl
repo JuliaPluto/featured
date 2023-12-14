@@ -8,6 +8,7 @@
 #> date = "2023-09-20"
 #> description = "Learn about the cool concept of convolution on continuous functions!"
 #> license = "Unlicense"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Boshra Ariguib"
