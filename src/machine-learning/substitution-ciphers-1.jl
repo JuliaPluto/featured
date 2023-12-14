@@ -46,16 +46,46 @@ Here is an example. Try it out!
 # ╔═╡ 1bf7875f-9a22-4ddb-8493-e6415d7ff0b0
 @bind test_message TextField((40, 4), default="Let's do some encryption!")
 
+# ╔═╡ ab028285-df3c-43d8-a4b2-9b063650ba66
+
+
+# ╔═╡ e54cbe8a-fffd-41e6-9045-d8ecb0994ce6
+md"""
+Ciphers are used to **communicate in secret**. 
+
+Without knowing the cipher, the encrypted text is impossible to read. But if you know the cipher used to encrypt a message, you can **decrypt** a message from someone else.
+"""
+
+# ╔═╡ 7cee42ae-fa54-451f-a254-5871f22e5e11
+
+
+# ╔═╡ 12f13216-0809-4da6-ad81-36e21e491cd1
+md"""
+## The challenge
+
+Imagine that you intercepted a message that was encrypted using a cipher. The only thing you see is:
+
+
+"""
+
+# ╔═╡ 45242ec9-b815-483c-8ef9-6c6cfdd52e7d
+md"""
+but you don't have the original cipher. Is it possible to **crack the code** and figure out the cipher that was used, and read the secret message?
+"""
+
 # ╔═╡ fbbaac1b-53b1-4eb2-82b2-a0ec481f58e7
 md"""
-(More specifically, we will look at one-to-one substitution ciphers. This means that every letter in the original message has only one target, and every target has only one original.)
-
-In this notebook, we will define such ciphers, and make a start with solving them. Since solving ciphers is pretty hard, we will look at a simpler case: ceasar ciphers. We will see what it takes to write a program that solves these simpler ciphers.
-
-Part 2 of this notebook is about solving substitution ciphers. The two notebooks are intended to provide a gradual introduction into the topic, but you can skip ahead if you're feeling very confident.
-
-The exercises in this notebook will not require any knowledge about ciphers, but some understanding of handling strings in Julia is recommended.
+> ## Part 1 and 2
+> 
+> In Part 1, we will define substitution ciphers, and make a start with solving them. Since solving ciphers is pretty hard, we will look at a simpler case: _ceasar ciphers_. We will see what it takes to write a program that solves these simpler ciphers.
+> 
+> Part 2 of this notebook is about solving substitution ciphers. The two notebooks are intended to provide a gradual introduction into the topic, but you can skip ahead if you're feeling very confident.
+> 
+> The exercises in this notebook will not require any knowledge about ciphers, but some understanding of handling strings in Julia is recommended.
 """
+
+# ╔═╡ 92ca8a1e-4c20-419e-8d72-b9721f32699b
+
 
 # ╔═╡ 6917f83f-a6aa-4cbc-89da-ba0f448acaa0
 md"""
@@ -171,7 +201,10 @@ function encrypt(message, key)
 end
 
 # ╔═╡ 17c4d571-768e-451c-8596-34d791b83846
-encrypt(test_message, example_key)
+example_encrypted = encrypt(test_message, example_key)
+
+# ╔═╡ 8abce95f-7163-4043-8a20-340ead77f462
+example_encrypted
 
 # ╔═╡ c2a77d46-2d79-4993-96e4-a7d4a8ee5e6e
 md"""
@@ -204,6 +237,9 @@ function decrypt(message, key)
 
 	encrypt(message, inverse_key)
 end
+
+# ╔═╡ 81421e82-2679-417c-ba97-15e6ffa8c4d4
+decrypt(example_encrypted, example_key)
 
 # ╔═╡ a3a4d43f-3b53-4d85-9721-923f2a62e9a1
 md"""
