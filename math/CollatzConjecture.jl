@@ -4,7 +4,7 @@
 #> [frontmatter]
 #> title = "Visualizing the Collatz Conjecture "
 #> description = "Explore this cool math problem and create your own visualization!"
-#> tags = ["maths", "interactive visualization", "collatz conjecture ", "edmond harris"]
+#> tags = ["math", "interactive visualization", "collatz conjecture", "edmond harris"]
 #> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Collatz_Conjecture_Vizualization.png/600px-Collatz_Conjecture_Vizualization.png?20231214223051"
 #> date = "2023-12-14"
 #> license = "Unlicense"
