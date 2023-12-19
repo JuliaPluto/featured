@@ -3,6 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
+#> image = "https://private-user-images.githubusercontent.com/43678097/291725549-ebcd0d6c-fa37-4d2b-8d82-6814854f726b.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTEiLCJleHAiOjE3MDMwMjM5MTgsIm5iZiI6MTcwMzAyMzYxOCwicGF0aCI6Ii80MzY3ODA5Ny8yOTE3MjU1NDktZWJjZDBkNmMtZmEzNy00ZDJiLThkODItNjgxNDg1NGY3MjZiLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFJV05KWUFYNENTVkVINTNBJTJGMjAyMzEyMTklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjMxMjE5VDIyMDY1OFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTg0OGFmNWRjNGYxYmY3NWYyOTkxYzQ0MGFkZGNhZWY0YTQ5MDMzOWFkNmY1NDcxMmRhZDUzYjQ2ZTYwMGMyYzImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.mOxjYLOsfEIrrT15usnJRpBn4fROSPndfJfpVQ5HwDw"
 #> title = "Styling with CSS"
 #> tags = ["web", "css"]
 #> license = "Unlicense"
