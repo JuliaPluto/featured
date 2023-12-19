@@ -6,6 +6,8 @@
 #> title = "Structure and language"
 #> tags = ["language", "natural language processing", "language modelling", "natural language generation", "homework"]
 #> description = "Automatically detect the language of a piece of text, and generate realistic-looking random text!"
+#> license = "MIT / CC BY-SA 4.0"
+#> license_url = "https://github.com/mitmath/computational-thinking/blob/Fall23/LICENSE.md"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "MIT Computational Thinking"
