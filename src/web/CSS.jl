@@ -2,6 +2,7 @@
 # v0.19.36
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
 #> title = "Styling with CSS"
 #> tags = ["web", "css"]
 #> license = "Unlicense"
@@ -18,7 +19,7 @@ using InteractiveUtils
 md"""
 # Styling notebooks with CSS
 
-Are you ready to bring your notebook presentation to the next level? Do you want to change the way Pluto looks for you? Do you want special formatting for your cell output?
+Are you looking bring your notebook presentation to the next level? Do you want to change the way Pluto looks for you? Do you want special formatting for your cell output?
 
 This is the notebook for you! We'll talk about how to style the notebook page using CSS. Let's get started!
 """
@@ -29,7 +30,7 @@ md"""
 
 CSS stands for _cascading style sheets_ and it's the language we use to describe what web content should look like.
 
-A typical web page is written in HTML. HTML is essentially text with tags, that your browser is able to make sense of. For example:
+A typical web page is written in HTML. HTML is essentially text with tags, which your browser is able to make sense of. For example:
 """
 
 # ╔═╡ 0bbfdbd5-91cd-4faf-98ef-ed2401c7de15
@@ -75,7 +76,7 @@ html"""
 md"""
 What's happening here?
 
-- Our first cell contains the tag `<span>`. A span is a _generic_ element that just describes a span of text. It doesn't really do anything.
+- Our first cell contains the tag `<span>`. A span is a _generic_ element that just tags a selection of text. It doesn't really do anything.
 - The span tag includes another attribute: `id="orange"`. That's a way of giving a unique name to this element.
 - We then write some style rules in a `<style>` tag. We added a rule with the _selector_ `#orange`. That means we want to select elements that have `orange` as their ID.
 - The content of our rule, between the `{}`, describes what the selected element should look like. In this case, we say it should be written in orange.
@@ -90,30 +91,30 @@ md"""
 
 # ╔═╡ e6f1b9dc-8243-4d11-bd21-aa37396cb1e7
 html"""
-We can use also CSS to <span id="underlined-text">underline</span> text, or to make it very <span id="small-text">small</span> or <span id="big-text">big</span>. Or you can write text in <span id="caps-text">all caps</span>. And you can change both the <span id="red-text">text colour</span> and <span id="red-background">background colour</span>.
+We can use also CSS to <span id="section-1">underline</span> text, or to make it very <span id="section-2">small</span> or <span id="section-3">big</span>. Or you can write text in <span id="section-4">all caps</span>. And you can change both the <span id="section-5">text colour</span> and <span id="section-6">background colour</span>.
 
 <style>
-	#small-text {
+	#section-1 {
 		text-decoration: underline;
 	}
 
-	#underlined-text {
+	#section-2 {
 		background-color: rgba(255, 0, 0, 0.3);
 	}
 
-	#big-text {
+	#section-3 {
 		color: red;
 	}
 
-	#caps-text {
+	#section-4 {
 		font-size: x-large;
 	}
 
-	#red-text {
+	#section-5 {
 		font-size: x-small;
 	}
 
-	#red-background {
+	#section-6 {
 		text-transform: uppercase;
 	}
 </style>
@@ -123,11 +124,11 @@ We can use also CSS to <span id="underlined-text">underline</span> text, or to m
 md"""
 ## CSS selectors
 
-So far we've used the `id` of elements to describe what they should look like. That's a fine way to do things if we want to style specific elements, like the output of a single cell.
+So far we've used the `id` of elements to describe what they should look like. That's a fine way to do things if we want to style a specific element, like the output of a single cell.
 
 But a lot of the time, we want to write more _general_ rules that describe the overall layout of the page, like "every code cell should have a blue background" or "images should have a margin of 100 pixels".
 
-CSS selectors are designed for these kind of generic rules. Let's go over the fundamentals.
+Luckily, CSS selectors can do a lot more than selecting elements by their ID. Let's go over the fundamentals.
 """
 
 # ╔═╡ 4a0aaf47-3685-4b01-bd57-f1ea0a09d01a
@@ -135,6 +136,7 @@ html"""
 We've already seen one type of selector: <span id="special-element">selecting the id of the element</span>.
 
 <style>
+	/* hashtag for ID selection */
 	#special-element {
 		text-decoration: underline wavy;
 	}
@@ -146,6 +148,7 @@ html"""
 You can also select the <special-element>name of the tag</special-element>. This is useful for very generic selectors, like "any paragraph".
 
 <style>
+	/* no special character for the tag name */
 	special-element {
 		text-decoration: underline wavy;
 	}
@@ -154,11 +157,16 @@ You can also select the <special-element>name of the tag</special-element>. This
 
 # ╔═╡ b6279fae-90fc-430f-bcb6-1d79f0e98fba
 html"""
-Sometimes we want something a bit more fine-tuned than the element type: not all paragraphs, but some of them. But IDs are intended to be unique.
+<p>
+	Sometimes we want something a bit more fine-tuned than the element type: not all paragraphs, but some of them. We can't use IDs here: those are meant to be unique.
+</p>
 
-In this case, we usually use the `class` attribute. That's a way of saying a bunch of elements belong to a particular category. Then you can <span class="special-element">select elements of a class</span>.
+<p>
+	In this case, we usually use the <code>class</code> attribute. That's a way of saying a bunch of elements belong to a particular category. Then you can <span class="special-element">select elements of a class</span>.
+</p>
 
 <style>
+	/* use a dot for class names */
 	.special-element {
 		text-decoration: underline wavy;
 	}
@@ -167,9 +175,7 @@ In this case, we usually use the `class` attribute. That's a way of saying a bun
 
 # ╔═╡ 18613f4c-7beb-4051-ab75-1c3db8c4c97a
 md"""
-Alright, so we can select by the element type, the unique ID of the element, or the class name we assign to the element.
-
-We can also combine selectors.
+Alright, so we can select by the element type, the unique ID of the element, or the class name we assign to the element. We can also combine selectors!
 """
 
 # ╔═╡ 8f553705-9f6f-4b0e-babc-1170cede56e6
@@ -185,26 +191,28 @@ html"""
 </p>
 
 <style>
-	/* combine selectors without a space to match all of them on the same element */
+	/* combine selectors to match all of them on the same element */
 
 	p.example#example-1 {
 		font-style: italic;
 	}
 
 	p.example.special {
-		font-size: large;
+		font-size: x-large;
 	}
 
-	/* chain selectors with a space to match */
+	/* chain selectors with a space to match "a within b" */
+	/* in this case: an element with class "number" inside an element
+	with ID "example-2" */
 
-	p.example span.number {
+	#example-2 .number {
 		font-weight: bold;
 	}
 
 	/* or wrap one rule in another */
 
-	p#example-3 {
-		span.number {
+	#example-3 {
+		.number {
 			text-decoration: underline;
 		}
 	}
@@ -338,7 +346,7 @@ html"""
 md"""
 !!! info "What's a div?"
 
-	We used `<div>` as the top-level tag in these examples. `<div>` stands for division: it's a generic element meant to divide the content of a page into parts without really saying anything else about it - it's a suitable generic wrapper for cell output.
+	We used `<div>` as the top-level tag in these examples. `<div>` stands for division: it's a generic element meant to divide the content of a page into parts without really saying anything else about what those parts are for - it's a suitable generic wrapper for cell output.
 """
 
 # ╔═╡ 00398409-91c3-4bec-8f80-d53d71c33bdd
@@ -367,7 +375,7 @@ md"""
 
 What if we _don't_ want to style specific cells?
 
-Sometimes it's useful to style the entire page. For instance, you could change the layout of a notebook for a presentation. Or maybe you just have a personal preference to show all text in purple!
+Sometimes it's useful to style the entire page. For instance, you could change the layout of a notebook for a presentation to show bigger text or hide the live docs. Or maybe you just have a personal preference to show all text in purple!
 
 We've already seen that `<style>` elements can modify anything on the page. If we want to style Pluto, though, we need to know how to select specific elements.
 
@@ -388,7 +396,7 @@ html"""
 
 # ╔═╡ d9ac05cc-3c54-46fc-bf28-ad38418fe413
 md"""
-Keep in mind that Pluto doesn't guarantee a stable API for styling. That is to say, new versions of Pluto can change class names or element names, or just slightly restyle the page in a way that messes up your own styling rules.
+Keep in mind that Pluto doesn't guarantee a stable API for styling. That is to say, new versions of Pluto might change class names or element names, or just slightly restyle the page in a way that messes up your own styling rules.
 
 That said, Pluto has been around for a while, so you can expect it to be reasonably stable.
 """
