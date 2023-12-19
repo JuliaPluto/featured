@@ -11,8 +11,8 @@
 #> description = "Learn about optimisation by solving substitution ciphers!"
 #> 
 #>     [[frontmatter.author]]
-#>     name = "Pluto.jl"
-#>     url = "https://github.com/JuliaPluto"
+#>     name = "Luka van der Plas"
+#>     url = "https://github.com/lukavdplas"
 
 using Markdown
 using InteractiveUtils
