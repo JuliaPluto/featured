@@ -1,11 +1,15 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.19.36
 
 #> [frontmatter]
 #> image = "https://jupyter.org/assets/homepage/main-logo.svg"
 #> title = "Pluto for Jupyter users"
 #> tags = ["basic"]
 #> description = "Coming to Pluto from Jupyter? Here's what you need to know!"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
 
 using Markdown
 using InteractiveUtils
@@ -20,11 +24,11 @@ md"""
 [Jupyter](https://jupyter.org/) is another open source notebook environment, that works with Julia, Python, and R. If you're already familiar with Jupyter and are now trying out Pluto, this notebook is for you!
 """
 
-# ╔═╡ b5eefb2d-95f0-474e-9651-dfe91f627ec3
+# ╔═╡ a423fc4f-6000-4451-bc03-4035c9847753
 md"""
 ## Reactivity
 
-The key difference between Pluto and Jupyter is *reactivity*.
+The most notable difference between Pluto and Jupyter is *reactivity*.
 
 Here we have two cells: one defines `x`, and one defines `y`, which depends on `x`. Try changing the value of `x` here, and see what happens!
 """
@@ -35,91 +39,143 @@ x = 1
 # ╔═╡ 8e1faf5f-7b60-4b57-9902-e9d2531f0961
 y = x + 1
 
-# ╔═╡ fcc01f50-521d-44e3-b162-b689379db2af
+# ╔═╡ 03d3ade3-056a-4f16-9b31-d259879082c9
 md"""
-When you change `x`, `y` is immediately updated with it!
-
-This can save you some tedious work where you have to rerun several cells after making an update. But it's more than a time-saver!
+When you change `x`, `y` is immediately updated with it! ⚡
 """
 
-# ╔═╡ d65cefad-e53f-4dc9-86cf-a6c010d36a23
+# ╔═╡ 3ed1ed94-8741-48a0-9d23-bb78499eec91
 md"""
-In a Jupyter notebook, your session has an internal *state*, that contains all the variables you have defined. When you run a cell defining `x = 1`, the value of `x` is stored - and it will stay there when you remove the cell. So now your session remembers that `x = 1`, even though you don't have any code saying that!
-
-This can cause all sorts of headaches. You might recognise some of these situations:
-- You work on a notebook and it all runs great. The next day, you open it again, and suddenly it doesn't work anymore.
-- You ask someone for help with a notebook, but they can't see the issue. Finally, you realise the problem was a line of code that you had written *and* deleted an hour ago!
-- 
+That's what we mean by reactivity in Pluto. Pluto analyses the _dependencies_ between your code, and reruns cells when needed to keep everything up to date. This is very different from Jupyter, where you were in charge of deciding when to rerun cells!
 """
 
-# ╔═╡ 798659b9-583c-41d2-8cf7-cc1ac18d0992
+# ╔═╡ 773ac617-4e5d-46b9-92ff-b0d9a23e42f1
+md"""
+This can save you some tedious work of having to rerun several cells when you change a variable, but it's more than a time-saver!
+
+Because the output of your cells is always kept up-to-date, you won't have weird errors that depend on some code that you ran in your session but deleted over an hour ago. Likewise, when you shut down Pluto and open it the next day, all your notebooks will work exactly like yesterday.
+"""
+
+# ╔═╡ 74a6102a-e09d-4ebb-9ef8-2511b0f46f58
+md"""
+## Cell order
+
+Like Jupyter, Pluto doesn't mind if your cells don't match execution order. Here the `mice` cell depends on `mouse`, but `mouse` comes second:
+"""
+
+# ╔═╡ 3bca136c-115f-4dd1-ac4d-d14c23c538ce
+mouse = "🐭"
+
+# ╔═╡ 807b1586-8b3e-4cb1-9a9d-8ca66a28ec3e
+mice = repeat(mouse, 3)
+
+# ╔═╡ 2b91d104-921a-4d66-ac1f-a940cdb2d14c
+md"""
+This is also fine in Jupyter, but it's discouraged. Running cells yourself is easier when you can run things top-to-bottom, and the "run all cells" command also requires your cells work like that.
+
+Because Pluto analyses the dependencies in your code, playing with the order of cells is no problem at all!
+"""
+
+# ╔═╡ 447f49ce-1738-4987-a976-094174971ccb
+md"""
+## Re-assigning variables
+
+Here' s something that you can't do in Pluto:
+"""
+
+# ╔═╡ c4ece2cd-31f4-4c91-a59b-e520de13dedd
+md"""
+We tried to create multiple cells that set the value of `greatness`, but that's not possible!
+
+This is because Pluto's reactivity. This cell depends on `greatness`, but which value should it use?
+"""
+
+# ╔═╡ 162513a8-4ca9-4cae-9e43-1ae09827f7a4
+badness = -greatness
+
+# ╔═╡ 5c958b92-c511-48b0-aeb2-a8b5fe4514cb
+md"""
+Pluto also can't decide the proper dependency order between the three cells. Should `greatness` be `(0 + 1) * 2)` or `(0 * 2) + 1` ?
+"""
+
+# ╔═╡ ee7adb33-b394-484d-8071-122642ea867b
+md"""
+We can't give an answer that everyone will agree on in every situation - so for clarity, Pluto just prohibits this kind of ambiguity.
+"""
+
+# ╔═╡ 4fe5a14c-a482-4d77-9472-d9c0a793e91e
+md"""
+If you run into this error, you can do two things:
+
+- Wrap all definitions together into a single cell
+- Rename variables so they all have different names, e.g. `greatness_1`, `greatness_2`.
+"""
+
+# ╔═╡ 5200e802-8080-4394-aa85-e2604c7279c8
 md"""
 ## Multiple expressions per cell
 
-It may surprise you that you can't put multiple expressions in the same cell:
+When you start programming your first Pluto notebook, you'll probably run in to this error:
 """
 
-# ╔═╡ 89670543-7e56-4c7d-8d33-25430e99f8e6
+# ╔═╡ 94991d24-6aad-4361-a8e5-5e2c1f15c53c
 cat = "🐈"
 dog = "🐕"
 
-# ╔═╡ 4e964657-88ba-4ad2-8c25-ff2e3053fb69
+# ╔═╡ 244ca1ba-c2dc-4713-9dd0-57ed0d19ba70
 md"""
-There are a few ways to make this code work again. As the error message suggests, you can just split up your code in multiple cells. It is also possible to wrap the code in a `begin`/`end` block, like this:
-"""
+Ah, Pluto cells must be a single expression. Not to worry - as you can see, the error message lets you pick a solution. Either split up the cell in two:
 
-# ╔═╡ 34ae0410-a129-4720-ac40-23b36c48f470
+```julia
+cat = "🐈"
+```
+
+```julia
+dog = "🐕"
+```
+
+... or write a cell with a begin/end block:
+
+```julia
 begin
 	cat = "🐈"
 	dog = "🐕"
 end
-
-# ╔═╡ 42bf60f4-72b5-45f0-8924-65715675bf20
-md"""
-In other cases, it may be more appropriate to use a `let`/`end` block, where you use a few lines of code but only define one variable.
+```
 """
 
-# ╔═╡ 46d8bf1a-0565-4c4f-b6ef-2e75a1f96ea2
-mice = let
-	mouse1 = "🐁"
-	mouse2 = "🐭"
-	mouse1 * mouse2
-end
-
-# ╔═╡ 1d93dabf-8583-4f7f-a48e-e339c7d73bba
+# ╔═╡ b5c9eda2-b080-41cb-bd2e-33891b3ffae6
 md"""
-Coming from Jupyter, this can all feel very frustrating. Jupyter programmers tend to use cells as little "sections" of code, and are often used to having a few lines of code per cell.
+Coming from Jupyter, this can feel a bit frustrating. Jupyter programmers often divide up their notebook in "sections" or code, with each cell containing 3-10 expressions, rather than 1.
 
-This makes sense for Jupyter! We've already talked about reactivity. In Jupyter, you want to avoid having to rerun many cells when you change a variable. So it's more efficient to group related statements that you can run together.
+Grouping expressions like this makes sense in Jupyter because you're in charge of rerunning cells. It's just more efficient and less error-prone to group related statements in a single cell.
 
-In Pluto, you don't have to worry about any of that! Instead, Pluto's analysis of the dependencies in your code works best when you use one variable per cell.
-
-A lot of Jupyter start out by wrapping every cell in a `begin`/`end` block. Of course, you are the best person to decide what style of code works for you, but I encourage you to give this one-expression-per-cell style a chance!
+In Pluto, you don't have to worry about that! Instead, Pluto's analysis of dependencies in your code works best when each cell defines only a single variable.
 """
 
-# ╔═╡ 9bf88092-2c64-43e9-8d84-619cbcf64b09
+# ╔═╡ a7ea9146-86f6-4d2a-85a3-950f2e7bc102
 md"""
 ## Package management
 
-Here is a neat thing about Pluto: by default, it will manage your packages for you!
+Here is a neat thing in Pluto: it will manage your packages for you!
 
-Packages are automatically installed when you use `import` or `using`. To use a package, you simply have to create cell like this:
+To add a package to your notebook, just write a cell importing it. If you hadn't installed the package yet, Pluto will do so for you.
 """
 
 # ╔═╡ 74ff3d85-a6f4-4ae4-8502-18cf7a180ac5
 md"""
-As you're probably aware, the good folks maintaining packages will release new versions over time. That's great, but it can cause issues with compatibility.
+The package manager does some other neat stuff too. As you're probably aware, the good folks maintaining packages will release new versions over time. That's great, but it can cause issues with compatibility.
 
 Because of this, it can be useful if you've written down somewhere which versions of each package you were using - and if you're running someone else's code, you can avoid errors by using the same versions they used.
 
 In Pluto all of that happens automatically: your package environment is stored inside the notebook file. When someone else opens your notebook with Pluto, the exact same package environment will be used, and packages will work on their computer.
 """
 
-# ╔═╡ 491e1d24-c08b-438f-9947-9e9f2639e97f
+# ╔═╡ d3cf365d-ef7e-4a48-a32d-b050e69e5075
 md"""
 !!! tip
-
-	If you're starting to protest because you're used to managing your own package environment, don't worry. Calling `Pkg.activate` will disable Pluto's package manager.
+	
+	If you're used to doing your own package management and you don't want Pluto to take over, don't worry! When you activate your own environment, [the package manager will be disabled](https://github.com/fonsp/Pluto.jl/wiki/%F0%9F%8E%81-Package-management#advanced-set-up-an-environment-with-pkgactivate).
 """
 
 # ╔═╡ 58761686-b3c8-47f3-b05c-616f34ac71d9
@@ -131,7 +187,7 @@ For more information on this, [read about package management on the Pluto.jl wik
 md"""
 ## Markdown cells
 
-Unlike Jupyter, Pluto doesn't have text cells or markdown cells. Ever cell is just Julia code. However, you can write markdown expressions in Julia, and those will be nicely displayed by Pluto. Like this:
+Unlike Jupyter, Pluto doesn't have text cells or markdown cells. Every cell is just Julia code. However, you can write markdown expressions in Julia, and those will be nicely displayed by Pluto. Like this:
 """
 
 # ╔═╡ 016f9e48-1672-481e-b642-d0c6bf67a5bc
@@ -146,17 +202,39 @@ md"""
 	Use `ctrl + M` / `cmd + M` in a cell to wrap it in `md""\"` markers!
 """
 
-# ╔═╡ 9c9e807d-7b6b-47ff-b98f-351f0e0ee90c
+# ╔═╡ e99b9c02-a31a-46d9-a5f1-9849c9d3cbe0
 md"""
-## Version control
+## Notebook files
 
-Many programmers work with git to keep track of the different versions of their code that develop over time. Git is a useful tool to keep track of your changes, even between different collaborators and different "branches" of the project. When developing large coding projects with a group of people, version control is indispensible.
+### Pluto notebooks are scripts
 
-The files for Jupyter notebooks are not very suitable for keeping track of changes over time, though. Opening a notebook, running the code and changing a single line can cause a lot of changes in the file.
+A neat thing: Pluto notebooks are saved as `.jl` files: they're just Julia scripts! You can send them to Julia programmers that don't use Pluto, and they can run the script just like that. Or you can write your code in a notebook, and then run it on a larger dataset from the command line.
 
-This is because Jupyter notebooks contain not just the code, but also information about the output of the cells and the order in which they were run. That information is useful in some cases, but for version control, it creates a lot of clutter.
+And just in case you're wondering: Pluto notebook files will save your cells in the order they should be _run_, not the order in which they're displayed. So you can play with the order and still run the code as a script!
 
-If you do the kind of programming where version control is important, you'll find that Pluto notebooks work really well with that!
+This is quite different from `.ipynb` files, which can only be run with Jupyter.
+
+There are a few more notable differences in the files:
+
+### Pluto notebooks include packages
+
+As we mentioned, Pluto comes with a built-in package manager, so the notebook file also includes info about package versions.
+
+### Pluto notebooks don't include output
+
+You may already have noticed that the experience of opening a Pluto notebook is a bit different, because it doesn't come with pre-loaded output for each cell.
+
+This comes with pros and cons: it allows Pluto notebooks to maintain a simpler file, but makes it a bit harder to "preview" a notebook.
+
+If you want to send someone your notebook _with output_, a good way to do it is as an HTML export (on the top menu) - that file will show all the output you created, and also allow viewers to download the original notebook file.
+
+### Version management
+
+If you work with Git, good news! Pluto notebook files are designed to work well with version management.
+
+Jupyter notebooks are notorious for creating huge *git diffs* (a git diff is an overview of changes in the file). Jupyter notebooks are easy to read, but their raw files are not.
+
+By contrast, the changes to a Pluto notebook are much easier to make sense of. Small changes to a notebook will result in small changes to the file. Nice!
 """
 
 # ╔═╡ e1c813e5-a393-4364-8494-687b98811a0b
@@ -169,6 +247,24 @@ Pluto, however, is only ever going to be Julia environment. The core of Pluto is
 
 This comes with pros and cons: Pluto can do some cool stuff because it knows the language you're working in, but it doesn't have the flexibility that Jupyter does.
 """
+
+# ╔═╡ 40ff93d6-1755-4258-9c15-3ae7be681d93
+md"""
+## Wrapping up
+
+That's it!
+
+I encourage you to make your own notebooks and play around with Pluto yourself. You can also take a look at Pluto's featured notebooks (on the home page) which show you a bit more of what you can do with Pluto!
+"""
+
+# ╔═╡ 5dd0949a-82d1-4b27-8318-9b42065d0957
+greatness = greatness * 2
+
+# ╔═╡ aff0754c-8e3a-4cbc-9697-0797e5d32fc2
+greatness = 0
+
+# ╔═╡ c12c3f7d-f91b-4395-9323-52a582a79bc6
+greatness = greatness + 1
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -183,8 +279,9 @@ PlutoUI = "~0.7.53"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.7.0"
+julia_version = "1.9.4"
 manifest_format = "2.0"
+project_hash = "2221109544af0af0a1dbe6ee2a9707ab16223647"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -194,6 +291,7 @@ version = "1.2.0"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
+version = "1.1.1"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -210,14 +308,19 @@ version = "0.11.4"
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
+version = "1.0.5+0"
 
 [[deps.Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[deps.Downloads]]
-deps = ["ArgTools", "LibCURL", "NetworkOptions"]
+deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+version = "1.6.0"
+
+[[deps.FileWatching]]
+uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
@@ -256,10 +359,12 @@ version = "0.21.4"
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
+version = "0.6.4"
 
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
+version = "8.4.0+0"
 
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -268,12 +373,13 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
+version = "1.11.0+1"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
 [[deps.LinearAlgebra]]
-deps = ["Libdl", "libblastrampoline_jll"]
+deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.Logging]]
@@ -291,19 +397,23 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
+version = "2.28.2+0"
 
 [[deps.Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
+version = "2022.10.11"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
+version = "1.2.0"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
+version = "0.3.21+4"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -312,8 +422,9 @@ uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
 version = "2.8.0"
 
 [[deps.Pkg]]
-deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+version = "1.9.2"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
@@ -352,6 +463,7 @@ version = "1.2.2"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+version = "0.7.0"
 
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -360,20 +472,28 @@ uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
 [[deps.SparseArrays]]
-deps = ["LinearAlgebra", "Random"]
+deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+version = "1.9.0"
+
+[[deps.SuiteSparse_jll]]
+deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
+uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
+version = "5.10.1+6"
 
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+version = "1.0.3"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
+version = "1.10.0"
 
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
@@ -399,43 +519,59 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
+version = "1.2.13+0"
 
 [[deps.libblastrampoline_jll]]
-deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
+deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
+version = "5.8.0+0"
 
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
+version = "1.52.0+1"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
+version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
 # ╟─cdbcc440-858c-11ee-25d2-dd9d69531eef
-# ╟─b5eefb2d-95f0-474e-9651-dfe91f627ec3
-# ╠═b25c812b-7ec2-4e17-aa1b-e1a1407d29fb
+# ╟─a423fc4f-6000-4451-bc03-4035c9847753
 # ╠═8e1faf5f-7b60-4b57-9902-e9d2531f0961
-# ╟─fcc01f50-521d-44e3-b162-b689379db2af
-# ╟─d65cefad-e53f-4dc9-86cf-a6c010d36a23
-# ╟─798659b9-583c-41d2-8cf7-cc1ac18d0992
-# ╠═89670543-7e56-4c7d-8d33-25430e99f8e6
-# ╟─4e964657-88ba-4ad2-8c25-ff2e3053fb69
-# ╠═34ae0410-a129-4720-ac40-23b36c48f470
-# ╟─42bf60f4-72b5-45f0-8924-65715675bf20
-# ╠═46d8bf1a-0565-4c4f-b6ef-2e75a1f96ea2
-# ╟─1d93dabf-8583-4f7f-a48e-e339c7d73bba
-# ╟─9bf88092-2c64-43e9-8d84-619cbcf64b09
+# ╠═b25c812b-7ec2-4e17-aa1b-e1a1407d29fb
+# ╟─03d3ade3-056a-4f16-9b31-d259879082c9
+# ╟─3ed1ed94-8741-48a0-9d23-bb78499eec91
+# ╟─773ac617-4e5d-46b9-92ff-b0d9a23e42f1
+# ╟─74a6102a-e09d-4ebb-9ef8-2511b0f46f58
+# ╠═807b1586-8b3e-4cb1-9a9d-8ca66a28ec3e
+# ╠═3bca136c-115f-4dd1-ac4d-d14c23c538ce
+# ╟─2b91d104-921a-4d66-ac1f-a940cdb2d14c
+# ╟─447f49ce-1738-4987-a976-094174971ccb
+# ╠═aff0754c-8e3a-4cbc-9697-0797e5d32fc2
+# ╠═c12c3f7d-f91b-4395-9323-52a582a79bc6
+# ╠═5dd0949a-82d1-4b27-8318-9b42065d0957
+# ╟─c4ece2cd-31f4-4c91-a59b-e520de13dedd
+# ╠═162513a8-4ca9-4cae-9e43-1ae09827f7a4
+# ╟─5c958b92-c511-48b0-aeb2-a8b5fe4514cb
+# ╟─ee7adb33-b394-484d-8071-122642ea867b
+# ╟─4fe5a14c-a482-4d77-9472-d9c0a793e91e
+# ╟─5200e802-8080-4394-aa85-e2604c7279c8
+# ╠═94991d24-6aad-4361-a8e5-5e2c1f15c53c
+# ╟─244ca1ba-c2dc-4713-9dd0-57ed0d19ba70
+# ╟─b5c9eda2-b080-41cb-bd2e-33891b3ffae6
+# ╟─a7ea9146-86f6-4d2a-85a3-950f2e7bc102
 # ╠═db1ef6d1-7921-4035-8705-a0820048b785
 # ╟─74ff3d85-a6f4-4ae4-8502-18cf7a180ac5
-# ╟─491e1d24-c08b-438f-9947-9e9f2639e97f
+# ╟─d3cf365d-ef7e-4a48-a32d-b050e69e5075
 # ╟─58761686-b3c8-47f3-b05c-616f34ac71d9
 # ╟─8bbe13ff-f643-4ed0-aacf-9bafaa7c59c0
 # ╠═016f9e48-1672-481e-b642-d0c6bf67a5bc
 # ╟─669323ca-aac3-415c-bbfc-14525447ccd8
-# ╟─9c9e807d-7b6b-47ff-b98f-351f0e0ee90c
+# ╟─e99b9c02-a31a-46d9-a5f1-9849c9d3cbe0
 # ╟─e1c813e5-a393-4364-8494-687b98811a0b
+# ╟─40ff93d6-1755-4258-9c15-3ae7be681d93
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
