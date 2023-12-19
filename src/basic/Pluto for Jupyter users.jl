@@ -2,9 +2,11 @@
 # v0.19.36
 
 #> [frontmatter]
-#> image = "https://jupyter.org/assets/homepage/main-logo.svg"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
+#> image = "https://raw.githubusercontent.com/JuliaPluto/featured/96002ed127924a82c8095d1b09c3ff9fce1db1cf/media/pluto%20jupyter.png"
 #> title = "Pluto for Jupyter users"
 #> tags = ["basic"]
+#> license = "Unlicense"
 #> description = "Coming to Pluto from Jupyter? Here's what you need to know!"
 #> 
 #>     [[frontmatter.author]]
@@ -22,6 +24,8 @@ md"""
 # Pluto for Jupyter users
 
 [Jupyter](https://jupyter.org/) is another open source notebook environment, that works with Julia, Python, and R. If you're already familiar with Jupyter and are now trying out Pluto, this notebook is for you!
+
+We'll go over some key differences between Pluto and Jupyter. Let's get started!
 """
 
 # ╔═╡ a423fc4f-6000-4451-bc03-4035c9847753
