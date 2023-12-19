@@ -4,7 +4,7 @@
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg"
-#> order = "2"
+#> order = "3"
 #> tags = ["javascript", "web", "classic"]
 #> license = "Unlicense"
 #> description = "Use HTML, CSS and JavaScript to make your own interactive visualizations!"
