@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
-#> image = "https://raw.githubusercontent.com/JuliaPluto/featured/96002ed127924a82c8095d1b09c3ff9fce1db1cf/media/pluto%20jupyter.png"
+#> image = "https://github.com/JuliaPluto/featured/assets/6933510/19a10d1d-2a3b-42d0-9804-c1fd41c83bcd"
 #> title = "Pluto for Jupyter users"
 #> tags = ["basic"]
 #> license = "Unlicense"
