@@ -1,16 +1,16 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.36
 
 #> [frontmatter]
-#> image = "https://upload.wikimedia.org/wikipedia/commons/0/07/Tower_of_Hanoi.jpeg"
-#> tags = ["basic", "classic"]
-#> license = "Unlicense"
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/0/07/Tower_of_Hanoi.jpeg"
+#> tags = ["classic", "puzzle"]
+#> license = "Unlicense"
 #> description = "An interactive Julia puzzle about stacking disks."
 #> 
 #>     [[frontmatter.author]]
-#>     name = "Pluto.jl"
-#>     url = "https://github.com/JuliaPluto"
+#>     name = "Luka van der Plas"
+#>     url = "https://github.com/lukavdplas"
 
 using Markdown
 using InteractiveUtils
@@ -21,7 +21,7 @@ md"""
 
 The tower of hanoi is a famous puzzle.
 
-![setup of the tower of a hanoi](https://upload.wikimedia.org/wikipedia/commons/0/07/Tower_of_Hanoi.jpeg)
+![setup of the tower of hanoi](https://upload.wikimedia.org/wikipedia/commons/0/07/Tower_of_Hanoi.jpeg)
 
 The game consists of three rods with disks stacked on top of them. The puzzle will start with all disks in a stack on one of the rods (like in the picture). The goal is to move all the discs to a single stack on the last rod.
 

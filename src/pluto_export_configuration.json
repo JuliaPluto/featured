@@ -30,6 +30,11 @@
             "tags": ["language"]
         },
         {
+            "title": "Puzzles & Games",
+            "description": "Have fun with some recreational programming!",
+            "tags": ["puzzle", "game"]
+        },
+        {
             "title": "Pluto and the Web",
             "description": "Pluto is a fantastic tool for connecting Julia to the web! Learn more about using HTML, CSS and JavaScript in Pluto to take your visualization skills to the next level.",
             "tags": ["web"]
