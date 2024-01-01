@@ -1,12 +1,12 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.19.36
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg"
-#> order = "2"
+#> order = "3"
 #> tags = ["javascript", "web", "classic"]
 #> license = "Unlicense"
-#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Use HTML, CSS and JavaScript to make your own interactive visualizations!"
 #> 
 #>     [[frontmatter.author]]
@@ -44,43 +44,8 @@ md"""
 
 This document assumes that you have used HTML, CSS and JavaScript before in another context. If you know Julia, and you want to add these web languages to your skill set, we encourage you to do so! It will be useful knowledge, also outside of Pluto.
 
+If you're new to all this, Pluto's featured notebooks also include more basic notebooks on using HTML and CSS!
 """
-
-# ╔═╡ 28ae1424-67dc-4b76-a172-1185cc76cb59
-@htl("""
-
-<article class="learning">
-	<h4>
-		Learning HTML and CSS
-	</h4>
-	<p>
-		It is easy to learn HTML and CSS because they are not 'programming languages' like Julia and JavaScript, they are <em>markup languages</em>: there are no loops, functions or arrays, you only <em>declare</em> how your document is structured (HTML) and what that structure looks like on a 2D color display (CSS).
-	</p>
-	<p>
-		As an example, this is what this cell looks like, written in HTML and CSS:
-	</p>
-</article>
-
-
-<style>
-
-	article.learning {
-		background: #f996a84f;
-		padding: 1em;
-		border-radius: 5px;
-	}
-
-	article.learning h4::before {
-		content: "☝️";
-	}
-
-	article.learning p::first-letter {
-		font-size: 1.5em;
-		font-family: cursive;
-	}
-
-</style>
-""")
 
 # ╔═╡ ea39c63f-7466-4015-a66c-08bd9c716343
 md"""
@@ -112,7 +77,7 @@ TableOfContents()
 md"""
 # Essentials
 
-## Using HTML, CSS and JavaScript
+## Using HTML and JavaScript
 
 To use web languages inside Pluto, we recommend the small package [`HypertextLiteral.jl`](https://github.com/MechanicalRabbit/HypertextLiteral.jl), which provides an `@htl` macro.
 
@@ -124,11 +89,11 @@ You wrap `@htl` around a string expression to mark it as an *HTML literal*, as w
 
 # ╔═╡ 858745a9-cd59-43a6-a296-803515518e57
 md"""
-### CSS and JavaScript
+### Adding JavaScript to a cell
 
-You can use CSS and JavaScript by including it inside HTML, just like you do when writing a web page.
+You can use JavaScript by including it inside HTML, just like you do when writing a web page.
 
-For example, here we use `<script>` to include some JavaScript, and `<style>` to include CSS.
+For example, here we use `<script>` to include some JavaScript.
 """
 
 # ╔═╡ 21a9e3e6-92f4-475d-9c8e-21e15c09336b
@@ -143,15 +108,6 @@ Hello!
 currentScript.previousElementSibling.innerText = "Hello from JavaScript!"
 
 </script>
-
-<style>
-.blue-background {
-	padding: .5em;
-	background: lightblue;
-	color: black;
-}
-</style>
-
 """)
 
 # ╔═╡ 4a3398be-ee86-45f3-ac8b-f627a38c00b8
@@ -804,60 +760,6 @@ details(x, summary="Show more") = @htl("""
 	</details>
 	""")
 
-# ╔═╡ 93abe0dc-f041-475f-9ef7-d8ee4408414b
-details(md"""
-	```htmlmixed
-	
-	<article class="learning">
-		<h4>
-			Learning HTML and CSS
-		</h4>
-		<p>
-			It is easy to learn HTML and CSS because they are not 'programming languages' like Julia and JavaScript, they are <em>markup languages</em>: there are no loops, functions or arrays, you only <em>declare</em> how your document is structured (HTML) and what that structure looks like on a 2D color display (CSS).
-		</p>
-		<p>
-			As an example, this is what this cell looks like, written in HTML and CSS:
-		</p>
-	</article>
-
-
-	<style>
-
-		article.learning {
-			background: #fde6ea4c;
-			padding: 1em;
-			border-radius: 5px;
-		}
-
-		article.learning h4::before {
-			content: "☝️";
-		}
-
-		article.learning p::first-letter {
-			font-size: 1.5em;
-			font-family: cursive;
-		}
-
-	</style>
-	```
-	""", "Show with syntax highlighting")
-
-# ╔═╡ d12b98df-8c3f-4620-ba3c-2f3dadac521b
-details(md"""
-	```htmlmixed
-	<script>
-
-	// interpolate the data 🐸
-	const data = $(simple_data)
-
-	const span = document.createElement("span")
-	span.innerText = data.msg.repeat(data.times)
-	
-	return span
-	</script>
-	```
-	""", "Show with syntax highlighting")
-
 # ╔═╡ 94561cb1-2325-49b6-8b22-943923fdd91b
 details(md"""
 	```htmlmixed
@@ -1224,9 +1126,9 @@ uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 
 [[Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "a935806434c9d4c506ba941871b327b96d41f2bf"
+git-tree-sha1 = "8489905bcdbcfac64d1daa51ca07c0d8f0283821"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.0"
+version = "2.8.1"
 
 [[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -1330,8 +1232,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─97914842-76d2-11eb-0c48-a7eedca870fb
 # ╠═571613a1-6b4b-496d-9a68-aac3f6a83a4b
 # ╟─168e13f7-2ff2-4207-be56-e57755041d36
-# ╠═28ae1424-67dc-4b76-a172-1185cc76cb59
-# ╟─93abe0dc-f041-475f-9ef7-d8ee4408414b
 # ╟─ea39c63f-7466-4015-a66c-08bd9c716343
 # ╟─8b082f9a-073e-4112-9422-4087850fc89e
 # ╟─d70a3a02-ef3a-450f-bf5a-4a0d7f6262e2
@@ -1357,7 +1257,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─7afbf8ef-e91c-45b9-bf22-24201cbb4828
 # ╠═b226da72-9512-4d14-8582-2f7787c25028
 # ╠═a6fd1f7b-a8fc-420d-a8bb-9f549842ad3e
-# ╟─d12b98df-8c3f-4620-ba3c-2f3dadac521b
 # ╟─965f3660-6ec4-4a86-a2a2-c167dbe9315f
 # ╠═01ce31a9-6856-4ee7-8bce-7ce635167457
 # ╠═00d97588-d591-4dad-9f7d-223c237deefd
