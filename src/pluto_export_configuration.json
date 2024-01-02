@@ -5,6 +5,11 @@
     
     "collections": [
         {
+            "title": "Announcements",
+            "description": "Latest updates from Julia land!",
+            "tags": ["announcements"]
+        },
+        {
             "title": "Getting started",
             "description": "Learn the basics of Pluto in just 10 minutes!",
             "tags": ["basic"]
