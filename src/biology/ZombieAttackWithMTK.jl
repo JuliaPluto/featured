@@ -26,30 +26,40 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 067a70a9-79c7-4ef7-8ffe-f800787da677
+# ╔═╡ 00edd691-2b60-4d1d-b5e2-2fd4675469da
+begin
+	using ModelingToolkit
+	using DifferentialEquations
+	md"""
+	!!! info "ModelingToolkit"
+		[ModelingToolkit](https://juliapackages.com/p/ModelingToolkit):
+	
+		[DifferentialEquations](https://www.juliapackages.com/p/DifferentialEquations): 
+	"""
+end
+
+# ╔═╡ 7a937f2c-5808-4756-9bfc-6f84b0f03cc9
 begin
 	using Plots
 	plotly()
 	using PlutoUI
+	import PlutoUI: combine
+	using PlutoHooks
+	using HypertextLiteral: @htl
+	using Parameters
+	md"""
+	!!! info "ModelingToolkit"
+		[Plots](https://juliapackages.com/p/Plots):
+	
+		[PlutoUI](https://www.juliapackages.com/p/PlutoUI): 
+	
+		[PlutoHooks](https://www.juliapackages.com/p/PlutoHooks): 
+	
+		[HypertextLiteral](https://www.juliapackages.com/p/HypertextLiteral): 
+	
+		[Parameters](https://www.juliapackages.com/p/Parameters): 
+	"""
 end
-
-# ╔═╡ 28a84200-b0b6-478b-b228-0a9108641cd7
-using ModelingToolkit,DifferentialEquations, DynamicalSystems
-
-# ╔═╡ 5ae86997-81b6-4baa-8f15-48efb811d873
-using StaticArrays
-
-# ╔═╡ b594ea1f-da86-4656-a9ca-b0930e4f502c
-using PlutoHooks
-
-# ╔═╡ 3a893a38-3bf5-4503-9700-798aff40bf1b
-using HypertextLiteral: @htl
-
-# ╔═╡ 9cb26448-98c4-4437-b7de-cec95d737198
-using Parameters
-
-# ╔═╡ f34fa717-7d8c-469c-bcae-4300cf7f78a7
-import PlutoUI: combine
 
 # ╔═╡ 5d7d7822-61c9-47a1-830b-6b0294531d5c
 TableOfContents()
@@ -1061,6 +1071,9 @@ function format_colorPicker( params::Vector{ColorParameter};title::String)
 		"""
 	end
 end
+
+# ╔═╡ 813fc6b1-460a-49cb-9ae5-909e38e18e71
+md"# Packages"
 
 # ╔═╡ 88f8f2b8-6ea5-4bcc-8026-70a760873033
 md"### CSS"
@@ -3217,13 +3230,6 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
-# ╠═067a70a9-79c7-4ef7-8ffe-f800787da677
-# ╠═28a84200-b0b6-478b-b228-0a9108641cd7
-# ╠═5ae86997-81b6-4baa-8f15-48efb811d873
-# ╠═b594ea1f-da86-4656-a9ca-b0930e4f502c
-# ╠═3a893a38-3bf5-4503-9700-798aff40bf1b
-# ╠═f34fa717-7d8c-469c-bcae-4300cf7f78a7
-# ╠═9cb26448-98c4-4437-b7de-cec95d737198
 # ╠═5d7d7822-61c9-47a1-830b-6b0294531d5c
 # ╟─fc95aba1-5f63-44ee-815c-e9f181219253
 # ╟─19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
@@ -3313,6 +3319,9 @@ version = "1.4.1+1"
 # ╟─1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
 # ╟─31873c6e-2c78-4bb8-8069-ca491f25b077
 # ╟─e8f30ca6-0d03-4a8b-a835-c5c1dce56575
+# ╠═813fc6b1-460a-49cb-9ae5-909e38e18e71
+# ╠═00edd691-2b60-4d1d-b5e2-2fd4675469da
+# ╠═7a937f2c-5808-4756-9bfc-6f84b0f03cc9
 # ╟─88f8f2b8-6ea5-4bcc-8026-70a760873033
 # ╟─929793eb-4409-46d9-85be-98f1b98d8839
 # ╟─00000000-0000-0000-0000-000000000001
