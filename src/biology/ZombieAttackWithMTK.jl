@@ -90,10 +90,10 @@ D = Differential(t);
 md"# Simple Zombie Outbreak Model"
 
 # ╔═╡ 01ce7903-0ba3-45bc-816a-f8288583b4d4
-begin
-	@variables S(t) Z(t) R(t)  # Our 3 dependent variables 
-	@parameters α β ζ 
-end;
+@variables S(t) Z(t) R(t)  # Our 3 dependent variables 
+
+# ╔═╡ 6bfa46a7-f50d-49b6-bebc-b7821f89100f
+@parameters α β ζ  # controls the interaction between the different classes
 
 # ╔═╡ 43593199-0107-4b69-a239-f9f68c14b8eb
 @named simple_attack_sys = ODESystem(
@@ -137,7 +137,7 @@ md"## Let's use a quarantine"
 # ╔═╡ 2cb27c2f-edae-4386-a68d-77b2050924a0
 begin
 	@variables Q(t)
-	@parameters κ σ γ
+	@parameters κ γ
 end;
 
 # ╔═╡ 6467d83d-0e9c-4025-aecf-ab19807e6ba7
@@ -178,15 +178,6 @@ end;
 begin
 	@named treatment_model_sys = ODESystem(treatment_model_eqs)
 end
-
-# ╔═╡ 8b7936d4-4730-4475-9ce6-1a102dc397aa
-
-
-# ╔═╡ 8ddf1454-0b2e-4c50-9679-576d5044898f
-
-
-# ╔═╡ d040a941-4ffb-4ad0-b4bd-c3007184afd6
-
 
 # ╔═╡ aee9374d-fefc-409b-99f0-67de38071f52
 md"## Let's fight back..."
@@ -350,6 +341,16 @@ tspanSlider = SliderParameter(
 			label 	= "ζ",
 			description = "Back from the dead Rate"
 		)
+
+# ╔═╡ 671ad109-4bea-426f-b5c2-2dcabb53a7be
+simple_attack_params =  [
+	S 	=> 50.0,  
+	Z 	=> 10.0,  
+	R 	=> 0, 				    # we will always start with 0 removed 	 
+	α 	=> αSlider.default, 	 
+	β 	=> βSlider.default, 	 
+	ζ   => ζSlider.default, 	 
+]
 
 # ╔═╡ f21ad23e-dcdd-46fa-b10e-fd115c17eb98
 ρSlider = SliderParameter(
@@ -571,18 +572,6 @@ begin
 	
 end;
 
-# ╔═╡ 671ad109-4bea-426f-b5c2-2dcabb53a7be
-begin	
-	simple_attack_params =  [
-		S => simple_attack_u0s.S, # Number of Humans  at t = 0
-	 	Z => simple_attack_u0s.Z, # Number of Zombies at t = 0
-		R => 0, # Number of Removed at t = 0
-		α 	=> simple_attack_ps.α, # Zombie defeating rate
-		β 	=> simple_attack_ps.β, # Zombie infection rate
-		ζ   => simple_attack_ps.ζ, # "Back from the dead" rate
-	]
-end
-
 # ╔═╡ 3bd175bd-0019-40bc-a1f7-9f94e94ddb87
 begin
 	simple_attack_prob = ODEProblem(
@@ -590,14 +579,7 @@ begin
 		simple_attack_params, 
 		(0.0, simple_attack_tspan.duration)
 	)
-	simple_attack_prob
 end
-
-# ╔═╡ 90f84ca1-3e3d-4a60-aa50-8888629244b5
-simple_attack_sol = solve(simple_attack_prob)
-
-# ╔═╡ 1904a300-05c2-4642-ae09-944a0e4ae5f8
-lattent_infection_sol = solve(simple_attack_prob)
 
 # ╔═╡ 7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 begin
@@ -631,8 +613,49 @@ end;
 
 # ╔═╡ 5ddf1f68-2dd6-4780-a5f9-90a2c0370967
 begin
-	plot(simple_attack_sol)
-	xlims!(simple_attack_plots_params.ts,simple_attack_plots_params.te)
+	
+	let 
+		state, setState = @use_state(nothing)
+		@use_effect([
+			simple_attack_u0s,
+			simple_attack_ps, 
+			simple_attack_tspan, 
+			simple_attack_plots_params
+		]) do
+
+			# ModelingToolkit provide a handy feature that is the remake() function. It is used to redefine a model's parameters more effiently when the equations remain identical. This allows for near instant feedback for interaction with the sliders. 
+			
+			prob = remake(
+				simple_attack_prob;
+				u0 = ModelingToolkit.varmap_to_vars(
+					[
+						 S => simple_attack_u0s.S, 
+						 Z => simple_attack_u0s.Z,
+					     R => 0,
+					],
+					states(simple_attack_sys)
+				),
+				p =  ModelingToolkit.varmap_to_vars(
+					[
+						 α => simple_attack_ps.α, 
+						 β => simple_attack_ps.β,
+					     ζ => simple_attack_ps.ζ,
+					],
+					parameters(simple_attack_sys)
+				),
+				tspan = (0.0, simple_attack_tspan.duration)
+			)
+
+			
+			sol = solve(prob)
+			p = plot(sol, label=["Susceptible 👩" "Zombies 🧟" "Removed 👵" ])
+			xlims!(simple_attack_plots_params.ts,simple_attack_plots_params.te)
+			setState(p)
+		end
+
+		state
+	
+	end
 end
 
 # ╔═╡ e5deaa27-54cb-4f48-8f56-b55c3a797dcf
@@ -694,8 +717,44 @@ lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params fo
 
 # ╔═╡ 603aea40-5cb1-4ef0-9bee-f7476c815833
 begin
-	plot(lattent_infection_sol)
-	xlims!(lattent_infection_plots_params.ts,lattent_infection_plots_params.te)
+	let 
+		state, setState = @use_state(nothing)
+		@use_effect([
+			lattent_infection_u0s,
+			lattent_infection_ps, 
+			lattent_infection_tspan, 
+			lattent_infection_plots_params]) do
+			prob = remake(lattent_infection_prob;
+				u0 = ModelingToolkit.varmap_to_vars(
+					[
+						 S => lattent_infection_u0s.S, 
+						 Z => lattent_infection_u0s.Z,
+						 I => 0,
+					     R => 0,
+					],
+					states(lattent_infection_sys)
+				),
+				p =  ModelingToolkit.varmap_to_vars(
+					[
+						 α => lattent_infection_ps.α, 
+						 β => lattent_infection_ps.β,
+					     ζ => lattent_infection_ps.ζ,
+						 ρ => lattent_infection_ps.ρ
+					],
+					parameters(lattent_infection_sys)
+				),
+				tspan = (0, lattent_infection_tspan.duration)
+			)
+			
+			sol = solve(prob)
+
+			p = plot(sol, labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" ])
+			xlims!(lattent_infection_plots_params.ts,lattent_infection_plots_params.te)
+			setState(p)
+		end
+		state
+	
+	end
 end
 
 # ╔═╡ 7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
@@ -764,8 +823,47 @@ end;
 
 # ╔═╡ f2bfba1b-6be2-4e30-a886-617c30f8b027
 begin
-	plot(simple_quarantine_sol)
-	xlims!(simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
+	let 
+		state, setState = @use_state(nothing)
+		@use_effect([
+			simple_quarantine_u0s,
+			simple_quarantine_ps,
+			simple_quarantine_tspan, 
+			simple_quarantine_plots_params
+			]) do
+			prob = remake(simple_quarantine_prob;
+				u0 = ModelingToolkit.varmap_to_vars(
+					[
+						 S => simple_quarantine_u0s.S, 
+						 Z => simple_quarantine_u0s.Z,
+						 Q => 0,
+						 I => 0,
+					     R => 0,
+					],
+					states(simple_quarantine_sys)
+				),
+				p =  ModelingToolkit.varmap_to_vars(
+					[
+						 α => simple_quarantine_ps.α, 
+						 β => simple_quarantine_ps.β,
+					     ζ => simple_quarantine_ps.ζ,
+						 γ => simple_quarantine_ps.γ,
+						 ρ => simple_quarantine_ps.ρ,
+						 κ => simple_quarantine_ps.κ
+					],
+					parameters(simple_quarantine_sys)
+				),
+				tspan = (0, simple_quarantine_tspan.duration)
+			)
+			
+			sol = solve(prob)
+			p = plot(sol,  labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" "Quarantine 😷" ])
+			xlims!(simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
+			setState(p)
+		end
+		state
+	
+	end
 end
 
 # ╔═╡ 00b880d1-3db4-40a6-aff4-03a4900df99d
@@ -830,8 +928,40 @@ treatment_model_plots_params_sliders = @bind treatment_model_plots_params format
 
 # ╔═╡ 2a3e5049-9ded-427b-b719-f9ef48164bb6
 begin
-	plot(treatment_model_sol)
-	xlims!(treatment_model_plots_params.ts,treatment_model_plots_params.te)
+	let 
+		state, setState = @use_state(nothing)
+		@use_effect([treatment_model_u0s,treatment_model_ps, treatment_model_tspan, treatment_model_plots_params]) do
+			prob = remake(treatment_model_prob; 
+				u0 = ModelingToolkit.varmap_to_vars(
+					[
+						 S => treatment_model_u0s.S, 
+						 Z => treatment_model_u0s.Z,
+						 I => 0,
+					     R => 0,
+					],
+					states(treatment_model_sys)
+				),
+				p =  ModelingToolkit.varmap_to_vars(
+					[
+						 α => treatment_model_ps.α, 
+						 β => treatment_model_ps.β,
+					     ζ => treatment_model_ps.ζ,
+						 c => treatment_model_ps.c,
+						 ρ => treatment_model_ps.ρ,
+					],
+					parameters(treatment_model_sys)
+				),
+				tspan = (0.0, treatment_model_tspan.duration)
+			)
+			
+			sol = solve(prob)
+			p = plot(sol)
+			xlims!(treatment_model_plots_params.ts,treatment_model_plots_params.te)
+			setState(p)
+		end
+		state
+	
+	end
 end
 
 # ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
@@ -897,8 +1027,46 @@ impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_p
 
 # ╔═╡ 1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
 begin
-	plot(impulsive_eradication_sol)
-	xlims!(impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
+	let 
+		state, setState = @use_state(nothing)
+		@use_effect([
+			impulsive_eradication_u0s,
+			impulsive_eradication_ps,
+			impulsive_eradication_tspan,
+			impulsive_eradication_plots_params]) do
+			prob = remake(impulsive_eradication_prob;
+				u0 = ModelingToolkit.varmap_to_vars(
+					[
+						 S => impulsive_eradication_u0s.S, 
+						 Z => impulsive_eradication_u0s.Z,
+						 I => 0,
+					     R => 0,
+					],
+					states(impulsive_eradication_sys)
+				),
+				p =  ModelingToolkit.varmap_to_vars(
+					[
+						 α => impulsive_eradication_ps.α, 
+						 β => impulsive_eradication_ps.β,
+					     ζ => impulsive_eradication_ps.ζ,
+					     ρ => impulsive_eradication_ps.ρ,
+						 k => impulsive_eradication_ps.k,
+						 c => impulsive_eradication_ps.c,
+					],
+					parameters(impulsive_eradication_sys)
+				),
+				tspan = (0.0, impulsive_eradication_tspan.duration)
+			)
+			
+			
+			sol = solve(prob)
+			p = plot(sol)
+			xlims!(impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
+			setState(p)
+		end
+		state
+	
+	end
 end
 
 # ╔═╡ 1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
@@ -1032,6 +1200,17 @@ function createSliderGroup(sliders, extraSliders)
 """)
 end
 
+# ╔═╡ 122b4bc2-24df-423c-904b-158cc0790abe
+createSliderGroup(
+		[
+			simple_attack_ps_sliders,
+			simple_attack_u0s_sliders],
+		[
+			simple_attack_tspan_sliders,
+			simple_attack_plots_params_sliders
+		]
+	)
+
 # ╔═╡ 572dff66-18d8-4b0f-be6e-75767ac33be0
 createSliderGroup(
 	[
@@ -1058,8 +1237,8 @@ createSliderGroup(
 # ╔═╡ ab916a56-52ff-4f35-b8ba-72f2d3d7ba9a
 createSliderGroup(
 	[
-		treatment_model_u0s_sliders,
-		treatment_model_ps_sliders
+		treatment_model_ps_sliders,
+		treatment_model_u0s_sliders
 	],
 	[
 		treatment_model_tspan_sliders,
@@ -3171,13 +3350,14 @@ version = "1.4.1+1"
 # ╠═961c955f-cc9b-4cb3-abed-dc19a95ca1eb
 # ╟─bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
 # ╠═01ce7903-0ba3-45bc-816a-f8288583b4d4
+# ╠═6bfa46a7-f50d-49b6-bebc-b7821f89100f
 # ╠═43593199-0107-4b69-a239-f9f68c14b8eb
 # ╠═671ad109-4bea-426f-b5c2-2dcabb53a7be
 # ╠═3bd175bd-0019-40bc-a1f7-9f94e94ddb87
-# ╠═90f84ca1-3e3d-4a60-aa50-8888629244b5
-# ╠═5ddf1f68-2dd6-4780-a5f9-90a2c0370967
-# ╠═49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
-# ╠═7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
+# ╟─122b4bc2-24df-423c-904b-158cc0790abe
+# ╟─5ddf1f68-2dd6-4780-a5f9-90a2c0370967
+# ╟─49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
+# ╟─7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 # ╟─c0be7469-6c7b-46e8-b4b5-2c3c1d003433
 # ╟─0f22c808-a413-415e-95d1-98317ca6ed25
 # ╠═dc366710-6f43-434c-8787-d6d1a7dd3920
@@ -3185,9 +3365,8 @@ version = "1.4.1+1"
 # ╠═9358905f-8d2f-40f6-a9d9-38e39ae3ee85
 # ╠═68c6f9c8-2e76-4b08-8b9b-f18b13a4a50b
 # ╠═d04d419b-2fc0-4b3a-bb78-ea3b6b76bc64
-# ╠═1904a300-05c2-4642-ae09-944a0e4ae5f8
 # ╠═572dff66-18d8-4b0f-be6e-75767ac33be0
-# ╠═603aea40-5cb1-4ef0-9bee-f7476c815833
+# ╟─603aea40-5cb1-4ef0-9bee-f7476c815833
 # ╠═e5deaa27-54cb-4f48-8f56-b55c3a797dcf
 # ╟─d59c9761-382e-4450-b654-dc4b8b203f15
 # ╟─e831d3ab-8122-4cb6-9dfc-ebbfb241f0c9
@@ -3197,7 +3376,7 @@ version = "1.4.1+1"
 # ╠═2847c8b9-0ac8-4b90-a23b-6323414b3d1b
 # ╠═d60f5b1d-132d-4d76-8060-d6365b95e923
 # ╠═33ba58f3-9959-48ec-a7f0-098b864ba02f
-# ╠═f2bfba1b-6be2-4e30-a886-617c30f8b027
+# ╟─f2bfba1b-6be2-4e30-a886-617c30f8b027
 # ╟─7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
 # ╟─94b4f52b-ae28-4e26-93d2-7e7d32c739d5
 # ╟─f13c3c52-7c73-4aa3-a233-3d64f4623b89
@@ -3206,13 +3385,10 @@ version = "1.4.1+1"
 # ╠═3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 # ╠═06efabb8-15dc-4952-9f5b-fabadd13a87a
 # ╠═8a8733d1-89ae-4a0b-a218-72127fd14e0b
-# ╠═8b7936d4-4730-4475-9ce6-1a102dc397aa
-# ╠═8ddf1454-0b2e-4c50-9679-576d5044898f
-# ╠═d040a941-4ffb-4ad0-b4bd-c3007184afd6
 # ╠═e5fc55c6-c292-494d-9a56-9506eb95c80d
 # ╠═7b660a3d-3fe3-4d48-be37-49754fa70b16
 # ╟─ab916a56-52ff-4f35-b8ba-72f2d3d7ba9a
-# ╠═2a3e5049-9ded-427b-b719-f9ef48164bb6
+# ╟─2a3e5049-9ded-427b-b719-f9ef48164bb6
 # ╟─00b880d1-3db4-40a6-aff4-03a4900df99d
 # ╟─d5c896f3-1aa8-4334-8c7c-7b01b122aa1b
 # ╟─53c4ef85-6f0c-46d8-a08a-28f8ab368309
@@ -3224,8 +3400,8 @@ version = "1.4.1+1"
 # ╠═89a66b68-dfaf-454f-b787-96fabb978e7a
 # ╠═1e457fe1-6cc5-4d2e-812e-13f666747d81
 # ╠═2cfac784-ec48-4963-a12d-d8bac6ae41cc
-# ╠═63c5fab1-fb11-4d9a-b2fc-8a23598602ba
-# ╠═1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
+# ╟─63c5fab1-fb11-4d9a-b2fc-8a23598602ba
+# ╟─1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
 # ╟─028b2237-e62a-403b-8d6c-786accb8c782
 # ╟─4e947fbc-84f4-460d-9079-0e7397f5d05f
 # ╟─5efa346c-4d46-4c5c-9e14-08015a96bd85
