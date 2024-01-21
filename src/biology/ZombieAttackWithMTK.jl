@@ -68,7 +68,7 @@ TableOfContents()
 md"""The world is facing a impending disaster. A virus broke out from a laboratory and is turning humans into zombies! 
 There are only 2 outcomes, either the zombies take over the world or a solution is found to fight them and survive this terrible apocalpyse.
 
-Countries are closing down borders, the flights are no longer running, chaos is spreading quickly accross the world... 
+Countries are closing down borders, flights are no longer running, chaos is spreading quickly accross the world... 
 """
 
 # ╔═╡ 19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
@@ -77,23 +77,57 @@ md"# Introduction"
 # ╔═╡ 7f21a7c5-08aa-4810-9752-671516918119
 md"""There is hope! The zombies are still in low numbers and there is time to prepare. What could we possibly do to address this? Before nailing planks of wood to the windows of the lab, let's try to understand what *could* happen. 
 
-Let's try to use a model of the outbreak to try and predict what could happen. 
+Let's try to use a model of an outbreak to try and predict what could happen. 
 """
-
-# ╔═╡ d3acb594-ce66-4049-b674-ef641ee1207e
-@variables t;
-
-# ╔═╡ 961c955f-cc9b-4cb3-abed-dc19a95ca1eb
-D = Differential(t);
 
 # ╔═╡ bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
 md"# Simple Zombie Outbreak Model"
+
+# ╔═╡ cc1a1a9a-7a45-4231-8471-0fb90b994357
+md"""To model the situation, lets start with the simplest model. In this model, there are healthy humans and zombies. So what happens when a zombie meets a human? Well we can say that there is a rate β that describes the chance of a zombie converting a human into another human. We can then define the following system of equation: 
+"""
+
+# ╔═╡ 4c3f3770-ef33-41a5-89a6-274101b06c87
+md"""However since β is define to be positive this model is quite pessimistic, every scenario will eventually end up with zombies taking over the world. 
+
+Lets give the humans some chance of fighting back. We can introduce a new class of individuals in our model, that we'll call 'Removed'. This class represent the zombies that were abled to be killed by humans. We now have: 
+
+- S: Human suceptible to be converted (Healthy)
+- Z: Zombies 
+- R: Removed 
+
+We define the rate at which the suceptible kill the zombies with the rate α. Addionally, these zombies will be hard to get rid of since there is a small chance ζ that a removed "comes back from the dead" and is reintroduced as a zombie. 
+"""
+
+# ╔═╡ e0581cf3-f942-45a6-bcf2-9e72ba2379a4
+md"""
+
+!!! info "Acausal Modeling"
+	To define this model, we will be using the acausal modeling library [ModelingToolkit](https://github.com/SciML/ModelingToolkit.jl) from [SciML](https://sciml.ai/). The idea is that we can define equations and systems using the equations that we have defined directly. (You can actually check that the system that is mentioned earlier is actually a ModelingToolkit system.)
+
+"""
+
+# ╔═╡ 28def719-c8e2-43d6-b20e-6141e423add2
+md"The first step is to define the variables that we'll be needed for the model. Tht is, our depedent time variable ``t``, the differential operator ``D``, the independent variables ``S``, ``Z``, ``R`` and the model parameters ``α``, ``β``, ``ζ`` " 
+
+# ╔═╡ d3acb594-ce66-4049-b674-ef641ee1207e
+@variables t
+
+# ╔═╡ 961c955f-cc9b-4cb3-abed-dc19a95ca1eb
+D = Differential(t)
 
 # ╔═╡ 01ce7903-0ba3-45bc-816a-f8288583b4d4
 @variables S(t) Z(t) R(t)  # Our 3 dependent variables 
 
 # ╔═╡ 6bfa46a7-f50d-49b6-bebc-b7821f89100f
-@parameters α β ζ  # controls the interaction between the different classes
+@parameters α β ζ  
+
+# ╔═╡ ddcea9d8-abc0-40a3-8740-fa0cd29b0b0e
+ODESystem(
+	[
+		D(S) ~ -β*S*Z,
+	 	D(Z) ~  β*S*Z]
+, name = :base) # only used for equations display
 
 # ╔═╡ 43593199-0107-4b69-a239-f9f68c14b8eb
 @named simple_attack_sys = ODESystem(
@@ -104,17 +138,52 @@ md"# Simple Zombie Outbreak Model"
 	]
 )
 
+# ╔═╡ 4b731a5f-3fe2-4691-8f89-c37f05d623ab
+md"Now in order to simulate what would happen to our model we need to set some values for each of the variables and parameter of the system"
+
+# ╔═╡ 416dc725-d1c1-4b14-9315-aa57d9e1127d
+md"""
+
+!!! info "Sliders"
+	Throughout this notebook I use sliders to add interactivity to the system. When defining parameters and initial values it will always be in the form:
+
+	`[PARAM] => [SYSTEM](u0s/ps).[PARAM]`
+	
+	where `[SYSTEM](u0s/ps)` is an variable that contains the current values selected by the sliders and `[SYSTEM]` is the system of the current section. More information is available in the [appendix](#6b4feee8-f8bb-4639-a423-97e7ab82cad0). 
+"""
+
 # ╔═╡ c0be7469-6c7b-46e8-b4b5-2c3c1d003433
 md"# Extending the Model"
 
+# ╔═╡ 5047fe97-df0e-4611-9b6c-733af6e0ad32
+md"This is good, however, this basic model is quite pessimistic. As you can see, the only scenario where the zombies never take over, is when they never get the chance to bite one human. There seems to be no chance for the camp to survive the attack. But it must be possible, right? "
+
+# ╔═╡ ec47f63d-36eb-4331-aec9-9f1af15a3eab
+md"""
+!!! tip "Update from the front line"
+	As you hear the roars from outside the camp, you realise that their might some hope after all. Some new promising information has come through! A team on the front line has reported that the virus does not transform the human directly into zombies! There might be some hope for a cure... 
+
+	The days are rough and more zombies are trying to get in but after securing the walls of the camp you decide to return to your model to try to add this new bit of information.
+"""
+
 # ╔═╡ 0f22c808-a413-415e-95d1-98317ca6ed25
 md"## Latent Infection"
+
+# ╔═╡ c1918d6a-3b5a-4046-b084-e6f98eaabee6
+md"""	
+Let's introduce this as the concept of latent infection. In this scenario, when a zombie bites a human, that human first becomes infected, and after some time, turns into a zombie. 
+	
+We can introduce a new class `I(t)` and the parameter ρ to capture the rate at which the infected turn into zombies.
+"""
 
 # ╔═╡ dc366710-6f43-434c-8787-d6d1a7dd3920
 begin
 	@variables I(t)
 	@parameters ρ 
 end;
+
+# ╔═╡ 6aa3249f-4751-45d9-b13d-f748cc950d47
+md"We can define the new equations and follow the same workflow as before to solve this system."
 
 # ╔═╡ d4446f64-8d69-4ded-90b3-59544800d6fa
 begin
@@ -131,8 +200,50 @@ begin
 	@named lattent_infection_sys = ODESystem(lattent_infection_eqs)
 end
 
+# ╔═╡ 8c51a878-6466-4832-ad74-c90683614ebc
+md"""
+In this model, we are able to survie a bit longer, but there still does not seem to be a way to overcome all the zombies. 
+
+"""
+
+# ╔═╡ b2e6544a-2e87-439c-9b25-de60518f1970
+md"""
+!!! tip "New development!"
+	As the days go by, there are more and more zombies but few survivors are now coming to the camp. The last group arrived 4 days ago, and there has not been another sighting since. 
+
+	At least it seems that the radio is working again. You switch to the information channel, and you managed to catch some exiting information.
+
+	The cure has been developed!
+	It was tested this morning on the first patient. You might be able to stop infected patient turning them into zombies afterall. 
+	The report indicates that the cure only works on infected patient and does not seem to work on fully transformed zombies.
+
+	The letter mentioned that the cure will be delivered to all survivor camps in the next few weeks, so as you wait patiently you decide to set up a section of our camp to isolate the infected so that you are ready when we get the cure... 
+
+	So far the virus has not been seen to transmit by any other mean than bitting, and the infected don't seem to have a urge of bitting anyone. 
+	However, there don't seem to be a clear warning to when that seems to happen and reports indicates that it takes between 1 day to a couple week after the bite. 
+	
+	To be safe, we can make a quarantine, where every new infected person can be isolated from anyone else, reducing the chance that they infect other people once they suddendly get a taste of human blood. After setting up the tent and securing everything, we now have a dedicated section of the camp where any new infected patient can stay. 
+"""
+
 # ╔═╡ e831d3ab-8122-4cb6-9dfc-ebbfb241f0c9
-md"## Let's use a quarantine"
+md"## Setting up a quarantine"
+
+# ╔═╡ a0cfe29e-bc1e-451c-b456-9060137e17d1
+md"""Let's add a quarantine into our model. We will represent the number of people in the quarantine section with the state Q(t) and introduce 2 new parameters.
+
+- κ: Infected to Quarantine rate
+- γ: Quarantine to Removed rate 
+
+!!! tip "Did you get bitten?"
+	We have a big camp and getting bitten has now become taboo, hence a few people have not directly said openly that they have be bitten... 
+
+The κ parameter will take into account and represent how much of the infected are placed in quarantine. 
+
+!!! tip "A unfornutate futur" 
+	Unfornutalely the quarantine is not a very solid area and the first infected patient that was admitted turned into zombie, wreaking havoc inside the camp. You take the hard decision to remove the zombies from the quarantine. 
+
+The γ parameter represents all the infected that have turned into zombies and who are then removed.
+"""
 
 # ╔═╡ 2cb27c2f-edae-4386-a68d-77b2050924a0
 begin
@@ -156,8 +267,22 @@ begin
 	@named simple_quarantine_sys = ODESystem(simple_quarantine_eqs)
 end
 
+# ╔═╡ 7eb18218-a9aa-4b3e-9448-8b724e9c9093
+md"---"
+
+# ╔═╡ 874323d9-2910-4c77-8aa1-902df4990105
+md"""
+!!! tip "The white van at the gate"
+	As you wake up to another day of fighting of zombies, you receive a call from the main gate. A white van is trying to get in. As soon as you hear this, you rush to the gate. 
+
+	"We have the cure!!" you hear, and suddendly the whole camp erupts in joy. You finaly have a chance to fight off this pandedemic. 
+"""
+
 # ╔═╡ 79489f1f-b8a7-4800-b9ec-feaf6fa134b1
-md"## We got a treatment!"
+md"## Treating the infected!"
+
+# ╔═╡ f804a947-4e16-4871-84e3-8654d4fb0a46
+md"To incorporate the cure into to the model, we can define a new parameter `c` that will determine how effective the cure is in treating the infected. This parameter abstract the time it takes for the cure to work, the amount of infected patient the camp can treat, the supply etc..."
 
 # ╔═╡ 3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 begin
@@ -179,16 +304,44 @@ begin
 	@named treatment_model_sys = ODESystem(treatment_model_eqs)
 end
 
+# ╔═╡ c81b1580-55e5-4034-934a-b682a029ee9c
+md"---"
+
+# ╔═╡ bc1471e4-925f-4583-b9b1-193ca59748be
+md"""
+
+!!! tip "A misterious delivery"
+	A big crate just got delivered at the camp, with a note that simply state: "A gift from your friends!". 
+
+	After some debate, you anxiously open the crate to find a large number of steel components. You also find a manual at the top: it's a turret! 
+
+	The turret is a next-generation plasma beam turret that send orbs of energy. You are now equipped to handle large vagues of zombies. 
+"""
+
 # ╔═╡ aee9374d-fefc-409b-99f0-67de38071f52
 md"## Let's fight back..."
+
+# ╔═╡ f7e79c80-1da8-4b95-9447-6107a9e8f2df
+md"""
+To model the behaviour of our new turret, we can introduce the concept of events into our model. 
+ModelingToolkit enables the possibility to define discrete events which affect the values of a state or parameter at a given t. 
+
+In our case, we can define the parameter `k` to define the efficacy of the turret. The manual indicates that the turret reload time is 10s. H
+
+"""
+
+# ╔═╡ edd1f38c-60a9-4dee-afe1-c674907a652c
+turret_reload_time = 10.0
 
 # ╔═╡ 806d844d-a02e-4b50-bb51-132513003cbf
 begin
 	@parameters k
 end;
 
-# ╔═╡ 0ff70c70-6ecb-40d9-9e3e-27ab44a2d6be
-dt = 1.0
+# ╔═╡ 59a77cd5-35de-4e27-9539-43f0d6c791ac
+impulsive_eradication_impulse = [
+		turret_reload_time => [Z ~ Z - (k*Z)]
+]
 
 # ╔═╡ c841be91-502b-4b30-9af0-ba10e5d71558
 begin
@@ -197,9 +350,6 @@ begin
 		D(I) ~  β*S*Z - ρ*I 	  		   - c*I, 
 		D(Z) ~ 		  + ρ*I	+ ζ*R - α*S*Z     ,
 		D(R) ~  	  		- ζ*R + α*S*Z,
-	]
-	impulsive_eradication_impulse = [
-		dt => [Z ~ Z - (k*Z)]
 	]
 end;
 
@@ -216,6 +366,25 @@ begin
 	)
 end
 
+# ╔═╡ 5169aab6-e356-41eb-ba77-1d57d4e1b8ab
+md"---"
+
+# ╔═╡ a7819b3e-6929-4d97-8860-b5eeb0c4d39a
+md"# Other extensions"
+
+# ╔═╡ 92010b6c-f024-44d2-8d19-2f39b35f26f4
+md"""
+Can you think of other way to extend the model?
+Here's a few ideas:
+
+- The quarantine might not be perfect and zombies might escape, how would the equations change? 
+- Maybe there is another cure that can also cure transformed zombies, how could you model that?
+- What if the turret requires someone to operate, adding another check might make the last model more realistic? 
+
+Now you can create your own model to make your own zombie attack model. 
+ **(Share you model in the Julia slack!)**
+"""
+
 # ╔═╡ 6b4feee8-f8bb-4639-a423-97e7ab82cad0
 md"# Appendix"
 
@@ -223,7 +392,7 @@ md"# Appendix"
 md"# Sliders Setup"
 
 # ╔═╡ 2462b985-9c4a-446a-b8ea-3d5f6c7543c0
-md"# Initial Values"
+md"## Initial Values"
 
 # ╔═╡ 1a50274c-f283-4248-9764-973076e0f1a3
 md"### Suceptible"
@@ -3342,16 +3511,23 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
-# ╠═5d7d7822-61c9-47a1-830b-6b0294531d5c
+# ╟─5d7d7822-61c9-47a1-830b-6b0294531d5c
 # ╟─fc95aba1-5f63-44ee-815c-e9f181219253
 # ╟─19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
 # ╟─7f21a7c5-08aa-4810-9752-671516918119
+# ╟─bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
+# ╟─cc1a1a9a-7a45-4231-8471-0fb90b994357
+# ╟─ddcea9d8-abc0-40a3-8740-fa0cd29b0b0e
+# ╟─4c3f3770-ef33-41a5-89a6-274101b06c87
+# ╟─e0581cf3-f942-45a6-bcf2-9e72ba2379a4
+# ╟─28def719-c8e2-43d6-b20e-6141e423add2
 # ╠═d3acb594-ce66-4049-b674-ef641ee1207e
 # ╠═961c955f-cc9b-4cb3-abed-dc19a95ca1eb
-# ╟─bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
 # ╠═01ce7903-0ba3-45bc-816a-f8288583b4d4
 # ╠═6bfa46a7-f50d-49b6-bebc-b7821f89100f
 # ╠═43593199-0107-4b69-a239-f9f68c14b8eb
+# ╠═4b731a5f-3fe2-4691-8f89-c37f05d623ab
+# ╟─416dc725-d1c1-4b14-9315-aa57d9e1127d
 # ╠═671ad109-4bea-426f-b5c2-2dcabb53a7be
 # ╠═3bd175bd-0019-40bc-a1f7-9f94e94ddb87
 # ╟─122b4bc2-24df-423c-904b-158cc0790abe
@@ -3359,17 +3535,24 @@ version = "1.4.1+1"
 # ╟─49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
 # ╟─7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 # ╟─c0be7469-6c7b-46e8-b4b5-2c3c1d003433
+# ╠═5047fe97-df0e-4611-9b6c-733af6e0ad32
+# ╟─ec47f63d-36eb-4331-aec9-9f1af15a3eab
 # ╟─0f22c808-a413-415e-95d1-98317ca6ed25
+# ╟─c1918d6a-3b5a-4046-b084-e6f98eaabee6
 # ╠═dc366710-6f43-434c-8787-d6d1a7dd3920
+# ╟─6aa3249f-4751-45d9-b13d-f748cc950d47
 # ╠═d4446f64-8d69-4ded-90b3-59544800d6fa
 # ╠═9358905f-8d2f-40f6-a9d9-38e39ae3ee85
 # ╠═68c6f9c8-2e76-4b08-8b9b-f18b13a4a50b
 # ╠═d04d419b-2fc0-4b3a-bb78-ea3b6b76bc64
 # ╠═572dff66-18d8-4b0f-be6e-75767ac33be0
 # ╟─603aea40-5cb1-4ef0-9bee-f7476c815833
-# ╠═e5deaa27-54cb-4f48-8f56-b55c3a797dcf
+# ╟─e5deaa27-54cb-4f48-8f56-b55c3a797dcf
 # ╟─d59c9761-382e-4450-b654-dc4b8b203f15
+# ╟─8c51a878-6466-4832-ad74-c90683614ebc
+# ╟─b2e6544a-2e87-439c-9b25-de60518f1970
 # ╟─e831d3ab-8122-4cb6-9dfc-ebbfb241f0c9
+# ╟─a0cfe29e-bc1e-451c-b456-9060137e17d1
 # ╠═2cb27c2f-edae-4386-a68d-77b2050924a0
 # ╠═6467d83d-0e9c-4025-aecf-ab19807e6ba7
 # ╠═26050146-bacf-42c2-b56b-4e2ddf27b19d
@@ -3381,7 +3564,10 @@ version = "1.4.1+1"
 # ╟─94b4f52b-ae28-4e26-93d2-7e7d32c739d5
 # ╟─f13c3c52-7c73-4aa3-a233-3d64f4623b89
 # ╟─97564904-a6ce-497b-9bbc-e978c6877f0c
-# ╟─79489f1f-b8a7-4800-b9ec-feaf6fa134b1
+# ╟─7eb18218-a9aa-4b3e-9448-8b724e9c9093
+# ╟─874323d9-2910-4c77-8aa1-902df4990105
+# ╠═79489f1f-b8a7-4800-b9ec-feaf6fa134b1
+# ╟─f804a947-4e16-4871-84e3-8654d4fb0a46
 # ╠═3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 # ╠═06efabb8-15dc-4952-9f5b-fabadd13a87a
 # ╠═8a8733d1-89ae-4a0b-a218-72127fd14e0b
@@ -3393,9 +3579,13 @@ version = "1.4.1+1"
 # ╟─d5c896f3-1aa8-4334-8c7c-7b01b122aa1b
 # ╟─53c4ef85-6f0c-46d8-a08a-28f8ab368309
 # ╟─22d85cbc-0e8f-49c9-9045-3b56d2a3c2f0
+# ╟─c81b1580-55e5-4034-934a-b682a029ee9c
+# ╟─bc1471e4-925f-4583-b9b1-193ca59748be
 # ╟─aee9374d-fefc-409b-99f0-67de38071f52
+# ╟─f7e79c80-1da8-4b95-9447-6107a9e8f2df
+# ╠═edd1f38c-60a9-4dee-afe1-c674907a652c
+# ╠═59a77cd5-35de-4e27-9539-43f0d6c791ac
 # ╠═806d844d-a02e-4b50-bb51-132513003cbf
-# ╠═0ff70c70-6ecb-40d9-9e3e-27ab44a2d6be
 # ╠═c841be91-502b-4b30-9af0-ba10e5d71558
 # ╠═89a66b68-dfaf-454f-b787-96fabb978e7a
 # ╠═1e457fe1-6cc5-4d2e-812e-13f666747d81
@@ -3405,9 +3595,12 @@ version = "1.4.1+1"
 # ╟─028b2237-e62a-403b-8d6c-786accb8c782
 # ╟─4e947fbc-84f4-460d-9079-0e7397f5d05f
 # ╟─5efa346c-4d46-4c5c-9e14-08015a96bd85
+# ╟─5169aab6-e356-41eb-ba77-1d57d4e1b8ab
+# ╟─a7819b3e-6929-4d97-8860-b5eeb0c4d39a
+# ╟─92010b6c-f024-44d2-8d19-2f39b35f26f4
 # ╟─6b4feee8-f8bb-4639-a423-97e7ab82cad0
 # ╟─61897e7f-eac1-4eea-a679-4cb53757ee7f
-# ╟─2462b985-9c4a-446a-b8ea-3d5f6c7543c0
+# ╠═2462b985-9c4a-446a-b8ea-3d5f6c7543c0
 # ╟─1a50274c-f283-4248-9764-973076e0f1a3
 # ╟─2a5599e2-77ff-4951-8873-a3bd145b614f
 # ╟─c8d9d400-d8fc-4c29-b7c8-f54670eb8317
