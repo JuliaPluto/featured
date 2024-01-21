@@ -64,39 +64,38 @@ end
 # ╔═╡ 5d7d7822-61c9-47a1-830b-6b0294531d5c
 TableOfContents()
 
-# ╔═╡ fc95aba1-5f63-44ee-815c-e9f181219253
-md"""The world is facing a impending disaster. A virus broke out from a laboratory and is turning humans into zombies! 
-There are only 2 outcomes, either the zombies take over the world or a solution is found to fight them and survive this terrible apocalpyse.
-
-Countries are closing down borders, flights are no longer running, chaos is spreading quickly accross the world... 
-"""
-
 # ╔═╡ 19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
 md"# Introduction"
 
-# ╔═╡ 7f21a7c5-08aa-4810-9752-671516918119
-md"""There is hope! The zombies are still in low numbers and there is time to prepare. What could we possibly do to address this? Before nailing planks of wood to the windows of the lab, let's try to understand what *could* happen. 
+# ╔═╡ fc95aba1-5f63-44ee-815c-e9f181219253
+md"""
+!!! tip "Is this the end of the world?" 
+	The world is facing a impending disaster. A virus broke out from a laboratory and is turning humans into zombies! 
+	There are only 2 outcomes, either the zombies take over the world or a solution is found to fight them and survive this terrible apocalpyse.
 
-Let's try to use a model of an outbreak to try and predict what could happen. 
+	Countries are closing down borders, flights are no longer running, chaos is spreading quickly accross the world... 
+
+	There is hope! The zombies are still in low numbers and there is time to prepare. What could we possibly do to address this? Before nailing planks of wood to the windows of the lab, let's try to understand what *could* happen. 
+	Let's try to use a model of an outbreak to try and predict what could happen. 
 """
 
 # ╔═╡ bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
-md"# Simple Zombie Outbreak Model"
+md"## Simple Zombie Outbreak Model"
 
 # ╔═╡ cc1a1a9a-7a45-4231-8471-0fb90b994357
-md"""To model the situation, lets start with the simplest model. In this model, there are healthy humans and zombies. So what happens when a zombie meets a human? Well we can say that there is a rate β that describes the chance of a zombie converting a human into another human. We can then define the following system of equation: 
+md"""Let's start with the simplest model. In this model, there are healthy humans and zombies. So what happens when a zombie meets a human? Well we can say that there is a positive rate β that describes the chance of a zombie converting a human into another human. We can then define the following system of equation: 
 """
 
 # ╔═╡ 4c3f3770-ef33-41a5-89a6-274101b06c87
-md"""However since β is define to be positive this model is quite pessimistic, every scenario will eventually end up with zombies taking over the world. 
+md"""However since β is defined to be positive this model is quite pessimistic, every scenario will eventually end up with zombies taking over the world. 
 
 Lets give the humans some chance of fighting back. We can introduce a new class of individuals in our model, that we'll call 'Removed'. This class represent the zombies that were abled to be killed by humans. We now have: 
 
-- S: Human suceptible to be converted (Healthy)
+- S: Human susceptible to be converted (Healthy)
 - Z: Zombies 
 - R: Removed 
 
-We define the rate at which the suceptible kill the zombies with the rate α. Addionally, these zombies will be hard to get rid of since there is a small chance ζ that a removed "comes back from the dead" and is reintroduced as a zombie. 
+We define the rate at which the susceptible kill the zombies with the rate α. Addionally, these zombies will be hard to get rid of since there is a small chance ζ that a removed "comes back from the dead" and is reintroduced as a zombie. 
 """
 
 # ╔═╡ e0581cf3-f942-45a6-bcf2-9e72ba2379a4
@@ -123,11 +122,18 @@ D = Differential(t)
 @parameters α β ζ  
 
 # ╔═╡ ddcea9d8-abc0-40a3-8740-fa0cd29b0b0e
-ODESystem(
-	[
-		D(S) ~ -β*S*Z,
-	 	D(Z) ~  β*S*Z]
-, name = :base) # only used for equations display
+begin
+	displaySystem = ODESystem(
+		[
+			D(S) ~ -β*S*Z,
+		 	D(Z) ~  β*S*Z]
+	, name = :base) # only used for equations display
+	
+	# @info typeof(displaySystem)  # uncomment to check the type of displaySystem
+end
+
+# ╔═╡ 52d9452b-5c1e-42ea-8976-0ec2f30eaaf8
+md"Once we have defined everything, we can put them together to define the system via the ODE System constructor:"
 
 # ╔═╡ 43593199-0107-4b69-a239-f9f68c14b8eb
 @named simple_attack_sys = ODESystem(
@@ -145,11 +151,29 @@ md"Now in order to simulate what would happen to our model we need to set some v
 md"""
 
 !!! info "Sliders"
-	Throughout this notebook I use sliders to add interactivity to the system. When defining parameters and initial values it will always be in the form:
+	Throughout this notebook I use sliders to add interactivity to the system. For each parameter, a default slider is defined and given some default values, upper/lower bounds. More information is available in the [appendix](#6b4feee8-f8bb-4639-a423-97e7ab82cad0). 
+"""
 
-	`[PARAM] => [SYSTEM](u0s/ps).[PARAM]`
-	
-	where `[SYSTEM](u0s/ps)` is an variable that contains the current values selected by the sliders and `[SYSTEM]` is the system of the current section. More information is available in the [appendix](#6b4feee8-f8bb-4639-a423-97e7ab82cad0). 
+# ╔═╡ 56714c4c-daed-47e2-bda7-ab5518e16faa
+md"
+Great, now that we have an idea of what we will start with, the next step is to define a [ODEProblem](https://docs.sciml.ai/DiffEqDocs/stable/types/ode_types/), which allows us to solve the problem, given the values that we just defined. 
+
+"
+
+# ╔═╡ 63181343-9e48-4cdc-8888-c5476b4d75cd
+md"""
+!!! info "Solving the problem" 
+
+	To solve the problem one can simply call the `solve()` method on the problem to get a set of values representing the population at each given timestep. You can then plot the solution by calling plot(). 
+
+	```julia
+	 simple_attack_sol = solve(simple_attack_prob)
+
+	 p = plot(simple_attack_sol)
+
+	```
+
+	However, in order to explore different parameters, sliders are used for interactivity. To prevent compile the problem over and over again, we can call remake() on the problem with new parameters and this is optimized to recreate the problem much faster, as much of the code required to solve the problem does not actually change when changing parameters value/initial values. 
 """
 
 # ╔═╡ c0be7469-6c7b-46e8-b4b5-2c3c1d003433
@@ -780,51 +804,33 @@ begin
 
 end;
 
-# ╔═╡ 5ddf1f68-2dd6-4780-a5f9-90a2c0370967
+# ╔═╡ dd6bea4d-35fc-4cea-956c-00db08a1f511
 begin
+	simple_attack_prob_remake = remake(
+		simple_attack_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => simple_attack_u0s.S, 
+				 Z => simple_attack_u0s.Z,
+				 R => 0,
+			],
+			states(simple_attack_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => simple_attack_ps.α, 
+				 β => simple_attack_ps.β,
+				 ζ => simple_attack_ps.ζ,
+			],
+			parameters(simple_attack_sys)
+		),
+		tspan = (0.0, simple_attack_tspan.duration)
+	)
+
 	
-	let 
-		state, setState = @use_state(nothing)
-		@use_effect([
-			simple_attack_u0s,
-			simple_attack_ps, 
-			simple_attack_tspan, 
-			simple_attack_plots_params
-		]) do
-
-			# ModelingToolkit provide a handy feature that is the remake() function. It is used to redefine a model's parameters more effiently when the equations remain identical. This allows for near instant feedback for interaction with the sliders. 
-			
-			prob = remake(
-				simple_attack_prob;
-				u0 = ModelingToolkit.varmap_to_vars(
-					[
-						 S => simple_attack_u0s.S, 
-						 Z => simple_attack_u0s.Z,
-					     R => 0,
-					],
-					states(simple_attack_sys)
-				),
-				p =  ModelingToolkit.varmap_to_vars(
-					[
-						 α => simple_attack_ps.α, 
-						 β => simple_attack_ps.β,
-					     ζ => simple_attack_ps.ζ,
-					],
-					parameters(simple_attack_sys)
-				),
-				tspan = (0.0, simple_attack_tspan.duration)
-			)
-
-			
-			sol = solve(prob)
-			p = plot(sol, label=["Susceptible 👩" "Zombies 🧟" "Removed 👵" ])
-			xlims!(simple_attack_plots_params.ts,simple_attack_plots_params.te)
-			setState(p)
-		end
-
-		state
-	
-	end
+	simple_attack_sol = solve(simple_attack_prob_remake)
+	plot(simple_attack_sol, label=["Susceptible 👩" "Zombies 🧟" "Removed 👵" ])
+	xlims!(simple_attack_plots_params.ts,simple_attack_plots_params.te)
 end
 
 # ╔═╡ e5deaa27-54cb-4f48-8f56-b55c3a797dcf
@@ -886,44 +892,34 @@ lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params fo
 
 # ╔═╡ 603aea40-5cb1-4ef0-9bee-f7476c815833
 begin
-	let 
-		state, setState = @use_state(nothing)
-		@use_effect([
-			lattent_infection_u0s,
-			lattent_infection_ps, 
-			lattent_infection_tspan, 
-			lattent_infection_plots_params]) do
-			prob = remake(lattent_infection_prob;
-				u0 = ModelingToolkit.varmap_to_vars(
-					[
-						 S => lattent_infection_u0s.S, 
-						 Z => lattent_infection_u0s.Z,
-						 I => 0,
-					     R => 0,
-					],
-					states(lattent_infection_sys)
-				),
-				p =  ModelingToolkit.varmap_to_vars(
-					[
-						 α => lattent_infection_ps.α, 
-						 β => lattent_infection_ps.β,
-					     ζ => lattent_infection_ps.ζ,
-						 ρ => lattent_infection_ps.ρ
-					],
-					parameters(lattent_infection_sys)
-				),
-				tspan = (0, lattent_infection_tspan.duration)
-			)
-			
-			sol = solve(prob)
 
-			p = plot(sol, labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" ])
-			xlims!(lattent_infection_plots_params.ts,lattent_infection_plots_params.te)
-			setState(p)
-		end
-		state
+	lattent_infection_prob_remake = remake(lattent_infection_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => lattent_infection_u0s.S, 
+				 Z => lattent_infection_u0s.Z,
+				 I => 0,
+				 R => 0,
+			],
+			states(lattent_infection_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => lattent_infection_ps.α, 
+				 β => lattent_infection_ps.β,
+				 ζ => lattent_infection_ps.ζ,
+				 ρ => lattent_infection_ps.ρ
+			],
+			parameters(lattent_infection_sys)
+		),
+		tspan = (0, lattent_infection_tspan.duration)
+	)
 	
-	end
+	lattent_infection_sol = solve(lattent_infection_prob_remake)
+
+	plot(lattent_infection_sol, labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" ])
+	xlims!(lattent_infection_plots_params.ts,lattent_infection_plots_params.te)
+
 end
 
 # ╔═╡ 7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
@@ -992,47 +988,36 @@ end;
 
 # ╔═╡ f2bfba1b-6be2-4e30-a886-617c30f8b027
 begin
-	let 
-		state, setState = @use_state(nothing)
-		@use_effect([
-			simple_quarantine_u0s,
-			simple_quarantine_ps,
-			simple_quarantine_tspan, 
-			simple_quarantine_plots_params
-			]) do
-			prob = remake(simple_quarantine_prob;
-				u0 = ModelingToolkit.varmap_to_vars(
-					[
-						 S => simple_quarantine_u0s.S, 
-						 Z => simple_quarantine_u0s.Z,
-						 Q => 0,
-						 I => 0,
-					     R => 0,
-					],
-					states(simple_quarantine_sys)
-				),
-				p =  ModelingToolkit.varmap_to_vars(
-					[
-						 α => simple_quarantine_ps.α, 
-						 β => simple_quarantine_ps.β,
-					     ζ => simple_quarantine_ps.ζ,
-						 γ => simple_quarantine_ps.γ,
-						 ρ => simple_quarantine_ps.ρ,
-						 κ => simple_quarantine_ps.κ
-					],
-					parameters(simple_quarantine_sys)
-				),
-				tspan = (0, simple_quarantine_tspan.duration)
-			)
-			
-			sol = solve(prob)
-			p = plot(sol,  labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" "Quarantine 😷" ])
-			xlims!(simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
-			setState(p)
-		end
-		state
+
+	simple_quarantine_prob_remake = remake(simple_quarantine_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => simple_quarantine_u0s.S, 
+				 Z => simple_quarantine_u0s.Z,
+				 Q => 0,
+				 I => 0,
+				 R => 0,
+			],
+			states(simple_quarantine_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => simple_quarantine_ps.α, 
+				 β => simple_quarantine_ps.β,
+				 ζ => simple_quarantine_ps.ζ,
+				 γ => simple_quarantine_ps.γ,
+				 ρ => simple_quarantine_ps.ρ,
+				 κ => simple_quarantine_ps.κ
+			],
+			parameters(simple_quarantine_sys)
+		),
+		tspan = (0, simple_quarantine_tspan.duration)
+	)
 	
-	end
+	simple_quarantine_sol = solve(simple_quarantine_prob_remake)
+	plot(simple_quarantine_sol,  labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" "Quarantine 😷" ])
+	xlims!(simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
+	
 end
 
 # ╔═╡ 00b880d1-3db4-40a6-aff4-03a4900df99d
@@ -1097,40 +1082,34 @@ treatment_model_plots_params_sliders = @bind treatment_model_plots_params format
 
 # ╔═╡ 2a3e5049-9ded-427b-b719-f9ef48164bb6
 begin
-	let 
-		state, setState = @use_state(nothing)
-		@use_effect([treatment_model_u0s,treatment_model_ps, treatment_model_tspan, treatment_model_plots_params]) do
-			prob = remake(treatment_model_prob; 
-				u0 = ModelingToolkit.varmap_to_vars(
-					[
-						 S => treatment_model_u0s.S, 
-						 Z => treatment_model_u0s.Z,
-						 I => 0,
-					     R => 0,
-					],
-					states(treatment_model_sys)
-				),
-				p =  ModelingToolkit.varmap_to_vars(
-					[
-						 α => treatment_model_ps.α, 
-						 β => treatment_model_ps.β,
-					     ζ => treatment_model_ps.ζ,
-						 c => treatment_model_ps.c,
-						 ρ => treatment_model_ps.ρ,
-					],
-					parameters(treatment_model_sys)
-				),
-				tspan = (0.0, treatment_model_tspan.duration)
-			)
-			
-			sol = solve(prob)
-			p = plot(sol)
-			xlims!(treatment_model_plots_params.ts,treatment_model_plots_params.te)
-			setState(p)
-		end
-		state
+
+	treatment_model_prob_remake = remake(treatment_model_prob; 
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => treatment_model_u0s.S, 
+				 Z => treatment_model_u0s.Z,
+				 I => 0,
+				 R => 0,
+			],
+			states(treatment_model_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => treatment_model_ps.α, 
+				 β => treatment_model_ps.β,
+				 ζ => treatment_model_ps.ζ,
+				 c => treatment_model_ps.c,
+				 ρ => treatment_model_ps.ρ,
+			],
+			parameters(treatment_model_sys)
+		),
+		tspan = (0.0, treatment_model_tspan.duration)
+	)
 	
-	end
+	treatment_model_sol = solve(treatment_model_prob_remake)
+	plot(treatment_model_sol)
+	xlims!(treatment_model_plots_params.ts,treatment_model_plots_params.te)
+	
 end
 
 # ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
@@ -1196,46 +1175,36 @@ impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_p
 
 # ╔═╡ 1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
 begin
-	let 
-		state, setState = @use_state(nothing)
-		@use_effect([
-			impulsive_eradication_u0s,
-			impulsive_eradication_ps,
-			impulsive_eradication_tspan,
-			impulsive_eradication_plots_params]) do
-			prob = remake(impulsive_eradication_prob;
-				u0 = ModelingToolkit.varmap_to_vars(
-					[
-						 S => impulsive_eradication_u0s.S, 
-						 Z => impulsive_eradication_u0s.Z,
-						 I => 0,
-					     R => 0,
-					],
-					states(impulsive_eradication_sys)
-				),
-				p =  ModelingToolkit.varmap_to_vars(
-					[
-						 α => impulsive_eradication_ps.α, 
-						 β => impulsive_eradication_ps.β,
-					     ζ => impulsive_eradication_ps.ζ,
-					     ρ => impulsive_eradication_ps.ρ,
-						 k => impulsive_eradication_ps.k,
-						 c => impulsive_eradication_ps.c,
-					],
-					parameters(impulsive_eradication_sys)
-				),
-				tspan = (0.0, impulsive_eradication_tspan.duration)
-			)
-			
-			
-			sol = solve(prob)
-			p = plot(sol)
-			xlims!(impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
-			setState(p)
-		end
-		state
+
+	impulsive_eradication_prob_remake = remake(impulsive_eradication_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => impulsive_eradication_u0s.S, 
+				 Z => impulsive_eradication_u0s.Z,
+				 I => 0,
+				 R => 0,
+			],
+			states(impulsive_eradication_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => impulsive_eradication_ps.α, 
+				 β => impulsive_eradication_ps.β,
+				 ζ => impulsive_eradication_ps.ζ,
+				 ρ => impulsive_eradication_ps.ρ,
+				 k => impulsive_eradication_ps.k,
+				 c => impulsive_eradication_ps.c,
+			],
+			parameters(impulsive_eradication_sys)
+		),
+		tspan = (0.0, impulsive_eradication_tspan.duration)
+	)
 	
-	end
+	
+	impulsive_eradication_sol = solve(impulsive_eradication_prob_remake)
+	plot(impulsive_eradication_sol)
+	xlims!(impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
+	
 end
 
 # ╔═╡ 1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
@@ -3512,9 +3481,8 @@ version = "1.4.1+1"
 
 # ╔═╡ Cell order:
 # ╟─5d7d7822-61c9-47a1-830b-6b0294531d5c
-# ╟─fc95aba1-5f63-44ee-815c-e9f181219253
 # ╟─19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
-# ╟─7f21a7c5-08aa-4810-9752-671516918119
+# ╟─fc95aba1-5f63-44ee-815c-e9f181219253
 # ╟─bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
 # ╟─cc1a1a9a-7a45-4231-8471-0fb90b994357
 # ╟─ddcea9d8-abc0-40a3-8740-fa0cd29b0b0e
@@ -3525,17 +3493,20 @@ version = "1.4.1+1"
 # ╠═961c955f-cc9b-4cb3-abed-dc19a95ca1eb
 # ╠═01ce7903-0ba3-45bc-816a-f8288583b4d4
 # ╠═6bfa46a7-f50d-49b6-bebc-b7821f89100f
+# ╠═52d9452b-5c1e-42ea-8976-0ec2f30eaaf8
 # ╠═43593199-0107-4b69-a239-f9f68c14b8eb
-# ╠═4b731a5f-3fe2-4691-8f89-c37f05d623ab
-# ╟─416dc725-d1c1-4b14-9315-aa57d9e1127d
+# ╟─4b731a5f-3fe2-4691-8f89-c37f05d623ab
+# ╠═416dc725-d1c1-4b14-9315-aa57d9e1127d
 # ╠═671ad109-4bea-426f-b5c2-2dcabb53a7be
+# ╟─56714c4c-daed-47e2-bda7-ab5518e16faa
 # ╠═3bd175bd-0019-40bc-a1f7-9f94e94ddb87
+# ╟─63181343-9e48-4cdc-8888-c5476b4d75cd
 # ╟─122b4bc2-24df-423c-904b-158cc0790abe
-# ╟─5ddf1f68-2dd6-4780-a5f9-90a2c0370967
+# ╟─dd6bea4d-35fc-4cea-956c-00db08a1f511
 # ╟─49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
 # ╟─7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 # ╟─c0be7469-6c7b-46e8-b4b5-2c3c1d003433
-# ╠═5047fe97-df0e-4611-9b6c-733af6e0ad32
+# ╟─5047fe97-df0e-4611-9b6c-733af6e0ad32
 # ╟─ec47f63d-36eb-4331-aec9-9f1af15a3eab
 # ╟─0f22c808-a413-415e-95d1-98317ca6ed25
 # ╟─c1918d6a-3b5a-4046-b084-e6f98eaabee6
@@ -3566,7 +3537,7 @@ version = "1.4.1+1"
 # ╟─97564904-a6ce-497b-9bbc-e978c6877f0c
 # ╟─7eb18218-a9aa-4b3e-9448-8b724e9c9093
 # ╟─874323d9-2910-4c77-8aa1-902df4990105
-# ╠═79489f1f-b8a7-4800-b9ec-feaf6fa134b1
+# ╟─79489f1f-b8a7-4800-b9ec-feaf6fa134b1
 # ╟─f804a947-4e16-4871-84e3-8654d4fb0a46
 # ╠═3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 # ╠═06efabb8-15dc-4952-9f5b-fabadd13a87a
@@ -3600,7 +3571,7 @@ version = "1.4.1+1"
 # ╟─92010b6c-f024-44d2-8d19-2f39b35f26f4
 # ╟─6b4feee8-f8bb-4639-a423-97e7ab82cad0
 # ╟─61897e7f-eac1-4eea-a679-4cb53757ee7f
-# ╠═2462b985-9c4a-446a-b8ea-3d5f6c7543c0
+# ╟─2462b985-9c4a-446a-b8ea-3d5f6c7543c0
 # ╟─1a50274c-f283-4248-9764-973076e0f1a3
 # ╟─2a5599e2-77ff-4951-8873-a3bd145b614f
 # ╟─c8d9d400-d8fc-4c29-b7c8-f54670eb8317
@@ -3609,7 +3580,7 @@ version = "1.4.1+1"
 # ╟─49d5fe00-d25d-40e8-b8e6-e8a475a23e9c
 # ╟─90673d7c-9ebf-4d31-8f89-7a3e1325c373
 # ╟─f1d9d916-def2-45f3-94a3-1621d5cd8913
-# ╟─a2fe2c48-bbb1-4601-96b2-470e1768c102
+# ╠═a2fe2c48-bbb1-4601-96b2-470e1768c102
 # ╟─81ef11bb-c4ca-45c9-bd4f-9bef33c1672e
 # ╟─91a92730-965a-44a6-87a9-ba350f6614ca
 # ╟─665a9877-1b0e-4175-9d01-aad723209b57
