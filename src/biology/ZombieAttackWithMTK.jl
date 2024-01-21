@@ -104,9 +104,6 @@ end;
 	]
 )
 
-# ╔═╡ 0587bd6f-0855-49a1-aab4-1f44d270c8e8
-
-
 # ╔═╡ c0be7469-6c7b-46e8-b4b5-2c3c1d003433
 md"# Extending the Model"
 
@@ -182,6 +179,15 @@ begin
 	@named treatment_model_sys = ODESystem(treatment_model_eqs)
 end
 
+# ╔═╡ 8b7936d4-4730-4475-9ce6-1a102dc397aa
+
+
+# ╔═╡ 8ddf1454-0b2e-4c50-9679-576d5044898f
+
+
+# ╔═╡ d040a941-4ffb-4ad0-b4bd-c3007184afd6
+
+
 # ╔═╡ aee9374d-fefc-409b-99f0-67de38071f52
 md"## Let's fight back..."
 
@@ -202,7 +208,7 @@ begin
 		D(R) ~  	  		- ζ*R + α*S*Z,
 	]
 	impulsive_eradication_impulse = [
-		dt => [🧟 ~ 🧟 - (k*🧟)]
+		dt => [Z ~ Z - (k*Z)]
 	]
 end;
 
@@ -211,14 +217,61 @@ begin
 	@named impulsive_eradication_sys = ODESystem(
 		impulsive_eradication_eqs,
 		t,
-		[S,Z,I,Q],
+		[S,Z,I,R],
 		[β, α, ζ, k, ρ, c];
-		# Note here that we explicity give the variables and parameters to the ODESystem constructors. This is due to the fact that the automatic variables/parameters detection from MTK does not work on the discrete events, so we have to pass k as a parameter, and hence all of them.
-	discrete_events = impulsive_eradication_impulse)
+		
+		# Note here that we explicity give the variables and parameters to the ODESystem constructors. This is due to the fact that the automatic variables/parameters detection from the ODESystem constructor does not work on the discrete events (as of now), so we have to pass k as a parameter, and hence all of them.
+		discrete_events = impulsive_eradication_impulse
+	)
 end
 
-# ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
+# ╔═╡ 6b4feee8-f8bb-4639-a423-97e7ab82cad0
+md"# Appendix"
 
+# ╔═╡ 61897e7f-eac1-4eea-a679-4cb53757ee7f
+md"# Sliders Setup"
+
+# ╔═╡ 2462b985-9c4a-446a-b8ea-3d5f6c7543c0
+md"# Initial Values"
+
+# ╔═╡ 1a50274c-f283-4248-9764-973076e0f1a3
+md"### Suceptible"
+
+# ╔═╡ c8d9d400-d8fc-4c29-b7c8-f54670eb8317
+md"### Zombie"
+
+# ╔═╡ 0dd7fd47-6575-4b9d-938f-012cff42692d
+md"## Parameters"
+
+# ╔═╡ 49d5fe00-d25d-40e8-b8e6-e8a475a23e9c
+md"### tSpan"
+
+# ╔═╡ f1d9d916-def2-45f3-94a3-1621d5cd8913
+md"### α"
+
+# ╔═╡ 81ef11bb-c4ca-45c9-bd4f-9bef33c1672e
+md"### β"
+
+# ╔═╡ 665a9877-1b0e-4175-9d01-aad723209b57
+md"### ζ"
+
+# ╔═╡ 826e1888-664f-4a70-89b4-a593c3b3ec47
+md"### ρ"
+
+# ╔═╡ a98bc585-2648-4283-a742-e503c469b90b
+md"### k"
+
+# ╔═╡ da0d2229-c62c-4a81-8253-c95bf8bf503d
+md"### κ"
+
+# ╔═╡ 432b4a0a-d8ff-4765-9397-f54b7e5df0e5
+md"### σ"
+
+# ╔═╡ 7cb92640-c3f7-4d15-99bb-7fc159c8856c
+md"### γ"
+
+# ╔═╡ 2555bbc3-8b71-4fdd-9daa-9c263502eddf
+md"### c"
 
 # ╔═╡ f440930e-c68f-40ee-8d1b-cc510400e872
 md"### Interactivity extensions"
@@ -229,13 +282,198 @@ md"### Interactivity extensions"
 	ub::T = 100.0
 	step::T = 1.0
 	default::T = lb
+	description::String = "" 
 	label::String 
 	alias::Symbol = Symbol(label)
-	function SliderParameter{T}(lb::T,ub::T,step::T,default::T, label::String, alias::Symbol) where T
+	function SliderParameter{T}(lb::T,ub::T,step::T,default::T, description::String ,label::String, alias::Symbol) where T
 		 if ub < lb error("Invalid Bounds") end 
-		 return new{typeof(default)}(lb,ub,step,default,label,alias)
+		 return new{typeof(default)}(lb,ub,step,default,description,label,alias)
 	end
 end
+
+# ╔═╡ 2a5599e2-77ff-4951-8873-a3bd145b614f
+suceptibleInitSlider = SliderParameter(
+			lb 		= 1,
+			ub 	 	= 1000,
+			step 	= 1,
+			default = 50,
+			alias 	= :S,
+			label 	= "👩"
+		)
+
+# ╔═╡ ca777958-84f4-42ef-95f7-1b0778620e0c
+zombieInitSlider = SliderParameter(
+			lb 		= 1,
+			ub 	 	= 1000,
+			step 	= 1,
+			default = 10,
+			alias 	= :Z,
+			label = "🧟"
+		)
+
+# ╔═╡ 90673d7c-9ebf-4d31-8f89-7a3e1325c373
+tspanSlider = SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= 1000.0,
+			step 	= 10.0,
+			default = 100.0,
+			alias 	= :duration,
+			label = "Duration"
+		)
+
+# ╔═╡ a2fe2c48-bbb1-4601-96b2-470e1768c102
+αSlider = SliderParameter(
+			lb 		= 0.0,
+			ub 		= 0.8,
+			step  	= 0.01,
+			default = 0.5,
+			label 	= "α",
+			description = "Zombie Defeating Rate" 
+		)
+
+# ╔═╡ 91a92730-965a-44a6-87a9-ba350f6614ca
+βSlider = SliderParameter(
+			lb  	= 0.2, 
+			ub 		= 1.0, 
+			step   	= 0.01, 
+			default = 0.25,
+			label  	= "β",
+			description = "Infection Rate"
+		)
+
+# ╔═╡ b7213dcc-a2de-4507-a869-7f109d5a52ca
+ζSlider = SliderParameter(
+			lb 		= 0.1,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.05, 
+			label 	= "ζ",
+			description = "Back from the dead Rate"
+		)
+
+# ╔═╡ f21ad23e-dcdd-46fa-b10e-fd115c17eb98
+ρSlider = SliderParameter(
+			lb 		= 0.05,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.4,
+			label 	= "ρ",
+			description = "Zombie Transformation Rate"
+		)
+
+# ╔═╡ 68c6f9c8-2e76-4b08-8b9b-f18b13a4a50b
+begin	
+	lattent_infection_params =  [
+		S => 50.0, 
+	 	Z => 10.0, 
+	 	I => 0, 					  
+		R => 0, 					  
+		α => αSlider.default,   # Zombie defeating rate
+		β => βSlider.default,   # Zombie infection rate
+		ζ => ζSlider.default,   # "Back from the dead" rate
+		ρ => ρSlider.default,   # "Back from the dead" rate
+	]
+end
+
+# ╔═╡ 7fb8d441-3685-4673-a959-75901d5ad06d
+kSlider = SliderParameter(
+			lb 		= 0.0,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.05,
+			label 	= "k",
+			description = "Turret Effectiveness"
+		)
+
+# ╔═╡ 89e74250-9d4b-49cc-9f12-2a4e6d921b90
+κSlider = SliderParameter(
+			lb 		= 0.0,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.05,
+			label 	= "κ",
+			description = "Infected into Quarantine rate"
+		)
+
+# ╔═╡ e5f00f03-348b-4153-bf2b-efffba4254cb
+σSlider = SliderParameter(
+			lb 		= 0.0,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.5,
+			label 	= "σ",
+	 		description = ""
+		)
+
+# ╔═╡ 8c37e496-4f0b-4151-991a-4bccf66e35f8
+γSlider = SliderParameter(
+			lb 		= 0.0,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.04,
+			label 	= "γ",
+			description = "Quarantine tried to escape but failed rate"
+		)
+
+# ╔═╡ 2847c8b9-0ac8-4b90-a23b-6323414b3d1b
+begin	
+	simple_quarantine_params =  [
+		S => 50.0,  
+	 	Z => 10.0,  
+	 	I => 0, 					   
+		R => 0, 					   
+		Q => 0, 					   
+		α 	=> αSlider.default, # Zombie defeating rate
+		β 	=> βSlider.default, # Susceptible to Infection rate
+		ζ   => ζSlider.default, # "Back from the dead" rate
+		ρ   => ρSlider.default, # Zombie transformation rate
+		κ 	=> κSlider.default, # Infected to Quarantined  rate
+		γ   => γSlider.default, # Failed Quarantined rate
+	]
+end
+
+# ╔═╡ 89b55225-e4df-4be3-a34e-e0fe31c1ba0a
+cSlider = SliderParameter(
+			lb 		= 0.0,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.5,
+			label 	= "c",
+			description = "Cure Effectiveness" 
+		)
+
+# ╔═╡ e5fc55c6-c292-494d-9a56-9506eb95c80d
+begin	
+	treatment_model_params =  [
+		S => 50.0, 
+	 	Z => 10.0, 
+	 	I => 0, 				
+		R => 0, 				
+		α => αSlider.default, 
+		β => βSlider.default, 
+		ζ => ζSlider.default, 
+		ρ => ρSlider.default, 
+		c => cSlider.default, 
+		
+	]
+end
+
+# ╔═╡ 1e457fe1-6cc5-4d2e-812e-13f666747d81
+begin	
+	impulsive_eradication_params =  [
+		S => 50.0, 
+	 	Z => 10.0, 
+		I => 0,
+		R => 0, 			
+		α => αSlider.default, 
+		β => βSlider.default, 
+		ρ => βSlider.default,  
+		ζ => ζSlider.default, 
+		k => kSlider.default, 
+		c => cSlider.default, 
+		
+	]
+end;
 
 # ╔═╡ c56afbfc-7536-41cb-9ada-ceba128820c6
 @with_kw struct NumberFieldParameter{T}
@@ -243,11 +481,12 @@ end
 	ub::T = 100
 	step::T = 1
 	default::T = lb
+	description::String = "" 
 	label::String
 	alias::Symbol = Symbol(label)
-	function NumberFieldParameter(lb,ub,step,default, label, alias) 
+	function NumberFieldParameter(lb,ub,step,default,description, label, alias) 
 		 if ub < lb error("Invalid Bounds") end 
-		 return new{typeof(default)}(lb,ub,step,default,label,alias)
+		 return new{typeof(default)}(lb,ub,step,default,description,label,alias)
 	end
 end
 
@@ -255,6 +494,7 @@ end
 @with_kw struct CheckBoxParameter
 	label::String 
 	default::Bool = false
+	description::String = "" 
 	alias::Symbol = Symbol(label)
 end
 
@@ -262,21 +502,25 @@ end
 @with_kw struct ColorParameter
 	label::String 
 	default::RGB = RGB(0,0,0)
+	description::String = "" 
 	alias::Symbol = Symbol(label)
 end
 
 # ╔═╡ 2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
-function format_sliderParameter( params::Vector{SliderParameter{T}};title::String,) where T
+function format_sliderParameter(params;title::String,) 
 	
 	return combine() do Child
 		
 		mds = [
 			@htl("""
-			<div class="slider-container">
-			<div>
+			<div class="slider-container-content">
+			<div class="slider-container-content-inner"> 
+				$(param.description)
+			</div>
+			<div class="slider-container-content-inner"> 
 			<p>$(param.label)
 			</div>
-			<div>
+			<div class="slider-container-content-inner"> 
 				$(Child(param.alias, PlutoUI.Slider(param.lb:param.step:param.ub, default = param.default, show_value = true))) 
 			</div>
 			</div>
@@ -285,109 +529,59 @@ function format_sliderParameter( params::Vector{SliderParameter{T}};title::Strin
 			
 			for param in params
 		]
-		md"""
-		#### $title
-		$(mds)
-		"""
+		@htl("""
+		<div class="slider-container">
+			<div class="slider-container-title">
+				<h4>$title</h4>
+			</div>
+			<div class="slider-container-content-wrapper">
+				$(mds)
+			</div>
+		</div>
+		""")
 	end
 end
 
-# ╔═╡ 19bec5fe-0e08-4854-9cb5-c710c055355c
-function format_sliderParameter( params::Vector{SliderParameter};title::String,)
+# ╔═╡ 49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
+begin
 	
-	return combine() do Child
-		
-		mds = [
-			@htl("""
-			<div>
-			<p>$(param.label)
-			</div>
-			<div>
-				$(Child(param.alias, PlutoUI.Slider(param.lb:param.step:param.ub, default = param.default, show_value = true))) 
-			</div>
-			
-			""")
-			for param in params
-		]
-		md"""
-		#### $title
-		$(mds)
-		"""
-	end
-end
-
-# ╔═╡ 097c67b1-b8b7-4ec3-8115-4c5dc39701c4
-simple_attack_u0s_sliders = @bind simple_attack_u0s format_sliderParameter([
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 50,
-			label 	= "👩"
-		),
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 10,
-			label = "🧟"
-		),
-	],
-	title = "Initial Values",
-);
-
-# ╔═╡ c3f6ca59-382a-4fc8-abb5-d7ecd77fcec1
-simple_attack_ps_sliders = @bind simple_attack_ps format_sliderParameter([
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step  	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "α"
-		),
-		SliderParameter(
-			lb  	= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step   	= 1/ 10e4,
-			default = 1 / 10e3,
-			label  	= "β"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ζ"
-		),
-	],
-	title = "Model Parameters",
-);
+	# These are the main sliders definition for defining the system definition
+	
+	simple_attack_u0s_sliders = @bind simple_attack_u0s format_sliderParameter(
+		title = "Initial Values",
+		[
+			suceptibleInitSlider,
+			zombieInitSlider,
+		],
+	)
+	simple_attack_ps_sliders = @bind simple_attack_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider,
+			βSlider,
+			ζSlider
+		],
+	)
+	simple_attack_tspan_sliders = @bind simple_attack_tspan format_sliderParameter(
+		title = "Time Span",
+		[
+			tspanSlider
+		],
+	)
+	
+end;
 
 # ╔═╡ 671ad109-4bea-426f-b5c2-2dcabb53a7be
 begin	
 	simple_attack_params =  [
 		S => simple_attack_u0s.S, # Number of Humans  at t = 0
-	 	Z => simple_attack_u0s.R, # Number of Zombies at t = 0
+	 	Z => simple_attack_u0s.Z, # Number of Zombies at t = 0
 		R => 0, # Number of Removed at t = 0
 		α 	=> simple_attack_ps.α, # Zombie defeating rate
 		β 	=> simple_attack_ps.β, # Zombie infection rate
 		ζ   => simple_attack_ps.ζ, # "Back from the dead" rate
 	]
 end
-
-# ╔═╡ 8479c78f-9284-4c9d-85e9-c833490054ec
-simple_attack_tspan_sliders = @bind simple_attack_tspan format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= 10000.0,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :duration,
-			label = "Duration"
-		)
-	],
-	title = "Time Span",
-);
 
 # ╔═╡ 3bd175bd-0019-40bc-a1f7-9f94e94ddb87
 begin
@@ -405,33 +599,35 @@ simple_attack_sol = solve(simple_attack_prob)
 # ╔═╡ 1904a300-05c2-4642-ae09-944a0e4ae5f8
 lattent_infection_sol = solve(simple_attack_prob)
 
-# ╔═╡ f18a94da-f4c5-43ee-b1ee-1a2ebcfc65b5
-simple_attack_tspan_sliders
+# ╔═╡ 7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
+begin
 
-# ╔═╡ 49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
-simple_attack_plots_params_sliders = @bind simple_attack_plots_params format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= simple_attack_tspan.duration,
-			step 	= 10.0,
-			default = 0.0,
-			alias 	= :ts,
-			label = "Starting time (Plot)"
-		),
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= simple_attack_tspan.duration,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :te,
-			label = "End time (Plot)"
-		),
-	],
-	title = "Plotting Parameters",
-);
+	# These sliders are for dealing with interactivity of the plots
+		
+	simple_attack_plots_params_sliders = @bind simple_attack_plots_params format_sliderParameter(
+		title = "Plotting Parameters",
+		[
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_attack_tspan.duration,
+				step 	= 10.0,
+				default = 0.0,
+				alias 	= :ts,
+				label = "Starting time"
+			),
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_attack_tspan.duration,
+				step 	= 10.0,
+				default = simple_attack_tspan.duration,
+				alias 	= :te,
+				label = "End time"
+			)
+		],
+	);
+		
 
-# ╔═╡ 023639a2-7c9b-46c4-9a8a-dc3379b6a30b
-simple_attack_plots_params_sliders
+end;
 
 # ╔═╡ 5ddf1f68-2dd6-4780-a5f9-90a2c0370967
 begin
@@ -439,87 +635,30 @@ begin
 	xlims!(simple_attack_plots_params.ts,simple_attack_plots_params.te)
 end
 
-# ╔═╡ faf6fe0b-c971-413d-ba11-7c83715a3633
-lattent_infection_u0s_sliders = @bind lattent_infection_u0s format_sliderParameter([
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 50,
-			label 	= "👩"
-		),
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 10,
-			label = "🧟"
-		),
-	],
-	title = "Initial Values",
-);
-
-# ╔═╡ db0232d0-3278-4d1d-9847-45b271f10f67
-lattent_infection_ps_sliders = @bind lattent_infection_ps format_sliderParameter([
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step  	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "α"
-		),
-		SliderParameter(
-			lb  	= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step   	= 1/ 10e4,
-			default = 1 / 10e3,
-			label  	= "β"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ζ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ρ"
-		),
-	],
-	title = "Model Parameters",
-);
-
-# ╔═╡ 68c6f9c8-2e76-4b08-8b9b-f18b13a4a50b
-begin	
-	lattent_infection_params =  [
-		S => lattent_infection_u0s.S, # Number of Humans   at t = 0
-	 	Z => lattent_infection_u0s.Z, # Number of Zombies  at t = 0
-	 	I => 0, 						 # Number of Infected at t = 0
-		R => 0, 					   	 # Number of Removed at t = 0
-		α 	=> lattent_infection_ps.α, # Zombie defeating rate
-		β 	=> lattent_infection_ps.β, # Zombie infection rate
-		ζ   => lattent_infection_ps.ζ, # "Back from the dead" rate
-		ρ   => lattent_infection_ps.ρ, # "Back from the dead" rate
-	]
-end
-
-# ╔═╡ df819d18-88d2-4531-9099-ab708380c27f
-lattent_infection_tspan_sliders = @bind lattent_infection_tspan format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= 10000.0,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :duration,
-			label = "Duration"
-		)
-	],
-	title = "Time Span",
-);
+# ╔═╡ e5deaa27-54cb-4f48-8f56-b55c3a797dcf
+begin
+	lattent_infection_u0s_sliders = @bind lattent_infection_u0s format_sliderParameter([
+		suceptibleInitSlider,
+		zombieInitSlider
+		],
+		title = "Initial Values",
+	);
+	
+	lattent_infection_ps_sliders = @bind lattent_infection_ps format_sliderParameter([
+			αSlider,
+			βSlider,
+			ζSlider,
+			ρSlider,
+		],
+		title = "Model Parameters",
+	);
+	
+	lattent_infection_tspan_sliders = @bind lattent_infection_tspan format_sliderParameter([
+			tspanSlider
+		],
+		title = "Time Span",
+	);
+end;
 
 # ╔═╡ d04d419b-2fc0-4b3a-bb78-ea3b6b76bc64
 begin
@@ -531,7 +670,7 @@ begin
 	lattent_infection_prob
 end
 
-# ╔═╡ 62f3cd34-b9c4-405f-92b2-8daa4aca4eab
+# ╔═╡ d59c9761-382e-4450-b654-dc4b8b203f15
 lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params format_sliderParameter([
 		SliderParameter(
 			lb 		= 0.0,
@@ -553,9 +692,6 @@ lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params fo
 	title = "Plotting Parameters",
 );
 
-# ╔═╡ 4d67d5bf-52cc-4d72-bef7-c0de7aea07c9
-lattent_infection_plots_params_sliders
-
 # ╔═╡ 603aea40-5cb1-4ef0-9bee-f7476c815833
 begin
 	plot(lattent_infection_sol)
@@ -563,111 +699,34 @@ begin
 end
 
 # ╔═╡ 7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
-simple_quarantine_u0s_sliders = @bind simple_quarantine_u0s format_sliderParameter([
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 50,
-			label 	= "👩"
-		),
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 10,
-			label = "🧟"
-		),
-	],
-	title = "Initial Values",
-);
+simple_quarantine_u0s_sliders = @bind simple_quarantine_u0s format_sliderParameter(
+		title = "Initial Values",
+		[
+			suceptibleInitSlider,
+			zombieInitSlider
+		],
+	);
+
+# ╔═╡ 94b4f52b-ae28-4e26-93d2-7e7d32c739d5
+simple_quarantine_ps_sliders = @bind simple_quarantine_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider,
+			βSlider,
+			ζSlider,
+			ρSlider,
+			κSlider,
+			γSlider
+		],
+	);
 
 # ╔═╡ f13c3c52-7c73-4aa3-a233-3d64f4623b89
-simple_quarantine_ps_sliders = @bind simple_quarantine_ps format_sliderParameter([
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step  	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "α"
-		),
-		SliderParameter(
-			lb  	= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step   	= 1/ 10e4,
-			default = 1 / 10e3,
-			label  	= "β"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ζ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ρ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "κ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "σ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "γ"
-		),
-	],
-	title = "Model Parameters",
-);
-
-# ╔═╡ 2847c8b9-0ac8-4b90-a23b-6323414b3d1b
-begin	
-	simple_quarantine_params =  [
-		S => simple_quarantine_u0s.S, # Number of Humans   at t = 0
-	 	Z => simple_quarantine_u0s.Z, # Number of Zombies  at t = 0
-	 	I => 0, 						 # Number of Infected at t = 0
-		R => 0, 					   	 # Number of Removed at t = 0
-		Q => 0, 					   	 # Number of Quarantined at t = 0
-		α 	=> simple_quarantine_ps.α, # Zombie defeating rate
-		β 	=> simple_quarantine_ps.β, # Zombie infection rate
-		ζ   => simple_quarantine_ps.ζ, # "Back from the dead" rate
-		ρ   => simple_quarantine_ps.ρ, # "Back from the dead" rate
-		κ 	=> simple_quarantine_ps.κ, #  Infected to Quarantined  rate
-		σ   => simple_quarantine_ps.σ, #  Zombie to infected rate
-		γ   => simple_quarantine_ps.γ, #  "Freedom kill" rate
-	]
-end
-
-# ╔═╡ 97564904-a6ce-497b-9bbc-e978c6877f0c
-simple_quarantine_tspan_sliders = @bind simple_quarantine_tspan format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= 10000.0,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :duration,
-			label = "Duration"
-		)
-	],
-	title = "Time Span",
-);
+simple_quarantine_tspan_sliders = @bind simple_quarantine_tspan format_sliderParameter(
+		title = "Time Span",
+		[
+			tspanSlider
+		],
+	);
 
 # ╔═╡ d60f5b1d-132d-4d76-8060-d6365b95e923
 begin
@@ -679,33 +738,29 @@ begin
 	simple_quarantine_prob
 end
 
-# ╔═╡ 33ba58f3-9959-48ec-a7f0-098b864ba02f
-simple_quarantine_sol = solve(simple_quarantine_prob)
-
-# ╔═╡ bb7cea3d-f1c3-421a-bda3-9be39ed638f7
-simple_quarantine_plots_params_sliders = @bind simple_quarantine_plots_params format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= simple_quarantine_tspan.duration,
-			step 	= 10.0,
-			default = 0.0,
-			alias 	= :ts,
-			label = "Starting time (Plot)"
-		),
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= simple_quarantine_tspan.duration,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :te,
-			label = "End time (Plot)"
-		),
-	],
-	title = "Plotting Parameters",
-);
-
-# ╔═╡ 3338b869-e8de-4401-bcb0-6dd1b5f1826d
-simple_quarantine_plots_params_sliders
+# ╔═╡ 97564904-a6ce-497b-9bbc-e978c6877f0c
+begin
+	simple_quarantine_plots_params_sliders = @bind simple_quarantine_plots_params format_sliderParameter([
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_quarantine_tspan.duration,
+				step 	= 10.0,
+				default = 0.0,
+				alias 	= :ts,
+				label = "Starting time"
+			),
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_quarantine_tspan.duration,
+				step 	= 10.0,
+				default = simple_quarantine_tspan.duration,
+				alias 	= :te,
+				label = "End time"
+			),
+		],
+		title = "Plotting Parameters",
+	);
+end;
 
 # ╔═╡ f2bfba1b-6be2-4e30-a886-617c30f8b027
 begin
@@ -713,96 +768,33 @@ begin
 	xlims!(simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
 end
 
-# ╔═╡ 8b7936d4-4730-4475-9ce6-1a102dc397aa
+# ╔═╡ 00b880d1-3db4-40a6-aff4-03a4900df99d
 treatment_model_u0s_sliders = @bind treatment_model_u0s format_sliderParameter([
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 50,
-			label 	= "👩"
-		),
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 10,
-			label = "🧟"
-		),
+		suceptibleInitSlider,
+		zombieInitSlider
 	],
 	title = "Initial Values",
 );
 
-# ╔═╡ 8ddf1454-0b2e-4c50-9679-576d5044898f
-treatment_model_ps_sliders = @bind treatment_model_ps format_sliderParameter([
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step  	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "α"
-		),
-		SliderParameter(
-			lb  	= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step   	= 1/ 10e4,
-			default = 1 / 10e3,
-			label  	= "β"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ζ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ρ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "c"
-		)
-	],
-	title = "Model Parameters",
-);
+# ╔═╡ d5c896f3-1aa8-4334-8c7c-7b01b122aa1b
+treatment_model_ps_sliders = @bind treatment_model_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider
+			βSlider
+			ζSlider
+			ρSlider
+			cSlider	
+		],
+	);
 
-# ╔═╡ e5fc55c6-c292-494d-9a56-9506eb95c80d
-begin	
-	treatment_model_params =  [
-		S => treatment_model_u0s.S, # Number of Humans   at t = 0
-	 	Z => treatment_model_u0s.Z, # Number of Zombies  at t = 0
-	 	I => 0, 						 # Number of Infected at t = 0
-		R => 0, 					   	 # Number of Removed at t = 0
-		α 	=> treatment_model_ps.α, # Zombie defeating rate
-		β 	=> treatment_model_ps.β, # Zombie infection rate
-		ζ   => treatment_model_ps.ζ, # "Back from the dead" rate
-		ρ   => treatment_model_ps.ρ, # "Back from the dead" rate
-		c 	=> treatment_model_ps.c, #  Infected to Quarantined  rate
-		
-	]
-end
-
-# ╔═╡ d040a941-4ffb-4ad0-b4bd-c3007184afd6
-treatment_model_tspan_sliders = @bind treatment_model_tspan format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= 10000.0,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :duration,
-			label = "Duration"
-		)
-	],
-	title = "Time Span",
-);
+# ╔═╡ 53c4ef85-6f0c-46d8-a08a-28f8ab368309
+treatment_model_tspan_sliders = @bind treatment_model_tspan format_sliderParameter(
+		title = "Time Span",
+		[
+			tspanSlider
+		],
+	);
 
 # ╔═╡ 7b660a3d-3fe3-4d48-be37-49754fa70b16
 begin
@@ -811,13 +803,10 @@ begin
 		treatment_model_params, 
 		(0.0, treatment_model_tspan.duration)
 	)			
-	treatment_model_prob
+	
 end
 
-# ╔═╡ 5641dd0f-9cda-4667-8963-ded180164a5e
-treatment_model_sol = solve(treatment_model_prob)
-
-# ╔═╡ 4373f6a6-4e0d-4c95-9cc3-60dd02a31e47
+# ╔═╡ 22d85cbc-0e8f-49c9-9045-3b56d2a3c2f0
 treatment_model_plots_params_sliders = @bind treatment_model_plots_params format_sliderParameter([
 		SliderParameter(
 			lb 		= 0.0,
@@ -831,7 +820,7 @@ treatment_model_plots_params_sliders = @bind treatment_model_plots_params format
 			lb 		= 0.0,
 			ub 	 	= treatment_model_tspan.duration,
 			step 	= 10.0,
-			default = 1000.0,
+			default = treatment_model_tspan.duration,
 			alias 	= :te,
 			label = "End time (Plot)"
 		),
@@ -839,103 +828,41 @@ treatment_model_plots_params_sliders = @bind treatment_model_plots_params format
 	title = "Plotting Parameters",
 );
 
-# ╔═╡ 96aa0e2d-325c-43e2-81e1-96bf76eea0b5
-treatment_model_plots_params_sliders
-
 # ╔═╡ 2a3e5049-9ded-427b-b719-f9ef48164bb6
 begin
 	plot(treatment_model_sol)
 	xlims!(treatment_model_plots_params.ts,treatment_model_plots_params.te)
 end
 
-# ╔═╡ 05e62a8e-ad6b-48e6-a1bf-566a1f69cedd
-impulsive_eradication_u0s_sliders = @bind impulsive_eradication_u0s format_sliderParameter([
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 50,
-			label 	= "👩"
-		),
-		SliderParameter(
-			lb 		= 1,
-			ub 	 	= 1000,
-			step 	= 1,
-			default = 10,
-			label = "🧟"
-		),
-	],
+# ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
+impulsive_eradication_u0s_sliders = @bind impulsive_eradication_u0s format_sliderParameter(
 	title = "Initial Values",
-);
-
-# ╔═╡ 2dcae92d-3912-4413-9181-015d575d3203
-impulsive_eradication_u0s_sliders
-
-# ╔═╡ ef8eb104-2a17-4fae-8344-3f49b9f48ba5
-impulsive_eradication_ps_sliders = @bind impulsive_eradication_ps format_sliderParameter([
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1.0 ,
-			step  	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "α"
-		),
-		SliderParameter(
-			lb  	= 1 / 10e5,
-			ub 		= 1.0 ,
-			step   	= 1/ 10e4,
-			default = 1 / 10e3,
-			label  	= "β"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e5,
-			ub 		= 1 / 10e1,
-			step 	= 1/ 10e4,
-			default = 1 / 10e3,
-			label 	= "ζ"
-		),
-		SliderParameter(
-			lb 		= 1 / 10e2,
-			ub 		= 1.0 ,
-			step 	= 1/ 10e2,
-			default = 1 / 10e2,
-			label 	= "k"
-		)
+	[
+		suceptibleInitSlider,
+		zombieInitSlider
 	],
-	title = "Model Parameters",
 );
 
-# ╔═╡ 1e457fe1-6cc5-4d2e-812e-13f666747d81
-begin	
-	impulsive_eradication_params =  [
-		S => impulsive_eradication_u0s.S, # Number of Humans   at t = 0
-	 	Z => impulsive_eradication_u0s.Z, # Number of Zombies  at t = 0
-		R => 0, 					   	    # Number of Removed at t = 0
-		α 	=> impulsive_eradication_ps.α,  # Zombie defeating rate
-		β 	=> impulsive_eradication_ps.β,  # Zombie infection rate
-		ζ   => impulsive_eradication_ps.ζ,  # "Back from the dead" rate
-		k 	=> impulsive_eradication_ps.k,  # Kill ratio
-		ρ 	=> 0.05,
-		c => 0.02
-	]
-end
-
-# ╔═╡ 6f88886a-9986-4aae-b9eb-3be4989c31ca
-impulsive_eradication_ps_sliders
-
-# ╔═╡ 6cc96875-38fd-4054-82f7-0c82efd54d21
-impulsive_eradication_tspan_sliders = @bind impulsive_eradication_tspan format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= 10000.0,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :duration,
-			label = "Duration"
-		)
-	],
-	title = "Time Span",
-);
+# ╔═╡ 4e947fbc-84f4-460d-9079-0e7397f5d05f
+begin
+	impulsive_eradication_ps_sliders = @bind impulsive_eradication_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider, 
+			βSlider,
+			ζSlider,
+			ρSlider,
+			cSlider,
+			kSlider,
+			
+		],
+	);
+	impulsive_eradication_tspan_sliders = @bind impulsive_eradication_tspan format_sliderParameter([
+			tspanSlider
+		],
+		title = "Time Span",
+	);
+end; 
 
 # ╔═╡ 2cfac784-ec48-4963-a12d-d8bac6ae41cc
 begin
@@ -944,16 +871,9 @@ begin
 		impulsive_eradication_params, 
 		(0.0, impulsive_eradication_tspan.duration)
 	)			
-	impulsive_eradication_prob
 end
 
-# ╔═╡ 010e7f0d-d099-4943-8358-6231fc417957
-impulsive_eradication_sol = solve(impulsive_eradication_prob)
-
-# ╔═╡ d82a5fbb-8a3a-42a2-bc7d-3801712f5556
-impulsive_eradication_tspan_sliders
-
-# ╔═╡ 28c9a0b4-12f0-467e-afbf-76dcec6dc73a
+# ╔═╡ 5efa346c-4d46-4c5c-9e14-08015a96bd85
 impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_params format_sliderParameter([
 		SliderParameter(
 			lb 		= 0.0,
@@ -974,9 +894,6 @@ impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_p
 	],
 	title = "Plotting Parameters",
 );
-
-# ╔═╡ 50714de6-dc61-4883-83f5-185b4c2d2b28
-impulsive_eradication_plots_params_sliders
 
 # ╔═╡ 1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
 begin
@@ -1060,6 +977,107 @@ function format_colorPicker( params::Vector{ColorParameter};title::String)
 	end
 end
 
+# ╔═╡ 411354b2-f9b7-46cc-9fe2-358f2d691dfe
+function createSliderGroup(sliders, extraSliders)
+
+	slider_group_wrap =  x -> @htl("""
+					<div class="slider-group-inner ">
+						$x
+					</div>
+	""")
+	sliders_group = map(slider_group_wrap, sliders)
+	extraSliders_group = map(slider_group_wrap, extraSliders)
+	toggleId = join(rand(["a","b","c","d"],20))
+	return @htl("""
+	<div class="on-small-show">
+		<div class="slider-group sidebar-right">
+			<div class="interact-group">
+				<div class="slider-group-outer">
+					$sliders_group
+				</div>
+				<div class="slider-container">
+					<div class="wrap-collabsible">
+						<input id="$(toggleId)" class="toggle" type="checkbox" checked="" />
+						<label for="$(toggleId)" class="lbl-toggle">Extra Parameters</label>
+						<div class="collapsible-content">
+							<div class="content-inner">
+								$extraSliders_group
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="on-tiny-show">
+		<div class="sidebar-bottom ">
+			<div class="interact-group">
+				<div>
+					$sliders_group
+				</div>
+				<div class="slider-container">
+					<div class="wrap-collabsible">
+						<input id="collapsible_simple_attack2" class="toggle" type="checkbox" checked="" />
+						<label for="collapsible_simple_attack2" class="lbl-toggle">Extra Parameters</label>
+						<div class="collapsible-content">
+							<div class="content-inner">
+								$extraSliders_group
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+""")
+end
+
+# ╔═╡ 572dff66-18d8-4b0f-be6e-75767ac33be0
+createSliderGroup(
+	[
+		lattent_infection_ps_sliders,
+		lattent_infection_u0s_sliders
+	],
+	[
+		lattent_infection_tspan_sliders,
+		lattent_infection_plots_params_sliders
+	])
+
+# ╔═╡ 33ba58f3-9959-48ec-a7f0-098b864ba02f
+createSliderGroup(
+	[
+		simple_quarantine_ps_sliders,
+		simple_quarantine_u0s_sliders
+	],
+	[
+		simple_quarantine_tspan_sliders,
+		simple_quarantine_plots_params_sliders
+	]
+)
+
+# ╔═╡ ab916a56-52ff-4f35-b8ba-72f2d3d7ba9a
+createSliderGroup(
+	[
+		treatment_model_u0s_sliders,
+		treatment_model_ps_sliders
+	],
+	[
+		treatment_model_tspan_sliders,
+		treatment_model_plots_params_sliders
+	]
+)
+
+# ╔═╡ 63c5fab1-fb11-4d9a-b2fc-8a23598602ba
+createSliderGroup(
+	[
+		impulsive_eradication_ps_sliders,
+		impulsive_eradication_u0s_sliders
+	],
+	[
+		impulsive_eradication_tspan_sliders, impulsive_eradication_plots_params_sliders
+	]
+)
+
 # ╔═╡ 813fc6b1-460a-49cb-9ae5-909e38e18e71
 md"# Packages"
 
@@ -1070,11 +1088,187 @@ md"### CSS"
 @htl("""
 <style>
 
+bond {
+	width: 100%
+	
+}
+
+
+@media screen and (min-width: 600px) {
+	
+	.on-tiny-show {
+		display: flex;
+	}
+	.on-small-show {
+		display: none;
+	}
+	.on-big-show {
+		display: none;
+	}
+}
+@media screen and (min-width: 1200px) {
+	.on-tiny-show {
+		display: none;
+	}
+	.on-small-show {
+		display: flex;
+	}
+	.on-big-show {
+		display: none;
+	}
+}
+@media screen and (min-width: 1800px) {
+	.on-tiny-show {
+		display: none;
+	}
+	.on-small-show {
+		display: flex;
+	}
+	.on-big-show {
+		display: flex;
+	}
+}
+
+
 .slider-container{
+	min-width: 27rem;
+    gap: 0.5rem;
+	border-radius: 1rem;
+	width: 100%;
+	background: rgba(0, 105, 255, 0.2);
+}
+.slider-container-content-wrapper{
 	display: flex;
-	padding: 0.25rem;
+	flex-direction: column;
+}
+.slider-container-content{
+	min-width: 30rem;
+	display: flex;
+	padding: 0.5rem;
+	margin: 0.5rem;
     gap: 0.5rem;
 }
+
+.slider-container-content-inner{
+ 	display: flex;
+	align-items: center;
+}
+
+.slider-container-title{
+	display: block;
+	text-align: center;
+	padding: 1rem;
+	color: #ddd;
+	background: #0069ff;
+	cursor: pointer;
+	border-radius: 7px;
+	transition: all 0.25s ease-out;
+}
+
+.sidebar-left {
+	position: absolute;
+    top: 100%;
+	right: 110%;
+	width: 17rem;
+	z-index: 99;
+}
+.sidebar-right {
+    top: 100%;
+	position: absolute;
+	left: 100%;
+	width: 17rem;
+}
+.sidebar-bottom {
+    display: flex;
+}
+
+.slider-group{
+	display:flex; 
+	flex-direction: column;
+	padding: .5rem;  
+}
+.slider-group-inner{
+	border-radius: 7px;
+	display:flex; 
+	align-items:center; 
+}
+.slider-group-outer{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.interact-group {
+	display: flex;
+    flex-direction: column;
+	gap: 0.5rem;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+.wrap-collabsible {
+  
+}
+
+.lbl-toggle {
+  display: block;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 1rem;
+  color: #ddd;
+  background: #0069ff;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: all 0.25s ease-out;
+}
+
+.lbl-toggle:hover {
+  color: #fff;
+}
+.lbl-toggle::before {
+  content: " ";
+  display: inline-block;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid currentColor;
+  vertical-align: middle;
+  margin-right: 0.7rem;
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-out;
+}
+.toggle:checked + .lbl-toggle::before {
+  transform: rotate(90deg) translateX(-3px);
+}
+.collapsible-content {
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.25s ease-in-out;
+}
+.toggle:checked + .lbl-toggle + .collapsible-content {
+  max-height: 100rem;
+}
+.toggle:checked + .lbl-toggle {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.collapsible-content .content-inner {
+  background: rgba(0, 105, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 105, 255, 0.45);
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  padding: 0.25rem .25rem;
+}
+.content-inner{
+  padding: 0.5rem
+}
+.collapsible-content p {
+  margin-bottom: 0;
+}
+
+
 </style>
 """)
 
@@ -2978,44 +3172,36 @@ version = "1.4.1+1"
 # ╟─bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
 # ╠═01ce7903-0ba3-45bc-816a-f8288583b4d4
 # ╠═43593199-0107-4b69-a239-f9f68c14b8eb
-# ╠═0587bd6f-0855-49a1-aab4-1f44d270c8e8
-# ╟─097c67b1-b8b7-4ec3-8115-4c5dc39701c4
-# ╟─c3f6ca59-382a-4fc8-abb5-d7ecd77fcec1
-# ╟─8479c78f-9284-4c9d-85e9-c833490054ec
 # ╠═671ad109-4bea-426f-b5c2-2dcabb53a7be
 # ╠═3bd175bd-0019-40bc-a1f7-9f94e94ddb87
 # ╠═90f84ca1-3e3d-4a60-aa50-8888629244b5
-# ╠═f18a94da-f4c5-43ee-b1ee-1a2ebcfc65b5
-# ╠═49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
-# ╠═023639a2-7c9b-46c4-9a8a-dc3379b6a30b
 # ╠═5ddf1f68-2dd6-4780-a5f9-90a2c0370967
+# ╠═49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
+# ╠═7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 # ╟─c0be7469-6c7b-46e8-b4b5-2c3c1d003433
 # ╟─0f22c808-a413-415e-95d1-98317ca6ed25
 # ╠═dc366710-6f43-434c-8787-d6d1a7dd3920
 # ╠═d4446f64-8d69-4ded-90b3-59544800d6fa
 # ╠═9358905f-8d2f-40f6-a9d9-38e39ae3ee85
-# ╟─faf6fe0b-c971-413d-ba11-7c83715a3633
-# ╟─db0232d0-3278-4d1d-9847-45b271f10f67
-# ╟─df819d18-88d2-4531-9099-ab708380c27f
 # ╠═68c6f9c8-2e76-4b08-8b9b-f18b13a4a50b
 # ╠═d04d419b-2fc0-4b3a-bb78-ea3b6b76bc64
 # ╠═1904a300-05c2-4642-ae09-944a0e4ae5f8
-# ╠═62f3cd34-b9c4-405f-92b2-8daa4aca4eab
-# ╠═4d67d5bf-52cc-4d72-bef7-c0de7aea07c9
+# ╠═572dff66-18d8-4b0f-be6e-75767ac33be0
 # ╠═603aea40-5cb1-4ef0-9bee-f7476c815833
+# ╠═e5deaa27-54cb-4f48-8f56-b55c3a797dcf
+# ╟─d59c9761-382e-4450-b654-dc4b8b203f15
 # ╟─e831d3ab-8122-4cb6-9dfc-ebbfb241f0c9
 # ╠═2cb27c2f-edae-4386-a68d-77b2050924a0
 # ╠═6467d83d-0e9c-4025-aecf-ab19807e6ba7
 # ╠═26050146-bacf-42c2-b56b-4e2ddf27b19d
-# ╠═7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
-# ╠═f13c3c52-7c73-4aa3-a233-3d64f4623b89
-# ╠═97564904-a6ce-497b-9bbc-e978c6877f0c
 # ╠═2847c8b9-0ac8-4b90-a23b-6323414b3d1b
 # ╠═d60f5b1d-132d-4d76-8060-d6365b95e923
 # ╠═33ba58f3-9959-48ec-a7f0-098b864ba02f
-# ╠═bb7cea3d-f1c3-421a-bda3-9be39ed638f7
-# ╠═3338b869-e8de-4401-bcb0-6dd1b5f1826d
 # ╠═f2bfba1b-6be2-4e30-a886-617c30f8b027
+# ╟─7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
+# ╟─94b4f52b-ae28-4e26-93d2-7e7d32c739d5
+# ╟─f13c3c52-7c73-4aa3-a233-3d64f4623b89
+# ╟─97564904-a6ce-497b-9bbc-e978c6877f0c
 # ╟─79489f1f-b8a7-4800-b9ec-feaf6fa134b1
 # ╠═3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 # ╠═06efabb8-15dc-4952-9f5b-fabadd13a87a
@@ -3025,39 +3211,63 @@ version = "1.4.1+1"
 # ╠═d040a941-4ffb-4ad0-b4bd-c3007184afd6
 # ╠═e5fc55c6-c292-494d-9a56-9506eb95c80d
 # ╠═7b660a3d-3fe3-4d48-be37-49754fa70b16
-# ╠═5641dd0f-9cda-4667-8963-ded180164a5e
-# ╠═4373f6a6-4e0d-4c95-9cc3-60dd02a31e47
-# ╠═96aa0e2d-325c-43e2-81e1-96bf76eea0b5
+# ╟─ab916a56-52ff-4f35-b8ba-72f2d3d7ba9a
 # ╠═2a3e5049-9ded-427b-b719-f9ef48164bb6
+# ╟─00b880d1-3db4-40a6-aff4-03a4900df99d
+# ╟─d5c896f3-1aa8-4334-8c7c-7b01b122aa1b
+# ╟─53c4ef85-6f0c-46d8-a08a-28f8ab368309
+# ╟─22d85cbc-0e8f-49c9-9045-3b56d2a3c2f0
 # ╟─aee9374d-fefc-409b-99f0-67de38071f52
 # ╠═806d844d-a02e-4b50-bb51-132513003cbf
 # ╠═0ff70c70-6ecb-40d9-9e3e-27ab44a2d6be
 # ╠═c841be91-502b-4b30-9af0-ba10e5d71558
 # ╠═89a66b68-dfaf-454f-b787-96fabb978e7a
-# ╠═05e62a8e-ad6b-48e6-a1bf-566a1f69cedd
-# ╠═ef8eb104-2a17-4fae-8344-3f49b9f48ba5
-# ╠═6cc96875-38fd-4054-82f7-0c82efd54d21
 # ╠═1e457fe1-6cc5-4d2e-812e-13f666747d81
 # ╠═2cfac784-ec48-4963-a12d-d8bac6ae41cc
-# ╠═010e7f0d-d099-4943-8358-6231fc417957
-# ╠═28c9a0b4-12f0-467e-afbf-76dcec6dc73a
-# ╠═50714de6-dc61-4883-83f5-185b4c2d2b28
-# ╠═d82a5fbb-8a3a-42a2-bc7d-3801712f5556
-# ╠═2dcae92d-3912-4413-9181-015d575d3203
-# ╠═6f88886a-9986-4aae-b9eb-3be4989c31ca
+# ╠═63c5fab1-fb11-4d9a-b2fc-8a23598602ba
 # ╠═1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
-# ╠═028b2237-e62a-403b-8d6c-786accb8c782
+# ╟─028b2237-e62a-403b-8d6c-786accb8c782
+# ╟─4e947fbc-84f4-460d-9079-0e7397f5d05f
+# ╟─5efa346c-4d46-4c5c-9e14-08015a96bd85
+# ╟─6b4feee8-f8bb-4639-a423-97e7ab82cad0
+# ╟─61897e7f-eac1-4eea-a679-4cb53757ee7f
+# ╟─2462b985-9c4a-446a-b8ea-3d5f6c7543c0
+# ╟─1a50274c-f283-4248-9764-973076e0f1a3
+# ╟─2a5599e2-77ff-4951-8873-a3bd145b614f
+# ╟─c8d9d400-d8fc-4c29-b7c8-f54670eb8317
+# ╟─ca777958-84f4-42ef-95f7-1b0778620e0c
+# ╟─0dd7fd47-6575-4b9d-938f-012cff42692d
+# ╟─49d5fe00-d25d-40e8-b8e6-e8a475a23e9c
+# ╟─90673d7c-9ebf-4d31-8f89-7a3e1325c373
+# ╟─f1d9d916-def2-45f3-94a3-1621d5cd8913
+# ╟─a2fe2c48-bbb1-4601-96b2-470e1768c102
+# ╟─81ef11bb-c4ca-45c9-bd4f-9bef33c1672e
+# ╟─91a92730-965a-44a6-87a9-ba350f6614ca
+# ╟─665a9877-1b0e-4175-9d01-aad723209b57
+# ╟─b7213dcc-a2de-4507-a869-7f109d5a52ca
+# ╟─826e1888-664f-4a70-89b4-a593c3b3ec47
+# ╟─f21ad23e-dcdd-46fa-b10e-fd115c17eb98
+# ╟─a98bc585-2648-4283-a742-e503c469b90b
+# ╟─7fb8d441-3685-4673-a959-75901d5ad06d
+# ╟─da0d2229-c62c-4a81-8253-c95bf8bf503d
+# ╟─89e74250-9d4b-49cc-9f12-2a4e6d921b90
+# ╟─432b4a0a-d8ff-4765-9397-f54b7e5df0e5
+# ╟─e5f00f03-348b-4153-bf2b-efffba4254cb
+# ╟─7cb92640-c3f7-4d15-99bb-7fc159c8856c
+# ╟─8c37e496-4f0b-4151-991a-4bccf66e35f8
+# ╟─2555bbc3-8b71-4fdd-9daa-9c263502eddf
+# ╟─89b55225-e4df-4be3-a34e-e0fe31c1ba0a
 # ╟─f440930e-c68f-40ee-8d1b-cc510400e872
 # ╟─19b3047c-6b4d-4e54-a932-1030a31dd713
 # ╟─c56afbfc-7536-41cb-9ada-ceba128820c6
 # ╟─d5c4e4fd-c674-4d81-a60c-1c0bd13235a4
 # ╟─308bfa9d-58fd-4411-88ab-ba0675898cac
 # ╟─2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
-# ╟─19bec5fe-0e08-4854-9cb5-c710c055355c
 # ╟─1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
 # ╟─31873c6e-2c78-4bb8-8069-ca491f25b077
 # ╟─e8f30ca6-0d03-4a8b-a835-c5c1dce56575
-# ╟─813fc6b1-460a-49cb-9ae5-909e38e18e71
+# ╟─411354b2-f9b7-46cc-9fe2-358f2d691dfe
+# ╠═813fc6b1-460a-49cb-9ae5-909e38e18e71
 # ╠═00edd691-2b60-4d1d-b5e2-2fd4675469da
 # ╠═7a937f2c-5808-4756-9bfc-6f84b0f03cc9
 # ╟─88f8f2b8-6ea5-4bcc-8026-70a760873033
