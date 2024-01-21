@@ -64,7 +64,11 @@ end
 TableOfContents()
 
 # ╔═╡ 684ab7f8-a5db-4c39-a3cc-ce948dd026b0
-md"Activate story mode? $(@bind story_mode CheckBox())"
+md"""
+!!! info "Story Mode" 
+	For putting this notebook into context, story cards were addeed for each section. There are not nessecary for following the notebook but makes the notebook a bit more entertaining. 
+Activate story mode? $(@bind story_mode CheckBox(default=true))
+"""
 
 # ╔═╡ 19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
 md"# Introduction"
@@ -91,7 +95,7 @@ if(story_mode)
 	
 			Can somebody open the gate?
 	
-		After a couple of minutes you finnaly hear sound of a sliding metal bar and a pair of eyes open a hatch in the door. 
+		After a couple of minutes you finnaly hear sound of a sliding metal bar and a pair of eyes appeard through a hatch in the door. 
 	
 			- Who is this?
 	
@@ -107,36 +111,36 @@ if(story_mode)
 	
 		After showing you around the camp, hans bring you to the biggest tent: the headquarters. It's covered in maps and scientific diagram. In the back of the room a woman is deep in though, looking a notepad. Hans calls her: 
 
-			Hey Zara, we have a new member! They told me they worked as an epidimiologist, maybe they can help?
+			- Hey Zara, we have a new member! They told me they worked as an epidimiologist, maybe they can help?
 
 		She looks up, looking confused. After a few seconds, she smiles and greets you. 
 
-			Welcome! We definetly need as much help as we can get. 
-			Do you know much about this virus?
+			- Welcome! We definetly need as much help as we can get. 
+			- Do you know much about this virus?
 
-			- No but we can try and figure it out together. 
+			No but we can try and figure it out together. 
 
 		After a short exchange, Hans announces that he has to leave and you are left with Zara in the tent. She turns to you, and gravely announces:
 			
-			There are only 2 outcomes.
-			Either the zombies take over the world 
-			Or we find a solution to fight them and survive this terrible apocalpyse.
+			- There are only 2 outcomes.
+			- Either the zombies take over the world 
+			- Or we find a solution to fight them and survive this terrible apocalpyse.
 
-			- Any chance of a cure?
+			Any chance of a cure?
 
-			We heard from our friends that a group is trying to develop something, but so far nothing. 
+			- We heard from our friends that a group is trying to develop something, but so far nothing. 
 
-			- Well I don't know much about vaccines and cure but I can try to predict what could happen?
+			Well I don't know much about vaccines and cure but I can try to predict what could happen?
 
-			Oh yeah? And how so?
+			- Oh yeah? And how so?
 
-			- Let me show you.
+			Let me show you.
 	
 	"""
 end
 
 # ╔═╡ bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
-md"## Simple Zombie Outbreak Model"
+md"## The Zombie Outbreak Model"
 
 # ╔═╡ cc1a1a9a-7a45-4231-8471-0fb90b994357
 md"""Let's start with the simplest model. In this model, there are healthy humans (susceptible) and zombies. So what happens when a zombie meets a human? 
@@ -163,11 +167,14 @@ We define ``α``  the rate at which the susceptible kill the zombies.
 Additionally, these zombies will be hard to get rid of since there is a small chance ζ that a removed "comes back from the dead" and is reintroduced as a zombie. 
 """
 
+# ╔═╡ 77d94a92-f058-4b9f-9df8-9de58603c293
+md"## Setting up the system"
+
 # ╔═╡ e0581cf3-f942-45a6-bcf2-9e72ba2379a4
 md"""
 
 !!! info "Acausal Modeling"
-	To define this model, we will be using the acausal modeling library [ModelingToolkit](https://github.com/SciML/ModelingToolkit.jl) from [SciML](https://sciml.ai/). The idea is that we can define equations and systems using the equations that we have defined directly. (You can actually check that the system that is mentioned earlier is actually a ModelingToolkit system.)
+	To setup this model, we will be using the acausal modeling library [ModelingToolkit](https://github.com/SciML/ModelingToolkit.jl) from [SciML](https://sciml.ai/). The idea is that we can define equations and systems using the equations that we have defined directly. (You can actually check that the system that is mentioned earlier is actually a ModelingToolkit system.)
 
 """
 
@@ -219,16 +226,6 @@ md"""
 	Throughout this notebook I use sliders to add interactivity to the system. For each parameter, a default slider is defined and given some default values, upper/lower bounds. More information is available in the [appendix](#6b4feee8-f8bb-4639-a423-97e7ab82cad0). 
 """
 
-# ╔═╡ 671ad109-4bea-426f-b5c2-2dcabb53a7be
-simple_attack_params =  [
-	S 	=> 50.0,  
-	Z 	=> 10.0,  
-	R 	=> 0, 				    # we will always start with 0 removed 	 
-	α 	=> αSlider.default,  	
-	β 	=> βSlider.default, 	 
-	ζ   => ζSlider.default, 	 
-]
-
 # ╔═╡ 56714c4c-daed-47e2-bda7-ab5518e16faa
 md"
 Great, now that we have an idea of what we will start with, the next step is to define a [ODEProblem](https://docs.sciml.ai/DiffEqDocs/stable/types/ode_types/), which allows us to solve the problem, given the values that we just defined. 
@@ -264,14 +261,11 @@ if(story_mode)
 	"""
 end
 
-# ╔═╡ c0be7469-6c7b-46e8-b4b5-2c3c1d003433
-md"# Extending the Model"
-
 # ╔═╡ 5047fe97-df0e-4611-9b6c-733af6e0ad32
 md"This is good, however, this basic model is quite pessimistic. As you can see, the only scenario where the zombies never take over, is when they never get the chance to bite one human. There seems to be no chance for the camp to survive the attack. But it must be possible, right? "
 
 # ╔═╡ 0f22c808-a413-415e-95d1-98317ca6ed25
-md"## Latent Infection"
+md"# Latent Infection"
 
 # ╔═╡ c1918d6a-3b5a-4046-b084-e6f98eaabee6
 md"""	
@@ -279,6 +273,9 @@ Let's introduce this as the concept of latent infection. In this scenario, when 
 	
 We can introduce a new class `I(t)` and the parameter ρ to capture the rate at which the infected turn into zombies.
 """
+
+# ╔═╡ ab1836a1-290d-4bde-bf1b-cc8287734e1e
+md"## Setup"
 
 # ╔═╡ dc366710-6f43-434c-8787-d6d1a7dd3920
 begin
@@ -303,6 +300,9 @@ end
 begin
 	@named lattent_infection_sys = ODESystem(lattent_infection_eqs)
 end
+
+# ╔═╡ 4a97986a-e5d0-4b56-bfb3-022ed9037dd7
+md"## Model Visualization"
 
 # ╔═╡ 8c51a878-6466-4832-ad74-c90683614ebc
 md"""
@@ -334,7 +334,7 @@ if(story_mode)
 end
 
 # ╔═╡ e831d3ab-8122-4cb6-9dfc-ebbfb241f0c9
-md"## Setting up a quarantine"
+md"# Setting up a quarantine"
 
 # ╔═╡ 51f33f5c-06c4-4a6c-9f91-6dd5f0822043
 md"""Let's add a quarantine into our model. We will represent the number of people in the quarantine section with the state Q(t) and introduce 2 new parameters.
@@ -371,6 +371,9 @@ md"""
 The γ parameter represents all the infected that have turned into zombies and who are then removed.
 """
 
+# ╔═╡ 5141dd63-ebfb-4b75-a0a3-8a0dd1163169
+md"## Setup"
+
 # ╔═╡ 2cb27c2f-edae-4386-a68d-77b2050924a0
 begin
 	@variables Q(t)
@@ -393,6 +396,9 @@ begin
 	@named simple_quarantine_sys = ODESystem(simple_quarantine_eqs)
 end
 
+# ╔═╡ bb435da5-5bd0-4944-abf1-5d54888efa53
+md"## Model Visualization"
+
 # ╔═╡ 874323d9-2910-4c77-8aa1-902df4990105
 if(story_mode)
 	md"""
@@ -406,10 +412,13 @@ if(story_mode)
 end
 
 # ╔═╡ 79489f1f-b8a7-4800-b9ec-feaf6fa134b1
-md"## Treating the infected!"
+md"# Treating the infected!"
 
 # ╔═╡ f804a947-4e16-4871-84e3-8654d4fb0a46
 md"To incorporate a cure into to the model, we can define a new parameter `c` that will determine how effective the cure is in treating the infected. This parameter abstract the time it takes for the cure to work, the amount of infected patient the camp can treat, the supply etc..."
+
+# ╔═╡ 5e8a9df5-26ac-4ee0-a647-5088bfb43b25
+md"## Setup"
 
 # ╔═╡ 3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 begin
@@ -431,6 +440,9 @@ begin
 	@named treatment_model_sys = ODESystem(treatment_model_eqs)
 end
 
+# ╔═╡ fcbc4792-866f-4dd1-9b41-a7bb7b1db5fd
+md"## Model Visualization"
+
 # ╔═╡ bc1471e4-925f-4583-b9b1-193ca59748be
 if(story_mode)
 	md"""
@@ -447,7 +459,7 @@ if(story_mode)
 end
 
 # ╔═╡ aee9374d-fefc-409b-99f0-67de38071f52
-md"## Let's fight back..."
+md"# Let's fight back..."
 
 # ╔═╡ f7e79c80-1da8-4b95-9447-6107a9e8f2df
 md"""
@@ -460,6 +472,9 @@ In our case, we can define the parameter `k` to define the efficacy of the turre
 
 # ╔═╡ edd1f38c-60a9-4dee-afe1-c674907a652c
 turret_reload_time = 10.0
+
+# ╔═╡ 4c4cd287-71d4-4845-b466-3d135610858b
+md"## Setup"
 
 # ╔═╡ 806d844d-a02e-4b50-bb51-132513003cbf
 begin
@@ -494,11 +509,70 @@ begin
 	)
 end
 
-# ╔═╡ 5169aab6-e356-41eb-ba77-1d57d4e1b8ab
-md"---"
+# ╔═╡ 333e8b9c-0595-4908-9741-ab75d6e6b3b9
+md"## Model Visualization"
+
+# ╔═╡ 3919e8ab-487d-4a6e-b462-73a9dfbac5e7
+md"# The vaccine model "
+
+# ╔═╡ 9148f8b0-e379-43aa-88f5-8c41a2ea62ca
+md"To introduce a vaccine, we can add a new class that will represent how many vaccinated individual. Alongside we can also introduce a new parameter ν that indicates the vaccination rate. 
+We define the new equation such that only the healthy susceptible are able to get a vaccine. We can also upgrade the cure to now be able to cure Zombies and infected in Quarantine. 
+"
+
+# ╔═╡ 74955738-33ca-4e6a-bde2-8080b32099c6
+md"## Setup"
+
+# ╔═╡ c3e21fa0-ce32-4919-bc18-16616dadcee1
+@variables V(t)
+
+# ╔═╡ ebad16ee-5c44-4313-9cdf-413ccd4fcfa0
+@parameters ν
+
+# ╔═╡ 8a0b1af6-2df6-4f98-9f3e-0714b19b9b69
+begin
+	vaccine_model_eqs = [
+		D(S) ~ -ν*S - β*S*Z 									 + c*Z + c*Q,
+		D(I) ~  	  β*S*Z  	- ρ*I 			- κ*I 			, 	
+		D(V) ~  ν*S,
+		D(Z) ~  	-α*S*Z  + ρ*I 	 + ζ*R                       - c*Z,
+		D(R) ~  	 α*S*Z  		 - ζ*R 			+ γ*Q, 
+		D(Q) ~          		 		 	+ κ*I 	- γ*Q              - c*Q
+	]
+end;
+
+# ╔═╡ a1c2d060-912b-441c-b986-2bac1a433c49
+begin
+	@named vaccine_model_sys = ODESystem(
+		vaccine_model_eqs,
+		t,
+		[S,I,Z,Q,R, V],
+		[β, α, ζ,ν, k, ρ, κ,γ, c];
+		
+		# We reuse the turret impusle for the last model
+		discrete_events = impulsive_eradication_impulse
+	)
+end
+
+# ╔═╡ 711bd169-61c7-4dc4-afc9-8829155d71fe
+md"## Model Visulization"
+
+# ╔═╡ d1b89ad6-9116-48b4-805f-f1ba6b15b3dc
+md"By introducing the vaccine we were now able to survive the zombie attack since once an human got vacinated it couldn't be transformed back into a zombie. This allows the vaccination class to grow while the zombie slowly decline in numbers. Altough if the cure becomes completly ineficient ``c =  0`` then any zombies are now trapped in their class and cannot be converted back to suseceptible, which only leaves a fix number of vaccinated vs zombies. In any case, in this scenario there are always humans surviving at the end. Yay! "
+
+# ╔═╡ 427d7fd4-af60-4b3b-9d43-3cc6511e281d
+if(story_mode)
+	md"""
+	---
+	
+	!!! tip "The End"
+		You made it!
+
+	"""
+end
 
 # ╔═╡ a7819b3e-6929-4d97-8860-b5eeb0c4d39a
-md"# Other extensions"
+md"# Conclusion"
 
 # ╔═╡ 92010b6c-f024-44d2-8d19-2f39b35f26f4
 md"""
@@ -512,6 +586,12 @@ Here's a few ideas:
 Now you can create your own model to make your own zombie attack model. 
  **(Share you model in the Julia slack!)**
 """
+
+# ╔═╡ fac12d85-045d-4e67-b3e8-d76f9285a297
+md"#  "
+
+# ╔═╡ e2ce7fa8-83d6-4fa0-9c42-6148c7884b96
+md"# "
 
 # ╔═╡ 6b4feee8-f8bb-4639-a423-97e7ab82cad0
 md"# Appendix"
@@ -532,7 +612,7 @@ md"### Zombie"
 md"## Parameters"
 
 # ╔═╡ 49d5fe00-d25d-40e8-b8e6-e8a475a23e9c
-md"### tSpan"
+md"### tspan"
 
 # ╔═╡ f1d9d916-def2-45f3-94a3-1621d5cd8913
 md"### α"
@@ -557,6 +637,9 @@ md"### σ"
 
 # ╔═╡ 7cb92640-c3f7-4d15-99bb-7fc159c8856c
 md"### γ"
+
+# ╔═╡ 262ce577-4c4b-4edc-9e3a-29379e1b5dce
+md"### ν"
 
 # ╔═╡ 2555bbc3-8b71-4fdd-9daa-9c263502eddf
 md"### c"
@@ -604,7 +687,7 @@ tspanSlider = SliderParameter(
 			lb 		= 0.0,
 			ub 	 	= 1000.0,
 			step 	= 10.0,
-			default = 100.0,
+			default = 250.0,
 			alias 	= :duration,
 			label = "Duration"
 		)
@@ -638,6 +721,16 @@ tspanSlider = SliderParameter(
 			label 	= "ζ",
 			description = "Back from the dead Rate"
 		)
+
+# ╔═╡ 671ad109-4bea-426f-b5c2-2dcabb53a7be
+simple_attack_params =  [
+	S 	=> 50.0,  
+	Z 	=> 10.0,  
+	R 	=> 0, 				    # we will always start with 0 removed 	 
+	α 	=> αSlider.default,  	
+	β 	=> βSlider.default, 	 
+	ζ   => ζSlider.default, 	 
+]
 
 # ╔═╡ f21ad23e-dcdd-46fa-b10e-fd115c17eb98
 ρSlider = SliderParameter(
@@ -720,6 +813,16 @@ begin
 	]
 end
 
+# ╔═╡ 7df920cf-b634-40c9-913a-bc26732f486e
+νSlider =  SliderParameter(
+			lb 		= 0.0,
+			ub 		= 1.0,
+			step 	= 0.01,
+			default = 0.8,
+			label 	= "ν",
+			description = "Vaccine Effectiveness"
+		)
+
 # ╔═╡ 89b55225-e4df-4be3-a34e-e0fe31c1ba0a
 cSlider = SliderParameter(
 			lb 		= 0.0,
@@ -756,6 +859,28 @@ begin
 		α => αSlider.default, 
 		β => βSlider.default, 
 		ρ => βSlider.default,  
+		ζ => ζSlider.default, 
+		k => kSlider.default, 
+		c => cSlider.default, 
+		
+	]
+end;
+
+# ╔═╡ 80aeb76f-4ab2-468f-95ef-f36491f4642e
+begin	
+	vaccine_model_params =  [
+		S => 50.0, 
+	 	Z => 10.0, 
+		V => 0,
+		Q => 0,
+		I => 0,
+		R => 0, 			
+		α => αSlider.default, 
+		β => βSlider.default, 
+		ρ => βSlider.default, 
+		κ => κSlider.default,
+		γ => γSlider.default,
+		ν => νSlider.default,
 		ζ => ζSlider.default, 
 		k => kSlider.default, 
 		c => cSlider.default, 
@@ -898,35 +1023,6 @@ begin
 
 end;
 
-# ╔═╡ dd6bea4d-35fc-4cea-956c-00db08a1f511
-begin
-	simple_attack_prob_remake = remake(
-		simple_attack_prob;
-		u0 = ModelingToolkit.varmap_to_vars(
-			[
-				 S => simple_attack_u0s.S, 
-				 Z => simple_attack_u0s.Z,
-				 R => 0,
-			],
-			states(simple_attack_sys)
-		),
-		p =  ModelingToolkit.varmap_to_vars(
-			[
-				 α => simple_attack_ps.α, 
-				 β => simple_attack_ps.β,
-				 ζ => simple_attack_ps.ζ,
-			],
-			parameters(simple_attack_sys)
-		),
-		tspan = (0.0, simple_attack_tspan.duration)
-	)
-
-	
-	simple_attack_sol = solve(simple_attack_prob_remake)
-	plot(simple_attack_sol, label=["Susceptible 👩" "Zombies 🧟" "Removed 👵" ])
-	xlims!(simple_attack_plots_params.ts,simple_attack_plots_params.te)
-end
-
 # ╔═╡ e5deaa27-54cb-4f48-8f56-b55c3a797dcf
 begin
 	lattent_infection_u0s_sliders = @bind lattent_infection_u0s format_sliderParameter([
@@ -959,7 +1055,6 @@ begin
 		lattent_infection_params, 
 		(0.0, lattent_infection_tspan.duration)
 	)			
-	lattent_infection_prob
 end
 
 # ╔═╡ d59c9761-382e-4450-b654-dc4b8b203f15
@@ -983,38 +1078,6 @@ lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params fo
 	],
 	title = "Plotting Parameters",
 );
-
-# ╔═╡ 603aea40-5cb1-4ef0-9bee-f7476c815833
-begin
-
-	lattent_infection_prob_remake = remake(lattent_infection_prob;
-		u0 = ModelingToolkit.varmap_to_vars(
-			[
-				 S => lattent_infection_u0s.S, 
-				 Z => lattent_infection_u0s.Z,
-				 I => 0,
-				 R => 0,
-			],
-			states(lattent_infection_sys)
-		),
-		p =  ModelingToolkit.varmap_to_vars(
-			[
-				 α => lattent_infection_ps.α, 
-				 β => lattent_infection_ps.β,
-				 ζ => lattent_infection_ps.ζ,
-				 ρ => lattent_infection_ps.ρ
-			],
-			parameters(lattent_infection_sys)
-		),
-		tspan = (0, lattent_infection_tspan.duration)
-	)
-	
-	lattent_infection_sol = solve(lattent_infection_prob_remake)
-
-	plot(lattent_infection_sol, labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" ])
-	xlims!(lattent_infection_plots_params.ts,lattent_infection_plots_params.te)
-
-end
 
 # ╔═╡ 7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
 simple_quarantine_u0s_sliders = @bind simple_quarantine_u0s format_sliderParameter(
@@ -1080,40 +1143,6 @@ begin
 	);
 end;
 
-# ╔═╡ f2bfba1b-6be2-4e30-a886-617c30f8b027
-begin
-
-	simple_quarantine_prob_remake = remake(simple_quarantine_prob;
-		u0 = ModelingToolkit.varmap_to_vars(
-			[
-				 S => simple_quarantine_u0s.S, 
-				 Z => simple_quarantine_u0s.Z,
-				 Q => 0,
-				 I => 0,
-				 R => 0,
-			],
-			states(simple_quarantine_sys)
-		),
-		p =  ModelingToolkit.varmap_to_vars(
-			[
-				 α => simple_quarantine_ps.α, 
-				 β => simple_quarantine_ps.β,
-				 ζ => simple_quarantine_ps.ζ,
-				 γ => simple_quarantine_ps.γ,
-				 ρ => simple_quarantine_ps.ρ,
-				 κ => simple_quarantine_ps.κ
-			],
-			parameters(simple_quarantine_sys)
-		),
-		tspan = (0, simple_quarantine_tspan.duration)
-	)
-	
-	simple_quarantine_sol = solve(simple_quarantine_prob_remake)
-	plot(simple_quarantine_sol,  labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" "Quarantine 😷" ])
-	xlims!(simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
-	
-end
-
 # ╔═╡ 00b880d1-3db4-40a6-aff4-03a4900df99d
 treatment_model_u0s_sliders = @bind treatment_model_u0s format_sliderParameter([
 		suceptibleInitSlider,
@@ -1173,38 +1202,6 @@ treatment_model_plots_params_sliders = @bind treatment_model_plots_params format
 	],
 	title = "Plotting Parameters",
 );
-
-# ╔═╡ 2a3e5049-9ded-427b-b719-f9ef48164bb6
-begin
-
-	treatment_model_prob_remake = remake(treatment_model_prob; 
-		u0 = ModelingToolkit.varmap_to_vars(
-			[
-				 S => treatment_model_u0s.S, 
-				 Z => treatment_model_u0s.Z,
-				 I => 0,
-				 R => 0,
-			],
-			states(treatment_model_sys)
-		),
-		p =  ModelingToolkit.varmap_to_vars(
-			[
-				 α => treatment_model_ps.α, 
-				 β => treatment_model_ps.β,
-				 ζ => treatment_model_ps.ζ,
-				 c => treatment_model_ps.c,
-				 ρ => treatment_model_ps.ρ,
-			],
-			parameters(treatment_model_sys)
-		),
-		tspan = (0.0, treatment_model_tspan.duration)
-	)
-	
-	treatment_model_sol = solve(treatment_model_prob_remake)
-	plot(treatment_model_sol)
-	xlims!(treatment_model_plots_params.ts,treatment_model_plots_params.te)
-	
-end
 
 # ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
 impulsive_eradication_u0s_sliders = @bind impulsive_eradication_u0s format_sliderParameter(
@@ -1267,39 +1264,69 @@ impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_p
 	title = "Plotting Parameters",
 );
 
-# ╔═╡ 1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
-begin
+# ╔═╡ e5a804cc-0cbe-4645-974b-0fca7cb366e0
+vaccine_model_u0s_sliders = @bind vaccine_model_u0s format_sliderParameter(
+	title = "Initial Values",
+	[
+		suceptibleInitSlider,
+		zombieInitSlider
+	],
+);
 
-	impulsive_eradication_prob_remake = remake(impulsive_eradication_prob;
-		u0 = ModelingToolkit.varmap_to_vars(
-			[
-				 S => impulsive_eradication_u0s.S, 
-				 Z => impulsive_eradication_u0s.Z,
-				 I => 0,
-				 R => 0,
-			],
-			states(impulsive_eradication_sys)
-		),
-		p =  ModelingToolkit.varmap_to_vars(
-			[
-				 α => impulsive_eradication_ps.α, 
-				 β => impulsive_eradication_ps.β,
-				 ζ => impulsive_eradication_ps.ζ,
-				 ρ => impulsive_eradication_ps.ρ,
-				 k => impulsive_eradication_ps.k,
-				 c => impulsive_eradication_ps.c,
-			],
-			parameters(impulsive_eradication_sys)
-		),
-		tspan = (0.0, impulsive_eradication_tspan.duration)
-	)
-	
-	
-	impulsive_eradication_sol = solve(impulsive_eradication_prob_remake)
-	plot(impulsive_eradication_sol)
-	xlims!(impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
-	
+# ╔═╡ c3ba93bf-710b-4ccf-8800-c34af7b61a42
+begin
+	vaccine_model_ps_sliders = @bind vaccine_model_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider, 
+			βSlider,
+			ζSlider,
+			ρSlider,
+			cSlider,
+			κSlider,
+			γSlider,
+			νSlider,
+			kSlider,
+			
+		],
+	);
+	vaccine_model_tspan_sliders = @bind vaccine_model_tspan format_sliderParameter([
+			tspanSlider
+		],
+		title = "Time Span",
+	);
+end; 
+
+# ╔═╡ 3eb51a7d-3a7e-4d5b-a635-71a4962dd2d9
+begin
+	vaccine_model_prob = ODEProblem(
+		vaccine_model_sys, 
+		vaccine_model_params, 
+		(0.0, vaccine_model_tspan.duration)
+	)			
 end
+
+# ╔═╡ 12d39fca-5e5c-4b01-8080-7099c151e5ec
+vaccine_model_plots_params_sliders = @bind vaccine_model_plots_params format_sliderParameter([
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= vaccine_model_tspan.duration,
+			step 	= 10.0,
+			default = 0.0,
+			alias 	= :ts,
+			label = "Starting time (Plot)"
+		),
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= vaccine_model_tspan.duration,
+			step 	= 10.0,
+			default = 1000.0,
+			alias 	= :te,
+			label = "End time (Plot)"
+		),
+	],
+	title = "Plotting Parameters",
+);
 
 # ╔═╡ 1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
 function format_numberFieldParameter( params::Vector{NumberFieldParameter{T}};title::String,) where T
@@ -1489,6 +1516,280 @@ createSliderGroup(
 	]
 )
 
+# ╔═╡ 70de0532-94df-4466-acc4-7a8157bd0262
+createSliderGroup(
+	[
+		vaccine_model_ps_sliders,
+		vaccine_model_u0s_sliders
+	],
+	[
+		vaccine_model_tspan_sliders, 
+		vaccine_model_plots_params_sliders
+	]
+)
+
+# ╔═╡ 230a4e8a-6eb7-4b0a-84a7-c86019060062
+function solutionAnalytics(sol::ODESolution)
+
+	
+	totalPop =  first(sol[:Z]) + first(sol[:S]) 
+	daysAllZombiesIndex = findfirst( x-> x >= totalPop-0.01*totalPop, sol[:Z]) 
+	
+
+	lastDayIndex = findfirst(x -> x<=1, sol[:S])
+	daysSurvived = (lastDayIndex == nothing) ? round(Int, sol[:t][end]) : round(Int, sol[:t][lastDayIndex])
+	
+	
+	daysAllZombies = (daysAllZombiesIndex == nothing) ? "Not reached yet " : round(Int, sol[:t][daysAllZombiesIndex])
+
+	@htl("""
+		<div class="analytics-card"> 
+		<div>
+		<b>Days survived:</b> $daysSurvived out of $(round(Int, sol[:t][end]))
+		</div>
+		
+		<div>
+		<b>Doomsday (Everyone is a zombie):</b> $daysAllZombies
+		</div>
+		</div> 
+	""")
+end
+
+# ╔═╡ daf4dd3e-9427-4baa-836e-e1d524c0a170
+function plotZombieModelEvolution(sol::ODESolution; xlim=(0.0,100.0), label=["Susceptible 👩" "Zombies 🧟" "Removed 👵" ], kwargs...,)
+	plot(sol; kwargs..., label)
+	xlims!(xlim)
+	title!("Time Evolution of the system")
+	xlabel!("Days")
+	ylabel!("Population")
+end
+
+# ╔═╡ dd6bea4d-35fc-4cea-956c-00db08a1f511
+begin
+	simple_attack_prob_remake = remake(
+		simple_attack_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => simple_attack_u0s.S, 
+				 Z => simple_attack_u0s.Z,
+				 R => 0,
+			],
+			states(simple_attack_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => simple_attack_ps.α, 
+				 β => simple_attack_ps.β,
+				 ζ => simple_attack_ps.ζ,
+			],
+			parameters(simple_attack_sys)
+		),
+		tspan = (0.0, simple_attack_tspan.duration)
+	)
+
+	
+	simple_attack_sol = solve(simple_attack_prob_remake)
+	plotZombieModelEvolution(
+		simple_attack_sol; 
+		xlim = (simple_attack_plots_params.ts,simple_attack_plots_params.te)
+	)
+end
+
+# ╔═╡ 6bc0dccf-eacd-4261-a9ff-fb67a4fbd5c6
+solutionAnalytics(simple_attack_sol)
+
+# ╔═╡ 603aea40-5cb1-4ef0-9bee-f7476c815833
+begin
+
+	lattent_infection_prob_remake = remake(lattent_infection_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => lattent_infection_u0s.S, 
+				 Z => lattent_infection_u0s.Z,
+				 I => 0,
+				 R => 0,
+			],
+			states(lattent_infection_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => lattent_infection_ps.α, 
+				 β => lattent_infection_ps.β,
+				 ζ => lattent_infection_ps.ζ,
+				 ρ => lattent_infection_ps.ρ
+			],
+			parameters(lattent_infection_sys)
+		),
+		tspan = (0, lattent_infection_tspan.duration)
+	)
+	
+	lattent_infection_sol = solve(lattent_infection_prob_remake)
+    plotZombieModelEvolution(lattent_infection_sol;
+		labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" ],
+		xlim = (lattent_infection_plots_params.ts,lattent_infection_plots_params.te)
+	)
+	
+end
+
+# ╔═╡ 10febcf4-5c69-436b-af91-f886ac6e34ad
+solutionAnalytics(lattent_infection_sol)
+
+# ╔═╡ f2bfba1b-6be2-4e30-a886-617c30f8b027
+begin
+
+	simple_quarantine_prob_remake = remake(simple_quarantine_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => simple_quarantine_u0s.S, 
+				 Z => simple_quarantine_u0s.Z,
+				 Q => 0,
+				 I => 0,
+				 R => 0,
+			],
+			states(simple_quarantine_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => simple_quarantine_ps.α, 
+				 β => simple_quarantine_ps.β,
+				 ζ => simple_quarantine_ps.ζ,
+				 γ => simple_quarantine_ps.γ,
+				 ρ => simple_quarantine_ps.ρ,
+				 κ => simple_quarantine_ps.κ
+			],
+			parameters(simple_quarantine_sys)
+		),
+		tspan = (0, simple_quarantine_tspan.duration)
+	)
+	
+	simple_quarantine_sol = solve(simple_quarantine_prob_remake)
+	plot(simple_quarantine_sol,  )
+	plotZombieModelEvolution(simple_quarantine_sol, 
+	labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" "Quarantine 😷" ],
+		xlim = (simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
+	)
+	
+end
+
+# ╔═╡ cd316741-bb6b-4000-87a8-5d5daf0bbb6b
+solutionAnalytics(simple_quarantine_sol)
+
+# ╔═╡ 2a3e5049-9ded-427b-b719-f9ef48164bb6
+begin
+
+	treatment_model_prob_remake = remake(treatment_model_prob; 
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => treatment_model_u0s.S, 
+				 Z => treatment_model_u0s.Z,
+				 I => 0,
+				 R => 0,
+			],
+			states(treatment_model_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => treatment_model_ps.α, 
+				 β => treatment_model_ps.β,
+				 ζ => treatment_model_ps.ζ,
+				 c => treatment_model_ps.c,
+				 ρ => treatment_model_ps.ρ,
+			],
+			parameters(treatment_model_sys)
+		),
+		tspan = (0.0, treatment_model_tspan.duration)
+	)
+	
+	treatment_model_sol = solve(treatment_model_prob_remake)
+	plotZombieModelEvolution(treatment_model_sol,
+		labels = labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵"],
+		xlim = (treatment_model_plots_params.ts,treatment_model_plots_params.te)
+	)
+	
+end
+
+# ╔═╡ 6642ec56-0093-4497-9bea-a05afd8e7507
+solutionAnalytics(treatment_model_sol)
+
+# ╔═╡ 1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
+begin
+
+	impulsive_eradication_prob_remake = remake(impulsive_eradication_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => impulsive_eradication_u0s.S, 
+				 Z => impulsive_eradication_u0s.Z,
+				 I => 0,
+				 R => 0,
+			],
+			states(impulsive_eradication_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => impulsive_eradication_ps.α, 
+				 β => impulsive_eradication_ps.β,
+				 ζ => impulsive_eradication_ps.ζ,
+				 ρ => impulsive_eradication_ps.ρ,
+				 k => impulsive_eradication_ps.k,
+				 c => impulsive_eradication_ps.c,
+			],
+			parameters(impulsive_eradication_sys)
+		),
+		tspan = (0.0, impulsive_eradication_tspan.duration)
+	)
+	
+	
+	impulsive_eradication_sol = solve(impulsive_eradication_prob_remake)
+	plotZombieModelEvolution(impulsive_eradication_sol,
+		labels = ["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵"],
+		xlim = (impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
+	)
+end
+
+# ╔═╡ 25089138-341a-413c-a19e-b56860faaf8d
+solutionAnalytics(impulsive_eradication_sol)
+
+# ╔═╡ bc872c1c-0b47-47d6-840b-3b988955dfc8
+begin
+
+	vaccine_model_prob_remake = remake(vaccine_model_prob;
+		u0 = ModelingToolkit.varmap_to_vars(
+			[
+				 S => vaccine_model_u0s.S, 
+				 Z => vaccine_model_u0s.Z,
+				 V => 0,
+			     Q => 0,
+				 I => 0,
+				 R => 0,
+			],
+			states(vaccine_model_sys)
+		),
+		p =  ModelingToolkit.varmap_to_vars(
+			[
+				 α => vaccine_model_ps.α, 
+				 β => vaccine_model_ps.β,
+				 ζ => vaccine_model_ps.ζ,
+				 ρ => vaccine_model_ps.ρ,
+				 k => vaccine_model_ps.k,
+				 c => vaccine_model_ps.c,
+				 κ => vaccine_model_ps.κ,
+				 ν => vaccine_model_ps.ν,
+				γ => vaccine_model_ps.γ
+			],
+			parameters(vaccine_model_sys)
+		),
+		tspan = (0.0, vaccine_model_tspan.duration)
+	)
+	
+	
+	vaccine_model_sol = solve(vaccine_model_prob_remake)
+	# plot(vaccine_model_sol)
+	plotZombieModelEvolution(vaccine_model_sol,
+		labels = ["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Quarantine 😷" "Removed 👵" "Vaccinated 💉"], 
+		xlim = (vaccine_model_plots_params.ts,vaccine_model_plots_params.te)
+	)
+end
+
 # ╔═╡ 813fc6b1-460a-49cb-9ae5-909e38e18e71
 md"## Packages"
 
@@ -1674,6 +1975,19 @@ bond {
 }
 .collapsible-content p {
   margin-bottom: 0;
+}
+
+
+.analytics-card{
+	display: flex;
+	flex-direction: column;
+
+	gap: 0.5rem;
+	padding: 0.75rem;
+
+	border-radius: 0.5rem;
+	background-color: #125555;
+	
 }
 
 
@@ -3571,6 +3885,7 @@ version = "1.4.1+1"
 # ╟─cc1a1a9a-7a45-4231-8471-0fb90b994357
 # ╟─ddcea9d8-abc0-40a3-8740-fa0cd29b0b0e
 # ╟─4c3f3770-ef33-41a5-89a6-274101b06c87
+# ╟─77d94a92-f058-4b9f-9df8-9de58603c293
 # ╟─e0581cf3-f942-45a6-bcf2-9e72ba2379a4
 # ╟─28def719-c8e2-43d6-b20e-6141e423add2
 # ╠═d3acb594-ce66-4049-b674-ef641ee1207e
@@ -3587,22 +3902,25 @@ version = "1.4.1+1"
 # ╟─63181343-9e48-4cdc-8888-c5476b4d75cd
 # ╟─122b4bc2-24df-423c-904b-158cc0790abe
 # ╟─dd6bea4d-35fc-4cea-956c-00db08a1f511
+# ╟─6bc0dccf-eacd-4261-a9ff-fb67a4fbd5c6
 # ╟─49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
 # ╟─7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 # ╟─3f6c6d86-0ba1-4b63-ac50-f1d4460ea90a
 # ╟─ec47f63d-36eb-4331-aec9-9f1af15a3eab
-# ╟─c0be7469-6c7b-46e8-b4b5-2c3c1d003433
 # ╟─5047fe97-df0e-4611-9b6c-733af6e0ad32
 # ╟─0f22c808-a413-415e-95d1-98317ca6ed25
 # ╟─c1918d6a-3b5a-4046-b084-e6f98eaabee6
+# ╟─ab1836a1-290d-4bde-bf1b-cc8287734e1e
 # ╠═dc366710-6f43-434c-8787-d6d1a7dd3920
 # ╟─6aa3249f-4751-45d9-b13d-f748cc950d47
 # ╠═d4446f64-8d69-4ded-90b3-59544800d6fa
 # ╠═9358905f-8d2f-40f6-a9d9-38e39ae3ee85
 # ╠═68c6f9c8-2e76-4b08-8b9b-f18b13a4a50b
 # ╠═d04d419b-2fc0-4b3a-bb78-ea3b6b76bc64
-# ╠═572dff66-18d8-4b0f-be6e-75767ac33be0
+# ╟─572dff66-18d8-4b0f-be6e-75767ac33be0
+# ╟─4a97986a-e5d0-4b56-bfb3-022ed9037dd7
 # ╟─603aea40-5cb1-4ef0-9bee-f7476c815833
+# ╠═10febcf4-5c69-436b-af91-f886ac6e34ad
 # ╟─8c51a878-6466-4832-ad74-c90683614ebc
 # ╟─e5deaa27-54cb-4f48-8f56-b55c3a797dcf
 # ╟─d59c9761-382e-4450-b654-dc4b8b203f15
@@ -3613,13 +3931,16 @@ version = "1.4.1+1"
 # ╟─42d42106-a896-4ac0-a476-8590a87b1428
 # ╟─4af55826-0499-4397-bf44-1ea28ab8de80
 # ╟─d923c200-843d-44e8-8870-6b44183a779a
+# ╟─5141dd63-ebfb-4b75-a0a3-8a0dd1163169
 # ╠═2cb27c2f-edae-4386-a68d-77b2050924a0
 # ╠═6467d83d-0e9c-4025-aecf-ab19807e6ba7
 # ╠═26050146-bacf-42c2-b56b-4e2ddf27b19d
 # ╠═2847c8b9-0ac8-4b90-a23b-6323414b3d1b
 # ╠═d60f5b1d-132d-4d76-8060-d6365b95e923
 # ╟─33ba58f3-9959-48ec-a7f0-098b864ba02f
+# ╟─bb435da5-5bd0-4944-abf1-5d54888efa53
 # ╟─f2bfba1b-6be2-4e30-a886-617c30f8b027
+# ╟─cd316741-bb6b-4000-87a8-5d5daf0bbb6b
 # ╟─7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
 # ╟─94b4f52b-ae28-4e26-93d2-7e7d32c739d5
 # ╟─f13c3c52-7c73-4aa3-a233-3d64f4623b89
@@ -3627,13 +3948,16 @@ version = "1.4.1+1"
 # ╟─874323d9-2910-4c77-8aa1-902df4990105
 # ╟─79489f1f-b8a7-4800-b9ec-feaf6fa134b1
 # ╟─f804a947-4e16-4871-84e3-8654d4fb0a46
+# ╟─5e8a9df5-26ac-4ee0-a647-5088bfb43b25
 # ╠═3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 # ╠═06efabb8-15dc-4952-9f5b-fabadd13a87a
 # ╠═8a8733d1-89ae-4a0b-a218-72127fd14e0b
 # ╠═e5fc55c6-c292-494d-9a56-9506eb95c80d
 # ╠═7b660a3d-3fe3-4d48-be37-49754fa70b16
 # ╟─ab916a56-52ff-4f35-b8ba-72f2d3d7ba9a
+# ╟─fcbc4792-866f-4dd1-9b41-a7bb7b1db5fd
 # ╟─2a3e5049-9ded-427b-b719-f9ef48164bb6
+# ╟─6642ec56-0093-4497-9bea-a05afd8e7507
 # ╟─00b880d1-3db4-40a6-aff4-03a4900df99d
 # ╟─d5c896f3-1aa8-4334-8c7c-7b01b122aa1b
 # ╟─53c4ef85-6f0c-46d8-a08a-28f8ab368309
@@ -3643,21 +3967,42 @@ version = "1.4.1+1"
 # ╟─f7e79c80-1da8-4b95-9447-6107a9e8f2df
 # ╠═edd1f38c-60a9-4dee-afe1-c674907a652c
 # ╠═59a77cd5-35de-4e27-9539-43f0d6c791ac
+# ╟─4c4cd287-71d4-4845-b466-3d135610858b
 # ╠═806d844d-a02e-4b50-bb51-132513003cbf
 # ╠═c841be91-502b-4b30-9af0-ba10e5d71558
 # ╠═89a66b68-dfaf-454f-b787-96fabb978e7a
 # ╠═1e457fe1-6cc5-4d2e-812e-13f666747d81
 # ╠═2cfac784-ec48-4963-a12d-d8bac6ae41cc
-# ╟─63c5fab1-fb11-4d9a-b2fc-8a23598602ba
-# ╟─1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
+# ╠═63c5fab1-fb11-4d9a-b2fc-8a23598602ba
+# ╟─333e8b9c-0595-4908-9741-ab75d6e6b3b9
+# ╠═1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
+# ╟─25089138-341a-413c-a19e-b56860faaf8d
 # ╟─028b2237-e62a-403b-8d6c-786accb8c782
-# ╟─4e947fbc-84f4-460d-9079-0e7397f5d05f
+# ╠═4e947fbc-84f4-460d-9079-0e7397f5d05f
 # ╟─5efa346c-4d46-4c5c-9e14-08015a96bd85
-# ╟─5169aab6-e356-41eb-ba77-1d57d4e1b8ab
+# ╟─3919e8ab-487d-4a6e-b462-73a9dfbac5e7
+# ╟─9148f8b0-e379-43aa-88f5-8c41a2ea62ca
+# ╟─74955738-33ca-4e6a-bde2-8080b32099c6
+# ╠═c3e21fa0-ce32-4919-bc18-16616dadcee1
+# ╠═ebad16ee-5c44-4313-9cdf-413ccd4fcfa0
+# ╠═8a0b1af6-2df6-4f98-9f3e-0714b19b9b69
+# ╠═a1c2d060-912b-441c-b986-2bac1a433c49
+# ╠═80aeb76f-4ab2-468f-95ef-f36491f4642e
+# ╠═3eb51a7d-3a7e-4d5b-a635-71a4962dd2d9
+# ╟─711bd169-61c7-4dc4-afc9-8829155d71fe
+# ╟─70de0532-94df-4466-acc4-7a8157bd0262
+# ╟─bc872c1c-0b47-47d6-840b-3b988955dfc8
+# ╟─d1b89ad6-9116-48b4-805f-f1ba6b15b3dc
+# ╟─e5a804cc-0cbe-4645-974b-0fca7cb366e0
+# ╟─c3ba93bf-710b-4ccf-8800-c34af7b61a42
+# ╟─12d39fca-5e5c-4b01-8080-7099c151e5ec
+# ╟─427d7fd4-af60-4b3b-9d43-3cc6511e281d
 # ╟─a7819b3e-6929-4d97-8860-b5eeb0c4d39a
 # ╟─92010b6c-f024-44d2-8d19-2f39b35f26f4
+# ╟─fac12d85-045d-4e67-b3e8-d76f9285a297
+# ╟─e2ce7fa8-83d6-4fa0-9c42-6148c7884b96
 # ╟─6b4feee8-f8bb-4639-a423-97e7ab82cad0
-# ╟─61897e7f-eac1-4eea-a679-4cb53757ee7f
+# ╠═61897e7f-eac1-4eea-a679-4cb53757ee7f
 # ╟─2462b985-9c4a-446a-b8ea-3d5f6c7543c0
 # ╟─1a50274c-f283-4248-9764-973076e0f1a3
 # ╟─2a5599e2-77ff-4951-8873-a3bd145b614f
@@ -3682,6 +4027,8 @@ version = "1.4.1+1"
 # ╟─e5f00f03-348b-4153-bf2b-efffba4254cb
 # ╟─7cb92640-c3f7-4d15-99bb-7fc159c8856c
 # ╟─8c37e496-4f0b-4151-991a-4bccf66e35f8
+# ╟─262ce577-4c4b-4edc-9e3a-29379e1b5dce
+# ╠═7df920cf-b634-40c9-913a-bc26732f486e
 # ╟─2555bbc3-8b71-4fdd-9daa-9c263502eddf
 # ╟─89b55225-e4df-4be3-a34e-e0fe31c1ba0a
 # ╟─f440930e-c68f-40ee-8d1b-cc510400e872
@@ -3694,10 +4041,12 @@ version = "1.4.1+1"
 # ╟─31873c6e-2c78-4bb8-8069-ca491f25b077
 # ╟─e8f30ca6-0d03-4a8b-a835-c5c1dce56575
 # ╟─411354b2-f9b7-46cc-9fe2-358f2d691dfe
+# ╠═230a4e8a-6eb7-4b0a-84a7-c86019060062
+# ╠═daf4dd3e-9427-4baa-836e-e1d524c0a170
 # ╟─813fc6b1-460a-49cb-9ae5-909e38e18e71
 # ╟─00edd691-2b60-4d1d-b5e2-2fd4675469da
 # ╟─7a937f2c-5808-4756-9bfc-6f84b0f03cc9
 # ╟─88f8f2b8-6ea5-4bcc-8026-70a760873033
-# ╟─929793eb-4409-46d9-85be-98f1b98d8839
+# ╠═929793eb-4409-46d9-85be-98f1b98d8839
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
