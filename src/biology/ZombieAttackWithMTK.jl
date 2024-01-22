@@ -76,7 +76,7 @@ md"# Introduction"
 # ╔═╡ ac777efc-f848-4358-afd2-a1af334752b3
 md"
 The world is facing a impending disaster. A virus broke out from a laboratory and is turning humans into zombies! 
-Countries are closing down borders, flights are no longer running, chaos is spreading quickly accross the world....
+Countries are closing down borders, flights are cancelled, chaos is spreading quickly accross the world...
 "
 
 # ╔═╡ fc95aba1-5f63-44ee-815c-e9f181219253
@@ -84,13 +84,13 @@ if(story_mode)
 	md"""
 	!!! tip "Is this the end of the world?" 
 
-		It has been a couple of days since the new broke out to the world, and you are running low on supplies. As you heat up your last tin of tomato soup, you hear the familiar notification on your phone. It reads:
+		It has been a couple of days since the news broke out to the world, and you are running low on supplies. As you heat up your last tin of tomato soup, you hear the familiar notification on your phone. It reads:
 
 		"Calling to all survivors. Go your local survivor camp to find shelter and supplies. For directions, click [here](https://www.google.com/maps/place/Survivor-NRW/@51.6019909,6.695119,7.82z/data=!4m6!3m5!1s0x47b855f29754ec41:0x8211d767f947fb45!8m2!3d51.8130827!4d7.2971646!16s%2Fg%2F11rrp49wcv?entry=ttu)."
 	
 		*Maybe it's not a bad idea after all*. After quickly packing up the basics in your backpack, you head off to the camp. 
 		
-		The major streets of the city, once packed with cars are now empty. Banks and shops have been torned down and no a single soul is to be seen. As you approach to the location shown on you phone, you find a big wall made of scraps assembled together: the survival camp. You approach the gate. 
+		The major streets of the city, once packed with cars, are now empty. Banks and shops have been torn down and not a single soul is to be seen. As you approach to the location shown on you phone, you find a big wall made of scraps assembled together: the survival camp. You approach the gate. 
 		
 			Anyone here?
 		
@@ -104,7 +104,7 @@ if(story_mode)
 	
 			- Who is this?
 	
-			I am a survivor, heard about this camp in the emergency signal.
+			I am a survivor. I heard about this camp in the emergency signal.
 	
 			- Have you had any interaction with the zombies? Did you get bitten?
 	
@@ -112,30 +112,30 @@ if(story_mode)
 	
 		The opening closes and a loud mechanical noise starts, the door is opening and a young survivor greets you: 
 		
-			My name is Hans and welcome to the camp! 
+			My name is Hans, welcome to the camp! 
 
-		After showing you around the camp, Hans bring you to the biggest tent: the headquarters. It's covered in maps and scientific diagram. In the back of the room a woman is deep in though, looking a notepad. Hans calls her: 
+		After showing you around the camp, Hans brings you to the biggest tent: the headquarters. It's covered in maps and scientific diagrams. In the back of the room, a woman is deep in thought, looking a notepad. Hans calls her: 
 
 			- Hey Zara, we have a new member!
 
-		She looks up, looking confused. After a few seconds, she smiles and greets you. 
+		She looks up, confused. After a few seconds, she smiles and greets you. 
 
-			- Welcome! We definetly need as much help as we can get. 
+			- Welcome! We definitely need as much help as we can get. 
 			- Do you know much about this virus?
 
-			No but I have worked on epidemiology before so maybe I can help?
+			No but I have worked on epidemiology before, so maybe I can help?
 
 		After a long exchange, Hans announces that he has to leave and you are left with Zara in the tent. She turns to you, and gravely announces:
 			
 			- There are only 2 outcomes.
-			- Either the zombies take over the world,
+			- Either the zombies take over the world...
 			- Or we find a solution to fight them and survive this terrible apocalpyse.
 
 			Any chance of a cure?
 
 			- We heard from our friends that a group is trying to develop something, but so far nothing. 
 
-			Well I don't know much about vaccines and cure but I can try to predict what could happen?
+			Well, I don't know much about vaccines and cures but I can try to predict what could happen?
 
 			- Oh yeah? And how so?
 
@@ -150,16 +150,16 @@ md"## The Zombie Outbreak Model"
 # ╔═╡ cc1a1a9a-7a45-4231-8471-0fb90b994357
 md"""Let's start with the simplest model. In this model, there are healthy humans (susceptible) and zombies. So what happens when a zombie meets a human? 
 
-We note ``S(t)`` the number of susectible at a given time ``t`` and and ``Z(t)`` for the number of zombies.
+We note ``S(t)`` the number of susectible humans at a given time ``t`` and and ``Z(t)`` for the number of zombies.
 
 We can say that there is a positive rate β that describes the chance of a zombie converting a human into another human. We also define the term ``S(t)Z(t)`` to capture the interaction between a zombie and a susceptible human. 
 We can then define the following system of equation: 
 """
 
 # ╔═╡ 4c3f3770-ef33-41a5-89a6-274101b06c87
-md"""However since β is defined to be positive this model is quite pessimistic, every scenario will eventually end up with all susceptible turing into zombies and taking over the world. 
+md"""However since β is defined to be positive this model is quite pessimistic, every scenario will eventually end up with all susceptible humans turning into zombies and taking over the world. 
 
-Lets give the humans some chance of fighting back. We can introduce a new class of individuals in our model, that we'll call 'Removed' noted ``R(T)``. This class represent the zombies that were abled to be killed by humans. 
+Let's give the humans some chance of fighting back. We can introduce a new class of individuals in our model, which we call 'Removed', noted ``R(T)``. This class represents the zombies that were killed by humans. 
 
 We now have: 
 
@@ -167,7 +167,7 @@ We now have:
 - ``Z(t)``: Zombies 
 - ``R(t)``: Removed 
 
-We define ``α``  the rate at which the susceptible kill the zombies. 
+We define ``α`` as the rate at which the susceptible humans kill the zombies. 
 
 Additionally, these zombies will be hard to get rid of since there is a small chance ζ that a removed "comes back from the dead" and is reintroduced as a zombie. 
 """
