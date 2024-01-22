@@ -73,19 +73,24 @@ Activate story mode? $(@bind story_mode CheckBox(default=true))
 # ╔═╡ 19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
 md"# Introduction"
 
+# ╔═╡ ac777efc-f848-4358-afd2-a1af334752b3
+md"
+The world is facing a impending disaster. A virus broke out from a laboratory and is turning humans into zombies! 
+Countries are closing down borders, flights are no longer running, chaos is spreading quickly accross the world....
+"
+
 # ╔═╡ fc95aba1-5f63-44ee-815c-e9f181219253
 if(story_mode)
 	md"""
 	!!! tip "Is this the end of the world?" 
-		The world is facing a impending disaster. A virus broke out from a laboratory and is turning humans into zombies! 
+
+		It has been a couple of days since the new broke out to the world, and you are running low on supplies. As you heat up your last tin of tomato soup, you hear the familiar notification on your phone. It reads:
+
+		"Calling to all survivors. Go your local survivor camp to find shelter and supplies. For directions, click [here](https://www.google.com/maps/place/Survivor-NRW/@51.6019909,6.695119,7.82z/data=!4m6!3m5!1s0x47b855f29754ec41:0x8211d767f947fb45!8m2!3d51.8130827!4d7.2971646!16s%2Fg%2F11rrp49wcv?entry=ttu)."
 	
-		Countries are closing down borders, flights are no longer running, chaos is spreading quickly accross the world. You hear that survivors have gotten together to establish a camp in your city. After quickly packing up the basic in your backpack, you head off to the camp. 
+		*Maybe it's not a bad idea after all*. After quickly packing up the basics in your backpack, you head off to the camp. 
 		
-		The major streets of the city, once packed with cars are now empty. Banks and shops have been torned down and no a single soul is to be seen. 
-	
-		*Hopefully there will not be an unpleasent encouter on your way.* 
-		
-		As you approach to the location shown on you phone you finally hear human activity. At the corner of the road, you finally see it: the survival camp. You approach the gate. 
+		The major streets of the city, once packed with cars are now empty. Banks and shops have been torned down and no a single soul is to be seen. As you approach to the location shown on you phone, you find a big wall made of scraps assembled together: the survival camp. You approach the gate. 
 		
 			Anyone here?
 		
@@ -95,35 +100,35 @@ if(story_mode)
 	
 			Can somebody open the gate?
 	
-		After a couple of minutes you finnaly hear sound of a sliding metal bar and a pair of eyes appeard through a hatch in the door. 
+		After a couple of minutes, you hear sound of a sliding metal bar and a pair of eyes appear through a rough opening in the door. 
 	
 			- Who is this?
 	
-			I am a survivor that heard about this camp in the emergency signal.
+			I am a survivor, heard about this camp in the emergency signal.
 	
 			- Have you had any interaction with the zombies? Did you get bitten?
 	
 			No, I have not seen a single one.
 	
-		The hatch closes and a loud mechanical noise starts, the door is opening and a young survivor greets you: 
+		The opening closes and a loud mechanical noise starts, the door is opening and a young survivor greets you: 
 		
 			My name is Hans and welcome to the camp! 
-	
-		After showing you around the camp, hans bring you to the biggest tent: the headquarters. It's covered in maps and scientific diagram. In the back of the room a woman is deep in though, looking a notepad. Hans calls her: 
 
-			- Hey Zara, we have a new member! They told me they worked as an epidimiologist, maybe they can help?
+		After showing you around the camp, Hans bring you to the biggest tent: the headquarters. It's covered in maps and scientific diagram. In the back of the room a woman is deep in though, looking a notepad. Hans calls her: 
+
+			- Hey Zara, we have a new member!
 
 		She looks up, looking confused. After a few seconds, she smiles and greets you. 
 
 			- Welcome! We definetly need as much help as we can get. 
 			- Do you know much about this virus?
 
-			No but we can try and figure it out together. 
+			No but I have worked on epidemiology before so maybe I can help?
 
-		After a short exchange, Hans announces that he has to leave and you are left with Zara in the tent. She turns to you, and gravely announces:
+		After a long exchange, Hans announces that he has to leave and you are left with Zara in the tent. She turns to you, and gravely announces:
 			
 			- There are only 2 outcomes.
-			- Either the zombies take over the world 
+			- Either the zombies take over the world,
 			- Or we find a solution to fight them and survive this terrible apocalpyse.
 
 			Any chance of a cure?
@@ -248,21 +253,26 @@ md"""
 	However, in order to explore different parameters, sliders are used for interactivity. To prevent compile the problem over and over again, we can call remake() on the problem with new parameters and this is optimized to recreate the problem much faster, as much of the code required to solve the problem does not actually change when changing parameters value/initial values. 
 """
 
+# ╔═╡ 637ef564-718f-4a4c-ac6c-cd9fd2802e16
+md"In the best of situation, the model predicts that humans will survive only a couple months, and there does not seem to be a way out."
+
 # ╔═╡ 3f6c6d86-0ba1-4b63-ac50-f1d4460ea90a
 if(story_mode) md"---" end
 
 # ╔═╡ ec47f63d-36eb-4331-aec9-9f1af15a3eab
 if(story_mode)
 	md"""
-	!!! tip "Update from the front line"
-		As you hear the roars from outside the camp, you realise that their might some hope after all. Some new promising information has come through! A team on the front line has reported that the virus does not transform the human directly into zombies! There might be some hope for a cure... 
+	!!! tip "Updating the model"
+
+		As you show Zara your model, she looks disapointed. 
+			
+			- This is not very hopeful...
+			- We are fighting back though! We are getting rid of some zombies, but they keep coming back...
+		
+			Well this is the simplest version, let me add more complexity to it.  
 	
-		The days are rough and more zombies are trying to get in but after securing the walls of the camp you decide to return to your model to try to add this new bit of information.
 	"""
 end
-
-# ╔═╡ 5047fe97-df0e-4611-9b6c-733af6e0ad32
-md"This is good, however, this basic model is quite pessimistic. As you can see, the only scenario where the zombies never take over, is when they never get the chance to bite one human. There seems to be no chance for the camp to survive the attack. But it must be possible, right? "
 
 # ╔═╡ 0f22c808-a413-415e-95d1-98317ca6ed25
 md"# Latent Infection"
@@ -318,18 +328,19 @@ if(story_mode)
 	!!! tip "New development!"
 		As the days go by, there are more and more zombies but few survivors are now coming to the camp. The last group arrived 4 days ago, and there has not been another sighting since. 
 	
-		At least it seems that the radio is working again. You switch to the information channel, and you managed to catch some exiting information.
+		As you have been doing everyday since the start, you switch to the information channel on your phone, but today it's different. There is a new blog post with a report attached to it.
 	
 		The cure has been developed!
-		It was tested this morning on the first patient. You might be able to stop infected patient turning them into zombies afterall. 
+	
+		It was tested on the first patient and no signs of transformation so far. You might be able to stop infected patients turning into zombies afterall. 
 		The report indicates that the cure only works on infected patient and does not seem to work on fully transformed zombies.
 	
-		The letter mentioned that the cure will be delivered to all survivor camps in the next few weeks, so as you wait patiently you decide to set up a section of our camp to isolate the infected so that you are ready when we get the cure... 
+		The post mentioned that the cure will be delivered to all survivor camps in the next few weeks, so as you wait patiently you decide to set up a section of our camp. This will help to isolate the infected so that you are ready when you get the cure... 
 	
 		So far the virus has not been seen to transmit by any other mean than bitting, and the infected don't seem to have a urge of bitting anyone. 
-		However, there don't seem to be a clear warning to when that seems to happen and reports indicates that it takes between 1 day to a couple week after the bite. 
+		However, they are no warning to when that seems to happen and reports indicates that it takes between a couples days to a couple weeks after the bite. 
 		
-		To be safe, we can make a quarantine, where every new infected person can be isolated from anyone else, reducing the chance that they infect other people once they suddendly get a taste of human blood. After setting up the tent and securing everything, we now have a dedicated section of the camp where any new infected patient can stay. 
+		To be safe, you decide to setup a quarantine, where every new infected person can be isolated from anyone else, reducing the chance that they infect other people once they suddendly get a taste of human blood. After setting up the tent and securing everything, you now have a dedicated section of the camp where any new infected patient can stay. 
 	"""
 end
 
@@ -355,14 +366,14 @@ end
 
 # ╔═╡ 42d42106-a896-4ac0-a476-8590a87b1428
 md"""
-The κ parameter will take into account and represent how much of the infected are placed in quarantine. 
+The κ parameter will represent how much of the infected are placed in quarantine. 
 """
 
 # ╔═╡ 4af55826-0499-4397-bf44-1ea28ab8de80
 if(story_mode)
 	md"""
 	!!! tip "A unfortunate futur" 
-		Unfornutalely the quarantine is not a very solid area and the first infected patient that was admitted turned into zombie, wreaking havoc inside the camp. You take the hard decision to remove the zombies from the quarantine. 
+		Unfornutalely the quarantine is not a very solid area and the first infected patient that was admitted turned into zombie, wreaking havoc inside the camp. You take the hard decision to remove the patients that have turned into zombies from the quarantine. 
 	"""
 end
 
@@ -454,7 +465,7 @@ if(story_mode)
 	
 		After some debate, you anxiously open the crate to find a large number of steel components. You also find a manual at the top: it's a turret! 
 	
-		The turret is a next-generation plasma beam turret that send orbs of energy. You are now equipped to handle large vagues of zombies. 
+		The turret is a next-generation plasma beam turret that send orbs of energy. You are now equipped to handle large vagues of zombies. The manual indicates that the turret needs a lot of energy to work. With the current supply of energy you have, you can only shoot every 2 days. 
 	"""
 end
 
@@ -466,12 +477,22 @@ md"""
 To model the behaviour of our new turret, we can introduce the concept of events into our model. 
 ModelingToolkit enables the possibility to define discrete events which affect the values of a state or parameter at a given t. 
 
-In our case, we can define the parameter `k` to define the efficacy of the turret. The manual indicates that the turret reload time is 10s. H
+In our case, we can define the parameter `k` to define the efficacy of the turret.
 
 """
 
 # ╔═╡ edd1f38c-60a9-4dee-afe1-c674907a652c
-turret_reload_time = 10.0
+turret_reload_time = 2.0
+
+# ╔═╡ 7f08a0fa-7cec-4a76-81ec-1076243ed670
+md"We can define the effect of the turret as removing a portion of the zombie population every $turret_reload_time s"
+
+# ╔═╡ 9eecf8d1-9e97-4965-92b8-510646bfe273
+md"""
+!!! info "Event handling"
+	The impulse is defined such that at every timestep the condition on the right is tested. The test is implicitly, as "``t == 0 \mod \text{turret\_reload\_time}``", that is, if the current timestep is a multiple of the value supplied. If the condition is true, the right side executes. One can explicilty put a condition such as ``t == 15.0`` for the event to trigger only once.
+	For more information, read the SciMl docs on handling discrete events [here](https://docs.sciml.ai/ModelingToolkit/stable/basics/Events/#Discrete-events-support)
+"""
 
 # ╔═╡ 4c4cd287-71d4-4845-b466-3d135610858b
 md"## Setup"
@@ -512,11 +533,24 @@ end
 # ╔═╡ 333e8b9c-0595-4908-9741-ab75d6e6b3b9
 md"## Model Visualization"
 
+# ╔═╡ faa4969c-7c76-48bc-a4f8-9a08d2cd16a0
+md"In this new scenario we are now able to survive way longer than before. We could survive for years to come. But even with the cure, we will still lose some people to the zombies, and they can never come back. If only there was a way around this..."
+
+# ╔═╡ 8b7b8608-8d85-4920-a452-b32706adfc17
+if(story_mode)
+	md"""
+	---
+	!!! tip "The vaccine has arrived!"
+		
+
+	"""
+end
+
 # ╔═╡ 3919e8ab-487d-4a6e-b462-73a9dfbac5e7
 md"# The vaccine model "
 
 # ╔═╡ 9148f8b0-e379-43aa-88f5-8c41a2ea62ca
-md"To introduce a vaccine, we can add a new class that will represent how many vaccinated individual. Alongside we can also introduce a new parameter ν that indicates the vaccination rate. 
+md"Let's introduce a vaccine into the model, we can add a new class that will represent how many vaccinated individual. Alongside we can also introduce a new parameter ν that indicates the vaccination rate. 
 We define the new equation such that only the healthy susceptible are able to get a vaccine. We can also upgrade the cure to now be able to cure Zombies and infected in Quarantine. 
 "
 
@@ -632,9 +666,6 @@ md"### k"
 # ╔═╡ da0d2229-c62c-4a81-8253-c95bf8bf503d
 md"### κ"
 
-# ╔═╡ 432b4a0a-d8ff-4765-9397-f54b7e5df0e5
-md"### σ"
-
 # ╔═╡ 7cb92640-c3f7-4d15-99bb-7fc159c8856c
 md"### γ"
 
@@ -645,7 +676,7 @@ md"### ν"
 md"### c"
 
 # ╔═╡ f440930e-c68f-40ee-8d1b-cc510400e872
-md"### Interactivity extensions"
+md"## Interactivity extensions"
 
 # ╔═╡ 19b3047c-6b4d-4e54-a932-1030a31dd713
 @with_kw struct SliderParameter{T} 
@@ -749,10 +780,10 @@ begin
 	 	Z => 10.0, 
 	 	I => 0, 					  
 		R => 0, 					  
-		α => αSlider.default,   # Zombie defeating rate
-		β => βSlider.default,   # Zombie infection rate
-		ζ => ζSlider.default,   # "Back from the dead" rate
-		ρ => ρSlider.default,   # "Back from the dead" rate
+		α => αSlider.default,  
+		β => βSlider.default,   
+		ζ => ζSlider.default,  
+		ρ => ρSlider.default,   
 	]
 end
 
@@ -768,7 +799,7 @@ kSlider = SliderParameter(
 
 # ╔═╡ 89e74250-9d4b-49cc-9f12-2a4e6d921b90
 κSlider = SliderParameter(
-			lb 		= 0.0,
+			lb 		= 0.05,
 			ub 		= 1.0,
 			step 	= 0.01,
 			default = 0.05,
@@ -776,24 +807,14 @@ kSlider = SliderParameter(
 			description = "Infected into Quarantine rate"
 		)
 
-# ╔═╡ e5f00f03-348b-4153-bf2b-efffba4254cb
-σSlider = SliderParameter(
-			lb 		= 0.0,
-			ub 		= 1.0,
-			step 	= 0.01,
-			default = 0.5,
-			label 	= "σ",
-	 		description = ""
-		)
-
 # ╔═╡ 8c37e496-4f0b-4151-991a-4bccf66e35f8
 γSlider = SliderParameter(
-			lb 		= 0.0,
+			lb 		= 0.5,
 			ub 		= 1.0,
 			step 	= 0.01,
-			default = 0.04,
+			default = 0.05,
 			label 	= "γ",
-			description = "Quarantine tried to escape but failed rate"
+			description = "Tried to escape Quarantine rate"
 		)
 
 # ╔═╡ 2847c8b9-0ac8-4b90-a23b-6323414b3d1b
@@ -920,7 +941,7 @@ end
 end
 
 # ╔═╡ 2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
-function format_sliderParameter(params;title::String,) 
+function format_sliderParameter(params;title::String = "") 
 	
 	return combine() do Child
 		
@@ -942,11 +963,18 @@ function format_sliderParameter(params;title::String,)
 			
 			for param in params
 		]
+		titleDiv = (title == "") ? @htl("<div></div>") : @htl("""
+			<div class="slider-container-title">
+				<h4>
+				$title
+				</h4>
+			</div>"""
+		)
+		
 		@htl("""
 		<div class="slider-container">
-			<div class="slider-container-title">
-				<h4>$title</h4>
-			</div>
+			$titleDiv
+			
 			<div class="slider-container-content-wrapper">
 				$(mds)
 			</div>
@@ -976,7 +1004,6 @@ begin
 		],
 	)
 	simple_attack_tspan_sliders = @bind simple_attack_tspan format_sliderParameter(
-		title = "Time Span",
 		[
 			tspanSlider
 		],
@@ -999,7 +1026,6 @@ begin
 	# These sliders are for dealing with interactivity of the plots
 		
 	simple_attack_plots_params_sliders = @bind simple_attack_plots_params format_sliderParameter(
-		title = "Plotting Parameters",
 		[
 			SliderParameter(
 				lb 		= 0.0,
@@ -1043,8 +1069,7 @@ begin
 	
 	lattent_infection_tspan_sliders = @bind lattent_infection_tspan format_sliderParameter([
 			tspanSlider
-		],
-		title = "Time Span",
+		]
 	);
 end;
 
@@ -1075,8 +1100,7 @@ lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params fo
 			alias 	= :te,
 			label = "End time (Plot)"
 		),
-	],
-	title = "Plotting Parameters",
+	]
 );
 
 # ╔═╡ 7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
@@ -1103,7 +1127,6 @@ simple_quarantine_ps_sliders = @bind simple_quarantine_ps format_sliderParameter
 
 # ╔═╡ f13c3c52-7c73-4aa3-a233-3d64f4623b89
 simple_quarantine_tspan_sliders = @bind simple_quarantine_tspan format_sliderParameter(
-		title = "Time Span",
 		[
 			tspanSlider
 		],
@@ -1138,8 +1161,7 @@ begin
 				alias 	= :te,
 				label = "End time"
 			),
-		],
-		title = "Plotting Parameters",
+		]
 	);
 end;
 
@@ -1165,7 +1187,6 @@ treatment_model_ps_sliders = @bind treatment_model_ps format_sliderParameter(
 
 # ╔═╡ 53c4ef85-6f0c-46d8-a08a-28f8ab368309
 treatment_model_tspan_sliders = @bind treatment_model_tspan format_sliderParameter(
-		title = "Time Span",
 		[
 			tspanSlider
 		],
@@ -1199,8 +1220,7 @@ treatment_model_plots_params_sliders = @bind treatment_model_plots_params format
 			alias 	= :te,
 			label = "End time (Plot)"
 		),
-	],
-	title = "Plotting Parameters",
+	]
 );
 
 # ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
@@ -1229,7 +1249,7 @@ begin
 	impulsive_eradication_tspan_sliders = @bind impulsive_eradication_tspan format_sliderParameter([
 			tspanSlider
 		],
-		title = "Time Span",
+		title = "",
 	);
 end; 
 
@@ -1260,8 +1280,7 @@ impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_p
 			alias 	= :te,
 			label = "End time (Plot)"
 		),
-	],
-	title = "Plotting Parameters",
+	]
 );
 
 # ╔═╡ e5a804cc-0cbe-4645-974b-0fca7cb366e0
@@ -1280,20 +1299,19 @@ begin
 		[
 			αSlider, 
 			βSlider,
+			νSlider,
+			cSlider,
 			ζSlider,
 			ρSlider,
-			cSlider,
 			κSlider,
 			γSlider,
-			νSlider,
 			kSlider,
 			
 		],
 	);
 	vaccine_model_tspan_sliders = @bind vaccine_model_tspan format_sliderParameter([
 			tspanSlider
-		],
-		title = "Time Span",
+		]
 	);
 end; 
 
@@ -1324,8 +1342,7 @@ vaccine_model_plots_params_sliders = @bind vaccine_model_plots_params format_sli
 			alias 	= :te,
 			label = "End time (Plot)"
 		),
-	],
-	title = "Plotting Parameters",
+	]
 );
 
 # ╔═╡ 1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
@@ -1527,6 +1544,9 @@ createSliderGroup(
 		vaccine_model_plots_params_sliders
 	]
 )
+
+# ╔═╡ 491f715e-048f-4bc4-b62b-9d9f622d835b
+md"## Plotting / Analytics "
 
 # ╔═╡ 230a4e8a-6eb7-4b0a-84a7-c86019060062
 function solutionAnalytics(sol::ODESolution)
@@ -1741,7 +1761,7 @@ begin
 	
 	impulsive_eradication_sol = solve(impulsive_eradication_prob_remake)
 	plotZombieModelEvolution(impulsive_eradication_sol,
-		labels = ["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵"],
+		labels = ["Susceptible 👩"  "Zombies 🧟" "Infected 😱" "Removed 👵"],
 		xlim = (impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
 	)
 end
@@ -1918,6 +1938,12 @@ bond {
 
 .wrap-collabsible {
   
+}
+
+.content-inner{
+	display: flex;
+	flex-direction: column;
+    gap: 0.5rem;
 }
 
 .lbl-toggle {
@@ -3880,6 +3906,7 @@ version = "1.4.1+1"
 # ╟─5d7d7822-61c9-47a1-830b-6b0294531d5c
 # ╟─684ab7f8-a5db-4c39-a3cc-ce948dd026b0
 # ╟─19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
+# ╟─ac777efc-f848-4358-afd2-a1af334752b3
 # ╟─fc95aba1-5f63-44ee-815c-e9f181219253
 # ╟─bf5da9c2-bb7b-46d2-8b39-a362eaf9e6f9
 # ╟─cc1a1a9a-7a45-4231-8471-0fb90b994357
@@ -3903,11 +3930,11 @@ version = "1.4.1+1"
 # ╟─122b4bc2-24df-423c-904b-158cc0790abe
 # ╟─dd6bea4d-35fc-4cea-956c-00db08a1f511
 # ╟─6bc0dccf-eacd-4261-a9ff-fb67a4fbd5c6
+# ╟─637ef564-718f-4a4c-ac6c-cd9fd2802e16
 # ╟─49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
 # ╟─7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 # ╟─3f6c6d86-0ba1-4b63-ac50-f1d4460ea90a
 # ╟─ec47f63d-36eb-4331-aec9-9f1af15a3eab
-# ╟─5047fe97-df0e-4611-9b6c-733af6e0ad32
 # ╟─0f22c808-a413-415e-95d1-98317ca6ed25
 # ╟─c1918d6a-3b5a-4046-b084-e6f98eaabee6
 # ╟─ab1836a1-290d-4bde-bf1b-cc8287734e1e
@@ -3920,7 +3947,7 @@ version = "1.4.1+1"
 # ╟─572dff66-18d8-4b0f-be6e-75767ac33be0
 # ╟─4a97986a-e5d0-4b56-bfb3-022ed9037dd7
 # ╟─603aea40-5cb1-4ef0-9bee-f7476c815833
-# ╠═10febcf4-5c69-436b-af91-f886ac6e34ad
+# ╟─10febcf4-5c69-436b-af91-f886ac6e34ad
 # ╟─8c51a878-6466-4832-ad74-c90683614ebc
 # ╟─e5deaa27-54cb-4f48-8f56-b55c3a797dcf
 # ╟─d59c9761-382e-4450-b654-dc4b8b203f15
@@ -3966,20 +3993,24 @@ version = "1.4.1+1"
 # ╟─aee9374d-fefc-409b-99f0-67de38071f52
 # ╟─f7e79c80-1da8-4b95-9447-6107a9e8f2df
 # ╠═edd1f38c-60a9-4dee-afe1-c674907a652c
+# ╠═7f08a0fa-7cec-4a76-81ec-1076243ed670
 # ╠═59a77cd5-35de-4e27-9539-43f0d6c791ac
+# ╟─9eecf8d1-9e97-4965-92b8-510646bfe273
 # ╟─4c4cd287-71d4-4845-b466-3d135610858b
 # ╠═806d844d-a02e-4b50-bb51-132513003cbf
 # ╠═c841be91-502b-4b30-9af0-ba10e5d71558
 # ╠═89a66b68-dfaf-454f-b787-96fabb978e7a
 # ╠═1e457fe1-6cc5-4d2e-812e-13f666747d81
 # ╠═2cfac784-ec48-4963-a12d-d8bac6ae41cc
-# ╠═63c5fab1-fb11-4d9a-b2fc-8a23598602ba
+# ╟─63c5fab1-fb11-4d9a-b2fc-8a23598602ba
 # ╟─333e8b9c-0595-4908-9741-ab75d6e6b3b9
-# ╠═1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
+# ╟─1d6f6649-ddee-42d7-a0b8-29e03f3ac0f8
 # ╟─25089138-341a-413c-a19e-b56860faaf8d
+# ╟─faa4969c-7c76-48bc-a4f8-9a08d2cd16a0
 # ╟─028b2237-e62a-403b-8d6c-786accb8c782
-# ╠═4e947fbc-84f4-460d-9079-0e7397f5d05f
+# ╟─4e947fbc-84f4-460d-9079-0e7397f5d05f
 # ╟─5efa346c-4d46-4c5c-9e14-08015a96bd85
+# ╟─8b7b8608-8d85-4920-a452-b32706adfc17
 # ╟─3919e8ab-487d-4a6e-b462-73a9dfbac5e7
 # ╟─9148f8b0-e379-43aa-88f5-8c41a2ea62ca
 # ╟─74955738-33ca-4e6a-bde2-8080b32099c6
@@ -4002,7 +4033,7 @@ version = "1.4.1+1"
 # ╟─fac12d85-045d-4e67-b3e8-d76f9285a297
 # ╟─e2ce7fa8-83d6-4fa0-9c42-6148c7884b96
 # ╟─6b4feee8-f8bb-4639-a423-97e7ab82cad0
-# ╠═61897e7f-eac1-4eea-a679-4cb53757ee7f
+# ╟─61897e7f-eac1-4eea-a679-4cb53757ee7f
 # ╟─2462b985-9c4a-446a-b8ea-3d5f6c7543c0
 # ╟─1a50274c-f283-4248-9764-973076e0f1a3
 # ╟─2a5599e2-77ff-4951-8873-a3bd145b614f
@@ -4023,12 +4054,10 @@ version = "1.4.1+1"
 # ╟─7fb8d441-3685-4673-a959-75901d5ad06d
 # ╟─da0d2229-c62c-4a81-8253-c95bf8bf503d
 # ╟─89e74250-9d4b-49cc-9f12-2a4e6d921b90
-# ╟─432b4a0a-d8ff-4765-9397-f54b7e5df0e5
-# ╟─e5f00f03-348b-4153-bf2b-efffba4254cb
 # ╟─7cb92640-c3f7-4d15-99bb-7fc159c8856c
 # ╟─8c37e496-4f0b-4151-991a-4bccf66e35f8
 # ╟─262ce577-4c4b-4edc-9e3a-29379e1b5dce
-# ╠═7df920cf-b634-40c9-913a-bc26732f486e
+# ╟─7df920cf-b634-40c9-913a-bc26732f486e
 # ╟─2555bbc3-8b71-4fdd-9daa-9c263502eddf
 # ╟─89b55225-e4df-4be3-a34e-e0fe31c1ba0a
 # ╟─f440930e-c68f-40ee-8d1b-cc510400e872
@@ -4041,8 +4070,9 @@ version = "1.4.1+1"
 # ╟─31873c6e-2c78-4bb8-8069-ca491f25b077
 # ╟─e8f30ca6-0d03-4a8b-a835-c5c1dce56575
 # ╟─411354b2-f9b7-46cc-9fe2-358f2d691dfe
-# ╠═230a4e8a-6eb7-4b0a-84a7-c86019060062
-# ╠═daf4dd3e-9427-4baa-836e-e1d524c0a170
+# ╟─491f715e-048f-4bc4-b62b-9d9f622d835b
+# ╟─230a4e8a-6eb7-4b0a-84a7-c86019060062
+# ╟─daf4dd3e-9427-4baa-836e-e1d524c0a170
 # ╟─813fc6b1-460a-49cb-9ae5-909e38e18e71
 # ╟─00edd691-2b60-4d1d-b5e2-2fd4675469da
 # ╟─7a937f2c-5808-4756-9bfc-6f84b0f03cc9
