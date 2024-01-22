@@ -179,12 +179,12 @@ md"## Setting up the system"
 md"""
 
 !!! info "Acausal Modeling"
-	To setup this model, we will be using the acausal modeling library [ModelingToolkit](https://github.com/SciML/ModelingToolkit.jl) from [SciML](https://sciml.ai/). The idea is that we can define equations and systems using the equations that we have defined directly. (You can actually check that the system that is mentioned earlier is actually a ModelingToolkit system.)
+	To set up this model, we will be using the *acausal modeling library* [ModelingToolkit](https://github.com/SciML/ModelingToolkit.jl) from [SciML](https://sciml.ai/). The idea is that we can define equations and systems using the equations that we have defined directly. (You can actually check that the system that is mentioned earlier is actually a ModelingToolkit system.)
 
 """
 
 # ╔═╡ 28def719-c8e2-43d6-b20e-6141e423add2
-md"The first step is to define the variables that we'll be needed for the model. Tht is, our depedent time variable ``t``, the differential operator ``D``, the independent variables ``S(t)``, ``Z(t)``, ``R(t)`` and the model parameters ``α``, ``β``, ``ζ`` " 
+md"The first step is to define the variables that will be needed for the model. That is, our dependent time variable ``t``, the differential operator ``D``, the independent variables ``S(t)``, ``Z(t)``, ``R(t)`` and the model parameters ``α``, ``β``, ``ζ`` " 
 
 # ╔═╡ d3acb594-ce66-4049-b674-ef641ee1207e
 @variables t
@@ -241,7 +241,7 @@ Great, now that we have an idea of what we will start with, the next step is to 
 md"""
 !!! info "Solving the problem" 
 
-	To solve the problem one can simply call the `solve()` method on the problem to get a set of values representing the population at each given timestep. You can then plot the solution by calling plot(). 
+	To solve the problem one can simply call the `solve()` function on the problem to get a set of values representing the population at each timestep. You can then plot the solution by calling `plot()`.
 
 	```julia
 	 simple_attack_sol = solve(simple_attack_prob)
@@ -250,11 +250,13 @@ md"""
 
 	```
 
-	However, in order to explore different parameters, sliders are used for interactivity. To prevent compile the problem over and over again, we can call remake() on the problem with new parameters and this is optimized to recreate the problem much faster, as much of the code required to solve the problem does not actually change when changing parameters value/initial values. 
+	However, in order to explore different parameters, sliders are used for interactivity. To prevent compiling the problem over and over again, we can call `remake()` on the problem with new parameters. This is optimized to recreate the problem much faster, because much of the code required to solve the problem does not actually change when changing parameters or the initial values. 
 """
 
 # ╔═╡ 637ef564-718f-4a4c-ac6c-cd9fd2802e16
-md"In the best of situation, the model predicts that humans will survive only a couple months, and there does not seem to be a way out."
+md"""
+If all went well, the model predicts that humans will survive only a couple months, and there does not seem to be a way out...
+"""
 
 # ╔═╡ 3f6c6d86-0ba1-4b63-ac50-f1d4460ea90a
 if(story_mode) md"---" end
@@ -269,7 +271,7 @@ if(story_mode)
 			- This is not very hopeful...
 			- We are fighting back though! We are getting rid of some zombies, but they keep coming back...
 		
-			Well this is the simplest version, let me add more complexity to it.  
+			Well this is the simplest version, let me add more complexity to it! 
 	
 	"""
 end
@@ -279,9 +281,9 @@ md"# Latent Infection"
 
 # ╔═╡ c1918d6a-3b5a-4046-b084-e6f98eaabee6
 md"""	
-Let's introduce this as the concept of latent infection. In this scenario, when a zombie bites a human, that human first becomes infected, and after some time, turns into a zombie. 
+Let's introduce the concept of **latent infection**. In this scenario, when a zombie bites a human, that human first becomes infected, and after some time, turns into a zombie. 
 	
-We can introduce a new class `I(t)` and the parameter ρ to capture the rate at which the infected turn into zombies.
+We can introduce a new class `I(t)` and the parameter `ρ` to capture the rate at which the infected turn into zombies.
 """
 
 # ╔═╡ ab1836a1-290d-4bde-bf1b-cc8287734e1e
@@ -326,21 +328,21 @@ if(story_mode)
 	--- 
 	
 	!!! tip "New development!"
-		As the days go by, there are more and more zombies but few survivors are now coming to the camp. The last group arrived 4 days ago, and there has not been another sighting since. 
+		As the days go by, there are more and more zombies but a few survivors are now coming to the camp. The last group arrived 4 days ago, and there has not been another sighting since. 
 	
-		As you have been doing everyday since the start, you switch to the information channel on your phone, but today it's different. There is a new blog post with a report attached to it.
+		As you have been doing every day since the start, you switch to the information channel on your phone, but today it's different. There is a new blog post with a report attached to it.
 	
-		The cure has been developed!
+		*The cure has been developed!*
 	
-		It was tested on the first patient and no signs of transformation so far. You might be able to stop infected patients turning into zombies afterall. 
-		The report indicates that the cure only works on infected patient and does not seem to work on fully transformed zombies.
+		It was tested on the first patient and no signs of transformation so far. You might be able to stop infected patients turning into zombies after all. 
+		The report indicates that the cure only works on infected patients and does not seem to work on fully transformed zombies.
 	
-		The post mentioned that the cure will be delivered to all survivor camps in the next few weeks, so as you wait patiently you decide to set up a section of our camp. This will help to isolate the infected so that you are ready when you get the cure... 
+		The post mentioned that the cure will be delivered to all survivor camps in the next few weeks, so as you wait patiently, you decide to set up a quarantine section of the camp. This will help to isolate the infected so that you are ready when you get the cure... 
 	
-		So far the virus has not been seen to transmit by any other mean than bitting, and the infected don't seem to have a urge of bitting anyone. 
-		However, they are no warning to when that seems to happen and reports indicates that it takes between a couples days to a couple weeks after the bite. 
+		So far, the virus has not been seen to transmit by any other means than biting, and the infected don't seem to have a urge of biting anyone. 
+		However, they are no warnings to when that seems to happen and reports indicates that it takes between a couples days to a couple weeks after the bite. 
 		
-		To be safe, you decide to setup a quarantine, where every new infected person can be isolated from anyone else, reducing the chance that they infect other people once they suddendly get a taste of human blood. After setting up the tent and securing everything, you now have a dedicated section of the camp where any new infected patient can stay. 
+		To be safe, you decide to setup a quarantine, where every new infected person can be isolated from anyone else, reducing the chance that they infect other people once they suddenly get a taste of human blood. After setting up the tent and securing everything, you now have a dedicated section of the camp where any new infected patient can stay. 
 	"""
 end
 
@@ -348,10 +350,10 @@ end
 md"# Setting up a quarantine"
 
 # ╔═╡ 51f33f5c-06c4-4a6c-9f91-6dd5f0822043
-md"""Let's add a quarantine into our model. We will represent the number of people in the quarantine section with the state Q(t) and introduce 2 new parameters.
+md"""Let's add a quarantine into our model. We will represent the number of people in the quarantine section with the state `Q(t)` and introduce 2 new parameters.
 
-- κ: Infected to Quarantine rate
-- γ: Quarantine to Removed rate 
+- `κ`: Infected to Quarantine rate
+- `γ`: Quarantine to Removed rate 
 """
 
 # ╔═╡ e515330c-d97a-4b66-b40c-fe44ea300bb2
@@ -360,26 +362,24 @@ if(story_mode)
 	!!! tip "Did you get bitten?"
 		We have a big camp and getting bitten has now become taboo, hence a few people have not directly said openly that they have be bitten... 
 	"""
-else
-	md""
 end
 
 # ╔═╡ 42d42106-a896-4ac0-a476-8590a87b1428
 md"""
-The κ parameter will represent how much of the infected are placed in quarantine. 
+The `κ` parameter will represent how much of the infected are placed in quarantine. 
 """
 
 # ╔═╡ 4af55826-0499-4397-bf44-1ea28ab8de80
 if(story_mode)
 	md"""
 	!!! tip "A unfortunate futur" 
-		Unfornutalely the quarantine is not a very solid area and the first infected patient that was admitted turned into zombie, wreaking havoc inside the camp. You take the hard decision to remove the patients that have turned into zombies from the quarantine. 
+		Unfortunalely the quarantine is not a very solid area and the first infected patient that was admitted turned into zombie, wreaking havoc inside the camp. You take the hard decision to remove the patients that have turned into zombies from the quarantine. 
 	"""
 end
 
 # ╔═╡ d923c200-843d-44e8-8870-6b44183a779a
 md"""
-The γ parameter represents all the infected that have turned into zombies and who are then removed.
+The `γ` parameter represents all the infected that have turned into zombies and who are then removed.
 """
 
 # ╔═╡ 5141dd63-ebfb-4b75-a0a3-8a0dd1163169
