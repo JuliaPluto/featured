@@ -416,9 +416,9 @@ if(story_mode)
 	---
 	
 	!!! tip "The white van at the gate"
-		As you wake up to another day of fighting of zombies, you receive a call from the main gate. A white van is trying to get in. As soon as you hear this, you rush to the gate. 
+		As you wake up to another day of fighting zombies, you receive a call from the main gate. A white van is trying to get in. As soon as you hear this, you rush to the gate. 
 	
-		"We have the cure!!" you hear, and suddendly the whole camp erupts in joy. You finaly have a chance to fight off this pandedemic. 
+		"We have the cure!!" you hear, and suddenly the whole camp erupts in joy. You finally have a chance to fight off this pandemic. 
 	"""
 end
 
@@ -426,7 +426,7 @@ end
 md"# Treating the infected!"
 
 # ╔═╡ f804a947-4e16-4871-84e3-8654d4fb0a46
-md"To incorporate a cure into to the model, we can define a new parameter `c` that will determine how effective the cure is in treating the infected. This parameter abstract the time it takes for the cure to work, the amount of infected patient the camp can treat, the supply etc..."
+md"To incorporate a cure into the model, we can define a new parameter `c` that will determine how effective the cure is in treating the infected. This parameter represents the time it takes for the cure to work, the amount of infected patient the camp can treat, the supply etc..."
 
 # ╔═╡ 5e8a9df5-26ac-4ee0-a647-5088bfb43b25
 md"## Setup"
@@ -461,11 +461,11 @@ if(story_mode)
 	---
 	
 	!!! tip "A misterious delivery"
-		A big crate just got delivered at the camp, with a note that simply state: "A gift from your friends!". 
+		A big crate just got delivered at the camp, with a note that simply states: "A gift from your friends!". 
 	
 		After some debate, you anxiously open the crate to find a large number of steel components. You also find a manual at the top: it's a turret! 
 	
-		The turret is a next-generation plasma beam turret that send orbs of energy. You are now equipped to handle large vagues of zombies. The manual indicates that the turret needs a lot of energy to work. With the current supply of energy you have, you can only shoot every 2 days. 
+		The turret is a next-generation plasma beam turret that send orbs of energy. You are now equipped to handle large waves of zombies. The manual indicates that the turret needs a lot of energy to work. With the current supply of energy you have, you can only shoot once every 2 days. 
 	"""
 end
 
@@ -550,9 +550,11 @@ end
 md"# The vaccine model "
 
 # ╔═╡ 9148f8b0-e379-43aa-88f5-8c41a2ea62ca
-md"Let's introduce a vaccine into the model, we can add a new class that will represent how many vaccinated individual. Alongside we can also introduce a new parameter ν that indicates the vaccination rate. 
-We define the new equation such that only the healthy susceptible are able to get a vaccine. We can also upgrade the cure to now be able to cure Zombies and infected in Quarantine. 
-"
+md"""
+Let's introduce a vaccine into the model, we can add a new class that will represent how many vaccinated individuals there are. We can also introduce a new parameter `ν` that indicates the vaccination rate. 
+
+We define the new equation such that only the healthy susceptible humans are able to get a vaccine. We can also upgrade the cure to now be able to cure Zombies and infected in Quarantine.
+"""
 
 # ╔═╡ 74955738-33ca-4e6a-bde2-8080b32099c6
 md"## Setup"
@@ -592,7 +594,11 @@ end
 md"## Model Visulization"
 
 # ╔═╡ d1b89ad6-9116-48b4-805f-f1ba6b15b3dc
-md"By introducing the vaccine we were now able to survive the zombie attack since once an human got vacinated it couldn't be transformed back into a zombie. This allows the vaccination class to grow while the zombie slowly decline in numbers. Altough if the cure becomes completly ineficient ``c =  0`` then any zombies are now trapped in their class and cannot be converted back to suseceptible, which only leaves a fix number of vaccinated vs zombies. In any case, in this scenario there are always humans surviving at the end. Yay! "
+md"""
+By introducing the vaccine we were now able to survive the zombie attack: once a human got vaccinated, they cannot be transformed back into a zombie. This allows the vaccination class to grow while the zombies slowly decline in numbers. 
+
+Although if the cure becomes completely inefficient ``c =  0`` then any zombies are now trapped in their class and cannot be converted back to suseceptible, which only leaves a fix number of vaccinated vs zombies. In any case, in this scenario there are always humans surviving at the end. Yay!
+"""
 
 # ╔═╡ 427d7fd4-af60-4b3b-9d43-3cc6511e281d
 if(story_mode)
