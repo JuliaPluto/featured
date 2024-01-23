@@ -46,6 +46,7 @@ begin
 	import PlutoUI: combine
 	using HypertextLiteral: @htl
 	using Parameters
+	using DocStringExtensions
 	md"""
 	!!! info "Display Packages"
 		[Plots](https://juliapackages.com/p/Plots): Plotting library for the several plots in the notebook.
@@ -54,12 +55,223 @@ begin
 	
 		[HypertextLiteral](https://www.juliapackages.com/p/HypertextLiteral): Julia package for generating HTML, SVG, and other SGML tagged content.
 	
-		[Parameters](https://www.juliapackages.com/p/Parameters): Types with default field values, keyword constructors and (un-)pack macros.
+		[Parameters](https://www.juliapackages.com/p/Parameters): Types with default field values with keyword constructors.
+	
+		[DocStringExtensions](https://www.juliapackages.com/p/DocStringExtensions): Package that provide `Abbreviations` to use in DocStrings.
 	"""
 end
 
-# ╔═╡ 5d7d7822-61c9-47a1-830b-6b0294531d5c
+# ╔═╡ a72d89aa-6108-40a2-afbb-b9edd0c90b8f
 TableOfContents()
+
+# ╔═╡ 5d7d7822-61c9-47a1-830b-6b0294531d5c
+begin
+	# CSS Styles used in notebook  	
+
+	@htl("""
+	<style>
+	
+	bond {
+		width: 100%
+		
+	}
+	
+	
+	@media screen and (min-width: 600px) {
+		
+		.on-tiny-show {
+			display: flex;
+		}
+		.on-small-show {
+			display: none;
+		}
+		.on-big-show {
+			display: none;
+		}
+	}
+	@media screen and (min-width: 1200px) {
+		.on-tiny-show {
+			display: none;
+		}
+		.on-small-show {
+			display: flex;
+		}
+		.on-big-show {
+			display: none;
+		}
+	}
+	@media screen and (min-width: 1800px) {
+		.on-tiny-show {
+			display: none;
+		}
+		.on-small-show {
+			display: flex;
+		}
+		.on-big-show {
+			display: flex;
+		}
+	}
+	
+	.slider-container-content-wrapper{
+			display: flex;
+			flex-direction: column;
+		}
+	.slider-container-content{
+		min-width: 30rem;
+		display: flex;
+		padding: 0.5rem;
+		margin: 0.5rem;
+		gap: 0.5rem;
+	}
+	
+	.slider-container-content-inner{
+		display: flex;
+		align-items: center;
+	}
+	
+	.slider-container-title{
+		display: block;
+		text-align: center;
+		padding: 1rem;
+		color: #ddd;
+		background: #0069ff;
+		cursor: pointer;
+		border-radius: 7px;
+		transition: all 0.25s ease-out;
+	}
+	
+	.slider-container{
+		min-width: 27rem;
+	    gap: 0.5rem;
+		border-radius: 1rem;
+		width: 100%;
+		background: rgba(0, 105, 255, 0.2);
+	}
+	
+	
+	.sidebar-left {
+		position: absolute;
+	    top: 100%;
+		right: 110%;
+		width: 17rem;
+		z-index: 99;
+	}
+	.sidebar-right {
+	    top: 100%;
+		position: absolute;
+		left: 100%;
+		width: 17rem;
+	}
+	.sidebar-bottom {
+	    display: flex;
+	}
+	
+	.slider-group{
+		display:flex; 
+		flex-direction: column;
+		padding: .5rem;  
+	}
+	.slider-group-inner{
+		border-radius: 7px;
+		display:flex; 
+		align-items:center; 
+	}
+	.slider-group-outer{
+	    display: flex;
+	    flex-direction: column;
+	    justify-content: space-between;
+	}
+	
+	.interact-group {
+		display: flex;
+	    flex-direction: column;
+		gap: 0.5rem;
+	}
+	
+	.wrap-collabsible {
+	  
+	}
+	
+	.content-inner{
+		display: flex;
+		flex-direction: column;
+	    gap: 0.5rem;
+	}
+	
+	.lbl-toggle {
+	  display: block;
+	  font-weight: bold;
+	  font-family: monospace;
+	  font-size: 1.2rem;
+	  text-align: center;
+	  padding: 1rem;
+	  color: #ddd;
+	  background: #0069ff;
+	  cursor: pointer;
+	  border-radius: 7px;
+	  transition: all 0.25s ease-out;
+	}
+	
+	.lbl-toggle:hover {
+	  color: #fff;
+	}
+	.lbl-toggle::before {
+	  content: " ";
+	  display: inline-block;
+	  border-top: 5px solid transparent;
+	  border-bottom: 5px solid transparent;
+	  border-left: 5px solid currentColor;
+	  vertical-align: middle;
+	  margin-right: 0.7rem;
+	  transform: translateY(-2px);
+	  transition: transform 0.2s ease-out;
+	}
+	.toggle:checked + .lbl-toggle::before {
+	  transform: rotate(90deg) translateX(-3px);
+	}
+	.collapsible-content {
+	  max-height: 0px;
+	  overflow: hidden;
+	  transition: max-height 0.25s ease-in-out;
+	}
+	.toggle:checked + .lbl-toggle + .collapsible-content {
+	  max-height: 100rem;
+	}
+	.toggle:checked + .lbl-toggle {
+	  border-bottom-right-radius: 0;
+	  border-bottom-left-radius: 0;
+	}
+	.collapsible-content .content-inner {
+	  background: rgba(0, 105, 255, 0.2);
+	  border-bottom: 1px solid rgba(0, 105, 255, 0.45);
+	  border-bottom-left-radius: 7px;
+	  border-bottom-right-radius: 7px;
+	  padding: 0.25rem .25rem;
+	}
+	.content-inner{
+	  padding: 0.5rem
+	}
+	.collapsible-content p {
+	  margin-bottom: 0;
+	}
+	
+	
+	.analytics-card{
+		display: flex;
+		flex-direction: column;
+	
+		gap: 0.5rem;
+		padding: 0.75rem;
+	
+		border-radius: 0.5rem;
+		background-color: #125555;
+		
+	}
+	
+	
+	</style>
+	""")
+end
 
 # ╔═╡ 684ab7f8-a5db-4c39-a3cc-ce948dd026b0
 md"""
@@ -273,7 +485,8 @@ if(story_mode)
 			- This is not very hopeful...
 			- We are fighting back though! We are getting rid of some zombies, but they keep coming back...
 		
-		Well this is the simplest version, let me add more complexity to it.  
+			Well this is the simplest version, let me add more complexity to it.  
+	
 		You begin to add more parameters to the model, incorporating factors such as the rate of zombie infection. As you input the data, the model begins to paint a bleak picture of the future. Zara's disappointment deepens as she sees the projected outcome."This is worse than I thought." she says, her voice heavy with despair. "We need to come up with a new plan, something that will give us a fighting chance."
 		You nod in agreement, knowing that the situation is dire. Despite the survivors' best efforts, the zombie horde continues to grow, and resources are dwindling. As you continue to tweak the model, you realize that time is running out. The survivors must act quickly if they hope to turn the tide of the apocalypse.
 	
@@ -333,7 +546,7 @@ if(story_mode)
 	--- 
 	
 	!!! tip "New development!"
-		As the days go by, Zombie numbers are increasing, but few survivors have arrived at the camp lately.. The last group arrived 4 days ago, and there has not been another sighting since. 
+		As the days go by, zombie numbers are increasing, but few survivors have arrived at the camp lately.. The last group arrived 4 days ago, and there has not been another sighting since. 
 	
 		As you have been doing every day since the start, you switch to the information channel on your phone, but today it's different. There is a new blog post with a report attached to it.
 	
@@ -687,8 +900,7 @@ Can you think of other ways to extend the model?
 Here's a few ideas:
 
 - The quarantine might not be perfect and zombies might escape, how would the equations change? 
-- Maybe there is another cure that can also cure transformed zombies, how could you model that?
-- What if the turret requires someone to operate, adding another check might make the last model more realistic? 
+- What if the turret requires someone to operate, that might make the model more realistic? 
 
 Now you can create your own model to make your own zombie attack model. 
  **(Share you model in the Julia slack!)**
@@ -760,19 +972,43 @@ md"## Interactivity extensions"
 
 # ╔═╡ 19b3047c-6b4d-4e54-a932-1030a31dd713
 """
-Structure to hold default value for a parameter controlled via a Slider
+$(TYPEDEF)
+
+Structure to hold me/tadata for a parameter controlled via a Slider.
+
+$(TYPEDFIELDS)
+
+## Examples 
+
+```julia
+αSlider = SliderParameter(
+			lb = 0.0,
+			ub = 0.8,
+			step  = 0.01,
+			default = 0.5,
+			label 	= "α",
+			description = "Zombie Defeating Rate" 
+		)
+```
 """
 @with_kw struct SliderParameter 
-	lb = 0.0
-	ub = 100.0
-	step = 1.0
-	default = lb
-	description::String = "" 
+	"(REQUIRED) Name of parameter"
 	label::String 
+	"Lower Bound"
+	lb::Float64 = 0.0
+	"Upper Bound"
+	ub::Float64 = 100.0
+	"Slider Step"
+	step::Float64 = 1.0
+	"Initial Value"
+	default::Float64 = lb
+	"Text to show next to slider"
+	description::String = "" 
+	"Symbolic reference"
 	alias::Symbol = Symbol(label)
-	function SliderParameter(lb,ub,step,default, description::String ,label::String, alias::Symbol) 
+	function SliderParameter(label::String, lb,ub,step,default, description::String, alias::Symbol) 
 		 if ub < lb error("Invalid Bounds") end 
-		 return new(lb,ub,step,default,description,label,alias)
+		 return new(label,lb,ub,step,default,description,alias)
 	end
 end
 
@@ -992,33 +1228,33 @@ begin
 	]
 end;
 
-# ╔═╡ 5642f007-644b-4696-8daa-9d9d07c8f730
- SliderParameter(description = "desc1", label = "label1", alias = :alias1, lb = 0, step = 1, ub = 10, default = 2.0)
-
 # ╔═╡ 2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
 """
+	format_sliderParameter(params::Vector{SliderParameter};title::String = "") 
+
+A method to format SliderParameters. Depends on external CSS classes.
+
+
 """
-function format_sliderParameter(params::Vector{SliderParameter};title::String = "") where T 
-	
+function format_sliderParameter(sliderParams::Vector{SliderParameter};title::String = "")
 	return combine() do Child
-		
 		mds = [
 			@htl("""
 			<div class="slider-container-content">
 			<div class="slider-container-content-inner"> 
-				$(param.description)
+				$(sliderParam.description)
 			</div>
 			<div class="slider-container-content-inner"> 
-			<p>$(param.label)
+			<p>$(sliderParam.label)
 			</div>
 			<div class="slider-container-content-inner"> 
-				$(Child(param.alias, PlutoUI.Slider(param.lb:param.step:param.ub, default = param.default, show_value = true))) 
+				$(Child(sliderParam.alias, PlutoUI.Slider(sliderParam.lb:sliderParam.step:sliderParam.ub, default = sliderParam.default, show_value = true))) 
 			</div>
 			</div>
 			
 			""")
 			
-			for param in params
+			for sliderParam in sliderParams
 		]
 		titleDiv = (title == "") ? @htl("<div></div>") : @htl("""
 			<div class="slider-container-title">
@@ -1402,10 +1638,12 @@ vaccine_model_plots_params_sliders = @bind vaccine_model_plots_params format_sli
 	]
 );
 
-# ╔═╡ 4e30ca1a-b147-4d28-9344-d009318ecd35
-format_sliderParameter
-
 # ╔═╡ 411354b2-f9b7-46cc-9fe2-358f2d691dfe
+"""
+	createSliderGroup(sliders, extraSliders)
+
+Utility function to group Sliders into two groups. The `sliders` group is always displayed and the `extraSliders` group is collapsible. Depends on external CSS classes.
+"""
 function createSliderGroup(sliders, extraSliders)
 
 	slider_group_wrap =  x -> @htl("""
@@ -1533,6 +1771,10 @@ createSliderGroup(
 md"## Plotting / Analytics "
 
 # ╔═╡ 230a4e8a-6eb7-4b0a-84a7-c86019060062
+"""
+	solutionAnalytics(sol::ODESolution)
+Utility function to display analytics about the solution. Specific to the zombie model, as `sol` is expected to have been generated by a system with variables `Z` and `S`.  Returns HTML  via @htl().
+"""
 function solutionAnalytics(sol::ODESolution)
 
 	
@@ -1560,6 +1802,18 @@ function solutionAnalytics(sol::ODESolution)
 end
 
 # ╔═╡ daf4dd3e-9427-4baa-836e-e1d524c0a170
+"""
+	$(TYPEDSIGNATURES)
+
+Ploting shortcut for plotting model evolution of a zombie model. 
+
+# Arguments
+
+- `xlim:` X axis limits Default: `(0.0,100.0)`
+- `label`: Labels for plot Default: `["Susceptible 👩" "Zombies 🧟" "Removed 👵" ]`
+- `kwargs`: any other plot parameter, passed to `plot()`
+
+"""
 function plotZombieModelEvolution(sol::ODESolution; xlim=(0.0,100.0), label=["Susceptible 👩" "Zombies 🧟" "Removed 👵" ], kwargs...,)
 	plot(sol; kwargs..., label)
 	xlims!(xlim)
@@ -1797,220 +2051,11 @@ end
 # ╔═╡ 813fc6b1-460a-49cb-9ae5-909e38e18e71
 md"## Packages"
 
-# ╔═╡ ec9ba203-29a8-4fdb-a902-b7f5542adc05
-
-
-# ╔═╡ 88f8f2b8-6ea5-4bcc-8026-70a760873033
-md"## CSS"
-
-# ╔═╡ 929793eb-4409-46d9-85be-98f1b98d8839
-@htl("""
-<style>
-
-bond {
-	width: 100%
-	
-}
-
-
-@media screen and (min-width: 600px) {
-	
-	.on-tiny-show {
-		display: flex;
-	}
-	.on-small-show {
-		display: none;
-	}
-	.on-big-show {
-		display: none;
-	}
-}
-@media screen and (min-width: 1200px) {
-	.on-tiny-show {
-		display: none;
-	}
-	.on-small-show {
-		display: flex;
-	}
-	.on-big-show {
-		display: none;
-	}
-}
-@media screen and (min-width: 1800px) {
-	.on-tiny-show {
-		display: none;
-	}
-	.on-small-show {
-		display: flex;
-	}
-	.on-big-show {
-		display: flex;
-	}
-}
-
-
-.slider-container{
-	min-width: 27rem;
-    gap: 0.5rem;
-	border-radius: 1rem;
-	width: 100%;
-	background: rgba(0, 105, 255, 0.2);
-}
-.slider-container-content-wrapper{
-	display: flex;
-	flex-direction: column;
-}
-.slider-container-content{
-	min-width: 30rem;
-	display: flex;
-	padding: 0.5rem;
-	margin: 0.5rem;
-    gap: 0.5rem;
-}
-
-.slider-container-content-inner{
- 	display: flex;
-	align-items: center;
-}
-
-.slider-container-title{
-	display: block;
-	text-align: center;
-	padding: 1rem;
-	color: #ddd;
-	background: #0069ff;
-	cursor: pointer;
-	border-radius: 7px;
-	transition: all 0.25s ease-out;
-}
-
-.sidebar-left {
-	position: absolute;
-    top: 100%;
-	right: 110%;
-	width: 17rem;
-	z-index: 99;
-}
-.sidebar-right {
-    top: 100%;
-	position: absolute;
-	left: 100%;
-	width: 17rem;
-}
-.sidebar-bottom {
-    display: flex;
-}
-
-.slider-group{
-	display:flex; 
-	flex-direction: column;
-	padding: .5rem;  
-}
-.slider-group-inner{
-	border-radius: 7px;
-	display:flex; 
-	align-items:center; 
-}
-.slider-group-outer{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.interact-group {
-	display: flex;
-    flex-direction: column;
-	gap: 0.5rem;
-}
-
-.wrap-collabsible {
-  
-}
-
-.content-inner{
-	display: flex;
-	flex-direction: column;
-    gap: 0.5rem;
-}
-
-.lbl-toggle {
-  display: block;
-  font-weight: bold;
-  font-family: monospace;
-  font-size: 1.2rem;
-  text-align: center;
-  padding: 1rem;
-  color: #ddd;
-  background: #0069ff;
-  cursor: pointer;
-  border-radius: 7px;
-  transition: all 0.25s ease-out;
-}
-
-.lbl-toggle:hover {
-  color: #fff;
-}
-.lbl-toggle::before {
-  content: " ";
-  display: inline-block;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 5px solid currentColor;
-  vertical-align: middle;
-  margin-right: 0.7rem;
-  transform: translateY(-2px);
-  transition: transform 0.2s ease-out;
-}
-.toggle:checked + .lbl-toggle::before {
-  transform: rotate(90deg) translateX(-3px);
-}
-.collapsible-content {
-  max-height: 0px;
-  overflow: hidden;
-  transition: max-height 0.25s ease-in-out;
-}
-.toggle:checked + .lbl-toggle + .collapsible-content {
-  max-height: 100rem;
-}
-.toggle:checked + .lbl-toggle {
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.collapsible-content .content-inner {
-  background: rgba(0, 105, 255, 0.2);
-  border-bottom: 1px solid rgba(0, 105, 255, 0.45);
-  border-bottom-left-radius: 7px;
-  border-bottom-right-radius: 7px;
-  padding: 0.25rem .25rem;
-}
-.content-inner{
-  padding: 0.5rem
-}
-.collapsible-content p {
-  margin-bottom: 0;
-}
-
-
-.analytics-card{
-	display: flex;
-	flex-direction: column;
-
-	gap: 0.5rem;
-	padding: 0.75rem;
-
-	border-radius: 0.5rem;
-	background-color: #125555;
-	
-}
-
-
-</style>
-""")
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
@@ -2019,6 +2064,7 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 DifferentialEquations = "~7.10.0"
+DocStringExtensions = "~0.9.3"
 HypertextLiteral = "~0.9.5"
 ModelingToolkit = "~8.70.0"
 Parameters = "~0.12.3"
@@ -3890,6 +3936,7 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
+# ╟─a72d89aa-6108-40a2-afbb-b9edd0c90b8f
 # ╟─5d7d7822-61c9-47a1-830b-6b0294531d5c
 # ╟─684ab7f8-a5db-4c39-a3cc-ce948dd026b0
 # ╟─19ea7ddf-f62b-4dd9-95bb-d71ac9c375a0
@@ -3923,7 +3970,7 @@ version = "1.4.1+1"
 # ╟─49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
 # ╟─7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
 # ╟─3f6c6d86-0ba1-4b63-ac50-f1d4460ea90a
-# ╟─ec47f63d-36eb-4331-aec9-9f1af15a3eab
+# ╠═ec47f63d-36eb-4331-aec9-9f1af15a3eab
 # ╟─0f22c808-a413-415e-95d1-98317ca6ed25
 # ╟─c1918d6a-3b5a-4046-b084-e6f98eaabee6
 # ╟─ab1836a1-290d-4bde-bf1b-cc8287734e1e
@@ -3940,7 +3987,7 @@ version = "1.4.1+1"
 # ╟─8c51a878-6466-4832-ad74-c90683614ebc
 # ╟─e5deaa27-54cb-4f48-8f56-b55c3a797dcf
 # ╟─d59c9761-382e-4450-b654-dc4b8b203f15
-# ╟─b2e6544a-2e87-439c-9b25-de60518f1970
+# ╠═b2e6544a-2e87-439c-9b25-de60518f1970
 # ╟─e831d3ab-8122-4cb6-9dfc-ebbfb241f0c9
 # ╟─51f33f5c-06c4-4a6c-9f91-6dd5f0822043
 # ╟─e515330c-d97a-4b66-b40c-fe44ea300bb2
@@ -4010,7 +4057,7 @@ version = "1.4.1+1"
 # ╠═80aeb76f-4ab2-468f-95ef-f36491f4642e
 # ╠═3eb51a7d-3a7e-4d5b-a635-71a4962dd2d9
 # ╟─711bd169-61c7-4dc4-afc9-8829155d71fe
-# ╟─70de0532-94df-4466-acc4-7a8157bd0262
+# ╠═70de0532-94df-4466-acc4-7a8157bd0262
 # ╟─bc872c1c-0b47-47d6-840b-3b988955dfc8
 # ╟─d1b89ad6-9116-48b4-805f-f1ba6b15b3dc
 # ╟─e5a804cc-0cbe-4645-974b-0fca7cb366e0
@@ -4050,11 +4097,9 @@ version = "1.4.1+1"
 # ╟─7df920cf-b634-40c9-913a-bc26732f486e
 # ╟─2555bbc3-8b71-4fdd-9daa-9c263502eddf
 # ╟─89b55225-e4df-4be3-a34e-e0fe31c1ba0a
-# ╠═f440930e-c68f-40ee-8d1b-cc510400e872
-# ╠═19b3047c-6b4d-4e54-a932-1030a31dd713
-# ╠═4e30ca1a-b147-4d28-9344-d009318ecd35
-# ╠═5642f007-644b-4696-8daa-9d9d07c8f730
-# ╠═2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
+# ╟─f440930e-c68f-40ee-8d1b-cc510400e872
+# ╟─19b3047c-6b4d-4e54-a932-1030a31dd713
+# ╟─2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
 # ╟─411354b2-f9b7-46cc-9fe2-358f2d691dfe
 # ╟─491f715e-048f-4bc4-b62b-9d9f622d835b
 # ╟─230a4e8a-6eb7-4b0a-84a7-c86019060062
@@ -4062,8 +4107,5 @@ version = "1.4.1+1"
 # ╟─813fc6b1-460a-49cb-9ae5-909e38e18e71
 # ╟─00edd691-2b60-4d1d-b5e2-2fd4675469da
 # ╟─7a937f2c-5808-4756-9bfc-6f84b0f03cc9
-# ╠═ec9ba203-29a8-4fdb-a902-b7f5542adc05
-# ╟─88f8f2b8-6ea5-4bcc-8026-70a760873033
-# ╟─929793eb-4409-46d9-85be-98f1b98d8839
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
