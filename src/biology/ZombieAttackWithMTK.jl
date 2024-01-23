@@ -31,10 +31,10 @@ begin
 	using ModelingToolkit
 	using DifferentialEquations
 	md"""
-	!!! info "ModelingToolkit"
-		[ModelingToolkit](https://juliapackages.com/p/ModelingToolkit):
+	!!! info "Modeling"
+		[ModelingToolkit](https://juliapackages.com/p/ModelingToolkit): Use for modeling to setup ODESystem for each of the models.
 	
-		[DifferentialEquations](https://www.juliapackages.com/p/DifferentialEquations): 
+		[DifferentialEquations](https://www.juliapackages.com/p/DifferentialEquations): Holds the differential equation solvers.
 	"""
 end
 
@@ -47,16 +47,14 @@ begin
 	using HypertextLiteral: @htl
 	using Parameters
 	md"""
-	!!! info "ModelingToolkit"
-		[Plots](https://juliapackages.com/p/Plots):
+	!!! info "Display Packages"
+		[Plots](https://juliapackages.com/p/Plots): Plotting library for the several plots in the notebook.
+
+		[PlutoUI](https://www.juliapackages.com/p/PlutoUI):  Extension for Pluto to handle interactivity, provides the Sliders.
 	
-		[PlutoUI](https://www.juliapackages.com/p/PlutoUI): 
+		[HypertextLiteral](https://www.juliapackages.com/p/HypertextLiteral): Julia package for generating HTML, SVG, and other SGML tagged content.
 	
-		[PlutoHooks](https://www.juliapackages.com/p/PlutoHooks): 
-	
-		[HypertextLiteral](https://www.juliapackages.com/p/HypertextLiteral): 
-	
-		[Parameters](https://www.juliapackages.com/p/Parameters): 
+		[Parameters](https://www.juliapackages.com/p/Parameters): Types with default field values, keyword constructors and (un-)pack macros.
 	"""
 end
 
@@ -88,19 +86,17 @@ if(story_mode)
 
 		"Calling to all survivors. Go your local survivor camp to find shelter and supplies. For directions, click [here](https://www.google.com/maps/place/Survivor-NRW/@51.6019909,6.695119,7.82z/data=!4m6!3m5!1s0x47b855f29754ec41:0x8211d767f947fb45!8m2!3d51.8130827!4d7.2971646!16s%2Fg%2F11rrp49wcv?entry=ttu)."
 	
-		*Maybe it's not a bad idea after all*. After quickly packing up the basics in your backpack, you head off to the camp. 
+		*Maybe it's not a bad idea after all*. With no other options left, you decide to head to the camp for survival. After quickly packing up the basics in your backpack, you head off. 
 		
-		The major streets of the city, once packed with cars, are now empty. Banks and shops have been torn down and not a single soul is to be seen. As you approach to the location shown on you phone, you find a big wall made of scraps assembled together: the survival camp. You approach the gate. 
+		The major streets of the city, once packed with cars, are now empty. Banks and shops have been torn down and not a single soul is to be seen. As you approach the gate, you notice a big wall made of scraps assembled together: the survival camp.
 		
 			Anyone here?
 		
-		No response. 
+		You wait anxiously for a response, but the only sound is the wind blowing through the scraps of metal. 
 		
 		*Has the camp already fallen to the zombies?* 
 	
-			Can somebody open the gate?
-	
-		After a couple of minutes, you hear sound of a sliding metal bar and a pair of eyes appear through a rough opening in the door. 
+		You repeat your question, louder this time, but still no answer. After a couple of minutes, you hear sound of a sliding metal bar and a pair of eyes appear through a rough opening in the door. 
 	
 			- Who is this?
 	
@@ -110,15 +106,15 @@ if(story_mode)
 	
 			No, I have not seen a single one.
 	
-		The opening closes and a loud mechanical noise starts, the door is opening and a young survivor greets you: 
+		The opening closes and a loud mechanical noise starts, the door opens. A young blond man, with the biggest goggles you have ever seen, greets you: 
 		
-			My name is Hans, welcome to the camp! 
+			Hey! My name is Hans, welcome to the camp! 
 
 		After showing you around the camp, Hans brings you to the biggest tent: the headquarters. It's covered in maps and scientific diagrams. In the back of the room, a woman is deep in thought, looking a notepad. Hans calls her: 
 
 			- Hey Zara, we have a new member!
-
-		She looks up, confused. After a few seconds, she smiles and greets you. 
+		
+		Zara looks up from her notepad, her eyes scanning you from head to toe. After a few seconds, she smiles and extends her hand. 
 
 			- Welcome! We definitely need as much help as we can get. 
 			- Do you know much about this virus?
@@ -150,7 +146,7 @@ md"## The Zombie Outbreak Model"
 # ╔═╡ cc1a1a9a-7a45-4231-8471-0fb90b994357
 md"""Let's start with the simplest model. In this model, there are healthy humans (susceptible) and zombies. So what happens when a zombie meets a human? 
 
-We note ``S(t)`` the number of susectible humans at a given time ``t`` and and ``Z(t)`` for the number of zombies.
+We note ``S(t)`` the number of susceptible humans at a given time ``t`` and and ``Z(t)`` for the number of zombies.
 
 We can say that there is a positive rate β that describes the chance of a zombie converting a human into another human. We also define the term ``S(t)Z(t)`` to capture the interaction between a zombie and a susceptible human. 
 We can then define the following system of equation: 
@@ -171,6 +167,9 @@ We define ``α`` as the rate at which the susceptible humans kill the zombies.
 
 Additionally, these zombies will be hard to get rid of since there is a small chance ζ that a removed "comes back from the dead" and is reintroduced as a zombie. 
 """
+
+# ╔═╡ 71baff78-d298-4c6a-99d5-6b65c1c27e6f
+md"""Our model is now looks like this:"""
 
 # ╔═╡ 77d94a92-f058-4b9f-9df8-9de58603c293
 md"## Setting up the system"
@@ -220,6 +219,9 @@ md"Once we have defined everything, we can put them together to define the syste
 		D(R) ~ 			α*S*Z - ζ*R
 	]
 )
+
+# ╔═╡ 70547a7e-c357-4787-9c34-d2789bb60860
+simple_attack_sys
 
 # ╔═╡ 4b731a5f-3fe2-4691-8f89-c37f05d623ab
 md"Now in order to simulate what would happen to our model we need to set some values for each of the variables and parameter of the system"
@@ -271,7 +273,10 @@ if(story_mode)
 			- This is not very hopeful...
 			- We are fighting back though! We are getting rid of some zombies, but they keep coming back...
 		
-			Well this is the simplest version, let me add more complexity to it! 
+		Well this is the simplest version, let me add more complexity to it.  
+		You begin to add more parameters to the model, incorporating factors such as the rate of zombie infection. As you input the data, the model begins to paint a bleak picture of the future. Zara's disappointment deepens as she sees the projected outcome."This is worse than I thought." she says, her voice heavy with despair. "We need to come up with a new plan, something that will give us a fighting chance."
+		You nod in agreement, knowing that the situation is dire. Despite the survivors' best efforts, the zombie horde continues to grow, and resources are dwindling. As you continue to tweak the model, you realize that time is running out. The survivors must act quickly if they hope to turn the tide of the apocalypse.
+	
 	
 	"""
 end
@@ -328,21 +333,20 @@ if(story_mode)
 	--- 
 	
 	!!! tip "New development!"
-		As the days go by, there are more and more zombies but a few survivors are now coming to the camp. The last group arrived 4 days ago, and there has not been another sighting since. 
+		As the days go by, Zombie numbers are increasing, but few survivors have arrived at the camp lately.. The last group arrived 4 days ago, and there has not been another sighting since. 
 	
 		As you have been doing every day since the start, you switch to the information channel on your phone, but today it's different. There is a new blog post with a report attached to it.
 	
 		*The cure has been developed!*
 	
-		It was tested on the first patient and no signs of transformation so far. You might be able to stop infected patients turning into zombies after all. 
-		The report indicates that the cure only works on infected patients and does not seem to work on fully transformed zombies.
+		The first patient has been tested with the cure and has shown no signs of transformation so far. You might be able to stop infected patients turning into zombies afterall. The cure only works on infected individuals and does not seem to be effective on fully transformed zombies..
 	
-		The post mentioned that the cure will be delivered to all survivor camps in the next few weeks, so as you wait patiently, you decide to set up a quarantine section of the camp. This will help to isolate the infected so that you are ready when you get the cure... 
-	
-		So far, the virus has not been seen to transmit by any other means than biting, and the infected don't seem to have a urge of biting anyone. 
-		However, they are no warnings to when that seems to happen and reports indicates that it takes between a couples days to a couple weeks after the bite. 
+		The post mentioned that the cure will be delivered to all survivor camps in the next few weeks, so as you wait patiently you decide to set up a section of our camp. This will help to isolate the infected so that you are ready when you get the cure... 
+
+		Although the virus has only been observed to transmit through biting, there is no warning for when this might occur. Reports indicate that it can take anywhere from a couple of days to a couple of weeks after the bite for the infected individual to turn into a zombie.
+		To reduce the risk of infected individuals spreading the virus, a quarantine has been set up to isolate new cases from the rest of the camp.
 		
-		To be safe, you decide to setup a quarantine, where every new infected person can be isolated from anyone else, reducing the chance that they infect other people once they suddenly get a taste of human blood. After setting up the tent and securing everything, you now have a dedicated section of the camp where any new infected patient can stay. 
+		After setting up the tent and securing everything, you now have a dedicated section of the camp where any new infected patient can stay. 
 	"""
 end
 
@@ -419,6 +423,24 @@ if(story_mode)
 		As you wake up to another day of fighting zombies, you receive a call from the main gate. A white van is trying to get in. As soon as you hear this, you rush to the gate. 
 	
 		"We have the cure!!" you hear, and suddenly the whole camp erupts in joy. You finally have a chance to fight off this pandemic. 
+
+		You rush to the headquarter, extatic to announce the wonderful news to Zara and Hans. As you burst into the tent, you find only find Zara, head deep into her hand. 
+		
+			Zara! We got the cure!
+
+		She does not react, and you can hear sobbing.
+		
+			Hans? Hans, we got the cure!
+	
+		No reponse. 
+	
+			- I lost him... I.. We went to gather some supplies from the abandonned warehouse up north and... They showed up out of nowhere... I barely managed to escape
+			But...
+			Oh Hans...
+		She burst into tears. You take Zara into your arms. 
+
+		*If we can find him, we might still be able to cure him*. 
+		
 	"""
 end
 
@@ -466,6 +488,8 @@ if(story_mode)
 		After some debate, you anxiously open the crate to find a large number of steel components. You also find a manual at the top: it's a turret! 
 	
 		The turret is a next-generation plasma beam turret that send orbs of energy. You are now equipped to handle large waves of zombies. The manual indicates that the turret needs a lot of energy to work. With the current supply of energy you have, you can only shoot once every 2 days. 
+
+		*If only Hans was here..., he would absolutly love to put it together.*
 	"""
 end
 
@@ -541,8 +565,26 @@ if(story_mode)
 	md"""
 	---
 	!!! tip "The vaccine has arrived!"
+		You did not sleep very well last night, you could hear that all to familar groan all night and could barely shut an eye. The zombies have now been gathering in increasing numbers around the camp. They know that this is one of the last place where human survivors are.
+	
+		As you painfully try to get out of bed, you hear loud steps approaching your tent. 
 		
-
+			Wake up!!! Wake up!!!
+		Zara stroms in your tent, a bright smile on her face.
+	
+			We got it! We finally got it!
+		You look at her confused, as you try to make sense of the situation. 
+	
+			The vaccine! 
+			We finally have a chance against these damn zombies! The group sent us a whole 
+			crate! 
+			They also improved the cure, we can cure zombies now! 
+			We can save Hans!!
+		The group that developed the cure has managed to develop a vaccine. They extensively tested it and now vaccinated survivors are immune to the deadly bite. 
+	
+		*Could this be the begining of the end for these zombies?*
+		
+		
 	"""
 end
 
@@ -553,7 +595,7 @@ md"# The vaccine model "
 md"""
 Let's introduce a vaccine into the model, we can add a new class that will represent how many vaccinated individuals there are. We can also introduce a new parameter `ν` that indicates the vaccination rate. 
 
-We define the new equation such that only the healthy susceptible humans are able to get a vaccine. We can also upgrade the cure to now be able to cure Zombies and infected in Quarantine.
+We define the new equation such that only the healthy susceptible humans are able to get a vaccine. We'll also upgrade the cure to now be able to cure Zombies and infected in Quarantine.
 """
 
 # ╔═╡ 74955738-33ca-4e6a-bde2-8080b32099c6
@@ -569,7 +611,7 @@ md"## Setup"
 begin
 	vaccine_model_eqs = [
 		D(S) ~ -ν*S - β*S*Z 									 + c*Z + c*Q,
-		D(I) ~  	  β*S*Z  	- ρ*I 			- κ*I 			, 	
+		D(I) ~  	  β*S*Z  	- ρ*I 		- κ*I 			, 	
 		D(V) ~  ν*S,
 		D(Z) ~  	-α*S*Z  + ρ*I 	 + ζ*R                       - c*Z,
 		D(R) ~  	 α*S*Z  		 - ζ*R 			+ γ*Q, 
@@ -606,7 +648,32 @@ if(story_mode)
 	---
 	
 	!!! tip "The End"
-		You made it!
+		Everyone at the camp is now vaccinated. You have started to cure some of the zombies. 
+		You decide to go for the yet another trip outside the camp. After stashing twelve syringes of the miraculous cure and a couple of the vaccine, you head to the gate. After making it out the gate, you start walking on the deserted highway that was once crowded with people. 
+		*This is the one, I will find him this time*
+		You decide to go to the abandoned warehouse, as there always seems to be a new group of zombies around there. As you approach the warehouse, you find a large group of zombies, aimlessly wondering around. You scanned each of them from head to toe. And, finally, you see him. A zombie with a couple blond hair on its head, and the biggest pair of goggles.
+
+			Hans!! It's me!! 
+
+		Unfortunately, he does not react to his name, but you instinctively know that it is him. You approach and he tries to bite you. 
+		*Does not matter, I found him. *
+		The cure in one hand, you pull his arm and inject him with it. Tomorrow, he will be back to normal. 
+		You rush back to the camp, dragging him by the hand, and announce the great news to Zara. She jumps of joy, and you sense a feeling or relief that you have not seen in her since you arrived here. 
+
+		The next day, you go to the quarantine to check up on Hans. After entering the wrong room twice, you find Hans room. He is awake and shows little symptoms of the virus. As you enter, he turns around. At first looking confused but after a couple seconds, his eyes brighten up and rushes towards you. 
+
+			Thank you so much!! The nurse told me that you found me and gave me the cure! 
+
+		As you share with Hans what has happen to the camp over the last few weeks, Zara appears in the room. 
+
+			Hans!
+			I thought I'd never see your little face again.
+			
+		They share a hug, and you all walk back to the centre of the camp. 
+
+		Over the next months, you manage to cure all the remaining zombies that are still roaming in the city. People have started moving out from the camp, trying to restore what was left of their homes. Although the city has lost many of its inhabitant, it has slowly started to reconstruct itself. 
+		
+		The humans have survived the apocalypse. 
 
 	"""
 end
@@ -616,7 +683,7 @@ md"# Conclusion"
 
 # ╔═╡ 92010b6c-f024-44d2-8d19-2f39b35f26f4
 md"""
-Can you think of other way to extend the model?
+Can you think of other ways to extend the model?
 Here's a few ideas:
 
 - The quarantine might not be perfect and zombies might escape, how would the equations change? 
@@ -626,6 +693,13 @@ Here's a few ideas:
 Now you can create your own model to make your own zombie attack model. 
  **(Share you model in the Julia slack!)**
 """
+
+# ╔═╡ 14945142-2a86-43dc-ae4d-92a3270ed725
+md"# Further Reading: 
+
+- [When Zombies Attack!: Mathematical Modelling of an outbreak of zombie infection. Munz et al. (2009) ]( https://pdodds.w3.uvm.edu/files/papers/others/2009/munz2009a.pdf) (This paper highly inspired this notebook and the models were taken from the paper, with some slight modifcations. If you are interested in a proper mathemetical analysis, give it a read!)
+- [ModelingToolkit Documentation (including tutorials)](https://docs.sciml.ai/ModelingToolkit/stable/)
+"
 
 # ╔═╡ fac12d85-045d-4e67-b3e8-d76f9285a297
 md"#  "
@@ -643,7 +717,7 @@ md"# Sliders Setup"
 md"## Initial Values"
 
 # ╔═╡ 1a50274c-f283-4248-9764-973076e0f1a3
-md"### Suceptible"
+md"### Susceptible"
 
 # ╔═╡ c8d9d400-d8fc-4c29-b7c8-f54670eb8317
 md"### Zombie"
@@ -685,22 +759,25 @@ md"### c"
 md"## Interactivity extensions"
 
 # ╔═╡ 19b3047c-6b4d-4e54-a932-1030a31dd713
-@with_kw struct SliderParameter{T} 
-	lb::T = 0.0
-	ub::T = 100.0
-	step::T = 1.0
-	default::T = lb
+"""
+Structure to hold default value for a parameter controlled via a Slider
+"""
+@with_kw struct SliderParameter 
+	lb = 0.0
+	ub = 100.0
+	step = 1.0
+	default = lb
 	description::String = "" 
 	label::String 
 	alias::Symbol = Symbol(label)
-	function SliderParameter{T}(lb::T,ub::T,step::T,default::T, description::String ,label::String, alias::Symbol) where T
+	function SliderParameter(lb,ub,step,default, description::String ,label::String, alias::Symbol) 
 		 if ub < lb error("Invalid Bounds") end 
-		 return new{typeof(default)}(lb,ub,step,default,description,label,alias)
+		 return new(lb,ub,step,default,description,label,alias)
 	end
 end
 
 # ╔═╡ 2a5599e2-77ff-4951-8873-a3bd145b614f
-suceptibleInitSlider = SliderParameter(
+susceptibleInitSlider = SliderParameter(
 			lb 		= 1,
 			ub 	 	= 1000,
 			step 	= 1,
@@ -901,7 +978,7 @@ begin
 		V => 0,
 		Q => 0,
 		I => 0,
-		R => 0, 			
+		R => 0,
 		α => αSlider.default, 
 		β => βSlider.default, 
 		ρ => βSlider.default, 
@@ -915,39 +992,13 @@ begin
 	]
 end;
 
-# ╔═╡ c56afbfc-7536-41cb-9ada-ceba128820c6
-@with_kw struct NumberFieldParameter{T}
-	lb::T = 0
-	ub::T = 100
-	step::T = 1
-	default::T = lb
-	description::String = "" 
-	label::String
-	alias::Symbol = Symbol(label)
-	function NumberFieldParameter(lb,ub,step,default,description, label, alias) 
-		 if ub < lb error("Invalid Bounds") end 
-		 return new{typeof(default)}(lb,ub,step,default,description,label,alias)
-	end
-end
-
-# ╔═╡ d5c4e4fd-c674-4d81-a60c-1c0bd13235a4
-@with_kw struct CheckBoxParameter
-	label::String 
-	default::Bool = false
-	description::String = "" 
-	alias::Symbol = Symbol(label)
-end
-
-# ╔═╡ 308bfa9d-58fd-4411-88ab-ba0675898cac
-@with_kw struct ColorParameter
-	label::String 
-	default::RGB = RGB(0,0,0)
-	description::String = "" 
-	alias::Symbol = Symbol(label)
-end
+# ╔═╡ 5642f007-644b-4696-8daa-9d9d07c8f730
+ SliderParameter(description = "desc1", label = "label1", alias = :alias1, lb = 0, step = 1, ub = 10, default = 2.0)
 
 # ╔═╡ 2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
-function format_sliderParameter(params;title::String = "") 
+"""
+"""
+function format_sliderParameter(params::Vector{SliderParameter};title::String = "") where T 
 	
 	return combine() do Child
 		
@@ -997,7 +1048,7 @@ begin
 	simple_attack_u0s_sliders = @bind simple_attack_u0s format_sliderParameter(
 		title = "Initial Values",
 		[
-			suceptibleInitSlider,
+			susceptibleInitSlider,
 			zombieInitSlider,
 		],
 	)
@@ -1058,7 +1109,7 @@ end;
 # ╔═╡ e5deaa27-54cb-4f48-8f56-b55c3a797dcf
 begin
 	lattent_infection_u0s_sliders = @bind lattent_infection_u0s format_sliderParameter([
-		suceptibleInitSlider,
+		susceptibleInitSlider,
 		zombieInitSlider
 		],
 		title = "Initial Values",
@@ -1113,7 +1164,7 @@ lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params fo
 simple_quarantine_u0s_sliders = @bind simple_quarantine_u0s format_sliderParameter(
 		title = "Initial Values",
 		[
-			suceptibleInitSlider,
+			susceptibleInitSlider,
 			zombieInitSlider
 		],
 	);
@@ -1173,7 +1224,7 @@ end;
 
 # ╔═╡ 00b880d1-3db4-40a6-aff4-03a4900df99d
 treatment_model_u0s_sliders = @bind treatment_model_u0s format_sliderParameter([
-		suceptibleInitSlider,
+		susceptibleInitSlider,
 		zombieInitSlider
 	],
 	title = "Initial Values",
@@ -1233,7 +1284,7 @@ treatment_model_plots_params_sliders = @bind treatment_model_plots_params format
 impulsive_eradication_u0s_sliders = @bind impulsive_eradication_u0s format_sliderParameter(
 	title = "Initial Values",
 	[
-		suceptibleInitSlider,
+		susceptibleInitSlider,
 		zombieInitSlider
 	],
 );
@@ -1293,7 +1344,7 @@ impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_p
 vaccine_model_u0s_sliders = @bind vaccine_model_u0s format_sliderParameter(
 	title = "Initial Values",
 	[
-		suceptibleInitSlider,
+		susceptibleInitSlider,
 		zombieInitSlider
 	],
 );
@@ -1351,81 +1402,8 @@ vaccine_model_plots_params_sliders = @bind vaccine_model_plots_params format_sli
 	]
 );
 
-# ╔═╡ 1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
-function format_numberFieldParameter( params::Vector{NumberFieldParameter{T}};title::String,) where T
-	
-	return combine() do Child
-		
-		mds = [
-			@htl("""
-			<div>
-			<p>$(param.label)
-			</div>
-			<div>
-				$(Child(param.alias, PlutoUI.NumberField(param.lb:param.step:param.ub, default = param.default)) ) 
-			</div>
-			
-			""")
-			for param in params
-		]
-		md"""
-		#### $title
-		$(mds)
-		"""
-	end
-end
-
-# ╔═╡ 31873c6e-2c78-4bb8-8069-ca491f25b077
-function format_checkBoxParameter( params::Vector{CheckBoxParameter};title::String)
-	
-	return combine() do Child
-		
-		mds = [
-			@htl("""
-			<div>
-			<p>$(param.label)
-			</div>
-			<div>
-				$(Child(param.alias, PlutoUI.CheckBox(default=param.default)) ) 
-			</div>
-			
-			""")
-			
-			for param in params
-		]
-		
-		md"""
-		#### $title
-		$(mds)
-		"""
-	end
-end
-
-# ╔═╡ e8f30ca6-0d03-4a8b-a835-c5c1dce56575
-function format_colorPicker( params::Vector{ColorParameter};title::String)
-	
-	return combine() do Child
-		
-		mds = [
-			@htl("""
-			<div>
-			<p>$(param.label)
-			</div>
-			<div>
-				$(Child(param.alias, PlutoUI.ColorPicker(default=param.default))) 
-			</div>
-			
-			""")
-			
-			for param in params
-		]
-		
-		md"""
-		#### $title
-		$(mds)
-		"""
-	end
-end
+# ╔═╡ 4e30ca1a-b147-4d28-9344-d009318ecd35
+format_sliderParameter
 
 # ╔═╡ 411354b2-f9b7-46cc-9fe2-358f2d691dfe
 function createSliderGroup(sliders, extraSliders)
@@ -1563,10 +1541,10 @@ function solutionAnalytics(sol::ODESolution)
 	
 
 	lastDayIndex = findfirst(x -> x<=1, sol[:S])
-	daysSurvived = (lastDayIndex == nothing) ? round(Int, sol[:t][end]) : round(Int, sol[:t][lastDayIndex])
+	daysSurvived = isnothing(lastDayIndex) ? round(Int, sol[:t][end]) : round(Int, sol[:t][lastDayIndex])
 	
 	
-	daysAllZombies = (daysAllZombiesIndex == nothing) ? "Not reached yet " : round(Int, sol[:t][daysAllZombiesIndex])
+	daysAllZombies = isnothing(daysAllZombiesIndex) ? "Not reached yet " : round(Int, sol[:t][daysAllZombiesIndex])
 
 	@htl("""
 		<div class="analytics-card"> 
@@ -1818,6 +1796,9 @@ end
 
 # ╔═╡ 813fc6b1-460a-49cb-9ae5-909e38e18e71
 md"## Packages"
+
+# ╔═╡ ec9ba203-29a8-4fdb-a902-b7f5542adc05
+
 
 # ╔═╡ 88f8f2b8-6ea5-4bcc-8026-70a760873033
 md"## CSS"
@@ -2094,9 +2075,9 @@ version = "7.5.1"
 
 [[ArrayLayouts]]
 deps = ["FillArrays", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "b08a4043e1c14096ef8efe4dd97e07de5cacf240"
+git-tree-sha1 = "a45ec4acc9d905f94b47243cff666820bb107789"
 uuid = "4c555306-a7a7-4459-81d9-ec55ddd5c99a"
-version = "1.4.5"
+version = "1.5.2"
 
 [[Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -3235,9 +3216,9 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[Random123]]
 deps = ["Random", "RandomNumbers"]
-git-tree-sha1 = "552f30e847641591ba3f39fd1bed559b9deb0ef3"
+git-tree-sha1 = "c860e84651f58ce240dd79e5d9e055d55234c35a"
 uuid = "74087812-796a-5b5d-8853-05524746bad3"
-version = "1.6.1"
+version = "1.6.2"
 
 [[RandomExtensions]]
 deps = ["Random", "SparseArrays"]
@@ -3918,6 +3899,8 @@ version = "1.4.1+1"
 # ╟─cc1a1a9a-7a45-4231-8471-0fb90b994357
 # ╟─ddcea9d8-abc0-40a3-8740-fa0cd29b0b0e
 # ╟─4c3f3770-ef33-41a5-89a6-274101b06c87
+# ╟─71baff78-d298-4c6a-99d5-6b65c1c27e6f
+# ╟─70547a7e-c357-4787-9c34-d2789bb60860
 # ╟─77d94a92-f058-4b9f-9df8-9de58603c293
 # ╟─e0581cf3-f942-45a6-bcf2-9e72ba2379a4
 # ╟─28def719-c8e2-43d6-b20e-6141e423add2
@@ -3999,7 +3982,7 @@ version = "1.4.1+1"
 # ╟─aee9374d-fefc-409b-99f0-67de38071f52
 # ╟─f7e79c80-1da8-4b95-9447-6107a9e8f2df
 # ╠═edd1f38c-60a9-4dee-afe1-c674907a652c
-# ╠═7f08a0fa-7cec-4a76-81ec-1076243ed670
+# ╟─7f08a0fa-7cec-4a76-81ec-1076243ed670
 # ╠═59a77cd5-35de-4e27-9539-43f0d6c791ac
 # ╟─9eecf8d1-9e97-4965-92b8-510646bfe273
 # ╟─4c4cd287-71d4-4845-b466-3d135610858b
@@ -4036,6 +4019,7 @@ version = "1.4.1+1"
 # ╟─427d7fd4-af60-4b3b-9d43-3cc6511e281d
 # ╟─a7819b3e-6929-4d97-8860-b5eeb0c4d39a
 # ╟─92010b6c-f024-44d2-8d19-2f39b35f26f4
+# ╟─14945142-2a86-43dc-ae4d-92a3270ed725
 # ╟─fac12d85-045d-4e67-b3e8-d76f9285a297
 # ╟─e2ce7fa8-83d6-4fa0-9c42-6148c7884b96
 # ╟─6b4feee8-f8bb-4639-a423-97e7ab82cad0
@@ -4066,15 +4050,11 @@ version = "1.4.1+1"
 # ╟─7df920cf-b634-40c9-913a-bc26732f486e
 # ╟─2555bbc3-8b71-4fdd-9daa-9c263502eddf
 # ╟─89b55225-e4df-4be3-a34e-e0fe31c1ba0a
-# ╟─f440930e-c68f-40ee-8d1b-cc510400e872
-# ╟─19b3047c-6b4d-4e54-a932-1030a31dd713
-# ╟─c56afbfc-7536-41cb-9ada-ceba128820c6
-# ╟─d5c4e4fd-c674-4d81-a60c-1c0bd13235a4
-# ╟─308bfa9d-58fd-4411-88ab-ba0675898cac
-# ╟─2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
-# ╟─1b4f97eb-69bb-4cfb-a3b5-8413cee7d2cc
-# ╟─31873c6e-2c78-4bb8-8069-ca491f25b077
-# ╟─e8f30ca6-0d03-4a8b-a835-c5c1dce56575
+# ╠═f440930e-c68f-40ee-8d1b-cc510400e872
+# ╠═19b3047c-6b4d-4e54-a932-1030a31dd713
+# ╠═4e30ca1a-b147-4d28-9344-d009318ecd35
+# ╠═5642f007-644b-4696-8daa-9d9d07c8f730
+# ╠═2c33a46c-6024-4a55-a7a5-5b7838cd4c9d
 # ╟─411354b2-f9b7-46cc-9fe2-358f2d691dfe
 # ╟─491f715e-048f-4bc4-b62b-9d9f622d835b
 # ╟─230a4e8a-6eb7-4b0a-84a7-c86019060062
@@ -4082,7 +4062,8 @@ version = "1.4.1+1"
 # ╟─813fc6b1-460a-49cb-9ae5-909e38e18e71
 # ╟─00edd691-2b60-4d1d-b5e2-2fd4675469da
 # ╟─7a937f2c-5808-4756-9bfc-6f84b0f03cc9
+# ╠═ec9ba203-29a8-4fdb-a902-b7f5542adc05
 # ╟─88f8f2b8-6ea5-4bcc-8026-70a760873033
-# ╠═929793eb-4409-46d9-85be-98f1b98d8839
+# ╟─929793eb-4409-46d9-85be-98f1b98d8839
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
