@@ -107,17 +107,31 @@ fonsi (2020)"""
 # ╔═╡ ab083f08-b0c0-11ea-0c23-315c14607f1f
 md"# 🐢 definition"
 
+# ╔═╡ 6548d8fe-4246-48ba-b7e7-8b5dd8a6be04
+
+
 # ╔═╡ 310a0c52-b0bf-11ea-3e32-69d685f2f45e
 Drawing = Vector{String}
 
 # ╔═╡ 6bbb674c-b0ba-11ea-2ff7-ebcde6573d5b
-Base.@kwdef mutable struct Turtle
-	pos::Tuple{Number, Number}
-	heading::Number
-	pen_down::Bool = true
-	color::String = "black"
-	history_svg::Drawing = String[]
-	history_actions::Vector{Tuple{String,Any}} = Tuple{String,Any}[]
+begin
+	Base.@kwdef mutable struct Turtle
+		pos::Tuple{Float64, Float64}
+		initial_pos::Tuple{Float64, Float64}
+		heading::Float64
+		initial_heading::Float64
+		pen_down::Bool = true
+		color::String = "black"
+		history_svg::Drawing = String[]
+		history_actions::Vector{Tuple{String,Any}} = Tuple{String,Any}[]
+	end
+	
+	Turtle(pos::Tuple{Number, Number}, heading::Number; kwargs...) = Turtle(;
+		pos, heading,
+		initial_pos=pos,
+		initial_heading=heading,
+		kwargs...
+	)
 end
 
 # ╔═╡ 5560ed36-b0c0-11ea-0104-49c31d171422
@@ -254,6 +268,13 @@ function lindenmayer(turtle, depth, angle, tilt, base)
 	end
 end
 
+# ╔═╡ 358cb837-a2d1-4b67-a1d4-aa6f62126c89
+map([1,2,3,4,5,100,5000]) do i
+	d = 1.0 / sqrt(i)
+	l=d*i
+	(;i,d,l )
+end
+
 # ╔═╡ 5aea06d4-b0c0-11ea-19f5-054b02e17675
 md"## Function to make turtle drawings with"
 
@@ -267,15 +288,87 @@ make_svg(🐢::Turtle; background="white") = """<svg version="1.1"
 
 # ╔═╡ 6dbce38e-b0bc-11ea-1126-a13e0d575339
 function turtle_drawing(f::Function; background="white")
-	🐢 = Turtle(pos=(150, 150), heading=pi*3/2)
+	🐢 = Turtle((150, 150), pi*3/2)
 	
 	f(🐢)
 	
 	return PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background))
 end
 
+# ╔═╡ 329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+function turtle_drawing_cool(f::Function; background="white")
+	🐢 = Turtle((150, 150), pi*3/2)
+	
+	f(🐢)
+
+	step_delay = 1.0 / sqrt(length(🐢.history_actions))
+	
+	PlutoUI.ExperimentalLayout.Div([
+		PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background)),
+		@htl("""
+		<script>
+		const _x = $(rand())
+		const history = $(🐢.history_actions)
+		const wrapper = currentScript.closest(".turtle-wrapper")
+		const img = wrapper.firstElementChild
+
+		const div = document.createElement("div")
+		div.style.cssText = `position: absolute; left: 0; top: 0;`
+		const turtle_image = document.createElement("pl-turtle-image")
+		turtle_image.innerText = `🐢`
+		turtle_image.style.cssText = `display: block; transform: translate(-50%, -50%) rotate(.5turn);`
+
+		const turtle = document.createElement("pl-turtle")
+		turtle.style.cssText = `display: block; transition: transform \${$(step_delay)}s ease-in-out; transform-origin: top left;`
+		
+		turtle.appendChild(turtle_image)
+		div.appendChild(turtle)
+
+		let current_pos = $(🐢.initial_pos)
+		let current_heading = $(🐢.initial_heading)
+
+		
+		let set_turtle_pos = (pos, heading) => {
+			current_pos = pos
+			current_heading = heading
+
+			turtle.style.transform = `translate(\${pos[0]}px, \${pos[1]}px) rotate(\${heading}rad)`
+		}
+
+		set_turtle_pos($(🐢.initial_pos), $(🐢.initial_heading))
+
+		const running = {current: true}
+		invalidation.then(() => {
+			running.current = false
+		})
+
+		let take_step = (action, arg) => {
+			if(action === "move") {
+				set_turtle_pos(arg, current_heading)
+			} else if(action === "turn") {
+				set_turtle_pos(current_pos, arg)
+			}
+		}
+
+		let current_step = -1
+		let step = () => {
+			current_step += 1
+			if(current_step < history.length && running.current) {
+				take_step(...history[current_step])
+				setTimeout(step, 1000 * $(step_delay))
+			}
+		}
+
+		setTimeout(step, 1000)
+
+		return div
+		</script>
+		""")
+	]; class="turtle-wrapper", style="position: relative;")
+end
+
 # ╔═╡ e18d7225-5a06-4fbc-b836-17798c0eb198
-turtle_drawing() do t
+turtle_drawing_cool() do t
 
 	# take 5 steps
 	forward!(t, 5)
@@ -289,7 +382,7 @@ turtle_drawing() do t
 end
 
 # ╔═╡ 448dc68d-cd0a-4491-82ad-0e7cc00782ad
-turtle_drawing() do t
+turtle_drawing_cool() do t
 
 	color!(t, "red")
 	forward!(t, 5)
@@ -302,7 +395,7 @@ turtle_drawing() do t
 end
 
 # ╔═╡ 9dc072fe-b3db-11ea-1568-857a664ce4d2
-starry_night = turtle_drawing(background = "#000088") do t
+starry_night = turtle_drawing_cool(background = "#000088") do t
 	star_count = 100
 	
 	color!(t, "yellow")
@@ -323,7 +416,7 @@ starry_night = turtle_drawing(background = "#000088") do t
 end
 
 # ╔═╡ e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
-mondriaan = turtle_drawing() do t	
+mondriaan = turtle_drawing_cool() do t	
 	GO_mondriaan
 	size = 30
 	
@@ -347,7 +440,7 @@ mondriaan = turtle_drawing() do t
 end
 
 # ╔═╡ 60b52a52-b3eb-11ea-2e3c-9d185f4fbc2b
-fractal = turtle_drawing() do t
+fractal = turtle_drawing_cool() do t
 	penup!(t)
 	backward!(t, 15)
 	pendown!(t)
@@ -355,49 +448,13 @@ fractal = turtle_drawing() do t
 end
 
 # ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
-turtle_drawing() do t
+turtle_drawing_cool() do t
 	
 	for i in 0:.1:10
 		right!(t, angle)
 		forward!(t, i)
 	end
 	
-end
-
-# ╔═╡ 329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
-function turtle_drawing_cool(f::Function; background="white")
-	🐢 = Turtle(pos=(150, 150), heading=pi*3/2)
-	
-	f(🐢)
-	
-	PlutoUI.ExperimentalLayout.Div([
-		PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background)),
-		@htl("""
-		<script>
-		const _x = $(rand())
-		const history = $(🐢.history_actions)
-		const wrapper = currentScript.closest(".turtle-wrapper")
-		const img = wrapper.firstElementChild
-
-		console.log({history})
-
-		const div = document.createElement("div")
-		div.style.cssText = `position: absolute; left: 0; top: 0;`
-		const turtle_image = document.createElement("pl-turtle-image")
-		turtle_image.innerText = `🐢`
-		turtle_image.style.cssText = `display: block; transform: translate(-50%, -50%);`
-
-		const turtle = document.createElement("pl-turtle")
-		turtle.style.cssText = `transition: transform .3s ease-in-out;`
-		
-		turtle.appendChild(turtle_image)
-		div.appendChild(turtle)
-		
-
-		return div
-		</script>
-		""")
-	]; class="turtle-wrapper")
 end
 
 # ╔═╡ fc08d52f-91fb-47d4-9122-d45a287c0e7f
@@ -407,6 +464,8 @@ turtle_drawing_cool() do t
 	forward!(t, 5)
 
 	# turn right, 90 degrees
+	right!(t, 90)
+	right!(t, 90)
 	right!(t, 90)
 
 	# take 10 steps
@@ -709,7 +768,7 @@ version = "17.4.0+2"
 # ╟─d88440c2-b3dc-11ea-1944-0ba4a566d7c1
 # ╟─5d345ae8-f03a-11ea-1c2d-03f66115b590
 # ╟─b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
-# ╟─e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
+# ╠═e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
 # ╟─678850cc-b3e4-11ea-3cf0-a3445a3ac15a
 # ╟─cd442606-f03a-11ea-3d53-57e83c8cdb1f
 # ╟─4c1bcc58-b3ec-11ea-32d1-7f4cd113e43d
@@ -719,9 +778,10 @@ version = "17.4.0+2"
 # ╟─d1ae2696-b3eb-11ea-2fcc-07b842217994
 # ╟─f132f376-f03a-11ea-33e2-775fc026faca
 # ╟─70160fec-b0c7-11ea-0c2a-35418346592e
-# ╟─d30c8f2a-b0bf-11ea-0557-19bb61118644
+# ╠═d30c8f2a-b0bf-11ea-0557-19bb61118644
 # ╟─ab083f08-b0c0-11ea-0c23-315c14607f1f
 # ╠═6bbb674c-b0ba-11ea-2ff7-ebcde6573d5b
+# ╠═6548d8fe-4246-48ba-b7e7-8b5dd8a6be04
 # ╠═310a0c52-b0bf-11ea-3e32-69d685f2f45e
 # ╟─5560ed36-b0c0-11ea-0104-49c31d171422
 # ╠═e6c7e5be-b0bf-11ea-1f7e-73b9aae14382
@@ -731,6 +791,7 @@ version = "17.4.0+2"
 # ╠═1fb880a8-b3de-11ea-3181-478755ad354e
 # ╠═4c173318-b3de-11ea-2d4c-49dab9fa3877
 # ╠═2e7c8462-b3e2-11ea-1e41-a7085e012bb2
+# ╠═358cb837-a2d1-4b67-a1d4-aa6f62126c89
 # ╟─5aea06d4-b0c0-11ea-19f5-054b02e17675
 # ╠═6dbce38e-b0bc-11ea-1126-a13e0d575339
 # ╠═329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
