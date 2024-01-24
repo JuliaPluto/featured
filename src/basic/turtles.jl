@@ -24,6 +24,12 @@ end
 # ╔═╡ e814a124-f038-11ea-3b22-f109c99dbe03
 using PlutoUI
 
+# ╔═╡ 1cca3d6d-a40a-455c-84d3-dec04f0b496a
+using AbstractPlutoDingetjes
+
+# ╔═╡ 0786bcb6-d782-4d45-abc1-fdf8cb064ca7
+using HypertextLiteral
+
 # ╔═╡ 27d2fe04-a582-48f7-8d21-e2db7775f2c2
 md"""
 # Turtle drawing!
@@ -40,6 +46,8 @@ turtle_drawing() do t
 
 end
 ```
+
+This code creates an empty drawing, with a turtle `t` in the middle.
 
 Let's make our first drawing. 
 """
@@ -103,12 +111,13 @@ md"# 🐢 definition"
 Drawing = Vector{String}
 
 # ╔═╡ 6bbb674c-b0ba-11ea-2ff7-ebcde6573d5b
-mutable struct Turtle
+Base.@kwdef mutable struct Turtle
 	pos::Tuple{Number, Number}
 	heading::Number
-	pen_down::Bool
-	color::String
-	history::Drawing
+	pen_down::Bool = true
+	color::String = "black"
+	history_svg::Drawing = String[]
+	history_actions::Vector{Tuple{String,Any}} = Tuple{String,Any}[]
 end
 
 # ╔═╡ 5560ed36-b0c0-11ea-0104-49c31d171422
@@ -118,8 +127,9 @@ md"## Turtle commands"
 function forward!(🐢::Turtle, distance::Number)
 	old_pos = 🐢.pos
 	new_pos = 🐢.pos = old_pos .+ (10distance .* (cos(🐢.heading), sin(🐢.heading)))
+	push!(🐢.history_actions, ("move", new_pos))
 	if 🐢.pen_down
-		push!(🐢.history, """<line x1="$(old_pos[1])" y1="$(old_pos[2])" x2="$(new_pos[1])" y2="$(new_pos[2])" stroke="$(🐢.color)" stroke-width="4" />""")
+		push!(🐢.history_svg, """<line x1="$(old_pos[1])" y1="$(old_pos[2])" x2="$(new_pos[1])" y2="$(new_pos[2])" stroke="$(🐢.color)" stroke-width="4" />""")
 	end
 	🐢
 end
@@ -130,6 +140,8 @@ backward!(🐢::Turtle, by::Number) = forward!(🐢, -by)
 # ╔═╡ fc44503a-b0bf-11ea-0f28-510784847241
 function right!(🐢::Turtle, angle_degrees::Number)
 	🐢.heading += angle_degrees * pi / 180
+	push!(🐢.history_actions, ("turn", 🐢.heading))
+	🐢
 end
 
 # ╔═╡ d88440c2-b3dc-11ea-1944-0ba4a566d7c1
@@ -144,19 +156,21 @@ end
 # ╔═╡ 47907302-b0c0-11ea-0b27-b5cd2b4720d8
 left!(🐢::Turtle, angle::Number) = right!(🐢, -angle)
 
-# ╔═╡ 1fb880a8-b3de-11ea-3181-478755ad354e
-function penup!(🐢::Turtle)
-	🐢.pen_down = false
+# ╔═╡ 4c173318-b3de-11ea-2d4c-49dab9fa3877
+function pendown!(🐢::Turtle, value::Bool=true)
+	🐢.pen_down = value
+	push!(🐢.history_actions, ("pendown", value))
+	🐢
 end
 
-# ╔═╡ 4c173318-b3de-11ea-2d4c-49dab9fa3877
-function pendown!(🐢::Turtle)
-	🐢.pen_down = true
-end
+# ╔═╡ 1fb880a8-b3de-11ea-3181-478755ad354e
+penup!(🐢::Turtle, value::Bool=true) = pendown!(🐢, !value)
 
 # ╔═╡ 2e7c8462-b3e2-11ea-1e41-a7085e012bb2
-function color!(🐢::Turtle, color::AbstractString)
+function color!(🐢::Turtle, color::AbstractString="black")
 	🐢.color = color
+	push!(🐢.history_actions, ("color", color))
+	🐢
 end
 
 # ╔═╡ 678850cc-b3e4-11ea-3cf0-a3445a3ac15a
@@ -243,19 +257,21 @@ end
 # ╔═╡ 5aea06d4-b0c0-11ea-19f5-054b02e17675
 md"## Function to make turtle drawings with"
 
-# ╔═╡ 6dbce38e-b0bc-11ea-1126-a13e0d575339
-function turtle_drawing(f::Function; background="white")
-	🐢 = Turtle((150, 150), pi*3/2, true, "black", String[])
-	
-	f(🐢)
-	
-	image = """<svg version="1.1"
+# ╔═╡ 5030944f-efec-4226-9511-95ae3a4c179d
+make_svg(🐢::Turtle; background="white") = """<svg version="1.1"
      baseProfile="full"
      width="300" height="300"
      xmlns="http://www.w3.org/2000/svg">
-  <rect width="300" height="300" rx="10" fill="$(background)"  />
-	""" * join(🐢.history) * "</svg>"
-	return PlutoUI.Show(MIME"image/svg+xml"(), image)
+  <rect width="300" height="300" rx="10" fill="$(background)"  />$(
+	join(🐢.history_svg))</svg>"""
+
+# ╔═╡ 6dbce38e-b0bc-11ea-1126-a13e0d575339
+function turtle_drawing(f::Function; background="white")
+	🐢 = Turtle(pos=(150, 150), heading=pi*3/2)
+	
+	f(🐢)
+	
+	return PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background))
 end
 
 # ╔═╡ e18d7225-5a06-4fbc-b836-17798c0eb198
@@ -348,12 +364,66 @@ turtle_drawing() do t
 	
 end
 
+# ╔═╡ 329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+function turtle_drawing_cool(f::Function; background="white")
+	🐢 = Turtle(pos=(150, 150), heading=pi*3/2)
+	
+	f(🐢)
+	
+	PlutoUI.ExperimentalLayout.Div([
+		PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background)),
+		@htl("""
+		<script>
+		const _x = $(rand())
+		const history = $(🐢.history_actions)
+		const wrapper = currentScript.closest(".turtle-wrapper")
+		const img = wrapper.firstElementChild
+
+		console.log({history})
+
+		const div = document.createElement("div")
+		div.style.cssText = `position: absolute; left: 0; top: 0;`
+		const turtle_image = document.createElement("pl-turtle-image")
+		turtle_image.innerText = `🐢`
+		turtle_image.style.cssText = `display: block; transform: translate(-50%, -50%);`
+
+		const turtle = document.createElement("pl-turtle")
+		turtle.style.cssText = `transition: transform .3s ease-in-out;`
+		
+		turtle.appendChild(turtle_image)
+		div.appendChild(turtle)
+		
+
+		return div
+		</script>
+		""")
+	]; class="turtle-wrapper")
+end
+
+# ╔═╡ fc08d52f-91fb-47d4-9122-d45a287c0e7f
+turtle_drawing_cool() do t
+
+	# take 5 steps
+	forward!(t, 5)
+
+	# turn right, 90 degrees
+	right!(t, 90)
+
+	# take 10 steps
+	forward!(t, 10)
+
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+AbstractPlutoDingetjes = "6e696c72-6542-2067-7265-42206c756150"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
+AbstractPlutoDingetjes = "~1.2.3"
+HypertextLiteral = "~0.9.5"
 PlutoUI = "~0.7.55"
 """
 
@@ -363,7 +433,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "f64cdffc70331b0a2f407efefd54fd84eb680773"
+project_hash = "b36394a07f173aec47b6b925bd0067c5776e6b1c"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -663,5 +733,10 @@ version = "17.4.0+2"
 # ╠═2e7c8462-b3e2-11ea-1e41-a7085e012bb2
 # ╟─5aea06d4-b0c0-11ea-19f5-054b02e17675
 # ╠═6dbce38e-b0bc-11ea-1126-a13e0d575339
+# ╠═329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+# ╠═5030944f-efec-4226-9511-95ae3a4c179d
+# ╠═1cca3d6d-a40a-455c-84d3-dec04f0b496a
+# ╠═0786bcb6-d782-4d45-abc1-fdf8cb064ca7
+# ╠═fc08d52f-91fb-47d4-9122-d45a287c0e7f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
