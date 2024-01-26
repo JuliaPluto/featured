@@ -84,6 +84,11 @@ Piet Mondriaan (1913)"""
 # ╔═╡ b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
 @bind GO_mondriaan CounterButton("Another one!")
 
+# ╔═╡ a255402c-d719-41fc-babc-7988a9aa5421
+md"""
+It's like 3D printing!!
+"""
+
 # ╔═╡ cd442606-f03a-11ea-3d53-57e83c8cdb1f
 md"""## "_Een Boom_"
 Luka van der Plas (2020)"""
@@ -107,9 +112,6 @@ fonsi (2020)"""
 # ╔═╡ ab083f08-b0c0-11ea-0c23-315c14607f1f
 md"# 🐢 definition"
 
-# ╔═╡ 6548d8fe-4246-48ba-b7e7-8b5dd8a6be04
-
-
 # ╔═╡ 310a0c52-b0bf-11ea-3e32-69d685f2f45e
 Drawing = Vector{String}
 
@@ -123,7 +125,7 @@ begin
 		pen_down::Bool = true
 		color::String = "black"
 		history_svg::Drawing = String[]
-		history_actions::Vector{Tuple{String,Any}} = Tuple{String,Any}[]
+		history_actions::Vector{Tuple{UInt8,Any}} = Tuple{UInt8,Any}[]
 	end
 	
 	Turtle(pos::Tuple{Number, Number}, heading::Number; kwargs...) = Turtle(;
@@ -141,7 +143,7 @@ md"## Turtle commands"
 function forward!(🐢::Turtle, distance::Number)
 	old_pos = 🐢.pos
 	new_pos = 🐢.pos = old_pos .+ (10distance .* (cos(🐢.heading), sin(🐢.heading)))
-	push!(🐢.history_actions, ("move", new_pos))
+	push!(🐢.history_actions, (UInt8(0), Int64.(floor.(new_pos))))
 	if 🐢.pen_down
 		push!(🐢.history_svg, """<line x1="$(old_pos[1])" y1="$(old_pos[2])" x2="$(new_pos[1])" y2="$(new_pos[2])" stroke="$(🐢.color)" stroke-width="4" />""")
 	end
@@ -154,7 +156,7 @@ backward!(🐢::Turtle, by::Number) = forward!(🐢, -by)
 # ╔═╡ fc44503a-b0bf-11ea-0f28-510784847241
 function right!(🐢::Turtle, angle_degrees::Number)
 	🐢.heading += angle_degrees * pi / 180
-	push!(🐢.history_actions, ("turn", 🐢.heading))
+	push!(🐢.history_actions, (UInt8(1), Int64(floor(🐢.heading * 180 / pi))))
 	🐢
 end
 
@@ -173,7 +175,7 @@ left!(🐢::Turtle, angle::Number) = right!(🐢, -angle)
 # ╔═╡ 4c173318-b3de-11ea-2d4c-49dab9fa3877
 function pendown!(🐢::Turtle, value::Bool=true)
 	🐢.pen_down = value
-	push!(🐢.history_actions, ("pendown", value))
+	push!(🐢.history_actions, (UInt8(2), value))
 	🐢
 end
 
@@ -183,7 +185,7 @@ penup!(🐢::Turtle, value::Bool=true) = pendown!(🐢, !value)
 # ╔═╡ 2e7c8462-b3e2-11ea-1e41-a7085e012bb2
 function color!(🐢::Turtle, color::AbstractString="black")
 	🐢.color = color
-	push!(🐢.history_actions, ("color", color))
+	push!(🐢.history_actions, (UInt8(3), color))
 	🐢
 end
 
@@ -283,11 +285,11 @@ make_svg(🐢::Turtle; background="white") = """<svg version="1.1"
      baseProfile="full"
      width="300" height="300"
      xmlns="http://www.w3.org/2000/svg">
-  <rect width="300" height="300" rx="10" fill="$(background)"  />$(
+  <rect width="300" height="300" rx="10" fill="$(background)" />$(
 	join(🐢.history_svg))</svg>"""
 
 # ╔═╡ 6dbce38e-b0bc-11ea-1126-a13e0d575339
-function turtle_drawing(f::Function; background="white")
+function turtle_drawing_fast(f::Function; background="white")
 	🐢 = Turtle((150, 150), pi*3/2)
 	
 	f(🐢)
@@ -295,107 +297,8 @@ function turtle_drawing(f::Function; background="white")
 	return PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background))
 end
 
-# ╔═╡ 329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
-function turtle_drawing_cool(f::Function; background="white")
-	🐢 = Turtle((150, 150), pi*3/2)
-	
-	f(🐢)
-
-	step_delay = 1.0 / sqrt(length(🐢.history_actions))
-	
-	PlutoUI.ExperimentalLayout.Div([
-		PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background)),
-		@htl("""
-		<script>
-		const _x = $(rand())
-		const history = $(🐢.history_actions)
-		const wrapper = currentScript.closest(".turtle-wrapper")
-		const img = wrapper.firstElementChild
-
-		const div = document.createElement("div")
-		div.style.cssText = `position: absolute; left: 0; top: 0;`
-		const turtle_image = document.createElement("pl-turtle-image")
-		turtle_image.innerText = `🐢`
-		turtle_image.style.cssText = `display: block; transform: translate(-50%, -50%) rotate(.5turn);`
-
-		const turtle = document.createElement("pl-turtle")
-		turtle.style.cssText = `display: block; transition: transform \${$(step_delay)}s ease-in-out; transform-origin: top left;`
-		
-		turtle.appendChild(turtle_image)
-		div.appendChild(turtle)
-
-		let current_pos = $(🐢.initial_pos)
-		let current_heading = $(🐢.initial_heading)
-
-		
-		let set_turtle_pos = (pos, heading) => {
-			current_pos = pos
-			current_heading = heading
-
-			turtle.style.transform = `translate(\${pos[0]}px, \${pos[1]}px) rotate(\${heading}rad)`
-		}
-
-		set_turtle_pos($(🐢.initial_pos), $(🐢.initial_heading))
-
-		const running = {current: true}
-		invalidation.then(() => {
-			running.current = false
-		})
-
-		let take_step = (action, arg) => {
-			if(action === "move") {
-				set_turtle_pos(arg, current_heading)
-			} else if(action === "turn") {
-				set_turtle_pos(current_pos, arg)
-			}
-		}
-
-		let current_step = -1
-		let step = () => {
-			current_step += 1
-			if(current_step < history.length && running.current) {
-				take_step(...history[current_step])
-				setTimeout(step, 1000 * $(step_delay))
-			}
-		}
-
-		setTimeout(step, 1000)
-
-		return div
-		</script>
-		""")
-	]; class="turtle-wrapper", style="position: relative;")
-end
-
-# ╔═╡ e18d7225-5a06-4fbc-b836-17798c0eb198
-turtle_drawing_cool() do t
-
-	# take 5 steps
-	forward!(t, 5)
-
-	# turn right, 90 degrees
-	right!(t, 90)
-
-	# take 10 steps
-	forward!(t, 10)
-
-end
-
-# ╔═╡ 448dc68d-cd0a-4491-82ad-0e7cc00782ad
-turtle_drawing_cool() do t
-
-	color!(t, "red")
-	forward!(t, 5)
-
-	right!(t, 90)
-
-	color!(t, "pink")
-	forward!(t, 10)
-
-end
-
 # ╔═╡ 9dc072fe-b3db-11ea-1568-857a664ce4d2
-starry_night = turtle_drawing_cool(background = "#000088") do t
+starry_night = turtle_drawing_fast(background = "#000088") do t
 	star_count = 100
 	
 	color!(t, "yellow")
@@ -416,7 +319,7 @@ starry_night = turtle_drawing_cool(background = "#000088") do t
 end
 
 # ╔═╡ e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
-mondriaan = turtle_drawing_cool() do t	
+mondriaan = turtle_drawing_fast() do t	
 	GO_mondriaan
 	size = 30
 	
@@ -440,15 +343,168 @@ mondriaan = turtle_drawing_cool() do t
 end
 
 # ╔═╡ 60b52a52-b3eb-11ea-2e3c-9d185f4fbc2b
-fractal = turtle_drawing_cool() do t
+fractal = turtle_drawing_fast() do t
 	penup!(t)
 	backward!(t, 15)
 	pendown!(t)
 	lindenmayer(t, 0, fractal_angle, fractal_tilt, fractal_base)
 end
 
+# ╔═╡ 329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+function turtle_drawing(f::Function; background="white")
+	🐢 = Turtle((150, 150), pi*3/2)
+	
+	f(🐢)
+
+	step_delay = 1.0 / sqrt(length(🐢.history_actions))
+	
+	PlutoUI.ExperimentalLayout.Div([
+		PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background)),
+		@htl("""
+		<script>
+		const _x = $(rand())
+		const history = $(identity(🐢.history_actions))
+		const wrapper = currentScript.closest(".turtle-wrapper")
+		const img = wrapper.firstElementChild
+
+		const div = document.createElement("div")
+		div.style.cssText = `
+			position: absolute; 
+			left: 0; 
+			top: 0;
+		`
+		const turtle_image = document.createElement("pl-turtle-image")
+		turtle_image.innerText = `🐢`
+		turtle_image.style.cssText = `
+			display: block; 
+			transform: translate(-50%, -50%) rotate(.5turn);
+		`
+
+		const turtle = document.createElement("pl-turtle")
+		turtle.style.cssText = `
+			display: block; 
+			opacity: 0;
+			transition: 
+				transform \${$(step_delay)}s ease-in-out,
+				opacity \${$(step_delay)}s ease-in-out; 
+			transform-origin: top left;
+		`
+		
+		turtle.appendChild(turtle_image)
+		div.appendChild(turtle)
+
+		let svg_data = null
+		const stop_promise = invalidation.then(_x => null)
+		let current_blob_url = null
+		const blur_future_steps = (current_line_index) => {
+			Promise.race([stop_promise, svg_data]).then(txt => {
+				if(txt != null) {
+					let i = 0
+					let new_img = txt.replaceAll(`<line`, () =>  
+						i++ <= current_line_index ? `<line` : `<line opacity=".2"`
+					)
+					let old_url = current_blob_url
+					current_blob_url = URL.createObjectURL(new Blob([new_img], { type: `image/svg+xml` }))
+					img.src = current_blob_url
+					if(old_url != null) 
+						URL.revokeObjectURL(old_url)
+				}
+			})
+		}
+		invalidation.then(() => {
+			if(current_blob_url != null) 
+						URL.revokeObjectURL(current_blob_url)
+		})
+
+		let current_pos = $(🐢.initial_pos)
+		let current_heading = $(🐢.initial_heading * 180 / pi)
+		
+		let set_turtle_pos = (pos, heading) => {
+			current_pos = pos
+			current_heading = heading
+			turtle.style.transform = `translate(\${pos[0]}px, \${pos[1]}px) rotate(\${heading}deg)`
+		}
+
+		set_turtle_pos($(🐢.initial_pos), $(🐢.initial_heading * 180 / pi))
+
+		const running = {current: true}
+		invalidation.then(() => {
+			running.current = false
+		})
+
+		let current_num_lines = -1
+		let current_pendown = true
+		let take_step = (action, arg) => {
+			if(action === 0) {
+				if(current_pendown) {
+					current_num_lines += 1
+					blur_future_steps(current_num_lines)
+				}
+				set_turtle_pos(arg, current_heading)
+			} else if(action === 1) {
+				set_turtle_pos(current_pos, arg)
+			} else if(action === 2) {
+				current_pendown = arg
+			}
+		}
+
+		let current_step = -1
+		let step = () => {
+			current_step += 1
+			if(current_step < history.length && running.current) {
+				take_step(...history[current_step])
+				setTimeout(step, 1000 * $(step_delay))
+			}
+		}
+
+		const delayed = (f, delay) => {
+			const ref = setTimeout(f, delay)
+			invalidation.then(() => clearTimeout(ref))
+		}
+
+		delayed(() => {
+			svg_data = fetch(img.src).then(r => r.text())
+
+			turtle.style.opacity = "1"
+			blur_future_steps(-1)
+			delayed(step, 800)
+		}, 800)
+
+		return div
+		</script>
+		""")
+	]; class="turtle-wrapper", style="position: relative;")
+end
+
+# ╔═╡ e18d7225-5a06-4fbc-b836-17798c0eb198
+turtle_drawing() do t
+
+	# take 5 steps
+	forward!(t, 5)
+
+	# turn right, 90 degrees
+	right!(t, 90)
+
+	# take 10 steps
+	forward!(t, 10)
+
+end
+
+# ╔═╡ 448dc68d-cd0a-4491-82ad-0e7cc00782ad
+turtle_drawing() do t
+
+	color!(t, "red")
+	forward!(t, 5)
+
+	right!(t, 90)
+
+	color!(t, "pink")
+	forward!(t, 10)
+
+end
+
 # ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
-turtle_drawing_cool() do t
+turtle_drawing() do t
 	
 	for i in 0:.1:10
 		right!(t, angle)
@@ -458,9 +514,10 @@ turtle_drawing_cool() do t
 end
 
 # ╔═╡ fc08d52f-91fb-47d4-9122-d45a287c0e7f
-turtle_drawing_cool() do t
+turtle_drawing() do t
 
 	# take 5 steps
+	forward!(t, 5)
 	forward!(t, 5)
 
 	# turn right, 90 degrees
@@ -757,18 +814,19 @@ version = "17.4.0+2"
 # ╔═╡ Cell order:
 # ╠═e814a124-f038-11ea-3b22-f109c99dbe03
 # ╟─27d2fe04-a582-48f7-8d21-e2db7775f2c2
-# ╠═e18d7225-5a06-4fbc-b836-17798c0eb198
+# ╟─e18d7225-5a06-4fbc-b836-17798c0eb198
 # ╟─1ac7cee2-4aa7-497e-befe-8135d1d27d8d
 # ╟─d3d14186-4182-4187-9670-95b8b886bb74
 # ╟─71bb4346-7067-4db4-9a70-ab232e7c2ebc
-# ╠═448dc68d-cd0a-4491-82ad-0e7cc00782ad
+# ╟─448dc68d-cd0a-4491-82ad-0e7cc00782ad
 # ╟─553d0488-f03b-11ea-2997-3d82493cd4d7
 # ╟─25dc5690-f03a-11ea-3c59-35ae694b03b5
 # ╟─9dc072fe-b3db-11ea-1568-857a664ce4d2
 # ╟─d88440c2-b3dc-11ea-1944-0ba4a566d7c1
 # ╟─5d345ae8-f03a-11ea-1c2d-03f66115b590
 # ╟─b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
-# ╠═e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
+# ╟─e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
+# ╟─a255402c-d719-41fc-babc-7988a9aa5421
 # ╟─678850cc-b3e4-11ea-3cf0-a3445a3ac15a
 # ╟─cd442606-f03a-11ea-3d53-57e83c8cdb1f
 # ╟─4c1bcc58-b3ec-11ea-32d1-7f4cd113e43d
@@ -778,10 +836,9 @@ version = "17.4.0+2"
 # ╟─d1ae2696-b3eb-11ea-2fcc-07b842217994
 # ╟─f132f376-f03a-11ea-33e2-775fc026faca
 # ╟─70160fec-b0c7-11ea-0c2a-35418346592e
-# ╠═d30c8f2a-b0bf-11ea-0557-19bb61118644
+# ╟─d30c8f2a-b0bf-11ea-0557-19bb61118644
 # ╟─ab083f08-b0c0-11ea-0c23-315c14607f1f
 # ╠═6bbb674c-b0ba-11ea-2ff7-ebcde6573d5b
-# ╠═6548d8fe-4246-48ba-b7e7-8b5dd8a6be04
 # ╠═310a0c52-b0bf-11ea-3e32-69d685f2f45e
 # ╟─5560ed36-b0c0-11ea-0104-49c31d171422
 # ╠═e6c7e5be-b0bf-11ea-1f7e-73b9aae14382
@@ -793,9 +850,9 @@ version = "17.4.0+2"
 # ╠═2e7c8462-b3e2-11ea-1e41-a7085e012bb2
 # ╠═358cb837-a2d1-4b67-a1d4-aa6f62126c89
 # ╟─5aea06d4-b0c0-11ea-19f5-054b02e17675
-# ╠═6dbce38e-b0bc-11ea-1126-a13e0d575339
-# ╠═329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
-# ╠═5030944f-efec-4226-9511-95ae3a4c179d
+# ╟─6dbce38e-b0bc-11ea-1126-a13e0d575339
+# ╟─329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+# ╟─5030944f-efec-4226-9511-95ae3a4c179d
 # ╠═1cca3d6d-a40a-455c-84d3-dec04f0b496a
 # ╠═0786bcb6-d782-4d45-abc1-fdf8cb064ca7
 # ╠═fc08d52f-91fb-47d4-9122-d45a287c0e7f
