@@ -363,6 +363,7 @@ function turtle_drawing(f::Function; background="white")
 		@htl("""
 		<script>
 		const _x = $(rand())
+		const step_delay = $(step_delay)
 		const history = $(identity(🐢.history_actions))
 		const wrapper = currentScript.closest(".turtle-wrapper")
 		const img = wrapper.firstElementChild
@@ -385,8 +386,8 @@ function turtle_drawing(f::Function; background="white")
 			display: block; 
 			opacity: 0;
 			transition: 
-				transform \${$(step_delay)}s ease-in-out,
-				opacity \${$(step_delay)}s ease-in-out; 
+				transform \${step_delay}s ease-in-out,
+				opacity \${step_delay}s ease-in-out; 
 			transform-origin: top left;
 		`
 		
@@ -397,19 +398,21 @@ function turtle_drawing(f::Function; background="white")
 		const stop_promise = invalidation.then(_x => null)
 		let current_blob_url = null
 		const blur_future_steps = (current_line_index) => {
-			Promise.race([stop_promise, svg_data]).then(txt => {
-				if(txt != null) {
-					let i = 0
-					let new_img = txt.replaceAll(`<line`, () =>  
-						i++ <= current_line_index ? `<line` : `<line opacity=".2"`
-					)
-					let old_url = current_blob_url
-					current_blob_url = URL.createObjectURL(new Blob([new_img], { type: `image/svg+xml` }))
-					img.src = current_blob_url
-					if(old_url != null) 
-						URL.revokeObjectURL(old_url)
-				}
-			})
+			setTimeout(() => {
+				Promise.race([stop_promise, svg_data]).then(txt => {
+					if(txt != null) {
+						let i = 0
+						let new_img = txt.replaceAll(`<line`, () =>  
+							i++ <= current_line_index ? `<line` : `<line opacity=".2"`
+						)
+						let old_url = current_blob_url
+						current_blob_url = URL.createObjectURL(new Blob([new_img], { type: `image/svg+xml` }))
+						img.src = current_blob_url
+						if(old_url != null) 
+							URL.revokeObjectURL(old_url)
+					}
+				})
+			}, step_delay * 1000 / 2)
 		}
 		invalidation.then(() => {
 			if(current_blob_url != null) 
@@ -528,7 +531,24 @@ turtle_drawing() do t
 	# take 10 steps
 	forward!(t, 10)
 
+	penup!(t)
+
+	
+	right!(t, 120)
+	forward!(t, 5)
+
+	pendown!(t)
+
+	right!(t, 60)
+	forward!(t, 5)
+
+	right!(t, 60)
+	forward!(t, 5)
+
 end
+
+# ╔═╡ e0e86411-62cb-4af1-b91f-9069a5a20508
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -851,10 +871,11 @@ version = "17.4.0+2"
 # ╠═358cb837-a2d1-4b67-a1d4-aa6f62126c89
 # ╟─5aea06d4-b0c0-11ea-19f5-054b02e17675
 # ╟─6dbce38e-b0bc-11ea-1126-a13e0d575339
-# ╟─329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+# ╠═329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
 # ╟─5030944f-efec-4226-9511-95ae3a4c179d
 # ╠═1cca3d6d-a40a-455c-84d3-dec04f0b496a
 # ╠═0786bcb6-d782-4d45-abc1-fdf8cb064ca7
 # ╠═fc08d52f-91fb-47d4-9122-d45a287c0e7f
+# ╠═e0e86411-62cb-4af1-b91f-9069a5a20508
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
