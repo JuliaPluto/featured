@@ -3,11 +3,12 @@
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
+#> image = "https://raw.githubusercontent.com/damourChris/FeaturedPlutoNotebooks/main/maths/ZombieAttackNotebookPreview.png"
 #> title = "Modeling a Zombie Attack "
 #> date = "2023-12-16"
 #> license = "Unlicense"
 #> description = "An introduction to modeling dynamical systems with Modeling Toolkit through a Zombie Attack.  "
-#> tags = ["math","dynamical systems", "biology", "modelingtoolkit", "zombie outbreak", "modeling"]
+#> tags = ["dynamical systems", "biology", "modelingtoolkit", "zombie outbreak", "modeling"]
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Chris Damour"
@@ -151,26 +152,26 @@ md"## The Zombie Outbreak Model"
 # ╔═╡ cc1a1a9a-7a45-4231-8471-0fb90b994357
 md"""Let's start with the simplest model. In this model, there are healthy humans (susceptible) and zombies. So what happens when a zombie meets a human? 
 
-We note ``S(t)`` the number of susceptible humans at a given time ``t`` and and ``Z(t)`` for the number of zombies.
+We note ``😟(t)`` the number of susceptible humans at a given time ``t`` and and ``🧟(t)`` for the number of zombies.
 
-We can say that there is a positive rate β that describes the chance of a zombie converting a human into another human. We also define the term ``S(t)Z(t)`` to capture the interaction between a zombie and a susceptible human. 
+We can say that there is a positive rate 🦠 that describes the chance of a zombie converting a human into another human. We also define the term ``😟(t)🧟(t)`` to capture the interaction between a zombie and a susceptible human. 
 We can then define the following system of equation: 
 """
 
 # ╔═╡ 4c3f3770-ef33-41a5-89a6-274101b06c87
-md"""However since β is defined to be positive this model is quite pessimistic, every scenario will eventually end up with all susceptible humans turning into zombies and taking over the world. 
+md"""However since 🦠 is defined to be positive this model is quite pessimistic, every scenario will eventually end up with all susceptible humans turning into zombies and taking over the world. 
 
-Let's give the humans some chance of fighting back. We can introduce a new class of individuals in our model, which we call 'Removed', noted ``R(T)``. This class represents the zombies that were killed by humans. 
+Let's give the humans some chance of fighting back. We can introduce a new class of individuals in our model, which we call 'Removed', noted ``😵(t)``. This class represents the zombies that were killed by humans. 
 
 We now have: 
 
-- ``S(t)``: Humans susceptible to be converted 
-- ``Z(t)``: Zombies 
-- ``R(t)``: Removed 
+- ``😟(t)``: Humans susceptible to be converted 
+- ``🧟(t)``: Zombies 
+- ``😵(t)``: Removed 
 
-We define ``α`` as the rate at which the susceptible humans kill the zombies. 
+We define ⚔ as the rate at which the susceptible humans kill the zombies. 
 
-Additionally, these zombies will be hard to get rid of since there is a small chance ζ that a removed "comes back from the dead" and is reintroduced as a zombie. 
+Additionally, these zombies will be hard to get rid of since there is a small chance (noted 💀) that a removed "comes back from the dead" and is reintroduced as a zombie. 
 """
 
 # ╔═╡ 71baff78-d298-4c6a-99d5-6b65c1c27e6f
@@ -188,7 +189,7 @@ md"""
 """
 
 # ╔═╡ 28def719-c8e2-43d6-b20e-6141e423add2
-md"The first step is to define the variables that will be needed for the model. That is, our dependent time variable ``t``, the differential operator ``D``, the independent variables ``S(t)``, ``Z(t)``, ``R(t)`` and the model parameters ``α``, ``β``, ``ζ`` " 
+md"The first step is to define the variables that will be needed for the model. That is, our dependent time variable ``t``, the differential operator ``D``, the independent variables ``😟(t)``, ``🧟(t)``, ``😵(t)`` and the model parameters ``⚔``,``🦠``, and ``💀``." 
 
 # ╔═╡ d3acb594-ce66-4049-b674-ef641ee1207e
 @variables t
@@ -197,17 +198,17 @@ md"The first step is to define the variables that will be needed for the model. 
 D = Differential(t)
 
 # ╔═╡ 01ce7903-0ba3-45bc-816a-f8288583b4d4
-@variables S(t) Z(t) R(t)  
+@variables 😟(t) 🧟(t) 😵(t)  
 
 # ╔═╡ 6bfa46a7-f50d-49b6-bebc-b7821f89100f
-@parameters α β ζ  
+@parameters ⚔️ 🦠 💀  
 
 # ╔═╡ ddcea9d8-abc0-40a3-8740-fa0cd29b0b0e
 begin
 	displaySystem = ODESystem(
 		[
-			D(S) ~ -β*S*Z,
-		 	D(Z) ~  β*S*Z]
+			D(😟) ~ -🦠*😟*🧟,
+		 	D(🧟) ~  🦠*😟*🧟]
 	, name = :base) # only used for equations display
 	
 	# @info typeof(displaySystem)  # uncomment to check the type of displaySystem
@@ -219,9 +220,9 @@ md"Once we have defined everything, we can put them together to define the syste
 # ╔═╡ 43593199-0107-4b69-a239-f9f68c14b8eb
 @named simple_attack_sys = ODESystem(
 	[
-		D(S) ~ -β*S*Z,
-		D(Z) ~  β*S*Z - α*S*Z + ζ*R,
-		D(R) ~ 			α*S*Z - ζ*R
+		D(😟) ~ -🦠*😟*🧟,
+		D(🧟) ~  🦠*😟*🧟  -	⚔️*😟*🧟 + 💀*😵,
+		D(😵) ~ 		  	 	⚔️*😟*🧟 - 💀*😵
 	]
 )
 
@@ -300,7 +301,7 @@ md"# Latent Infection"
 md"""	
 Let's introduce the concept of **latent infection**. In this scenario, when a zombie bites a human, that human first becomes infected, and after some time, turns into a zombie. 
 	
-We can introduce a new class `I(t)` and the parameter `ρ` to capture the rate at which the infected turn into zombies.
+We can introduce a new class for the infected (noted `🤮(t)`) and the parameter 🌡️  to capture the rate at which the infected turn into zombies.
 """
 
 # ╔═╡ ab1836a1-290d-4bde-bf1b-cc8287734e1e
@@ -308,8 +309,8 @@ md"## Setup"
 
 # ╔═╡ dc366710-6f43-434c-8787-d6d1a7dd3920
 begin
-	@variables I(t)
-	@parameters ρ 
+	@variables 🤮(t)
+	@parameters 🌡️ 
 end;
 
 # ╔═╡ 6aa3249f-4751-45d9-b13d-f748cc950d47
@@ -318,23 +319,20 @@ md"We can define the new equations and follow the same workflow as before to sol
 # ╔═╡ d4446f64-8d69-4ded-90b3-59544800d6fa
 begin
 	lattent_infection_eqs = [
-		D(S) ~ 			-β*S*Z ,
-		D(I) ~ 		  	 β*S*Z 	- ρ*I, 
-		D(Z) ~ -α*S*Z 			+ ρ*I  	+ ζ*R,
-		D(R) ~  α*S*Z 		 			- ζ*R
+		D(😟) ~ 		-🦠*😟*🧟 ,
+		D(🤮) ~ 		 🦠*😟*🧟 	- 🌡️*🤮, 
+		D(🧟) ~ -⚔️*😟*🧟 			+ 🌡️*🤮  	+ 💀*😵,
+		D(😵) ~  ⚔️*😟*🧟 		 				- 💀*😵
 	]
-end
+end;
 
 # ╔═╡ 9358905f-8d2f-40f6-a9d9-38e39ae3ee85
 begin
 	@named lattent_infection_sys = ODESystem(lattent_infection_eqs)
 end
 
-# ╔═╡ 1a6574d3-a3d3-4b77-a481-8f0dfad1628a
-systemDiffTable([simple_attack_sys, lattent_infection_sys], headers=["Simple", "Lattent Infection"])
-
 # ╔═╡ 4a97986a-e5d0-4b56-bfb3-022ed9037dd7
-md"## Model Visualization"
+md"## Visualization"
 
 # ╔═╡ 8c51a878-6466-4832-ad74-c90683614ebc
 md"""
@@ -369,10 +367,10 @@ end
 md"# Setting up a quarantine"
 
 # ╔═╡ 51f33f5c-06c4-4a6c-9f91-6dd5f0822043
-md"""Let's add a quarantine into our model. We will represent the number of people in the quarantine section with the state `Q(t)` and introduce 2 new parameters.
+md"""Let's add a quarantine into our model. We will represent the number of people in the quarantine section with the state `😷(t)` and introduce 2 new parameters.
 
-- `κ`: Infected to Quarantine rate
-- `γ`: Quarantine to Removed rate 
+- `🚑`: Infected to Quarantine rate
+- `🗡️`: Quarantine to Removed rate 
 """
 
 # ╔═╡ e515330c-d97a-4b66-b40c-fe44ea300bb2
@@ -385,7 +383,7 @@ end
 
 # ╔═╡ 42d42106-a896-4ac0-a476-8590a87b1428
 md"""
-The `κ` parameter will represent how much of the infected are placed in quarantine. 
+The `🚑` parameter will represent how much of the infected are placed in quarantine. 
 """
 
 # ╔═╡ 4af55826-0499-4397-bf44-1ea28ab8de80
@@ -398,7 +396,7 @@ end
 
 # ╔═╡ d923c200-843d-44e8-8870-6b44183a779a
 md"""
-The `γ` parameter represents all the infected that have turned into zombies and who are then removed.
+The `🗡️` parameter represents all the quarantined that have turned into zombies and who are then removed.
 """
 
 # ╔═╡ 5141dd63-ebfb-4b75-a0a3-8a0dd1163169
@@ -406,18 +404,18 @@ md"## Setup"
 
 # ╔═╡ 2cb27c2f-edae-4386-a68d-77b2050924a0
 begin
-	@variables Q(t)
-	@parameters κ γ
+	@variables 😷(t)
+	@parameters 🚑 🗡️
 end;
 
 # ╔═╡ 6467d83d-0e9c-4025-aecf-ab19807e6ba7
 begin
 	simple_quarantine_eqs = [
-		D(S) ~ -β*S*Z,
-		D(I) ~  β*S*Z  - ρ*I 		- κ*I, 		   # New: - κ*I term
-		D(Z) ~ -α*S*Z  + ρ*I + ζ*R ,
-		D(R) ~  α*S*Z  		 - ζ*R 			+ γ*Q, # New: + γ*Q term
-		D(Q) ~          		 	+ κ*I 	- γ*Q  
+		D(😟) ~ -🦠*😟*🧟,
+		D(🤮) ~  🦠*😟*🧟  			- 🌡️*🤮- 🚑*🤮, 		   
+		D(🧟) ~ 		 - 	⚔️*😟*🧟  	+ 🌡️*🤮 		+ 💀*😵,
+		D(😵) ~  			⚔️*😟*🧟  		 			- 💀*😵+ 🗡️*😷, 
+		D(😷) ~          		 				+ 🚑*🤮 		- 🗡️*😷  
 	]
 end;
 
@@ -426,11 +424,8 @@ begin
 	@named simple_quarantine_sys = ODESystem(simple_quarantine_eqs)
 end
 
-# ╔═╡ a0f73d60-1f65-4b1d-9f13-e4f3ba842ca6
-systemDiffTable([simple_attack_sys, lattent_infection_sys, simple_quarantine_sys], headers=["Simple", "Lattent Infection", "Quarantine"])
-
 # ╔═╡ bb435da5-5bd0-4944-abf1-5d54888efa53
-md"## Model Visualization"
+md"## Visualization"
 
 # ╔═╡ 874323d9-2910-4c77-8aa1-902df4990105
 if(story_mode)
@@ -466,23 +461,23 @@ end
 md"# Treating the infected!"
 
 # ╔═╡ f804a947-4e16-4871-84e3-8654d4fb0a46
-md"To incorporate a cure into the model, we can define a new parameter `c` that will determine how effective the cure is in treating the infected. This parameter represents the time it takes for the cure to work, the amount of infected patient the camp can treat, the supply etc..."
+md"To incorporate a cure into the model, we can define a new parameter (noted 💊) that will determine how effective the cure is in treating the infected. This parameter represents the time it takes for the cure to work, the amount of infected patient the camp can treat, the supply etc..."
 
 # ╔═╡ 5e8a9df5-26ac-4ee0-a647-5088bfb43b25
 md"## Setup"
 
 # ╔═╡ 3d9aacb9-1307-4a80-a277-60fe3a66e7ed
 begin
-	@parameters c
+	@parameters 💊
 end;
 
 # ╔═╡ 06efabb8-15dc-4952-9f5b-fabadd13a87a
 begin
 	treatment_model_eqs = [
-		D(S) ~ -β*S*Z 				+ c*I,
-		D(I) ~  β*S*Z - ρ*I 		- c*I, 
-		D(Z) ~ -α*S*Z + ρ*I + ζ*R     ,
-		D(R) ~  α*S*Z  		- ζ*R,
+		D(😟) ~ 		-🦠*😟*🧟 		  +	💊*🤮,
+		D(🤮) ~  		 🦠*😟*🧟- 🌡️*🤮 -	💊*🤮, 
+		D(🧟) ~ -⚔️*😟*🧟 		  +	🌡️*🤮 			+ 💀*😵,
+		D(😵) ~  ⚔️*😟*🧟  							- 💀*😵,
 	]
 end;
 
@@ -491,11 +486,8 @@ begin
 	@named treatment_model_sys = ODESystem(treatment_model_eqs)
 end
 
-# ╔═╡ 68a8c259-1388-476d-be13-cd4e0f9eecd1
-systemDiffTable([lattent_infection_sys, simple_quarantine_sys,treatment_model_sys], headers=["Lattent Infection", "Quarantine","Treatment"])
-
 # ╔═╡ fcbc4792-866f-4dd1-9b41-a7bb7b1db5fd
-md"## Model Visualization"
+md"## Visualization"
 
 # ╔═╡ bc1471e4-925f-4583-b9b1-193ca59748be
 if(story_mode)
@@ -520,14 +512,25 @@ md"# Let's fight back..."
 # ╔═╡ f7e79c80-1da8-4b95-9447-6107a9e8f2df
 md"""
 To model the behaviour of our new turret, we can introduce the concept of events into our model. 
-ModelingToolkit enables the possibility to define discrete events which affect the values of a state or parameter at a given t. 
+ModelingToolkit enables the possibility to define discrete events which affect the values of a state or parameter at a given ``t``. 
 
-In our case, we can define the parameter `k` to define the efficacy of the turret.
+In our case, we can define the parameter 💣 to define the efficacy of the turret.
 
 """
 
+# ╔═╡ 4c4cd287-71d4-4845-b466-3d135610858b
+md"## Setup"
+
+# ╔═╡ 806d844d-a02e-4b50-bb51-132513003cbf
+begin
+	@parameters 💣
+end;
+
 # ╔═╡ edd1f38c-60a9-4dee-afe1-c674907a652c
-turret_reload_time = 2.0
+turret_reload_time = 20.0
+
+# ╔═╡ 7f08a0fa-7cec-4a76-81ec-1076243ed670
+md"We can define the effect of the turret as removing a portion of the zombie population every $turret_reload_time s"
 
 # ╔═╡ bbe1d37f-2517-4c61-820a-e0ca5876e435
 md"""
@@ -535,8 +538,10 @@ md"""
 	At the moment there is not a way to remake the ODEProblem with a different value for `turret_reload_time` so there is no slider to control this parameter (as recompling the system takes a couple seconds), but you can still change this value and see how it affect the system!
 """
 
-# ╔═╡ 7f08a0fa-7cec-4a76-81ec-1076243ed670
-md"We can define the effect of the turret as removing a portion of the zombie population every $turret_reload_time s"
+# ╔═╡ 59a77cd5-35de-4e27-9539-43f0d6c791ac
+impulsive_eradication_impulse = [
+		turret_reload_time => [🧟 ~ 🧟 - (💣*🧟)]
+]
 
 # ╔═╡ 9eecf8d1-9e97-4965-92b8-510646bfe273
 md"""
@@ -549,26 +554,13 @@ md"""
 	For more information, read the SciMl docs on handling discrete events [here](https://docs.sciml.ai/ModelingToolkit/stable/basics/Events/#Discrete-events-support).
 """
 
-# ╔═╡ 4c4cd287-71d4-4845-b466-3d135610858b
-md"## Setup"
-
-# ╔═╡ 806d844d-a02e-4b50-bb51-132513003cbf
-begin
-	@parameters k
-end;
-
-# ╔═╡ 59a77cd5-35de-4e27-9539-43f0d6c791ac
-impulsive_eradication_impulse = [
-		turret_reload_time => [Z ~ Z - (k*Z)]
-]
-
 # ╔═╡ c841be91-502b-4b30-9af0-ba10e5d71558
 begin
 	impulsive_eradication_eqs = [
-		D(S) ~ -β*S*Z 			  		   + c*I,
-		D(I) ~  β*S*Z - ρ*I 	  		   - c*I, 
-		D(Z) ~ 		  + ρ*I	+ ζ*R - α*S*Z     ,
-		D(R) ~  	  		- ζ*R + α*S*Z,
+		D(😟) ~ -🦠*😟*🧟 			  		+ 	💊*🤮,
+		D(🤮) ~  🦠*😟*🧟 - 🌡️*🤮 	  	- 	💊*🤮, 
+		D(🧟) ~ 		   + 🌡️*🤮 +	💀*😵 		 -	⚔️*😟*🧟 ,
+		D(😵) ~  	  			 	- 	💀*😵 		 + 	⚔️*😟*🧟,
 	]
 end;
 
@@ -577,19 +569,16 @@ begin
 	@named impulsive_eradication_sys = ODESystem(
 		impulsive_eradication_eqs,
 		t,
-		[S,Z,I,R],
-		[β, α, ζ, k, ρ, c];
+		[😟,🧟,🤮,😵],
+		[⚔️, 🦠, 💀, 💣, 🌡️, 💊];
 		
 		# Note here that we explicity give the variables and parameters to the ODESystem constructors. This is due to the fact that the automatic variables/parameters detection from the ODESystem constructor does not work on the discrete events (as of now), so we have to pass k as a parameter, and hence all of them.
 		discrete_events = impulsive_eradication_impulse
 	)
 end
 
-# ╔═╡ bec60bab-cce9-44a3-980e-6b9a5bad3b0a
-systemDiffTable([simple_quarantine_sys,treatment_model_sys,impulsive_eradication_sys], headers=["Lattent Infection", "Quarantine","Impulse Eradication"])
-
 # ╔═╡ 333e8b9c-0595-4908-9741-ab75d6e6b3b9
-md"## Model Visualization"
+md"## Visualization"
 
 # ╔═╡ faa4969c-7c76-48bc-a4f8-9a08d2cd16a0
 md"In this new scenario we are now able to survive way longer than before. We could survive for years to come. But even with the cure, we will still lose some people to the zombies, and they can never come back. If only there was a way around this..."
@@ -627,7 +616,7 @@ md"# The vaccine model "
 
 # ╔═╡ 9148f8b0-e379-43aa-88f5-8c41a2ea62ca
 md"""
-Let's introduce a vaccine into the model, we can add a new class that will represent how many vaccinated individuals there are. We can also introduce a new parameter `ν` that indicates the vaccination rate. 
+Let's introduce a vaccine into the model, we can add a new class that will represent how many vaccinated individuals there are. We can also introduce a new parameter 💉 that indicates the vaccination rate. 
 
 We define the new equation such that only the healthy susceptible humans are able to get a vaccine. We'll also upgrade the cure to now be able to cure Zombies and infected in Quarantine.
 """
@@ -636,20 +625,20 @@ We define the new equation such that only the healthy susceptible humans are abl
 md"## Setup"
 
 # ╔═╡ c3e21fa0-ce32-4919-bc18-16616dadcee1
-@variables V(t)
+@variables 😊(t)
 
 # ╔═╡ ebad16ee-5c44-4313-9cdf-413ccd4fcfa0
-@parameters ν
+@parameters 💉
 
 # ╔═╡ 8a0b1af6-2df6-4f98-9f3e-0714b19b9b69
 begin
 	vaccine_model_eqs = [
-		D(S) ~ -ν*S - β*S*Z 									 + c*Z + c*Q,
-		D(I) ~  	  β*S*Z  	- ρ*I 		- κ*I 			, 	
-		D(V) ~  ν*S,
-		D(Z) ~  	-α*S*Z  + ρ*I 	 + ζ*R                       - c*Z,
-		D(R) ~  	 α*S*Z  		 - ζ*R 			+ γ*Q, 
-		D(Q) ~          		 		 	+ κ*I 	- γ*Q              - c*Q
+		D(😟) ~ -💉*😟 - 🦠*😟*🧟   + 💊*🧟 + 💊*😷,
+		D(🤮) ~  	  	  🦠*😟*🧟  				  - 🌡️*🤮 		  - 🚑*🤮, 	
+		D(😊) ~  💉*😟,
+		D(🧟) ~  	-⚔️*😟*🧟         - 💊*🧟  		  +	🌡️*🤮 	  + 💀*😵,
+		D(😵) ~  	 ⚔️*😟*🧟  		 	 				 + 🗡️*😷 - 💀*😵, 
+		D(😷) ~          		 		 	  - 💊*😷	 - 🗡️*😷      + 🚑*🤮
 	]
 end;
 
@@ -658,25 +647,22 @@ begin
 	@named vaccine_model_sys = ODESystem(
 		vaccine_model_eqs,
 		t,
-		[S,I,Z,Q,R, V],
-		[β, α, ζ,ν, k, ρ, κ,γ, c];
+		[😟,🤮,🧟,😷,😵, 😊],
+		[⚔️, 🦠, 💀,💉, 💣, 🌡️, 🚑,🗡️, 💊];
 		
 		# We reuse the turret impusle for the last model
 		discrete_events = impulsive_eradication_impulse
 	)
 end
 
-# ╔═╡ e28d682e-f392-4e58-8917-b47b6423c7e4
-systemDiffTable([simple_quarantine_sys, impulsive_eradication_sys, vaccine_model_sys], headers=["Quarantine","Impulse Eradication", "Vaccine"])
-
 # ╔═╡ 711bd169-61c7-4dc4-afc9-8829155d71fe
-md"## Model Visulization"
+md"## Visualization"
 
 # ╔═╡ d1b89ad6-9116-48b4-805f-f1ba6b15b3dc
 md"""
 By introducing the vaccine we were now able to survive the zombie attack: once a human got vaccinated, they cannot be transformed back into a zombie. This allows the vaccination class to grow while the zombies slowly decline in numbers. 
 
-Although if the cure becomes completely inefficient ``c =  0`` then any zombies are now trapped in their class and cannot be converted back to suseceptible, which only leaves a fix number of vaccinated vs zombies. In any case, in this scenario there are always humans surviving at the end. Yay!
+Although if the cure becomes completely inefficient ``💊 =  0`` then any zombies are now trapped in their class and cannot be converted back to suseceptible, which only leaves a fix number of vaccinated and zombies getting slowly destroyed with the turret. In any case, in this scenario there are always humans surviving at the end. Yay!
 """
 
 # ╔═╡ 427d7fd4-af60-4b3b-9d43-3cc6511e281d
@@ -864,8 +850,7 @@ susceptibleInitSlider = SliderParameter(
 			ub 	 	= 1000,
 			step 	= 1,
 			default = 50,
-			alias 	= :S,
-			label 	= "👩"
+			label 	= "😟"
 		)
 
 # ╔═╡ ca777958-84f4-42ef-95f7-1b0778620e0c
@@ -874,44 +859,8 @@ zombieInitSlider = SliderParameter(
 			ub 	 	= 1000,
 			step 	= 1,
 			default = 10,
-			alias 	= :Z,
 			label = "🧟"
 		)
-
-# ╔═╡ 7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
-simple_quarantine_u0s_sliders = @bind simple_quarantine_u0s format_sliderParameter(
-		title = "Initial Values",
-		[
-			susceptibleInitSlider,
-			zombieInitSlider
-		],
-	);
-
-# ╔═╡ 00b880d1-3db4-40a6-aff4-03a4900df99d
-treatment_model_u0s_sliders = @bind treatment_model_u0s format_sliderParameter([
-		susceptibleInitSlider,
-		zombieInitSlider
-	],
-	title = "Initial Values",
-);
-
-# ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
-impulsive_eradication_u0s_sliders = @bind impulsive_eradication_u0s format_sliderParameter(
-	title = "Initial Values",
-	[
-		susceptibleInitSlider,
-		zombieInitSlider
-	],
-);
-
-# ╔═╡ e5a804cc-0cbe-4645-974b-0fca7cb366e0
-vaccine_model_u0s_sliders = @bind vaccine_model_u0s format_sliderParameter(
-	title = "Initial Values",
-	[
-		susceptibleInitSlider,
-		zombieInitSlider
-	],
-);
 
 # ╔═╡ 0dd7fd47-6575-4b9d-938f-012cff42692d
 md"## Parameters"
@@ -919,15 +868,15 @@ md"## Parameters"
 # ╔═╡ 2c4171e0-8fc6-49d2-ba39-f987b634abda
 md"""
  - [tspan](#90673d7c-9ebf-4d31-8f89-7a3e1325c373)
- - [α](#a2fe2c48-bbb1-4601-96b2-470e1768c102)
- - [β](#91a92730-965a-44a6-87a9-ba350f6614ca)
- - [ζ](#b7213dcc-a2de-4507-a869-7f109d5a52ca)
- - [ρ](#f21ad23e-dcdd-46fa-b10e-fd115c17eb98)
- - [k](#7fb8d441-3685-4673-a959-75901d5ad06d)
- - [κ](#89e74250-9d4b-49cc-9f12-2a4e6d921b90)
- - [γ](#8c37e496-4f0b-4151-991a-4bccf66e35f8)
- - [ν](#7df920cf-b634-40c9-913a-bc26732f486e)
- - [c](#89b55225-e4df-4be3-a34e-e0fe31c1ba0a)
+ - [⚔️](#a2fe2c48-bbb1-4601-96b2-470e1768c102)
+ - [🦠](#91a92730-965a-44a6-87a9-ba350f6614ca)
+ - [💀](#b7213dcc-a2de-4507-a869-7f109d5a52ca)
+ - [🌡️](#f21ad23e-dcdd-46fa-b10e-fd115c17eb98)
+ - [💣](#7fb8d441-3685-4673-a959-75901d5ad06d)
+ - [🚑](#89e74250-9d4b-49cc-9f12-2a4e6d921b90)
+ - [🗡️](#8c37e496-4f0b-4151-991a-4bccf66e35f8)
+ - [💉](#7df920cf-b634-40c9-913a-bc26732f486e)
+ - [💊](#89b55225-e4df-4be3-a34e-e0fe31c1ba0a)
 """
 
 # ╔═╡ 90673d7c-9ebf-4d31-8f89-7a3e1325c373
@@ -950,77 +899,22 @@ begin
 	"""
 end
 
-# ╔═╡ f13c3c52-7c73-4aa3-a233-3d64f4623b89
-simple_quarantine_tspan_sliders = @bind simple_quarantine_tspan format_sliderParameter(
-		[
-			tspanSlider
-		],
-	);
-
-# ╔═╡ 97564904-a6ce-497b-9bbc-e978c6877f0c
-begin
-	simple_quarantine_plots_params_sliders = @bind simple_quarantine_plots_params format_sliderParameter([
-			SliderParameter(
-				lb 		= 0.0,
-				ub 	 	= simple_quarantine_tspan.duration,
-				step 	= 10.0,
-				default = 0.0,
-				alias 	= :ts,
-				label = "Starting time"
-			),
-			SliderParameter(
-				lb 		= 0.0,
-				ub 	 	= simple_quarantine_tspan.duration,
-				step 	= 10.0,
-				default = simple_quarantine_tspan.duration,
-				alias 	= :te,
-				label = "End time"
-			),
-		]
-	);
-end;
-
-# ╔═╡ 53c4ef85-6f0c-46d8-a08a-28f8ab368309
-treatment_model_tspan_sliders = @bind treatment_model_tspan format_sliderParameter(
-		[
-			tspanSlider
-		],
-	);
-
-# ╔═╡ 22d85cbc-0e8f-49c9-9045-3b56d2a3c2f0
-treatment_model_plots_params_sliders = @bind treatment_model_plots_params format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= treatment_model_tspan.duration,
-			step 	= 10.0,
-			default = 0.0,
-			alias 	= :ts,
-			label = "Starting time (Plot)"
-		),
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= treatment_model_tspan.duration,
-			step 	= 10.0,
-			default = treatment_model_tspan.duration,
-			alias 	= :te,
-			label = "End time (Plot)"
-		),
-	]
-);
-
 # ╔═╡ a2fe2c48-bbb1-4601-96b2-470e1768c102
 begin
+
+	⚔️ # Ctrl-Click to go to parameter definition!
+	
 	αSlider = SliderParameter(
 		lb 		= 0.0,
 		ub 		= 0.8,
 		step  	= 0.01,
 		default = 0.5,
-		label 	= "α",
+		label 	= "⚔️",
 		description = "Zombie Defeating Rate" 
 	)
 	
 	md"""
-	**α**
+	**⚔️**
 	
 	This parameter controls the rate at which zombies are defeated by the susceptible. When a zombie is defeated, it is moved to the Removed (``R(t)``) class. 
 	
@@ -1030,17 +924,20 @@ end
 
 # ╔═╡ 91a92730-965a-44a6-87a9-ba350f6614ca
 begin
+	
+	🦠 # Ctrl-Click to go to parameter definition!
+	
 	βSlider = SliderParameter(
-		lb  	= 0.2, 
+		lb  	= 0.01, 
 		ub 		= 1.0, 
 		step   	= 0.01, 
 		default = 0.25,
-		label  	= "β",
+		label  	= "🦠",
 		description = "Infection Rate"
 	)
 	
 	md"""
-	**β**
+	**🦠**
 	
 	This parameter controls how infectious the Zombies are and at what rate do they transform Susceptibles into Zombies. Depending on the model, when a Susceptible is transformed, it is either moved to the Zombie class or the Infected class.
 	
@@ -1050,17 +947,20 @@ end
 
 # ╔═╡ b7213dcc-a2de-4507-a869-7f109d5a52ca
 begin
+	
+	💀 # Ctrl-Click to go to parameter definition!
+	
 	ζSlider = SliderParameter(
-		lb 		= 0.1,
+		lb 		= 0.01,
 		ub 		= 1.0,
 		step 	= 0.01,
 		default = 0.05, 
-		label 	= "ζ",
+		label 	= "💀",
 		description = "Back from the dead Rate"
 	)
 	
 	md"""
-	**ζ**
+	**💀**
 	
 	This parameter controls how effective the Zombies (``Z(t)``) are at coming back from the dead. In each model, a small section of the Removed (``R(t)``) class is moved to the Zombie class.  
 	
@@ -1070,104 +970,30 @@ end
 
 # ╔═╡ 671ad109-4bea-426f-b5c2-2dcabb53a7be
 simple_attack_params =  [
-	S 	=> 50.0,  
-	Z 	=> 10.0,  
-	R 	=> 0, 				    # we will always start with 0 removed 	 
-	α 	=> αSlider.default,  	
-	β 	=> βSlider.default, 	 
-	ζ   => ζSlider.default, 	 
+	😟 	=> 50.0,  
+	🧟 	=> 10.0,  
+	😵 	=> 0, 				    # we will always start with 0 removed 	 
+	⚔️ 	=> αSlider.default,  	
+	🦠 	=> βSlider.default, 	 
+	💀  => ζSlider.default, 	 
 ]
 
-# ╔═╡ 49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
-begin
-	
-	# These are the main sliders definition for defining the system definition
-	
-	simple_attack_u0s_sliders = @bind simple_attack_u0s format_sliderParameter(
-		title = "Initial Values",
-		[
-			susceptibleInitSlider,
-			zombieInitSlider,
-		],
-	)
-	simple_attack_ps_sliders = @bind simple_attack_ps format_sliderParameter(
-		title = "Model Parameters",
-		[
-			αSlider,
-			βSlider,
-			ζSlider
-		],
-	)
-	simple_attack_tspan_sliders = @bind simple_attack_tspan format_sliderParameter(
-		[
-			tspanSlider
-		],
-	)
-	
-end;
-
-# ╔═╡ 3bd175bd-0019-40bc-a1f7-9f94e94ddb87
-begin
-	simple_attack_prob = ODEProblem(
-		simple_attack_sys, 
-		simple_attack_params, 
-		(0.0, simple_attack_tspan.duration)
-	)
-end
-
-# ╔═╡ 7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
-begin
-
-	# These sliders are for dealing with interactivity of the plots
-		
-	simple_attack_plots_params_sliders = @bind simple_attack_plots_params format_sliderParameter(
-		[
-			SliderParameter(
-				lb 		= 0.0,
-				ub 	 	= simple_attack_tspan.duration,
-				step 	= 10.0,
-				default = 0.0,
-				alias 	= :ts,
-				label = "Starting time"
-			),
-			SliderParameter(
-				lb 		= 0.0,
-				ub 	 	= simple_attack_tspan.duration,
-				step 	= 10.0,
-				default = simple_attack_tspan.duration,
-				alias 	= :te,
-				label = "End time"
-			)
-		],
-	);
-		
-
-end;
-
-# ╔═╡ 122b4bc2-24df-423c-904b-158cc0790abe
-sideBarPanelsWithCollapsible(
-		[
-			simple_attack_ps_sliders,
-			simple_attack_u0s_sliders],
-		[
-			simple_attack_tspan_sliders,
-			simple_attack_plots_params_sliders
-		]
-	)
-
 # ╔═╡ f21ad23e-dcdd-46fa-b10e-fd115c17eb98
-begin
+begin 
+
+	🌡️ # Ctrl-Click to go to parameter definition!
+	
 	ρSlider = SliderParameter(
 		lb 		= 0.05,
 		ub 		= 1.0,
 		step 	= 0.01,
 		default = 0.4,
-		label 	= "ρ",
+		label 	= "🌡️",
 		description = "Zombie Transformation Rate"
 	)
 	
 	md"""
-	**ρ**
+	**🌡️**
 	
 	In the more complex model, this parameter controls the rate at which a Infected (``I(t)``) is transformed into a Zombie (``Z(t)``). 
 	
@@ -1178,95 +1004,33 @@ end
 # ╔═╡ 68c6f9c8-2e76-4b08-8b9b-f18b13a4a50b
 begin	
 	lattent_infection_params =  [
-		S => 50.0, 
-	 	Z => 10.0, 
-	 	I => 0, 					  
-		R => 0, 					  
-		α => αSlider.default,  
-		β => βSlider.default,   
-		ζ => ζSlider.default,  
-		ρ => ρSlider.default,   
+		😟=> 50.0, 
+	 	🧟 => 10.0, 
+	 	🤮 => 0, 					  
+		😵 => 0, 					  
+		⚔️ => αSlider.default,  
+		🦠 => βSlider.default,   
+		💀 => ζSlider.default,  
+		🌡️ => ρSlider.default,   
 	]
 end
-
-# ╔═╡ e5deaa27-54cb-4f48-8f56-b55c3a797dcf
-begin
-	lattent_infection_u0s_sliders = @bind lattent_infection_u0s format_sliderParameter([
-		susceptibleInitSlider,
-		zombieInitSlider
-		],
-		title = "Initial Values",
-	);
-	
-	lattent_infection_ps_sliders = @bind lattent_infection_ps format_sliderParameter([
-			αSlider,
-			βSlider,
-			ζSlider,
-			ρSlider,
-		],
-		title = "Model Parameters",
-	);
-	
-	lattent_infection_tspan_sliders = @bind lattent_infection_tspan format_sliderParameter([
-			tspanSlider
-		]
-	);
-end;
-
-# ╔═╡ d04d419b-2fc0-4b3a-bb78-ea3b6b76bc64
-begin
-	lattent_infection_prob = ODEProblem(
-		lattent_infection_sys, 
-		lattent_infection_params, 
-		(0.0, lattent_infection_tspan.duration)
-	)			
-end
-
-# ╔═╡ d59c9761-382e-4450-b654-dc4b8b203f15
-lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= lattent_infection_tspan.duration,
-			step 	= 10.0,
-			default = 0.0,
-			alias 	= :ts,
-			label = "Starting time (Plot)"
-		),
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= lattent_infection_tspan.duration,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :te,
-			label = "End time (Plot)"
-		),
-	]
-);
-
-# ╔═╡ 572dff66-18d8-4b0f-be6e-75767ac33be0
-sideBarPanelsWithCollapsible(
-	[
-		lattent_infection_ps_sliders,
-		lattent_infection_u0s_sliders
-	],
-	[
-		lattent_infection_tspan_sliders,
-		lattent_infection_plots_params_sliders
-	])
 
 # ╔═╡ 7fb8d441-3685-4673-a959-75901d5ad06d
 begin
+
+	💣 # Ctrl-Click to go to parameter definition!
+	
 	kSlider = SliderParameter(
 		lb 		= 0.0,
 		ub 		= 1.0,
 		step 	= 0.01,
 		default = 0.05,
-		label 	= "k",
+		label 	= "💣",
 		description = "Turret Effectiveness"
 	)
 	
 	md"""
-	**k**
+	**💣**
 	
 	This parameter controls the effectivness of the turret, killing and removing zombies for the systems. In the models implementing discrete events, it act by scaling down the zombie population via ``Z(t) = Z(t) - kZ(t)``.
 	
@@ -1277,17 +1041,20 @@ end
 
 # ╔═╡ 89e74250-9d4b-49cc-9f12-2a4e6d921b90
 begin
+	
+	🚑 # Ctrl-Click to go to parameter definition!
+	
 	κSlider = SliderParameter(
 		lb 		= 0.05,
 		ub 		= 1.0,
 		step 	= 0.01,
 		default = 0.05,
-		label 	= "κ",
+		label 	= "🚑",
 		description = "Infected into Quarantine rate"
 	)
 	
 	md"""
-	**κ**
+	**🚑**
 
 	This parameter controls the rate at which infected are transfered to the quarantine. 
 
@@ -1297,17 +1064,21 @@ end
 
 # ╔═╡ 8c37e496-4f0b-4151-991a-4bccf66e35f8
 begin
+
+	🗡️ # Ctrl-Click to go to parameter definition!
+
+	
 	γSlider = SliderParameter(
 		lb 		= 0.5,
 		ub 		= 1.0,
 		step 	= 0.01,
 		default = 0.05,
-		label 	= "γ",
+		label 	= "🗡️",
 		description = "Tried to escape Quarantine rate"
 	)
 
 	md"""
-	**γ**
+	**🗡️**
 
 	This parameter establishes the chance of a "new" Zombie trying to escape the quarantine. In the models implementing the quaranting, the escapee is then killed and moved to the Removed class.
 
@@ -1318,68 +1089,36 @@ end
 # ╔═╡ 2847c8b9-0ac8-4b90-a23b-6323414b3d1b
 begin	
 	simple_quarantine_params =  [
-		S => 50.0,  
-	 	Z => 10.0,  
-	 	I => 0, 					   
-		R => 0, 					   
-		Q => 0, 					   
-		α 	=> αSlider.default, # Zombie defeating rate
-		β 	=> βSlider.default, # Susceptible to Infection rate
-		ζ   => ζSlider.default, # "Back from the dead" rate
-		ρ   => ρSlider.default, # Zombie transformation rate
-		κ 	=> κSlider.default, # Infected to Quarantined  rate
-		γ   => γSlider.default, # Failed Quarantined rate
+		😟 => 50.0,  
+	 	🧟=> 10.0,  
+	 	🤮 => 0, 					   
+		😵 => 0, 					   
+		😷 => 0, 					   
+		⚔️ 	=> αSlider.default,
+		🦠 	=> βSlider.default,
+		💀  => ζSlider.default,
+		🌡️  => ρSlider.default,
+		🚑 	=> κSlider.default,
+		🗡️  => γSlider.default,
 	]
 end
-
-# ╔═╡ d60f5b1d-132d-4d76-8060-d6365b95e923
-begin
-	simple_quarantine_prob = ODEProblem(
-		simple_quarantine_sys, 
-		simple_quarantine_params, 
-		(0.0, simple_quarantine_tspan.duration)
-	)			
-	simple_quarantine_prob
-end
-
-# ╔═╡ 94b4f52b-ae28-4e26-93d2-7e7d32c739d5
-simple_quarantine_ps_sliders = @bind simple_quarantine_ps format_sliderParameter(
-		title = "Model Parameters",
-		[
-			αSlider,
-			βSlider,
-			ζSlider,
-			ρSlider,
-			κSlider,
-			γSlider
-		],
-	);
-
-# ╔═╡ 33ba58f3-9959-48ec-a7f0-098b864ba02f
-sideBarPanelsWithCollapsible(
-	[
-		simple_quarantine_ps_sliders,
-		simple_quarantine_u0s_sliders
-	],
-	[
-		simple_quarantine_tspan_sliders,
-		simple_quarantine_plots_params_sliders
-	]
-)
 
 # ╔═╡ 7df920cf-b634-40c9-913a-bc26732f486e
 begin
+
+	💉 # Ctrl-Click to go to parameter definition!
+	
 	νSlider =  SliderParameter(
 		lb 		= 0.0,
 		ub 		= 1.0,
 		step 	= 0.01,
 		default = 0.8,
-		label 	= "ν",
+		label 	= "💉",
 		description = "Vaccination Rate"
 	)
 
 	md"""
-	**ν**
+	**💉**
 
 	This parameter controls the rate of vaccination, that is how many susceptible are moved to the Vaccinated class.
 
@@ -1389,17 +1128,19 @@ end
 
 # ╔═╡ 89b55225-e4df-4be3-a34e-e0fe31c1ba0a
 begin
+	💊 # Ctrl-Click to go to parameter definition!
+	
 	cSlider = SliderParameter(
 		lb 		= 0.0,
 		ub 		= 1.0,
 		step 	= 0.01,
 		default = 0.5,
-		label 	= "c",
+		label 	= "💊",
 		description = "Curation Rate" 
 	)
 	
 	md"""
-	**c**
+	**💊**
 	
 	This parameter controls the rate at which individuals are able to be cured and placed back in the susceptible class. 
 
@@ -1410,220 +1151,57 @@ end
 # ╔═╡ e5fc55c6-c292-494d-9a56-9506eb95c80d
 begin	
 	treatment_model_params =  [
-		S => 50.0, 
-	 	Z => 10.0, 
-	 	I => 0, 				
-		R => 0, 				
-		α => αSlider.default, 
-		β => βSlider.default, 
-		ζ => ζSlider.default, 
-		ρ => ρSlider.default, 
-		c => cSlider.default, 
+		😟 => 50.0, 
+	 	🧟 => 10.0, 
+	 	🤮 => 0, 				
+		😵 => 0, 				
+		⚔️  => αSlider.default, 
+		🦠 => βSlider.default, 
+		💀 => ζSlider.default, 
+		🌡️ => ρSlider.default, 
+		💊 => cSlider.default, 
 		
 	]
 end
-
-# ╔═╡ 7b660a3d-3fe3-4d48-be37-49754fa70b16
-begin
-	treatment_model_prob = ODEProblem(
-		treatment_model_sys, 
-		treatment_model_params, 
-		(0.0, treatment_model_tspan.duration)
-	)			
-	
-end
-
-# ╔═╡ d5c896f3-1aa8-4334-8c7c-7b01b122aa1b
-treatment_model_ps_sliders = @bind treatment_model_ps format_sliderParameter(
-		title = "Model Parameters",
-		[
-			αSlider
-			βSlider
-			ζSlider
-			ρSlider
-			cSlider	
-		],
-	);
-
-# ╔═╡ ab916a56-52ff-4f35-b8ba-72f2d3d7ba9a
-sideBarPanelsWithCollapsible(
-	[
-		treatment_model_ps_sliders,
-		treatment_model_u0s_sliders
-	],
-	[
-		treatment_model_tspan_sliders,
-		treatment_model_plots_params_sliders
-	]
-)
 
 # ╔═╡ 1e457fe1-6cc5-4d2e-812e-13f666747d81
 begin	
 	impulsive_eradication_params =  [
-		S => 50.0, 
-	 	Z => 10.0, 
-		I => 0,
-		R => 0, 			
-		α => αSlider.default, 
-		β => βSlider.default, 
-		ρ => βSlider.default,  
-		ζ => ζSlider.default, 
-		k => kSlider.default, 
-		c => cSlider.default, 
+		😟 => 50.0, 
+	 	🧟 => 10.0, 
+		🤮 => 0,
+		😵 => 0, 			
+		⚔️  => αSlider.default, 
+		🦠 => βSlider.default, 
+		💀 => ζSlider.default, 
+		🌡️ => βSlider.default,  
+		💣 => kSlider.default, 
+		💊 => cSlider.default, 
 		
 	]
 end;
-
-# ╔═╡ 4e947fbc-84f4-460d-9079-0e7397f5d05f
-begin
-	impulsive_eradication_ps_sliders = @bind impulsive_eradication_ps format_sliderParameter(
-		title = "Model Parameters",
-		[
-			αSlider, 
-			βSlider,
-			ζSlider,
-			ρSlider,
-			cSlider,
-			kSlider,
-			
-		],
-	);
-	impulsive_eradication_tspan_sliders = @bind impulsive_eradication_tspan format_sliderParameter([
-			tspanSlider
-		],
-		title = "",
-	);
-end; 
-
-# ╔═╡ 2cfac784-ec48-4963-a12d-d8bac6ae41cc
-begin
-	impulsive_eradication_prob = ODEProblem(
-		impulsive_eradication_sys, 
-		impulsive_eradication_params, 
-		(0.0, impulsive_eradication_tspan.duration)
-	)			
-end
-
-# ╔═╡ 5efa346c-4d46-4c5c-9e14-08015a96bd85
-impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_params format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= impulsive_eradication_tspan.duration,
-			step 	= 10.0,
-			default = 0.0,
-			alias 	= :ts,
-			label 	= "Start",
-			description = "Starting time (Plot)"
-		),
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= impulsive_eradication_tspan.duration,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :te,
-			label   = "End", 
-			description = "End time (Plot)"
-		),
-	]
-);
-
-# ╔═╡ 63c5fab1-fb11-4d9a-b2fc-8a23598602ba
-sideBarPanelsWithCollapsible(
-	[
-		impulsive_eradication_ps_sliders,
-		impulsive_eradication_u0s_sliders
-	],
-	[
-		impulsive_eradication_tspan_sliders, impulsive_eradication_plots_params_sliders
-	]
-)
 
 # ╔═╡ 80aeb76f-4ab2-468f-95ef-f36491f4642e
 begin	
 	vaccine_model_params =  [
-		S => 50.0, 
-	 	Z => 10.0, 
-		V => 0,
-		Q => 0,
-		I => 0,
-		R => 0,
-		α => αSlider.default, 
-		β => βSlider.default, 
-		ρ => βSlider.default, 
-		κ => κSlider.default,
-		γ => γSlider.default,
-		ν => νSlider.default,
-		ζ => ζSlider.default, 
-		k => kSlider.default, 
-		c => cSlider.default, 
+		😟 => 50.0, 
+	 	🧟 => 10.0, 
+		😊 => 0,
+		😷 => 0,
+		🤮 => 0,
+		😵 => 0,
+		⚔️ => αSlider.default, 
+		🦠 => βSlider.default, 
+		💀 => ζSlider.default, 
+		🌡️ => βSlider.default, 
+		🚑 => κSlider.default,
+		🗡️ => γSlider.default,
+		💉 => νSlider.default,
+		💣 => kSlider.default, 
+		💊 => cSlider.default, 
 		
 	]
 end;
-
-# ╔═╡ c3ba93bf-710b-4ccf-8800-c34af7b61a42
-begin
-	vaccine_model_ps_sliders = @bind vaccine_model_ps format_sliderParameter(
-		title = "Model Parameters",
-		[
-			αSlider, 
-			βSlider,
-			νSlider,
-			cSlider,
-			ζSlider,
-			ρSlider,
-			κSlider,
-			γSlider,
-			kSlider,
-			
-		],
-	);
-	vaccine_model_tspan_sliders = @bind vaccine_model_tspan format_sliderParameter([
-			tspanSlider
-		]
-	);
-end; 
-
-# ╔═╡ 3eb51a7d-3a7e-4d5b-a635-71a4962dd2d9
-begin
-	vaccine_model_prob = ODEProblem(
-		vaccine_model_sys, 
-		vaccine_model_params, 
-		(0.0, vaccine_model_tspan.duration)
-	)			
-end
-
-# ╔═╡ 12d39fca-5e5c-4b01-8080-7099c151e5ec
-vaccine_model_plots_params_sliders = @bind vaccine_model_plots_params format_sliderParameter([
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= vaccine_model_tspan.duration,
-			step 	= 10.0,
-			default = 0.0,
-			alias 	= :ts,
-			label = "Starting time (Plot)"
-		),
-		SliderParameter(
-			lb 		= 0.0,
-			ub 	 	= vaccine_model_tspan.duration,
-			step 	= 10.0,
-			default = 1000.0,
-			alias 	= :te,
-			label = "End time (Plot)"
-		),
-	]
-);
-
-# ╔═╡ 70de0532-94df-4466-acc4-7a8157bd0262
-sideBarPanelsWithCollapsible(
-	[
-		vaccine_model_ps_sliders,
-		vaccine_model_u0s_sliders
-	],
-	[
-		vaccine_model_tspan_sliders, 
-		vaccine_model_plots_params_sliders
-	]
-)
 
 # ╔═╡ aa1fb294-a0d2-41b0-8237-3590d16d0573
 md"# Utils"
@@ -1685,137 +1263,6 @@ false
 function isSymbolicInArray(sym, arr)
 	isequal(setdiff(arr, [sym]), arr)
 end
-
-# ╔═╡ 66de57a4-18db-41fc-ba0f-8b889c4c4e66
-"""
-    systemDiffTable(systems::Vector{ODESystem}; headers::Union{Vector{String},Nothing}=nothing)
-
-Generate an HTML table that shows the differences between multiple ODE systems.
-
-# Arguments
-- `systems::Vector{ODESystem}`: A vector of ODE systems to compare.
-- `headers::Union{Vector{String},Nothing}= nothing`: An optional vector of strings to use as headers for the table. If not provided, the names of the systems will be used. The number of headers must match the number of systems.
-
-# Returns
-- An HTML string wrapped in a sidebar, which represents a table. The table has a row for each parameter and state in the systems. Each column represents a system. A checkmark ("✓") in a cell indicates that the corresponding parameter or state is present in the corresponding system.
-
-# Throws
-- `DimensionMismatch`: If the number of headers provided does not match the number of systems.
-
-# Example
-```julia
-system1 = ODESystem(...)
-system2 = ODESystem(...)
-systemDiffTable([system1, system2], headers=["System 1", "System 2"])
-```
-"""
-function systemDiffTable(
-	systems::Vector{ODESystem}; 
-	headers::Union{Vector{String},Nothing}= nothing
-)
-
-	if(!isnothing(headers) && length(systems) !== length(headers)) 		
-		throw(DimensionMismatch("Number of headers must match the number of systems.")) 
-	end
-
-	
-    paramsList = parameters.(systems)
-    statesList = states.(systems)
-
-    all_params = union(paramsList...)
-    all_states = union(statesList...)
-
-	headers = isnothing(headers) ? getproperty.(systems, :name) : headers
-	
-	headersHTML =  [
-					@htl "
-					<th>
-						$(header)
-					</th> "
-				 for header in headers
-	]
-	
-	paramsRowsHTML = map(all_params) do p 
-				@htl """
-					<tr>
-						<td>
-							$p
-						</td>
-						$([
-							@htl "
-								<td>
-									$(isSymbolicInArray(p, paramsList[index]) ? "" : "✓" )
-								</td> 
-							"
-							 
-							for (index) in 1:length(systems)
-						])
-					</tr>
-				"""
-			end
-
-	statesRowsHTML = map(all_states) do s 
-				@htl """
-					<tr>
-						<td>
-							$s
-						</td>
-						$([
-							@htl "
-								<td>
-									$(isSymbolicInArray(s, statesList[index]) ? "" : "✓" )
-								</td> 
-							"
-							
-							for (index) in 1:length(systems)
-						])
-						
-					</tr>
-				"""
-			end
-	
-    diffTable = @htl """
-		<table>
-			<tr>
-				<th>
-	
-				</th>
-				$(headersHTML)
-	
-			</tr>
-			<tr>
-				<th>
-					Parameter
-				</th>
-	
-			</tr>
-	
-			$(paramsRowsHTML)
-	
-			<tr>
-				<th>
-					States
-				</th>
-			</tr>
-	
-			$(statesRowsHTML)
-	
-		</table>
-	"""
-
-	return sideBarWrapper(
-		@htl("""	
-
-			<div>
-		
-				$diffTable
-			</div>
-			
-		"""
-		)
-	)
-end
-
 
 # ╔═╡ 24c846f3-3c61-4f9b-b243-d303451bcfdf
 """
@@ -1986,44 +1433,369 @@ function format_sliderParameter(sliderParams::Vector{SliderParameter};title::Str
 	end
 end
 
-# ╔═╡ 411354b2-f9b7-46cc-9fe2-358f2d691dfe
-"""
-    sideBarPanelsWithCollapsible(main, extra; location=:right, collapsibleTitle="Extra Parameters")
-
-Create a sidebar with two panels. The second panel is collapsible.
-
-# Arguments
-- `main`: The main content to be displayed in the sidebar.
-- `extra`: The extra content to be displayed in the collapsible panel.
-- `location` (optional, default=:right): The location of the sidebar. It can be either `:right` or `:left`.
-- `collapsibleTitle` (optional, default="Extra Parameters"): The title of the collapsible panel.
-
-# Returns
-- A sidebar with the main content and an extra collapsible panel.
-
-# Examples 
-
-```julia
-> main = html"<p>Main content"
-> extra = html"<p>Extra content"
-> sideBarPanelsWithCollapsible(main, extra)
-```
-"""
-function sideBarPanelsWithCollapsible(main, extra; location=:right, collapsibleTitle="Extra Parameters")
+# ╔═╡ 49f7ca3c-4b9d-4145-9faa-70d082a5c8d9
+begin
 	
-	return sideBarWrapper(
-		@htl(
-			"""
-			<div>
-			
-				$main
-				$(collapsiblePanel(extra; title=collapsibleTitle))
-				
-			</div>
-			"""
-		); location
+	# These are the main sliders definition for defining the system definition
+	
+	simple_attack_u0s_sliders = @bind simple_attack_u0s format_sliderParameter(
+		title = "Initial Values",
+		[
+			susceptibleInitSlider,
+			zombieInitSlider,
+		],
+	)
+	simple_attack_ps_sliders = @bind simple_attack_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider,
+			βSlider,
+			ζSlider
+		],
+	)
+	simple_attack_tspan_sliders = @bind simple_attack_tspan format_sliderParameter(
+		[
+			tspanSlider
+		],
+	)
+	
+end;
+
+# ╔═╡ 3bd175bd-0019-40bc-a1f7-9f94e94ddb87
+begin
+	simple_attack_prob = ODEProblem(
+		simple_attack_sys, 
+		simple_attack_params, 
+		(0.0, simple_attack_tspan.duration)
 	)
 end
+
+# ╔═╡ 7551684a-04cd-4d6d-bb9e-b7f4aa46aceb
+begin
+
+	# These sliders are for dealing with interactivity of the plots
+		
+	simple_attack_plots_params_sliders = @bind simple_attack_plots_params format_sliderParameter(
+		[
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_attack_tspan.duration,
+				step 	= 10.0,
+				default = 0.0,
+				alias 	= :ts,
+				label = "Starting time"
+			),
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_attack_tspan.duration,
+				step 	= 10.0,
+				default = simple_attack_tspan.duration,
+				alias 	= :te,
+				label = "End time"
+			)
+		],
+	);
+		
+
+end;
+
+# ╔═╡ e5deaa27-54cb-4f48-8f56-b55c3a797dcf
+begin
+	lattent_infection_u0s_sliders = @bind lattent_infection_u0s format_sliderParameter([
+		susceptibleInitSlider,
+		zombieInitSlider
+		],
+		title = "Initial Values",
+	);
+	
+	lattent_infection_ps_sliders = @bind lattent_infection_ps format_sliderParameter([
+			αSlider,
+			βSlider,
+			ζSlider,
+			ρSlider,
+		],
+		title = "Model Parameters",
+	);
+	
+	lattent_infection_tspan_sliders = @bind lattent_infection_tspan format_sliderParameter([
+			tspanSlider
+		]
+	);
+end;
+
+# ╔═╡ d04d419b-2fc0-4b3a-bb78-ea3b6b76bc64
+begin
+	lattent_infection_prob = ODEProblem(
+		lattent_infection_sys, 
+		lattent_infection_params, 
+		(0.0, lattent_infection_tspan.duration)
+	)			
+end
+
+# ╔═╡ d59c9761-382e-4450-b654-dc4b8b203f15
+lattent_infection_plots_params_sliders = @bind lattent_infection_plots_params format_sliderParameter([
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= lattent_infection_tspan.duration,
+			step 	= 10.0,
+			default = 0.0,
+			alias 	= :ts,
+			label = "Starting time (Plot)"
+		),
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= lattent_infection_tspan.duration,
+			step 	= 10.0,
+			default = 1000.0,
+			alias 	= :te,
+			label = "End time (Plot)"
+		),
+	]
+);
+
+# ╔═╡ 7d8c6ed0-f70c-42ae-9f89-1eb5a4a1447b
+simple_quarantine_u0s_sliders = @bind simple_quarantine_u0s format_sliderParameter(
+		title = "Initial Values",
+		[
+			susceptibleInitSlider,
+			zombieInitSlider
+		],
+	);
+
+# ╔═╡ 94b4f52b-ae28-4e26-93d2-7e7d32c739d5
+simple_quarantine_ps_sliders = @bind simple_quarantine_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider,
+			βSlider,
+			ζSlider,
+			ρSlider,
+			κSlider,
+			γSlider
+		],
+	);
+
+# ╔═╡ f13c3c52-7c73-4aa3-a233-3d64f4623b89
+simple_quarantine_tspan_sliders = @bind simple_quarantine_tspan format_sliderParameter(
+		[
+			tspanSlider
+		],
+	);
+
+# ╔═╡ d60f5b1d-132d-4d76-8060-d6365b95e923
+begin
+	simple_quarantine_prob = ODEProblem(
+		simple_quarantine_sys, 
+		simple_quarantine_params, 
+		(0.0, simple_quarantine_tspan.duration)
+	)			
+	simple_quarantine_prob
+end
+
+# ╔═╡ 97564904-a6ce-497b-9bbc-e978c6877f0c
+begin
+	simple_quarantine_plots_params_sliders = @bind simple_quarantine_plots_params format_sliderParameter([
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_quarantine_tspan.duration,
+				step 	= 10.0,
+				default = 0.0,
+				alias 	= :ts,
+				label = "Starting time"
+			),
+			SliderParameter(
+				lb 		= 0.0,
+				ub 	 	= simple_quarantine_tspan.duration,
+				step 	= 10.0,
+				default = simple_quarantine_tspan.duration,
+				alias 	= :te,
+				label = "End time"
+			),
+		]
+	);
+end;
+
+# ╔═╡ 00b880d1-3db4-40a6-aff4-03a4900df99d
+treatment_model_u0s_sliders = @bind treatment_model_u0s format_sliderParameter([
+		susceptibleInitSlider,
+		zombieInitSlider
+	],
+	title = "Initial Values",
+);
+
+# ╔═╡ d5c896f3-1aa8-4334-8c7c-7b01b122aa1b
+treatment_model_ps_sliders = @bind treatment_model_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider
+			βSlider
+			ζSlider
+			ρSlider
+			cSlider	
+		],
+	);
+
+# ╔═╡ 53c4ef85-6f0c-46d8-a08a-28f8ab368309
+treatment_model_tspan_sliders = @bind treatment_model_tspan format_sliderParameter(
+		[
+			tspanSlider
+		],
+	);
+
+# ╔═╡ 7b660a3d-3fe3-4d48-be37-49754fa70b16
+begin
+	treatment_model_prob = ODEProblem(
+		treatment_model_sys, 
+		treatment_model_params, 
+		(0.0, treatment_model_tspan.duration)
+	)			
+	
+end
+
+# ╔═╡ 22d85cbc-0e8f-49c9-9045-3b56d2a3c2f0
+treatment_model_plots_params_sliders = @bind treatment_model_plots_params format_sliderParameter([
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= treatment_model_tspan.duration,
+			step 	= 10.0,
+			default = 0.0,
+			alias 	= :ts,
+			label = "Starting time (Plot)"
+		),
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= treatment_model_tspan.duration,
+			step 	= 10.0,
+			default = treatment_model_tspan.duration,
+			alias 	= :te,
+			label = "End time (Plot)"
+		),
+	]
+);
+
+# ╔═╡ 028b2237-e62a-403b-8d6c-786accb8c782
+impulsive_eradication_u0s_sliders = @bind impulsive_eradication_u0s format_sliderParameter(
+	title = "Initial Values",
+	[
+		susceptibleInitSlider,
+		zombieInitSlider
+	],
+);
+
+# ╔═╡ 4e947fbc-84f4-460d-9079-0e7397f5d05f
+begin
+	impulsive_eradication_ps_sliders = @bind impulsive_eradication_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider, 
+			βSlider,
+			ζSlider,
+			ρSlider,
+			cSlider,
+			kSlider,
+			
+		],
+	);
+	impulsive_eradication_tspan_sliders = @bind impulsive_eradication_tspan format_sliderParameter([
+			tspanSlider
+		],
+		title = "",
+	);
+end; 
+
+# ╔═╡ 2cfac784-ec48-4963-a12d-d8bac6ae41cc
+begin
+	impulsive_eradication_prob = ODEProblem(
+		impulsive_eradication_sys, 
+		impulsive_eradication_params, 
+		(0.0, impulsive_eradication_tspan.duration)
+	)			
+end
+
+# ╔═╡ 5efa346c-4d46-4c5c-9e14-08015a96bd85
+impulsive_eradication_plots_params_sliders = @bind impulsive_eradication_plots_params format_sliderParameter([
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= impulsive_eradication_tspan.duration,
+			step 	= 10.0,
+			default = 0.0,
+			alias 	= :ts,
+			label 	= "Start",
+			description = "Starting time (Plot)"
+		),
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= impulsive_eradication_tspan.duration,
+			step 	= 10.0,
+			default = 1000.0,
+			alias 	= :te,
+			label   = "End", 
+			description = "End time (Plot)"
+		),
+	]
+);
+
+# ╔═╡ e5a804cc-0cbe-4645-974b-0fca7cb366e0
+vaccine_model_u0s_sliders = @bind vaccine_model_u0s format_sliderParameter(
+	title = "Initial Values",
+	[
+		susceptibleInitSlider,
+		zombieInitSlider
+	],
+);
+
+# ╔═╡ c3ba93bf-710b-4ccf-8800-c34af7b61a42
+begin
+	vaccine_model_ps_sliders = @bind vaccine_model_ps format_sliderParameter(
+		title = "Model Parameters",
+		[
+			αSlider, 
+			βSlider,
+			νSlider,
+			cSlider,
+			ζSlider,
+			ρSlider,
+			κSlider,
+			γSlider,
+			kSlider,
+			
+		],
+	);
+	vaccine_model_tspan_sliders = @bind vaccine_model_tspan format_sliderParameter([
+			tspanSlider
+		]
+	);
+end; 
+
+# ╔═╡ 3eb51a7d-3a7e-4d5b-a635-71a4962dd2d9
+begin
+	vaccine_model_prob = ODEProblem(
+		vaccine_model_sys, 
+		vaccine_model_params, 
+		(0.0, vaccine_model_tspan.duration)
+	)			
+end
+
+# ╔═╡ 12d39fca-5e5c-4b01-8080-7099c151e5ec
+vaccine_model_plots_params_sliders = @bind vaccine_model_plots_params format_sliderParameter([
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= vaccine_model_tspan.duration,
+			step 	= 10.0,
+			default = 0.0,
+			alias 	= :ts,
+			label = "Starting time (Plot)"
+		),
+		SliderParameter(
+			lb 		= 0.0,
+			ub 	 	= vaccine_model_tspan.duration,
+			step 	= 10.0,
+			default = 1000.0,
+			alias 	= :te,
+			label = "End time (Plot)"
+		),
+	]
+);
 
 # ╔═╡ 53b2a3e8-c8a9-4dae-92df-f3b9af112fda
 """
@@ -2208,11 +1980,265 @@ function sideBarWrapper(child; location=:right)
 	</div>
 	<div class="on-tiny-show">
 		<div style="display: flex"> 
-			$div
+			$child
 		</div>
 	</div>
 	""")
 end
+
+# ╔═╡ 66de57a4-18db-41fc-ba0f-8b889c4c4e66
+"""
+    systemDiffTable(systems::Vector{ODESystem}; headers::Union{Vector{String},Nothing}=nothing)
+
+Generate an HTML table that shows the differences between multiple ODE systems.
+
+# Arguments
+- `systems::Vector{ODESystem}`: A vector of ODE systems to compare.
+- `headers::Union{Vector{String},Nothing}= nothing`: An optional vector of strings to use as headers for the table. If not provided, the names of the systems will be used. The number of headers must match the number of systems.
+
+# Returns
+- An HTML string wrapped in a sidebar, which represents a table. The table has a row for each parameter and state in the systems. Each column represents a system. A checkmark ("✓") in a cell indicates that the corresponding parameter or state is present in the corresponding system.
+
+# Throws
+- `DimensionMismatch`: If the number of headers provided does not match the number of systems.
+
+# Example
+```julia
+> system1 = ODESystem(...)
+> system2 = ODESystem(...)
+> systemDiffTable([system1, system2], headers=["System 1", "System 2"])
+```
+"""
+function systemDiffTable(
+	systems::Vector{ODESystem}; 
+	headers::Union{Vector{String},Nothing}= nothing
+)
+
+	if(!isnothing(headers) && length(systems) !== length(headers)) 		
+		throw(DimensionMismatch("Number of headers must match the number of systems.")) 
+	end
+
+	
+    paramsList = parameters.(systems)
+    statesList = states.(systems)
+
+    all_params = union(paramsList...)
+    all_states = union(statesList...)
+
+	headers = isnothing(headers) ? getproperty.(systems, :name) : headers
+	
+	headersHTML =  [
+					@htl "
+					<th>
+						$(header)
+					</th> "
+				 for header in headers
+	]
+	
+	paramsRowsHTML = map(all_params) do p 
+				@htl """
+					<tr>
+						<td>
+							$p
+						</td>
+						$([
+							@htl "
+								<td>
+									$(isSymbolicInArray(p, paramsList[index]) ? "" : "✓" )
+								</td> 
+							"
+							 
+							for (index) in 1:length(systems)
+						])
+					</tr>
+				"""
+			end
+
+	statesRowsHTML = map(all_states) do s 
+				@htl """
+					<tr>
+						<td>
+							$s
+						</td>
+						$([
+							@htl "
+								<td>
+									$(isSymbolicInArray(s, statesList[index]) ? "" : "✓" )
+								</td> 
+							"
+							
+							for (index) in 1:length(systems)
+						])
+						
+					</tr>
+				"""
+			end
+	
+    diffTable = @htl """
+		<table>
+			<tr>
+				<th>
+	
+				</th>
+				$(headersHTML)
+	
+			</tr>
+			<tr>
+				<th>
+					Parameter
+				</th>
+	
+			</tr>
+	
+			$(paramsRowsHTML)
+	
+			<tr>
+				<th>
+					States
+				</th>
+			</tr>
+	
+			$(statesRowsHTML)
+	
+		</table>
+	"""
+
+	return sideBarWrapper(
+		@htl("""	
+
+			<div>
+		
+				$diffTable
+			</div>
+			
+		"""
+		)
+	)
+end
+
+
+# ╔═╡ 1a6574d3-a3d3-4b77-a481-8f0dfad1628a
+systemDiffTable([simple_attack_sys, lattent_infection_sys], headers=["Simple", "Lattent Infection"])
+
+# ╔═╡ a0f73d60-1f65-4b1d-9f13-e4f3ba842ca6
+systemDiffTable([simple_attack_sys, lattent_infection_sys, simple_quarantine_sys], headers=["Simple", "Lattent Infection", "Quarantine"])
+
+# ╔═╡ 68a8c259-1388-476d-be13-cd4e0f9eecd1
+systemDiffTable([lattent_infection_sys, simple_quarantine_sys,treatment_model_sys], headers=["Lattent Infection", "Quarantine","Treatment"])
+
+# ╔═╡ bec60bab-cce9-44a3-980e-6b9a5bad3b0a
+systemDiffTable([simple_quarantine_sys,treatment_model_sys,impulsive_eradication_sys], headers=["Quarantine", "Treatment","Impulse Eradication"])
+
+# ╔═╡ e28d682e-f392-4e58-8917-b47b6423c7e4
+systemDiffTable([simple_quarantine_sys, impulsive_eradication_sys, vaccine_model_sys], headers=["Quarantine","Impulse Eradication", "Vaccine"])
+
+# ╔═╡ 411354b2-f9b7-46cc-9fe2-358f2d691dfe
+"""
+    sideBarPanelsWithCollapsible(main, extra; location=:right, collapsibleTitle="Extra Parameters")
+
+Create a sidebar with two panels. The second panel is collapsible.
+
+# Arguments
+- `main`: The main content to be displayed in the sidebar.
+- `extra`: The extra content to be displayed in the collapsible panel.
+- `location` (optional, default=:right): The location of the sidebar. It can be either `:right` or `:left`.
+- `collapsibleTitle` (optional, default="Extra Parameters"): The title of the collapsible panel.
+
+# Returns
+- A sidebar with the main content and an extra collapsible panel.
+
+# Examples 
+
+```julia
+> main = html"<p>Main content"
+> extra = html"<p>Extra content"
+> sideBarPanelsWithCollapsible(main, extra)
+```
+"""
+function sideBarPanelsWithCollapsible(main, extra; location=:right, collapsibleTitle="Extra Parameters")
+	
+	return sideBarWrapper(
+		@htl(
+			"""
+			<div>
+			
+				$main
+				$(collapsiblePanel(extra; title=collapsibleTitle))
+				
+			</div>
+			"""
+		); location
+	)
+end
+
+# ╔═╡ 122b4bc2-24df-423c-904b-158cc0790abe
+sideBarPanelsWithCollapsible(
+		[
+			simple_attack_ps_sliders,
+			simple_attack_u0s_sliders],
+		[
+			simple_attack_tspan_sliders,
+			simple_attack_plots_params_sliders
+		]
+	)
+
+# ╔═╡ 572dff66-18d8-4b0f-be6e-75767ac33be0
+sideBarPanelsWithCollapsible(
+	[
+		lattent_infection_ps_sliders,
+		lattent_infection_u0s_sliders
+	],
+	[
+		lattent_infection_tspan_sliders,
+		lattent_infection_plots_params_sliders
+	])
+
+# ╔═╡ 33ba58f3-9959-48ec-a7f0-098b864ba02f
+sideBarPanelsWithCollapsible(
+	[
+		simple_quarantine_ps_sliders,
+		simple_quarantine_u0s_sliders
+	],
+	[
+		simple_quarantine_tspan_sliders,
+		simple_quarantine_plots_params_sliders
+	]
+)
+
+# ╔═╡ ab916a56-52ff-4f35-b8ba-72f2d3d7ba9a
+sideBarPanelsWithCollapsible(
+	[
+		treatment_model_ps_sliders,
+		treatment_model_u0s_sliders
+	],
+	[
+		treatment_model_tspan_sliders,
+		treatment_model_plots_params_sliders
+	]
+)
+
+# ╔═╡ 63c5fab1-fb11-4d9a-b2fc-8a23598602ba
+sideBarPanelsWithCollapsible(
+	[
+		impulsive_eradication_ps_sliders,
+		impulsive_eradication_u0s_sliders
+	],
+	[
+		impulsive_eradication_tspan_sliders, impulsive_eradication_plots_params_sliders
+	]
+)
+
+# ╔═╡ 70de0532-94df-4466-acc4-7a8157bd0262
+sideBarPanelsWithCollapsible(
+	[
+		vaccine_model_ps_sliders,
+		vaccine_model_u0s_sliders
+	],
+	[
+		vaccine_model_tspan_sliders, 
+		vaccine_model_plots_params_sliders
+	]
+)
 
 # ╔═╡ 491f715e-048f-4bc4-b62b-9d9f622d835b
 md"## Plotting / Analytics "
@@ -2224,20 +2250,22 @@ md"## Plotting / Analytics "
 This function generates an analytics card for a ODE solution of a Zombie Model. The analytics card displays the number of days survived and the day when everyone becomes a zombie.
 
 # Arguments
-- `sol::ODESolution`: An object of type ODESolution. This object should contain the solution to an ODE system with variables `S(t)` and `Z(T)`.
+- `sol::ODESolution`: An object of type ODESolution. This object should contain the solution to an ODE system with variables 
+- Survivor variable: Default `😟(t)` 
+- Zombie varaible: Default `🧟(t)`.
 
 # Returns
 - A HTML node that represents an analytics card. The card contains the number of days survived and the day when everyone becomes a zombie.
 
 """
-function solutionAnalytics(sol::ODESolution)
+function solutionAnalytics(sol::ODESolution; survivor=😟, zombie=🧟)
 
 	
-	totalPop =  first(sol[:Z]) + first(sol[:S]) 
-	daysAllZombiesIndex = findfirst( x-> x >= totalPop-0.01*totalPop, sol[:Z]) 
+	totalPop =  sum(sol.prob.u0) 
+	daysAllZombiesIndex = findfirst( x-> x >= totalPop-0.01*totalPop, sol[zombie]) 
 	
 
-	lastDayIndex = findfirst(x -> x<=1, sol[:S])
+	lastDayIndex = findfirst(x -> x<=1, sol[survivor])
 	daysSurvived = isnothing(lastDayIndex) ? round(Int, sol[:t][end]) : round(Int, sol[:t][lastDayIndex])
 	
 	
@@ -2278,15 +2306,16 @@ Ploting shortcut for plotting model evolution of a zombie model.
 
 # Arguments
 
+- `title`: Title of the plot Default: "Time Evolution of the system"
 - `xlim:` X axis limits Default: `(0.0,100.0)`
-- `label`: Labels for plot Default: `["Susceptible 👩" "Zombies 🧟" "Removed 👵" ]`
+- `label`: Labels for plot Default: `["Susceptible 😟" "Zombies 🧟" "Removed 😵" ]`
 - `kwargs`: any other plot parameter, passed to `plot()`
 
 """
-function plotZombieModelEvolution(sol::ODESolution; xlim=(0.0,100.0), label=["Susceptible 👩" "Zombies 🧟" "Removed 👵" ], kwargs...,)
+function plotZombieModelEvolution(sol::ODESolution; xlim=(0.0,100.0), title="Time Evolution of the system", label=["Susceptible 😟" "Zombies 🧟" "Removed 😵" ], kwargs...,)
 	plot(sol; kwargs..., label)
 	xlims!(xlim)
-	title!("Time Evolution of the system")
+	title!(title)
 	xlabel!("Days")
 	ylabel!("Population")
 end
@@ -2297,17 +2326,17 @@ begin
 		simple_attack_prob;
 		u0 = ModelingToolkit.varmap_to_vars(
 			[
-				 S => simple_attack_u0s.S, 
-				 Z => simple_attack_u0s.Z,
-				 R => 0,
+				 😟 => simple_attack_u0s.😟, 
+				 🧟 => simple_attack_u0s.🧟,
+				 😵 => 0,
 			],
 			states(simple_attack_sys)
 		),
 		p =  ModelingToolkit.varmap_to_vars(
 			[
-				 α => simple_attack_ps.α, 
-				 β => simple_attack_ps.β,
-				 ζ => simple_attack_ps.ζ,
+				 ⚔️ => simple_attack_ps.⚔️, 
+				 🦠 => simple_attack_ps.🦠,
+				 💀 => simple_attack_ps.💀,
 			],
 			parameters(simple_attack_sys)
 		),
@@ -2331,19 +2360,19 @@ begin
 	lattent_infection_prob_remake = remake(lattent_infection_prob;
 		u0 = ModelingToolkit.varmap_to_vars(
 			[
-				 S => lattent_infection_u0s.S, 
-				 Z => lattent_infection_u0s.Z,
-				 I => 0,
-				 R => 0,
+				 😟 => lattent_infection_u0s.😟, 
+				 🧟 => lattent_infection_u0s.🧟,
+				 🤮 => 0,
+				 😵 => 0,
 			],
 			states(lattent_infection_sys)
 		),
 		p =  ModelingToolkit.varmap_to_vars(
 			[
-				 α => lattent_infection_ps.α, 
-				 β => lattent_infection_ps.β,
-				 ζ => lattent_infection_ps.ζ,
-				 ρ => lattent_infection_ps.ρ
+				 ⚔️ => lattent_infection_ps.⚔️, 
+				 🦠 => lattent_infection_ps.🦠,
+				 💀 => lattent_infection_ps.💀,
+				 🌡️ => lattent_infection_ps.🌡️
 			],
 			parameters(lattent_infection_sys)
 		),
@@ -2352,6 +2381,7 @@ begin
 	
 	lattent_infection_sol = solve(lattent_infection_prob_remake)
     plotZombieModelEvolution(lattent_infection_sol;
+		title = "Latent Infection Model",
 		labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" ],
 		xlim = (lattent_infection_plots_params.ts,lattent_infection_plots_params.te)
 	)
@@ -2367,22 +2397,22 @@ begin
 	simple_quarantine_prob_remake = remake(simple_quarantine_prob;
 		u0 = ModelingToolkit.varmap_to_vars(
 			[
-				 S => simple_quarantine_u0s.S, 
-				 Z => simple_quarantine_u0s.Z,
-				 Q => 0,
-				 I => 0,
-				 R => 0,
+				 😟 => simple_quarantine_u0s.😟, 
+				 🧟 => simple_quarantine_u0s.🧟,
+				 😷 => 0,
+				 🤮 => 0,
+				 😵 => 0,
 			],
 			states(simple_quarantine_sys)
 		),
 		p =  ModelingToolkit.varmap_to_vars(
 			[
-				 α => simple_quarantine_ps.α, 
-				 β => simple_quarantine_ps.β,
-				 ζ => simple_quarantine_ps.ζ,
-				 γ => simple_quarantine_ps.γ,
-				 ρ => simple_quarantine_ps.ρ,
-				 κ => simple_quarantine_ps.κ
+				 ⚔️ => simple_quarantine_ps.⚔️, 
+				 🦠 => simple_quarantine_ps.🦠,
+				 💀 => simple_quarantine_ps.💀,
+				 🌡️ => simple_quarantine_ps.🌡️,
+				 🗡️ => simple_quarantine_ps.🗡️,
+				 🚑 => simple_quarantine_ps.🚑
 			],
 			parameters(simple_quarantine_sys)
 		),
@@ -2392,6 +2422,7 @@ begin
 	simple_quarantine_sol = solve(simple_quarantine_prob_remake)
 	plot(simple_quarantine_sol,  )
 	plotZombieModelEvolution(simple_quarantine_sol, 
+		title= "Quarantine Model", 
 	labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵" "Quarantine 😷" ],
 		xlim = (simple_quarantine_plots_params.ts,simple_quarantine_plots_params.te)
 	)
@@ -2407,20 +2438,20 @@ begin
 	treatment_model_prob_remake = remake(treatment_model_prob; 
 		u0 = ModelingToolkit.varmap_to_vars(
 			[
-				 S => treatment_model_u0s.S, 
-				 Z => treatment_model_u0s.Z,
-				 I => 0,
-				 R => 0,
+				 😟 => treatment_model_u0s.😟, 
+				 🧟 => treatment_model_u0s.🧟,
+				 🤮 => 0,
+				 😵 => 0,
 			],
 			states(treatment_model_sys)
 		),
 		p =  ModelingToolkit.varmap_to_vars(
 			[
-				 α => treatment_model_ps.α, 
-				 β => treatment_model_ps.β,
-				 ζ => treatment_model_ps.ζ,
-				 c => treatment_model_ps.c,
-				 ρ => treatment_model_ps.ρ,
+				 ⚔️ => treatment_model_ps.⚔️, 
+				 🦠 => treatment_model_ps.🦠,
+				 💀 => treatment_model_ps.💀,
+				 💊 => treatment_model_ps.💊,
+				 🌡️ => treatment_model_ps.🌡️,
 			],
 			parameters(treatment_model_sys)
 		),
@@ -2429,6 +2460,7 @@ begin
 	
 	treatment_model_sol = solve(treatment_model_prob_remake)
 	plotZombieModelEvolution(treatment_model_sol,
+		title = "Treatment Model",
 		labels = labels=["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Removed 👵"],
 		xlim = (treatment_model_plots_params.ts,treatment_model_plots_params.te)
 	)
@@ -2444,21 +2476,21 @@ begin
 	impulsive_eradication_prob_remake = remake(impulsive_eradication_prob;
 		u0 = ModelingToolkit.varmap_to_vars(
 			[
-				 S => impulsive_eradication_u0s.S, 
-				 Z => impulsive_eradication_u0s.Z,
-				 I => 0,
-				 R => 0,
+				 😟 => impulsive_eradication_u0s.😟, 
+				 🧟 => impulsive_eradication_u0s.🧟,
+				 🤮 => 0,
+				 😵 => 0,
 			],
 			states(impulsive_eradication_sys)
 		),
 		p =  ModelingToolkit.varmap_to_vars(
 			[
-				 α => impulsive_eradication_ps.α, 
-				 β => impulsive_eradication_ps.β,
-				 ζ => impulsive_eradication_ps.ζ,
-				 ρ => impulsive_eradication_ps.ρ,
-				 k => impulsive_eradication_ps.k,
-				 c => impulsive_eradication_ps.c,
+				 ⚔️ => impulsive_eradication_ps.⚔️, 
+				 🦠 => impulsive_eradication_ps.🦠,
+				 💀 => impulsive_eradication_ps.💀,
+				 🌡️ => impulsive_eradication_ps.🌡️,
+				 💣 => impulsive_eradication_ps.💣,
+				 💊 => impulsive_eradication_ps.💊,
 			],
 			parameters(impulsive_eradication_sys)
 		),
@@ -2468,6 +2500,7 @@ begin
 	
 	impulsive_eradication_sol = solve(impulsive_eradication_prob_remake)
 	plotZombieModelEvolution(impulsive_eradication_sol,
+		title = "Impulsive Eradication Model",
 		labels = ["Susceptible 👩"  "Zombies 🧟" "Infected 😱" "Removed 👵"],
 		xlim = (impulsive_eradication_plots_params.ts,impulsive_eradication_plots_params.te)
 	)
@@ -2482,26 +2515,26 @@ begin
 	vaccine_model_prob_remake = remake(vaccine_model_prob;
 		u0 = ModelingToolkit.varmap_to_vars(
 			[
-				 S => vaccine_model_u0s.S, 
-				 Z => vaccine_model_u0s.Z,
-				 V => 0,
-			     Q => 0,
-				 I => 0,
-				 R => 0,
+				 😟 => vaccine_model_u0s.😟, 
+				 🧟 => vaccine_model_u0s.🧟,
+				 😊 => 0,
+			     😷=> 0,
+				 🤮 => 0,
+				 😵 => 0,
 			],
 			states(vaccine_model_sys)
 		),
 		p =  ModelingToolkit.varmap_to_vars(
 			[
-				 α => vaccine_model_ps.α, 
-				 β => vaccine_model_ps.β,
-				 ζ => vaccine_model_ps.ζ,
-				 ρ => vaccine_model_ps.ρ,
-				 k => vaccine_model_ps.k,
-				 c => vaccine_model_ps.c,
-				 κ => vaccine_model_ps.κ,
-				 ν => vaccine_model_ps.ν,
-				γ => vaccine_model_ps.γ
+				 ⚔️ => vaccine_model_ps.⚔️, 
+				 🦠 => vaccine_model_ps.🦠,
+				 💀 => vaccine_model_ps.💀,
+				 🌡️ => vaccine_model_ps.🌡️,
+				 💣 => vaccine_model_ps.💣,
+				 💊 => vaccine_model_ps.💊,
+				 🚑 => vaccine_model_ps.🚑,
+				 💉 => vaccine_model_ps.💉,
+				🗡️ => vaccine_model_ps.🗡️
 			],
 			parameters(vaccine_model_sys)
 		),
@@ -2512,13 +2545,11 @@ begin
 	vaccine_model_sol = solve(vaccine_model_prob_remake)
 	# plot(vaccine_model_sol)
 	plotZombieModelEvolution(vaccine_model_sol,
+		title = "Vaccine Model",
 		labels = ["Susceptible 👩" "Infected 😱" "Zombies 🧟" "Quarantine 😷" "Removed 👵" "Vaccinated 💉"], 
 		xlim = (vaccine_model_plots_params.ts,vaccine_model_plots_params.te)
 	)
 end
-
-# ╔═╡ 813fc6b1-460a-49cb-9ae5-909e38e18e71
-md"## Packages"
 
 # ╔═╡ 88b3d429-4acd-4115-82da-972db1c5b501
 md"## CSS"
@@ -2597,6 +2628,9 @@ end
 begin
 	loadCSS()
 end
+
+# ╔═╡ 813fc6b1-460a-49cb-9ae5-909e38e18e71
+md"## Packages"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -4579,13 +4613,13 @@ version = "1.4.1+1"
 # ╟─bc1471e4-925f-4583-b9b1-193ca59748be
 # ╟─aee9374d-fefc-409b-99f0-67de38071f52
 # ╟─f7e79c80-1da8-4b95-9447-6107a9e8f2df
-# ╠═edd1f38c-60a9-4dee-afe1-c674907a652c
-# ╟─bbe1d37f-2517-4c61-820a-e0ca5876e435
-# ╟─7f08a0fa-7cec-4a76-81ec-1076243ed670
-# ╠═59a77cd5-35de-4e27-9539-43f0d6c791ac
-# ╟─9eecf8d1-9e97-4965-92b8-510646bfe273
 # ╟─4c4cd287-71d4-4845-b466-3d135610858b
 # ╠═806d844d-a02e-4b50-bb51-132513003cbf
+# ╟─7f08a0fa-7cec-4a76-81ec-1076243ed670
+# ╠═edd1f38c-60a9-4dee-afe1-c674907a652c
+# ╟─bbe1d37f-2517-4c61-820a-e0ca5876e435
+# ╠═59a77cd5-35de-4e27-9539-43f0d6c791ac
+# ╟─9eecf8d1-9e97-4965-92b8-510646bfe273
 # ╠═c841be91-502b-4b30-9af0-ba10e5d71558
 # ╟─bec60bab-cce9-44a3-980e-6b9a5bad3b0a
 # ╠═89a66b68-dfaf-454f-b787-96fabb978e7a
@@ -4657,14 +4691,14 @@ version = "1.4.1+1"
 # ╟─6f38c085-ffaf-4df5-9d83-217dc045d615
 # ╟─4da94e9b-f009-48e5-b9ac-cae6e4d7495e
 # ╟─491f715e-048f-4bc4-b62b-9d9f622d835b
-# ╟─230a4e8a-6eb7-4b0a-84a7-c86019060062
+# ╠═230a4e8a-6eb7-4b0a-84a7-c86019060062
 # ╟─daf4dd3e-9427-4baa-836e-e1d524c0a170
-# ╟─813fc6b1-460a-49cb-9ae5-909e38e18e71
-# ╟─00edd691-2b60-4d1d-b5e2-2fd4675469da
-# ╟─7a937f2c-5808-4756-9bfc-6f84b0f03cc9
 # ╟─88b3d429-4acd-4115-82da-972db1c5b501
 # ╟─ad0b76a6-46ce-42e0-82a5-e2230efc5d3b
 # ╟─ac29d04e-1c97-4062-85c9-522d094a8749
 # ╟─5d7d7822-61c9-47a1-830b-6b0294531d5c
+# ╟─813fc6b1-460a-49cb-9ae5-909e38e18e71
+# ╟─00edd691-2b60-4d1d-b5e2-2fd4675469da
+# ╟─7a937f2c-5808-4756-9bfc-6f84b0f03cc9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
