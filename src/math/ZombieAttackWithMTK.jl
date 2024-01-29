@@ -70,7 +70,7 @@ end
 # ╔═╡ 684ab7f8-a5db-4c39-a3cc-ce948dd026b0
 md"""
 !!! info "Story Mode" 
-	For putting this notebook into context, story cards were addeed for each section. There are not nessecary for following the notebook but makes the notebook a bit more entertaining. 
+	For putting this notebook into context, story cards were addeed for each section. There are not necessary for following the notebook but makes the notebook a bit more entertaining. 
 Activate story mode? $(@bind story_mode CheckBox(default=true))
 """
 
@@ -336,7 +336,7 @@ md"## Visualization"
 
 # ╔═╡ 8c51a878-6466-4832-ad74-c90683614ebc
 md"""
-In this model, we are able to survie a bit longer, but there still does not seem to be a way to overcome all the zombies. 
+In this model, we are able to survive a bit longer, but there still does not seem to be a way to overcome all the zombies. 
 
 """
 
@@ -390,7 +390,7 @@ The `🚑` parameter will represent how much of the infected are placed in quara
 if(story_mode)
 	md"""
 	!!! tip "A unfortunate futur" 
-		Unfortunalely the quarantine is not a very solid area and the first infected patient that was admitted turned into zombie, wreaking havoc inside the camp. You take the hard decision to remove the patients that have turned into zombies from the quarantine. 
+		Unfortunately the quarantine is not a very solid area and the first infected patient that was admitted turned into zombie, wreaking havoc inside the camp. You take the hard decision to remove the patients that have turned into zombies from the quarantine. 
 	"""
 end
 
@@ -502,7 +502,7 @@ if(story_mode)
 	
 		The turret is a next-generation plasma beam turret that send orbs of energy. You are now equipped to handle large waves of zombies. The manual indicates that the turret needs a lot of energy to work. With the current supply of energy you have, you can only shoot once every 2 days. 
 
-		*If only Hans was here..., he would absolutly love to put it together.*
+		*If only Hans was here..., he would absolutely love to put it together.*
 	"""
 end
 
@@ -660,7 +660,7 @@ md"## Visualization"
 
 # ╔═╡ d1b89ad6-9116-48b4-805f-f1ba6b15b3dc
 md"""
-By introducing the vaccine we were now able to survive the zombie attack: once a human got vaccinated, they cannot be transformed back into a zombie. This allows the vaccination class to grow while the zombies slowly decline in numbers. 
+By introducing the vaccine, we were now able to survive the zombie attack: once a human got vaccinated, they cannot be transformed back into a zombie. This allows the vaccination class to grow while the zombies slowly decline in numbers. 
 
 Although if the cure becomes completely inefficient ``💊 =  0`` then any zombies are now trapped in their class and cannot be converted back to suseceptible, which only leaves a fix number of vaccinated and zombies getting slowly destroyed with the turret. In any case, in this scenario there are always humans surviving at the end. Yay!
 """
@@ -674,7 +674,7 @@ if(story_mode)
 		Everyone at the camp is now vaccinated. You have started to cure some of the zombies. 
 		You decide to go for the yet another trip outside the camp. After stashing twelve syringes of the miraculous cure and a couple of the vaccine, you head to the gate. After making it out the gate, you start walking on the deserted highway that was once crowded with people. 
 		*This is the one, I will find him this time*
-		You decide to go to the abandoned warehouse, as there always seems to be a new group of zombies around there. As you approach the warehouse, you find a large group of zombies, aimlessly wondering around. You scanned each of them from head to toe. And, finally, you see him. A zombie with a couple blond hair on its head, and the biggest pair of goggles.
+		You decide to go to the abandoned warehouse, as there always seems to be a new group of zombies around there. As you approach the warehouse, you find a large group of zombies, aimlessly wondering around. You scanned each of them from head to toe. And, finally, you see him. A zombie with a couple of blond hair on his head, and the biggest pair of goggles.
 
 			Hans!! It's me!! 
 
@@ -706,7 +706,7 @@ md"# Conclusion"
 
 # ╔═╡ 42094ddf-3b6e-496d-9624-30723db25590
 md"""
-The chances of a zombie apocalypse hitting earth is almost zero but if it were to happen, than we know that our only chance to survive them is to kill them quickly and develop a cure and a vaccine when the attack persists. Otherwise, the zombies will take over and we, as humans, don't stand a chance. 
+The chances of a zombie apocalypse hitting earth is *almost* zero but if it were to happen, than we know that our only chance to survive them is to kill them quickly and develop a cure and a vaccine when the attack persists. Otherwise, the zombies will take over and we, as humans, don't stand a chance. 
 Being able to "destroy" zombies would also be ideal since the ability of zombies to simply come back is the most difficult aspect of surviving.  
 """
 
@@ -717,7 +717,7 @@ md"""
 
 	The aim of this notebook was to introduce the basics of creating a system of equations and design a model with ModelingToolkit. I glossed over a lot of analysis to keep it simple but if you are interested in a more in depth analysis of this model using the theory of dynamical systems, give the paper that inspired this notebook a read. 
 	
-	You also might of realized that there are a lot of simplifications made throughout this model. We consider the system to be continuous and we dont take into account spatial interactions. When desiging models, especially biological models, there is a balance between complexity and accuracy. There is an (almost) infinite different ways make the system more acurate, but that requires adding more complexity. In a real life scenario, we would also like to know precise values for the parameters, as you might of see that they can lead to widly different outcomes. This is usually achieved by fitting the model to existing real data and a variety of methods exist on this. Such methods include using stastical analysis such as least-square fit, bayesian inference or even deep learning.
+	You also might have realized that there are a lot of simplifications made throughout this model. We consider the system to be continuous and we dont take into account spatial interactions. When desiging models, especially biological models, there is a balance between complexity and accuracy. There is an *almost* infinite different ways make the system more acurate, but that requires adding more complexity. In a real life scenario, we would also like to know precise values for the parameters, as you might of see that they can lead to widly different outcomes. This is usually achieved by fitting the model to existing real data and a variety of methods exist on this. Such methods include using stastical analysis such as least-square fit, bayesian inference or even deep learning.
 
 
 	Can you think of other ways to extend the model?
@@ -4691,7 +4691,7 @@ version = "1.4.1+1"
 # ╟─6f38c085-ffaf-4df5-9d83-217dc045d615
 # ╟─4da94e9b-f009-48e5-b9ac-cae6e4d7495e
 # ╟─491f715e-048f-4bc4-b62b-9d9f622d835b
-# ╠═230a4e8a-6eb7-4b0a-84a7-c86019060062
+# ╟─230a4e8a-6eb7-4b0a-84a7-c86019060062
 # ╟─daf4dd3e-9427-4baa-836e-e1d524c0a170
 # ╟─88b3d429-4acd-4115-82da-972db1c5b501
 # ╟─ad0b76a6-46ce-42e0-82a5-e2230efc5d3b
