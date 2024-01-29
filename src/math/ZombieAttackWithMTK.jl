@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
-#> image = "https://github.com/damourChris/FeaturedPlutoNotebooks/blob/main/maths/ZombieAttackNotebookPreview.png?raw=true"
+#> image = "https://raw.githubusercontent.com/damourChris/FeaturedPlutoNotebooks/738fc31/maths/ZombieAttackNotebookPreview.png"
 #> title = "Modeling a Zombie Attack "
 #> date = "2023-12-16"
 #> license = "Unlicense"
