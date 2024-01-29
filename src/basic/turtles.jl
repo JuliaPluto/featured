@@ -61,6 +61,55 @@ md"""
 # ╔═╡ d3d14186-4182-4187-9670-95b8b886bb74
 md"""
 TODO: need to explain that you move, and that you leave a trace
+
+TODO: which commands are there?
+"""
+
+# ╔═╡ 7269e18f-8a63-4763-8114-d6f177d114fe
+md"""
+TODO: exercise, maybe fix some code?
+"""
+
+# ╔═╡ 0b3f4554-1a09-4b6b-b859-28ffbf393cef
+md"""
+TODO: button to start animation again
+"""
+
+# ╔═╡ 634309bc-64e7-47ef-888b-a083a485e105
+md"""
+## Using the `for` loop
+
+Let's make a zig-zag line!
+"""
+
+# ╔═╡ 2b245c13-82d7-40f6-b26b-d702962b37f3
+md"""
+You see that we make a zig-zag by doing one up-down motion, and repeating this. But if we want to make the drawing very long, **our code will become very long**.
+
+This is why `for`-loops are useful: you can repeat the same block of code multiple times.
+"""
+
+# ╔═╡ 42f262dd-4208-4a84-bd2d-5f4be5c78964
+md"""
+Try it yourself! Write code in the `for` loop to make it repeat 10 times.
+"""
+
+# ╔═╡ d742acd5-ad8d-4ee6-bab0-e54ab9313e0d
+md"""
+### The iterator `i`
+
+Inside the `for` loop, you can use the variable `i`, which goes from `1` to `10`. In the playground above, write `forward!(t, i)` somewhere inside the `for` loop. This means: *"move the turtle `t` forward by `i` steps"*. 
+
+Do you understand what happens?
+"""
+
+# ╔═╡ 15ba0e67-e1a8-43c7-a433-8e7e6d877376
+md"""
+## Understanding code with Logging
+
+Sometimes you want to the value of a variable 
+
+TODO
 """
 
 # ╔═╡ 71bb4346-7067-4db4-9a70-ab232e7c2ebc
@@ -68,6 +117,81 @@ md"""
 ## Adding color
 
 You can use `color!` to set the color of the turtle. This will determine the color of all future lines that you draw!
+"""
+
+# ╔═╡ 14c803ff-268b-48bc-90c9-faa88010f5fe
+md"""
+TODO: which colors can you use?
+"""
+
+# ╔═╡ 01b73386-ce68-4ad7-92af-17d91930f8f5
+md"""
+## Using global variables
+
+In a code cell, you can also create a **variable**, and use the value multiple times. For example:
+"""
+
+# ╔═╡ aa3d15c6-f6c2-49cd-9a77-7d9951157897
+example_step = 2
+
+# ╔═╡ f3ced552-1b2e-47a1-be8a-6a0c20561ae1
+md"""
+You can use this variable in other cells:
+"""
+
+# ╔═╡ 93fc3d23-9d7d-42ac-83fe-1cd568624a87
+example_step + example_step
+
+# ╔═╡ 160a5b22-6f1e-446d-861a-747cfe25bfda
+md"""
+We can also use variables in our drawings! Do you see where `example_step` is used in the example below? 
+"""
+
+# ╔═╡ 468eb41d-fa5a-46cd-a5ef-2708c74e5ee0
+md"""
+Now, go to [the definition of `example_step`](#example_step) and change the value from `1.5` to another number. 
+
+Do you see the drawing change?
+"""
+
+# ╔═╡ e523c524-8043-47f8-aeb3-69fad38aa272
+md"""
+TODO: step by step execution from PlutoTest? to show how variable substitution works?
+"""
+
+# ╔═╡ 0b8e61ca-4938-4a5f-85c5-248579716562
+
+
+# ╔═╡ 5a32b0d4-6a72-4b11-96ab-b6c8374153ba
+md"""
+## Interactivity with PlutoUI
+
+Let's do something fun! In the example above, you saw how you can change variables to control the image. In this section, we will use interactive elements from the package PlutoUI to **control Julia variables**. Let's try it!
+"""
+
+# ╔═╡ 925a66b2-3564-480c-be12-0e626b01362f
+@bind fun_angle Slider(0:180)
+
+# ╔═╡ c347a8ad-c859-4eb2-8fdc-bb7f04c7f70e
+@bind second_color ColorStringPicker()
+
+# ╔═╡ fac4f50a-ce65-4f22-af23-0fc73af936f2
+fun_angle, second_color
+
+# ╔═╡ 9a900923-e407-44a0-823a-f911a22a5ada
+html"""
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 """
 
 # ╔═╡ 553d0488-f03b-11ea-2997-3d82493cd4d7
@@ -139,8 +263,14 @@ end
 # ╔═╡ 5560ed36-b0c0-11ea-0104-49c31d171422
 md"## Turtle commands"
 
+# ╔═╡ d6b0e49b-3144-4230-9c5a-9cc6f90ab0c9
+warn_too_many_actions(🐢::Turtle) = if length(🐢.history_actions) > 20000
+		error("Drawing too big! The turtle took too many steps to make this drawing.")
+	end
+
 # ╔═╡ e6c7e5be-b0bf-11ea-1f7e-73b9aae14382
 function forward!(🐢::Turtle, distance::Number)
+	warn_too_many_actions(🐢)
 	old_pos = 🐢.pos
 	new_pos = 🐢.pos = old_pos .+ (10distance .* (cos(🐢.heading), sin(🐢.heading)))
 	push!(🐢.history_actions, (UInt8(0), Int64.(floor.(new_pos))))
@@ -155,6 +285,7 @@ backward!(🐢::Turtle, by::Number) = forward!(🐢, -by)
 
 # ╔═╡ fc44503a-b0bf-11ea-0f28-510784847241
 function right!(🐢::Turtle, angle_degrees::Number)
+	warn_too_many_actions(🐢)
 	🐢.heading += angle_degrees * pi / 180
 	push!(🐢.history_actions, (UInt8(1), Int64(floor(🐢.heading * 180 / pi))))
 	🐢
@@ -174,6 +305,7 @@ left!(🐢::Turtle, angle::Number) = right!(🐢, -angle)
 
 # ╔═╡ 4c173318-b3de-11ea-2d4c-49dab9fa3877
 function pendown!(🐢::Turtle, value::Bool=true)
+	warn_too_many_actions(🐢)
 	🐢.pen_down = value
 	push!(🐢.history_actions, (UInt8(2), value))
 	🐢
@@ -184,6 +316,7 @@ penup!(🐢::Turtle, value::Bool=true) = pendown!(🐢, !value)
 
 # ╔═╡ 2e7c8462-b3e2-11ea-1e41-a7085e012bb2
 function color!(🐢::Turtle, color::AbstractString="black")
+	warn_too_many_actions(🐢)
 	🐢.color = color
 	push!(🐢.history_actions, (UInt8(3), color))
 	🐢
@@ -485,12 +618,65 @@ turtle_drawing() do t
 	# take 5 steps
 	forward!(t, 5)
 
-	# turn right, 90 degrees
-	right!(t, 90)
+	# turn left, 90 degrees
+	left!(t, 90)
 
 	# take 10 steps
 	forward!(t, 10)
 
+end
+
+# ╔═╡ 19abbdeb-efe3-4a26-85c9-011ae5939c8e
+turtle_drawing() do t
+
+	forward!(t, 5)
+	right!(t, 160) # turn right, 160 degrees (almost a 180 degree half turn)
+	forward!(t, 5)
+	left!(t, 160) # turn back
+	
+
+	### REPEAT
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+	left!(t, 160)
+	
+	### REPEAT
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+	left!(t, 160)
+	
+	### REPEAT
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+	left!(t, 160)
+	
+end
+
+# ╔═╡ a84af845-7f7a-45eb-b1d4-dde8047cb8e8
+turtle_drawing() do t
+
+	for i in 1:10
+		forward!(t, 5)
+		right!(t, 160)
+		forward!(t, 5)
+		left!(t, 160)
+	end
+	
+end
+
+# ╔═╡ 5f0a4d6a-2545-4610-b827-6adc50204136
+turtle_drawing() do t
+
+	for i in 1:10
+		# repeat something 10 times
+		# write your code here! for example:
+		forward!(t, 2)
+
+	end
+	
 end
 
 # ╔═╡ 448dc68d-cd0a-4491-82ad-0e7cc00782ad
@@ -504,6 +690,34 @@ turtle_drawing() do t
 	color!(t, "pink")
 	forward!(t, 10)
 
+end
+
+# ╔═╡ 31847740-bb0b-41cc-9d4f-a42ee33bbc62
+turtle_drawing() do t
+
+	for i in 1:10
+		color!(t, "black")
+		forward!(t, example_step)
+
+		color!(t, "red")
+		forward!(t, example_step)
+	end
+	
+end
+
+# ╔═╡ aa724bc5-563f-4421-a55c-84ebd766f364
+turtle_drawing() do t
+
+	for i in 1:10
+		color!(t, "black")
+		forward!(t, 3)
+
+		right!(t, fun_angle)
+
+		color!(t, second_color)
+		forward!(t, 3)
+	end
+	
 end
 
 # ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
@@ -544,11 +758,38 @@ turtle_drawing() do t
 
 	right!(t, 60)
 	forward!(t, 5)
-
 end
 
-# ╔═╡ e0e86411-62cb-4af1-b91f-9069a5a20508
+# ╔═╡ 2722c8d8-58e0-4a3b-abdb-b810604384bf
+# ╠═╡ disabled = true
+#=╠═╡
+cellid_from_fname(s) = try
+	Base.UUID(split(String(s), "#==#")[2])
+catch
+	nothing
+end
+  ╠═╡ =#
 
+# ╔═╡ e0e86411-62cb-4af1-b91f-9069a5a20508
+#=╠═╡
+function from_which_cell()
+	this_cell = cellid_from_fname(@__FILE__)
+
+	cellids = (cellid_from_fname(stack.file) for stack in stacktrace(backtrace()))
+
+	Iterators.filter(x -> x ∉ (nothing, this_cell), cellids) |> collect
+end
+  ╠═╡ =#
+
+# ╔═╡ a3727d0a-3096-493c-a4fc-19e5a43cd683
+#=╠═╡
+x() = from_which_cell()
+  ╠═╡ =#
+
+# ╔═╡ 03c983b3-42f2-418d-89c2-fdfe74a4032a
+#=╠═╡
+x()
+  ╠═╡ =#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -832,13 +1073,39 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
-# ╠═e814a124-f038-11ea-3b22-f109c99dbe03
 # ╟─27d2fe04-a582-48f7-8d21-e2db7775f2c2
-# ╟─e18d7225-5a06-4fbc-b836-17798c0eb198
+# ╠═e18d7225-5a06-4fbc-b836-17798c0eb198
 # ╟─1ac7cee2-4aa7-497e-befe-8135d1d27d8d
 # ╟─d3d14186-4182-4187-9670-95b8b886bb74
+# ╟─7269e18f-8a63-4763-8114-d6f177d114fe
+# ╟─0b3f4554-1a09-4b6b-b859-28ffbf393cef
+# ╟─634309bc-64e7-47ef-888b-a083a485e105
+# ╠═19abbdeb-efe3-4a26-85c9-011ae5939c8e
+# ╟─2b245c13-82d7-40f6-b26b-d702962b37f3
+# ╠═a84af845-7f7a-45eb-b1d4-dde8047cb8e8
+# ╟─42f262dd-4208-4a84-bd2d-5f4be5c78964
+# ╠═5f0a4d6a-2545-4610-b827-6adc50204136
+# ╟─d742acd5-ad8d-4ee6-bab0-e54ab9313e0d
+# ╟─15ba0e67-e1a8-43c7-a433-8e7e6d877376
 # ╟─71bb4346-7067-4db4-9a70-ab232e7c2ebc
-# ╟─448dc68d-cd0a-4491-82ad-0e7cc00782ad
+# ╠═448dc68d-cd0a-4491-82ad-0e7cc00782ad
+# ╟─14c803ff-268b-48bc-90c9-faa88010f5fe
+# ╟─01b73386-ce68-4ad7-92af-17d91930f8f5
+# ╠═aa3d15c6-f6c2-49cd-9a77-7d9951157897
+# ╟─f3ced552-1b2e-47a1-be8a-6a0c20561ae1
+# ╠═93fc3d23-9d7d-42ac-83fe-1cd568624a87
+# ╟─160a5b22-6f1e-446d-861a-747cfe25bfda
+# ╠═31847740-bb0b-41cc-9d4f-a42ee33bbc62
+# ╟─468eb41d-fa5a-46cd-a5ef-2708c74e5ee0
+# ╟─e523c524-8043-47f8-aeb3-69fad38aa272
+# ╠═0b8e61ca-4938-4a5f-85c5-248579716562
+# ╟─5a32b0d4-6a72-4b11-96ab-b6c8374153ba
+# ╠═e814a124-f038-11ea-3b22-f109c99dbe03
+# ╠═925a66b2-3564-480c-be12-0e626b01362f
+# ╠═c347a8ad-c859-4eb2-8fdc-bb7f04c7f70e
+# ╠═fac4f50a-ce65-4f22-af23-0fc73af936f2
+# ╠═aa724bc5-563f-4421-a55c-84ebd766f364
+# ╟─9a900923-e407-44a0-823a-f911a22a5ada
 # ╟─553d0488-f03b-11ea-2997-3d82493cd4d7
 # ╟─25dc5690-f03a-11ea-3c59-35ae694b03b5
 # ╟─9dc072fe-b3db-11ea-1568-857a664ce4d2
@@ -862,6 +1129,7 @@ version = "17.4.0+2"
 # ╠═310a0c52-b0bf-11ea-3e32-69d685f2f45e
 # ╟─5560ed36-b0c0-11ea-0104-49c31d171422
 # ╠═e6c7e5be-b0bf-11ea-1f7e-73b9aae14382
+# ╠═d6b0e49b-3144-4230-9c5a-9cc6f90ab0c9
 # ╠═573c11b4-b0be-11ea-0416-31de4e217320
 # ╠═fc44503a-b0bf-11ea-0f28-510784847241
 # ╠═47907302-b0c0-11ea-0b27-b5cd2b4720d8
@@ -876,6 +1144,9 @@ version = "17.4.0+2"
 # ╠═1cca3d6d-a40a-455c-84d3-dec04f0b496a
 # ╠═0786bcb6-d782-4d45-abc1-fdf8cb064ca7
 # ╠═fc08d52f-91fb-47d4-9122-d45a287c0e7f
-# ╠═e0e86411-62cb-4af1-b91f-9069a5a20508
+# ╟─2722c8d8-58e0-4a3b-abdb-b810604384bf
+# ╟─e0e86411-62cb-4af1-b91f-9069a5a20508
+# ╟─03c983b3-42f2-418d-89c2-fdfe74a4032a
+# ╟─a3727d0a-3096-493c-a4fc-19e5a43cd683
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
