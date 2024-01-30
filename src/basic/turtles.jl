@@ -58,6 +58,24 @@ md"""
 	Take a look at the code above. Can you see how the **code corresponds to the picture**? Which step does what?
 """
 
+# ╔═╡ 46eebe4b-340b-468c-97c7-a4b5627b7163
+md"""
+### Let's make a square!
+
+Your turn! Edit the code below to draw a square. 🟥
+"""
+
+# ╔═╡ 04b3d54b-4e0b-46ad-bc92-f94ddfa890ef
+md"""
+!!! warning "Bonus exercise!"
+	Did you manage to make a square? Can you also make a triangle? 🔺
+"""
+
+# ╔═╡ 6eb9225b-dc7b-4fdb-acca-8d1d1d3bcc32
+md"""
+wat vormpjes die je kan maken met forward left
+"""
+
 # ╔═╡ d3d14186-4182-4187-9670-95b8b886bb74
 md"""
 TODO: need to explain that you move, and that you leave a trace
@@ -303,6 +321,12 @@ end
 # ╔═╡ 47907302-b0c0-11ea-0b27-b5cd2b4720d8
 left!(🐢::Turtle, angle::Number) = right!(🐢, -angle)
 
+# ╔═╡ 8f7af43c-13fc-4a65-8cd6-ede6bbbbf80d
+function register_line_number!(🐢::Turtle, lnn::Some{LineNumberNode})
+	warn_too_many_actions(🐢)
+	push!(🐢.history_actions, (UInt8(20), something(lnn).line))
+end
+
 # ╔═╡ 4c173318-b3de-11ea-2d4c-49dab9fa3877
 function pendown!(🐢::Turtle, value::Bool=true)
 	warn_too_many_actions(🐢)
@@ -527,6 +551,10 @@ function turtle_drawing(f::Function; background="white")
 		turtle.appendChild(turtle_image)
 		div.appendChild(turtle)
 
+		const line_highlighter = document.createElement("style")
+		div.appendChild(line_highlighter)
+		
+
 		let svg_data = null
 		const stop_promise = invalidation.then(_x => null)
 		let current_blob_url = null
@@ -568,6 +596,16 @@ function turtle_drawing(f::Function; background="white")
 			running.current = false
 		})
 
+		
+		const highlight_line = (line) => {
+			delayed(() => {
+				line_highlighter.innerText = `pluto-cell#\${currentScript.closest("pluto-cell").id} pluto-input .cm-editor .cm-line:nth-child(\${line}) {
+					background: #a0b1ff45;
+				}`
+			}, step_delay * 2)
+		}
+
+
 		let current_num_lines = -1
 		let current_pendown = true
 		let take_step = (action, arg) => {
@@ -581,6 +619,8 @@ function turtle_drawing(f::Function; background="white")
 				set_turtle_pos(current_pos, arg)
 			} else if(action === 2) {
 				current_pendown = arg
+			} else if(action === 20) {
+				highlight_line(arg)
 			}
 		}
 
@@ -626,45 +666,17 @@ turtle_drawing() do t
 
 end
 
-# ╔═╡ 19abbdeb-efe3-4a26-85c9-011ae5939c8e
+# ╔═╡ 90b40abf-caa3-4274-b164-e8c6d2f5b920
 turtle_drawing() do t
 
 	forward!(t, 5)
-	right!(t, 160) # turn right, 160 degrees (almost a 180 degree half turn)
-	forward!(t, 5)
-	left!(t, 160) # turn back
-	
 
-	### REPEAT
-	forward!(t, 5)
-	right!(t, 160)
-	forward!(t, 5)
-	left!(t, 160)
-	
-	### REPEAT
-	forward!(t, 5)
-	right!(t, 160)
-	forward!(t, 5)
-	left!(t, 160)
-	
-	### REPEAT
-	forward!(t, 5)
-	right!(t, 160)
-	forward!(t, 5)
-	left!(t, 160)
-	
-end
+	left!(t, 90)
 
-# ╔═╡ a84af845-7f7a-45eb-b1d4-dde8047cb8e8
-turtle_drawing() do t
+	forward!(t, 5)
 
-	for i in 1:10
-		forward!(t, 5)
-		right!(t, 160)
-		forward!(t, 5)
-		left!(t, 160)
-	end
-	
+	# what's next?
+
 end
 
 # ╔═╡ 5f0a4d6a-2545-4610-b827-6adc50204136
@@ -705,8 +717,98 @@ turtle_drawing() do t
 	
 end
 
-# ╔═╡ aa724bc5-563f-4421-a55c-84ebd766f364
+# ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
 turtle_drawing() do t
+	
+	for i in 0:.1:10
+		right!(t, angle)
+		forward!(t, i)
+	end
+	
+end
+
+# ╔═╡ fbcf4e5b-e748-4e26-b334-5c7b25e2cf72
+with_lnn_registrations(x; turtle_name::Symbol) = x
+
+# ╔═╡ e11da6c1-6336-4f34-9ab3-4531b136daad
+:(x(z)) |> dump
+
+# ╔═╡ 87aa1a40-afb0-4e56-b3f0-7c7e13c04ce8
+
+
+# ╔═╡ 32a78ca2-7a1b-40a5-9158-911b576139db
+function with_lnn_registrations(ex::Expr; turtle_name::Symbol)
+	Expr(
+		ex.head,
+		Iterators.flatten(
+			if a isa LineNumberNode
+				if ex.head ∈ (:block, :for)
+					(a,:($(register_line_number!)($turtle_name, $(Some(a)))))
+				else
+					(a,)
+				end
+			else
+				(with_lnn_registrations(a; turtle_name),)
+			end for a in ex.args
+		)...
+	)
+end
+
+# ╔═╡ 1e7dd491-2f09-4104-8a5d-512593da83f1
+macro turtle_drawing(x)
+	@assert Meta.isexpr(x, Symbol("->"))
+	turtle_name = x.args[1].args[1]
+	turtle_drawing
+	with_lnn_registrations
+
+	quote
+		$(turtle_drawing)($(esc(with_lnn_registrations(x; turtle_name))))
+	end
+end
+
+# ╔═╡ 19abbdeb-efe3-4a26-85c9-011ae5939c8e
+@turtle_drawing() do t
+
+	forward!(t, 5)
+	right!(t, 160) # turn right, 160 degrees (almost a 180 degree half turn)
+	forward!(t, 5)
+	left!(t, 160) # turn back
+	
+
+	### REPEAT
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+	left!(t, 160)
+	
+	### REPEAT
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+	left!(t, 160)
+	
+	### REPEAT
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+	left!(t, 160)
+	
+end
+
+# ╔═╡ a84af845-7f7a-45eb-b1d4-dde8047cb8e8
+@turtle_drawing() do t
+
+	for i in 1:10
+		forward!(t, 5)
+		right!(t, 160)
+		forward!(t, 5)
+		left!(t, 160)
+	end
+	
+end
+
+# ╔═╡ aa724bc5-563f-4421-a55c-84ebd766f364
+@turtle_drawing() do t
 
 	for i in 1:10
 		color!(t, "black")
@@ -720,18 +822,8 @@ turtle_drawing() do t
 	
 end
 
-# ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
-turtle_drawing() do t
-	
-	for i in 0:.1:10
-		right!(t, angle)
-		forward!(t, i)
-	end
-	
-end
-
 # ╔═╡ fc08d52f-91fb-47d4-9122-d45a287c0e7f
-turtle_drawing() do t
+@turtle_drawing() do t
 
 	# take 5 steps
 	forward!(t, 5)
@@ -781,14 +873,14 @@ function from_which_cell()
 end
   ╠═╡ =#
 
-# ╔═╡ a3727d0a-3096-493c-a4fc-19e5a43cd683
-#=╠═╡
-x() = from_which_cell()
-  ╠═╡ =#
-
 # ╔═╡ 03c983b3-42f2-418d-89c2-fdfe74a4032a
 #=╠═╡
 x()
+  ╠═╡ =#
+
+# ╔═╡ a3727d0a-3096-493c-a4fc-19e5a43cd683
+#=╠═╡
+x() = from_which_cell()
   ╠═╡ =#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1076,6 +1168,10 @@ version = "17.4.0+2"
 # ╟─27d2fe04-a582-48f7-8d21-e2db7775f2c2
 # ╠═e18d7225-5a06-4fbc-b836-17798c0eb198
 # ╟─1ac7cee2-4aa7-497e-befe-8135d1d27d8d
+# ╟─46eebe4b-340b-468c-97c7-a4b5627b7163
+# ╠═90b40abf-caa3-4274-b164-e8c6d2f5b920
+# ╟─04b3d54b-4e0b-46ad-bc92-f94ddfa890ef
+# ╠═6eb9225b-dc7b-4fdb-acca-8d1d1d3bcc32
 # ╟─d3d14186-4182-4187-9670-95b8b886bb74
 # ╟─7269e18f-8a63-4763-8114-d6f177d114fe
 # ╟─0b3f4554-1a09-4b6b-b859-28ffbf393cef
@@ -1112,7 +1208,7 @@ version = "17.4.0+2"
 # ╟─d88440c2-b3dc-11ea-1944-0ba4a566d7c1
 # ╟─5d345ae8-f03a-11ea-1c2d-03f66115b590
 # ╟─b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
-# ╟─e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
+# ╠═e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
 # ╟─a255402c-d719-41fc-babc-7988a9aa5421
 # ╟─678850cc-b3e4-11ea-3cf0-a3445a3ac15a
 # ╟─cd442606-f03a-11ea-3d53-57e83c8cdb1f
@@ -1133,6 +1229,7 @@ version = "17.4.0+2"
 # ╠═573c11b4-b0be-11ea-0416-31de4e217320
 # ╠═fc44503a-b0bf-11ea-0f28-510784847241
 # ╠═47907302-b0c0-11ea-0b27-b5cd2b4720d8
+# ╠═8f7af43c-13fc-4a65-8cd6-ede6bbbbf80d
 # ╠═1fb880a8-b3de-11ea-3181-478755ad354e
 # ╠═4c173318-b3de-11ea-2d4c-49dab9fa3877
 # ╠═2e7c8462-b3e2-11ea-1e41-a7085e012bb2
@@ -1140,10 +1237,15 @@ version = "17.4.0+2"
 # ╟─5aea06d4-b0c0-11ea-19f5-054b02e17675
 # ╟─6dbce38e-b0bc-11ea-1126-a13e0d575339
 # ╠═329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+# ╠═fc08d52f-91fb-47d4-9122-d45a287c0e7f
 # ╟─5030944f-efec-4226-9511-95ae3a4c179d
 # ╠═1cca3d6d-a40a-455c-84d3-dec04f0b496a
 # ╠═0786bcb6-d782-4d45-abc1-fdf8cb064ca7
-# ╠═fc08d52f-91fb-47d4-9122-d45a287c0e7f
+# ╠═fbcf4e5b-e748-4e26-b334-5c7b25e2cf72
+# ╠═e11da6c1-6336-4f34-9ab3-4531b136daad
+# ╠═87aa1a40-afb0-4e56-b3f0-7c7e13c04ce8
+# ╠═32a78ca2-7a1b-40a5-9158-911b576139db
+# ╠═1e7dd491-2f09-4104-8a5d-512593da83f1
 # ╟─2722c8d8-58e0-4a3b-abdb-b810604384bf
 # ╟─e0e86411-62cb-4af1-b91f-9069a5a20508
 # ╟─03c983b3-42f2-418d-89c2-fdfe74a4032a
