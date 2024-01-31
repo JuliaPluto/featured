@@ -29,11 +29,27 @@ using HypertextLiteral
 # ╔═╡ 53deda64-4123-436c-aced-f194a3eac4cf
 using BenchmarkTools
 
+# ╔═╡ b8db839d-3231-4622-9537-9ca2b3f13f32
+TableOfContents()
+
 # ╔═╡ 63de0f85-fe1d-4adf-9a90-be28e795c9d7
 import AbstractPlutoDingetjes.Bonds
 
 # ╔═╡ c9419b37-4c10-4858-8bbd-7f81b8f1db83
 md"# JuliaCeption"
+
+# ╔═╡ 749312a3-791e-4be7-aee7-d36e14495f80
+md"# Introduction" 
+
+# ╔═╡ cf50791f-1dc5-4988-abb2-79c3d53da67a
+md"""
+The Julia set is a mathematical concept that emerged from the study of complex dynamics, a branch of mathematics that deals with the iteration of functions in the complex plane. 
+
+The set is named after Gaston Julia (this guy -->), a French mathematician who discovered the sets and first explored their properties in the early 20th century. Julia sets are defined as the set of points in the complex plane that do not escape to infinity under iteration of a given function.
+"""
+
+# ╔═╡ 0331482a-55e5-402f-bc4f-9e9181f4f806
+md"# Visualizations"
 
 # ╔═╡ 34e7399f-ee06-471b-b25f-8d617431e95c
 function mandelbrot(c::Number; max_iter::Int=150)
@@ -58,12 +74,6 @@ function julia(z::Number,c::Number; max_iter::Int=150)
 	return k
 end
 
-
-# ╔═╡ a8de65a7-efa2-4967-98e3-03be07f7ee8d
-colors_values = [RGBA((k % 256)/256, (k % 128)/128, (k % 64)/64) for k in 1:619]
-
-# ╔═╡ 84f7cfea-3776-42b1-ab37-16aba88d7fde
-julia_img = Array{RGBA{N0f8}}(undef, 400, 400);
 
 # ╔═╡ b917af53-f7e3-4b6a-bc0e-fd070f5e03ac
 md"# Appendix" 
@@ -145,9 +155,6 @@ function generateFractal(
 	    return img
 	
 end
-
-# ╔═╡ 1b29c99b-d829-4088-9935-5d9c6035dbf0
-generateFractal(mandelbrot; color_values=colors_values)
 
 # ╔═╡ 5fdbc627-3b75-4acd-b884-01c3c5ff4bd9
 """
@@ -519,61 +526,102 @@ begin
 	
 end
 
-# ╔═╡ 3843ad2b-4be5-451e-9a09-29512f8a84ca
-xminslider = @bind xmin Slider(-5:0.1:0, show_value = true, default = -2.5)
+# ╔═╡ 3f50f459-9488-4287-acb8-cc8ad738b214
+md"""## Definition
 
-# ╔═╡ 45e06cca-7d75-4cbb-ac38-c18c0cf7a9ab
-yminslider = @bind ymin Slider(-5:0.1:0, show_value = true, default = -2.5)
+TODO JuliaSET DEFINITION
 
-# ╔═╡ 3495c968-c96a-4f72-9ff1-6e3886536965
-ymaxslider = @bind ymax Slider(0:0.1:5, show_value = true, default = 2.5)
+!!! info "A not so distant cousin" 
+	Some of you might recognize this and think: "Isn't this like a Mandelbrot set?" 
+	You are absolutly right! These two sets are very closely related
 
-# ╔═╡ 9684c087-b2cc-4c99-9259-cb6aa135f16e
-xmaxslider = @bind xmax Slider(0:0.1:5, show_value = true, default = 2.5)
+To explore what this means, let's try out some numbers. For now, our magic number will be ``-1``.
 
-# ╔═╡ 33feca8a-1ed9-45e3-83ed-fe770a1b3de7
-maxIterSlider = @bind max_iter Slider(10:500);
+Input a starting number: $(@bind def_input NumberField(-50:50, default = 0)) 
 
-# ╔═╡ 437718b2-10c6-4056-a1b3-512a118a2d6a
-max_iter
+Now we will transform this number like this: 
 
-# ╔═╡ b432c4f4-c98d-4b88-837b-438f6876b412
-scaleSlider = @bind scale Slider(50:1500, show_value=true)
+- Add the magic number 
 
-# ╔═╡ b7c39ae5-dfdf-44d1-8659-149fc9eee176
-xrange = range(xmin, xmax, length = scale)
+- Square it 
 
-# ╔═╡ fe462e20-8bb5-430f-aa91-7babfb77dd70
-yrange = range(ymin, ymax, length = scale)
+- Repeat
 
-# ╔═╡ c6a058fa-063a-4548-a098-3bcd3bbbff01
+"""
+
+# ╔═╡ 57c40974-77ab-4d6b-95b6-e80068eb6fd2
+@bind def_repeat Button("Repeat")
+
+# ╔═╡ f84557ef-1787-441d-9e24-ef9abc50e92c
+@bind def_reset Button("Reset")
+
+# ╔═╡ 1b854cb1-0be1-4b35-94ce-c50ef7a55112
 begin
+	def_reset	
+	def_sequence::Vector{Any} = [def_input]
+end;
+
+# ╔═╡ af275971-2d80-42b1-8d1c-258221dbe1ac
+begin
+	def_repeat
+	if(last(def_sequence) > 10000)	
+		
+		@info "The sequence is blowing up..."
+		def_sequence
+		
+	else
+		next = (last(def_sequence)+-1)^2
 	
-	mandel_img = generateFractal(mandelbrot, color_values=colors_values; img_width = 256, img_height = 256, yrange, xrange, max_iter)
-	mandel_img = imrotate(mandel_img, π/2) |> Matrix
-	# mandel_img = mandelbrot_set(Int(mandel_width), Int(mandel_height), max_iter)
+		push!(def_sequence, next)
+		def_sequence
+	end
 end
 
-# ╔═╡ bafac4db-b4c5-48bc-bc94-dd95d6c0a034
-inputRanges = (xrange, yrange)
+# ╔═╡ 8466ef52-b8f5-4fc0-8af2-771e2cb5a5a2
+begin
+	scaleSlider = @bind scale Slider(400:1500, show_value=true)
+	maxIterSlider = @bind max_iter Slider(10:500);
+	
+	xminslider = @bind xmin Slider(-5:0.1:0, show_value = true, default = -2.5)
+	yminslider = @bind ymin Slider(-5:0.1:0, show_value = true, default = -2.5)
+	ymaxslider = @bind ymax Slider(0:0.1:5, show_value = true, default = 2.5)
+	xmaxslider = @bind xmax Slider(0:0.1:5, show_value = true, default = 2.5)
+end;
 
-# ╔═╡ 82cb1e2e-872a-4b22-b2c3-396256e2261e
-complexSelectionPane = @bind complexSelection TwoDimInput(inputRanges, scale = 100.0,background=mandel_img, show_grid = false, show_value=true);
+# ╔═╡ 4df06ac3-06bb-476e-bbfd-fd7df2f6e29f
+begin
+	xrange = range(xmin, xmax, length = scale)
+	yrange = range(ymin, ymax, length = scale)
+	colors_values = [RGBA((k % 256)/256, (k % 128)/128, (k % 64)/64) for k in 1:max_iter]
+	
+	inputRanges = (xrange, yrange)
+	
 
-# ╔═╡ 83e7096a-bc63-4ac6-af29-c857d4fee2a9
-sideBarWrapper(
-	@htl """
-	<div>
-		$complexSelectionPane
-		Xmin: $xminslider <br>
-		Xmax: $xmaxslider <br>
-		Ymin: $yminslider <br>
-		Ymax: $ymaxslider <br>
-		Scale: $scaleSlider <br>
-		$maxIterSlider
-	</div>
-	"""
-)
+	mandel_img = generateFractal(mandelbrot, color_values=colors_values; img_width = 256, img_height = 256, yrange, xrange, max_iter)
+	mandel_img = imrotate(mandel_img, π/2) |> Matrix
+
+	complexSelectionPane = @bind complexSelection TwoDimInput(inputRanges, scale = 100.0,background=mandel_img, show_grid = false, show_value=true);
+end;
+
+# ╔═╡ 7db38547-80e7-4039-93ca-cda2816966b6
+generateFractal(julia; img_width = scale, img_height = scale, yrange, xrange, args = (Complex(-1,0)),  color_values=colors_values, max_iter)
+
+# ╔═╡ da0ff668-d43e-43cd-8d5d-a0b7e1acb802
+begin
+	sideBarWrapper(
+		@htl """
+		<div>
+			$complexSelectionPane
+			Xmin: $xminslider <br>
+			Xmax: $xmaxslider <br>
+			Ymin: $yminslider <br>
+			Ymax: $ymaxslider <br>
+			Scale: $scaleSlider <br>
+			$maxIterSlider
+		</div>
+		"""
+	)
+end
 
 # ╔═╡ 99d49e10-0ddb-417b-a47b-a6070bf51291
 generateFractal(julia; img_width = scale, img_height = scale, yrange, xrange, args = (complexSelection),  color_values=colors_values, max_iter)
@@ -1631,6 +1679,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╠═d1674c72-783d-404f-81c2-fe43809733a7
+# ╠═b8db839d-3231-4622-9537-9ca2b3f13f32
 # ╠═918377d1-7598-415b-830c-bbea15519bf9
 # ╠═6d8a09af-43a0-41c3-8e09-3c58f2915f2d
 # ╠═70e6b568-dc10-43fb-a449-5b5ac82fbbd3
@@ -1638,26 +1687,22 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═53deda64-4123-436c-aced-f194a3eac4cf
 # ╠═63de0f85-fe1d-4adf-9a90-be28e795c9d7
 # ╟─c9419b37-4c10-4858-8bbd-7f81b8f1db83
-# ╠═34e7399f-ee06-471b-b25f-8d617431e95c
-# ╠═3302b5a1-4f2a-44d9-b8ce-a39b2c161cdd
-# ╠═bfa44ab2-3a35-4265-b6c2-9ba1bfd77db2
-# ╠═a8de65a7-efa2-4967-98e3-03be07f7ee8d
-# ╠═1b29c99b-d829-4088-9935-5d9c6035dbf0
-# ╠═84f7cfea-3776-42b1-ab37-16aba88d7fde
-# ╠═c6a058fa-063a-4548-a098-3bcd3bbbff01
-# ╠═437718b2-10c6-4056-a1b3-512a118a2d6a
-# ╠═3843ad2b-4be5-451e-9a09-29512f8a84ca
-# ╠═45e06cca-7d75-4cbb-ac38-c18c0cf7a9ab
-# ╠═3495c968-c96a-4f72-9ff1-6e3886536965
-# ╠═9684c087-b2cc-4c99-9259-cb6aa135f16e
-# ╠═33feca8a-1ed9-45e3-83ed-fe770a1b3de7
-# ╠═b432c4f4-c98d-4b88-837b-438f6876b412
-# ╠═b7c39ae5-dfdf-44d1-8659-149fc9eee176
-# ╠═fe462e20-8bb5-430f-aa91-7babfb77dd70
-# ╠═83e7096a-bc63-4ac6-af29-c857d4fee2a9
+# ╟─749312a3-791e-4be7-aee7-d36e14495f80
+# ╠═cf50791f-1dc5-4988-abb2-79c3d53da67a
+# ╟─3f50f459-9488-4287-acb8-cc8ad738b214
+# ╠═1b854cb1-0be1-4b35-94ce-c50ef7a55112
+# ╠═57c40974-77ab-4d6b-95b6-e80068eb6fd2
+# ╟─af275971-2d80-42b1-8d1c-258221dbe1ac
+# ╟─f84557ef-1787-441d-9e24-ef9abc50e92c
+# ╟─0331482a-55e5-402f-bc4f-9e9181f4f806
+# ╠═7db38547-80e7-4039-93ca-cda2816966b6
+# ╟─34e7399f-ee06-471b-b25f-8d617431e95c
+# ╟─3302b5a1-4f2a-44d9-b8ce-a39b2c161cdd
+# ╟─bfa44ab2-3a35-4265-b6c2-9ba1bfd77db2
+# ╟─8466ef52-b8f5-4fc0-8af2-771e2cb5a5a2
+# ╟─4df06ac3-06bb-476e-bbfd-fd7df2f6e29f
+# ╠═da0ff668-d43e-43cd-8d5d-a0b7e1acb802
 # ╠═99d49e10-0ddb-417b-a47b-a6070bf51291
-# ╠═bafac4db-b4c5-48bc-bc94-dd95d6c0a034
-# ╠═82cb1e2e-872a-4b22-b2c3-396256e2261e
 # ╟─b917af53-f7e3-4b6a-bc0e-fd070f5e03ac
 # ╟─c4a03b8f-3fc0-4d93-a58c-10aee2d40a1a
 # ╠═0479f879-8db3-4c83-a56a-2bba1c24859c
