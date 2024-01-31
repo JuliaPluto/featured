@@ -35,45 +35,246 @@ import AbstractPlutoDingetjes.Bonds
 # ╔═╡ c9419b37-4c10-4858-8bbd-7f81b8f1db83
 md"# JuliaCeption"
 
-# ╔═╡ 2c7f9125-2970-4074-b36f-3116de2de726
-
+# ╔═╡ 34e7399f-ee06-471b-b25f-8d617431e95c
+function mandelbrot(c::Number; max_iter::Int=150)
+		z = 0
+	    n = 0
+	    while abs(z) <= 2 && n < max_iter
+	        z = z*z + c
+	        n += 1
+	    end
+	    return n
+	end
 
 # ╔═╡ bfa44ab2-3a35-4265-b6c2-9ba1bfd77db2
-function julia_set(c::Complex, img_width::Int, img_height::Int, max_iter::Int, img = Array{RGB{Float64}}(undef, img_height, img_width))
-	
-    color_values = [(k % 256, k % 128, k % 64) for k in 1:max_iter]
-	
-    img_width_div_2 = img_width / 2
-    img_height_div_2 = img_height / 2
-    img_width_div_4 = img_width / 4
-    img_height_div_4 = img_height / 4
-	
-    @threads for j in 1:img_height
-        for i in 1:img_width
-			@inbounds begin
-	            z = Complex((i - img_width_div_2)/img_width_div_4, (j - img_height_div_2)/img_height_div_4)
-	            k = 1
-	            while abs(z) <= 2 && k < max_iter
-	                k += 1
-	                z *= z
-	                z += c
-	            end
-	            r, g, b = color_values[k]
-	            img[j, i] = RGB(r/256, g/128, b/64)
-			end
-        end
-    end
-    return img
+
+function julia(z::Number,c::Number; max_iter::Int=150)
+	k = 1
+	while abs(z) <= 2 && k < max_iter
+		k += 1
+		z *= z
+		z += c
+	end
+	return k
 end
+
+
+# ╔═╡ a8de65a7-efa2-4967-98e3-03be07f7ee8d
+colors_values = [RGBA((k % 256)/256, (k % 128)/128, (k % 64)/64) for k in 1:619]
+
+# ╔═╡ 84f7cfea-3776-42b1-ab37-16aba88d7fde
+julia_img = Array{RGBA{N0f8}}(undef, 400, 400);
 
 # ╔═╡ b917af53-f7e3-4b6a-bc0e-fd070f5e03ac
 md"# Appendix" 
+
+# ╔═╡ c4a03b8f-3fc0-4d93-a58c-10aee2d40a1a
+"""
+	loadSideBarCSS()
+
+Helper function to generate the CSS needed for styling the sliders.
+Generate the following classes:
+- side-bar
+
+"""
+function loadSideBarCSS()
+	sideBarCSS = Dict(
+		:display => "flex",
+		:top => "100%",
+		:position => "absolute",
+		:min_width => "0",
+		:max_width => "17rem",
+		:z_index => "35",
+	)
+	
+	@htl("""
+		<style>
+			.side-bar{
+				$sideBarCSS
+			}
+		</style>
+	""")
+end
+
+# ╔═╡ 0479f879-8db3-4c83-a56a-2bba1c24859c
+function map_range(val::Real, src_range::AbstractRange, dst_range::AbstractRange)
+    return ((val - minimum(src_range)) / (maximum(src_range) - minimum(src_range))) * (maximum(dst_range) - minimum(dst_range)) + minimum(dst_range)
+
+end
+
+# ╔═╡ 3302b5a1-4f2a-44d9-b8ce-a39b2c161cdd
+function generateFractal(
+		iteration_calculator;
+		args = missing, 
+		resolution::Int = 100,
+		img_width::Int = 400,
+		img_height::Int= 400, 
+		xrange = range(-1,1, length = img_width),
+		yrange = range(-1,1, length = img_height), 
+		max_iter::Int  = 150,
+		color_values = [(k % 256, k % 128, k % 64) for k in 1:max_iter]
+)
+		# initialize empty array for img 
+		img = Array{RGBA{N0f8}}(undef, img_height, img_width)
+
+		# create pixel range for images
+		img_xrange = range(1, img_width, step = 1)
+		img_yrange = range(1, img_height, step = 1)
+
+
+		# @threads for parallelization
+	    for j in yrange
+	        for i in xrange
+				@inbounds begin
+					
+		            z = Complex(i, j)
+					
+					# compute num of iterations before blowing up  
+					k = ismissing(args) ? iteration_calculator(z; max_iter) :  iteration_calculator(z, args...; max_iter)
+
+					# map complex value to pixel position 
+					im_mapped = round(Int,map_range(j, yrange, img_yrange))
+					re_mapped = round(Int,map_range(i, xrange, img_xrange))
+
+					# assign color
+		            img[im_mapped, re_mapped] = color_values[k]
+				end
+	        end
+	    end
+
+	    return img
+	
+end
+
+# ╔═╡ 1b29c99b-d829-4088-9935-5d9c6035dbf0
+generateFractal(mandelbrot; color_values=colors_values)
+
+# ╔═╡ 5fdbc627-3b75-4acd-b884-01c3c5ff4bd9
+"""
+    sideBarWrapper(child; location=:right)
+
+Create a sidebar wrapper for a given HTML child.
+
+# Arguments
+- `child`: The HTML node to be wrapped.
+- `location` (optional): The location of the sidebar. Default is `:right`. 
+  
+# Returns
+- A HTML node that wraps the provided div in a sidebar.
+
+"""
+function sideBarWrapper(child; location=:right)
+
+	# swap left-right cos css is weird
+	location = (location == :left ) ? :right : :left
+	
+	return @htl("""
+	<div class="on-small-show">
+		<div class="side-bar" style="$location: 105%"> 
+			$child
+		</div>
+	</div>
+	<div class="on-tiny-show">
+		<div style="display: flex"> 
+			$child
+		</div>
+	</div>
+	""")
+end
+
+# ╔═╡ ae992403-16b6-467b-80f2-d8fd9bb78870
+"""
+	buffer_img_data(vis::CollatzVisualization)
+
+Helper function to transform a RGBA into a UInt8 buffer for loading onto a html canvas.
+"""
+function buffer_img_data(img)
+	buffer::Vector{UInt8} = [] 
+		
+	for pix in img
+		push!(buffer, reinterpret.(UInt8, [pix.r, pix.g, pix.b, pix.alpha])...)
+	end
+	return buffer
+end
+
+# ╔═╡ 7de6e5b0-5d98-40a2-9d83-f8842d6bff6b
+function loadDynamicViewCSS()
+	@htl("""
+	<style>
+		@media screen and (min-width: 600px) {
+			
+			.on-tiny-show {
+				display: flex;
+			}
+			.on-small-show {
+				display: none;
+			}
+			.on-big-show {
+				display: none;
+			}
+		}
+		@media screen and (min-width: 1200px) {
+			.on-tiny-show {
+				display: none;
+			}
+			.on-small-show {
+				display: flex;
+			}
+			.on-big-show {
+				display: none;
+			}
+		}
+		@media screen and (min-width: 1800px) {
+			.on-tiny-show {
+				display: none;
+			}
+			.on-small-show {
+				display: flex;
+			}
+			.on-big-show {
+				display: flex;
+			}
+		}
+	</style>
+	""")
+end
+
+# ╔═╡ 6f9f5ab5-ef9b-4875-bc88-595155c375ee
+function loadExtraCss()
+	@htl("""
+	<style>
+		.noselect {
+			 -webkit-touch-callout: none; /* iOS Safari */
+			    -webkit-user-select: none; /* Safari */
+			     -khtml-user-select: none; /* Konqueror HTML */
+			       -moz-user-select: none; /* Old versions of Firefox */
+			        -ms-user-select: none; /* Internet Explorer/Edge */
+			            user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+			}
+	</style>
+	""")
+end
+
+# ╔═╡ 9dc1f57a-44f3-4539-a6bf-b2cafa178315
+begin 
+	function loadCSS()
+		@htl """
+			$(loadDynamicViewCSS())
+			$(loadExtraCss())
+			$(loadSideBarCSS())
+		"""
+	end
+end
+
+# ╔═╡ d1674c72-783d-404f-81c2-fe43809733a7
+loadCSS()
 
 # ╔═╡ 4586984a-41b6-4a97-b1ff-52de5bbe13b2
 begin
 	
 	struct TwoDimInput
 		range::Tuple{AbstractRange, AbstractRange}
+		background::Vector{UInt8}
 		scale::Float64
 		default::Complex
 		show_value::Bool
@@ -81,26 +282,48 @@ begin
 	end
 	
 
-	function TwoDimInput(ranges; scale = 100.0, default = missing, show_value = false, show_grid=true)
-		default = ismissing(default) ? Complex((last(ranges[1]) + first(ranges[1]))/2,(last(ranges[2]) + first(ranges[2]))/2) : default
-		TwoDimInput(ranges, scale, default, show_value, show_grid)
+	function TwoDimInput(ranges; background = missing, scale = 100.0, default = missing, show_value = false, show_grid=true)
+
+	
+		width = 256
+		height = 256 
+	
+		
+		if(ismissing(background))
+			background = Array{RGBA{N0f8}}(undef, Int(width), Int(height));
+		end
+		
+		if(background isa Array{RGBA{N0f8}})
+			buffer::Vector{UInt8} = [] 
+		
+			for pix in background
+				push!(buffer, reinterpret.(UInt8, [pix.r, pix.g, pix.b, pix.alpha])...)
+			end
+			background = buffer
+		end
+		
+		if(ismissing(default))
+			default = Complex((last(ranges[1]) + first(ranges[1]))/2,(last(ranges[2]) + first(ranges[2]))/2) 
+		end
+		
+		TwoDimInput(ranges, background, scale, default, show_value, show_grid)
 	end
 
+	
 	Base.get(input::TwoDimInput) = input.default
 
 	Bonds.initial_value(input::TwoDimInput) = input.default
 	Bonds.possible_values(input::TwoDimInput) = input.range
 	Bonds.transform_value(input::TwoDimInput, val) = Base.parse(Complex{Float64}, val)
 
-	function Base.show(io::IO, m::MIME"text/html", input::TwoDimInput)
-
-		# Calculate grid display size based on input
-		grid_width = last(input.range[1]) - first(input.range[1]) * input.scale
-		grid_height = last(input.range[2]) - first(input.range[2]) * input.scale
-
+	function Base.show(io::IO, m::MIME"text/html", input::TwoDimInput)	
 		
 		# Define set of CSS classes if show_grid is active
+		grid_width = 256
+		grid_height = 256 
+
 		if(input.show_grid)
+
 
 			num_ticks = 20
 
@@ -149,6 +372,7 @@ begin
 			grid_beforeCSS = grid_afterCSS = grid_beforeafterCSS = Dict()
 		end
 
+		if(input.show_value)
 			selectionLabelDiv_CSS = Dict(
 				:display => "flex",
 				:flex_direction => "column",
@@ -159,21 +383,110 @@ begin
 				:color => "black",
 				:z_index => "10"
 			)
-		
+		else
+			selectionLabelDiv_CSS = Dict(
+				:display => "none"
+			)
+		end
 		show(io, m, @htl("""
 			<!-- Custom Input for holding complex value -->
-		    <input type="hidden" id="complexNumberValue" value="$(input.default)">
+		    <input type="hidden" value="$(input.default)">
 		
-			<!-- Canvas to display Selection grid -->
-			<div id="complexCanvas" class="grid">
-				<span id="selectedComplexNumber"></span>
-				<div id="selection"></div>
-				<div class="selectionLabelDiv" id="selectionLabelDiv">
-					<span id="selectionLabelx"></span>
-					<span id="selectionLabely"></span>
+			<div class="grid">
+				<!-- Canvas to display Selection grid -->
+				<canvas  width="$(grid_width)" height="$(grid_height)">
+			
+				</canvas>
+				<div class="selection"></div>
+				<div class="selectionLabelDiv">
+					<span class="noselect"></span>
+					<span class="noselect"></span>
 				</div>
 			</div>
 			
+			
+			<script>
+
+			// https://rosettacode.org/wiki/Map_range#JavaScript
+			var mapRange = function(from, to, s) {
+			  return to[0] + (s - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);
+			};
+
+		
+			const complexNumberValueInput = currentScript.previousElementSibling.previousElementSibling
+
+
+			const grid = currentScript.previousElementSibling
+			const gridChildren = grid.children
+
+			const canvas = gridChildren[0]
+			const point = gridChildren[1]
+			const labelDiv = gridChildren[2]
+			const labelx = labelDiv.children[0]
+			const labely = labelDiv.children[1]
+			
+			const buffer = $(input.background)
+			const ctx = canvas.getContext("2d");
+			ctx.rotate(90*Math.PI/180)
+			const arr = new Uint8ClampedArray(buffer);
+			let imageData = new ImageData(arr, $(grid_width), $(grid_height));
+			ctx.putImageData(imageData, 0, 0);
+			
+		
+			let isDragging = false;
+			let lastMousePosition = null;
+
+			const xrange = [$(minimum(input.range[1])),$(maximum(input.range[1]))]
+			const xdisplayrange = [0, $(grid_width)]
+		
+			const yrange = [$(minimum(input.range[2])),$(maximum(input.range[2]))]
+			const ydisplayrange = [0, $(grid_height)] 
+			grid.addEventListener('mousedown', function(event) {
+			    isDragging = true;
+			    lastMousePosition = { x: event.clientX, y: event.clientY };
+			});
+			
+			grid.addEventListener('mousemove', function(event) {
+			    if (!isDragging) return;
+			
+			    const rect = this.getBoundingClientRect();
+			    const x = event.clientX - rect.left; //x position within the element.
+			    const y = event.clientY - rect.top; //y position within the element.
+				
+				if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+
+					const realPart = mapRange(xdisplayrange, xrange, x)
+					const imaginaryPart = mapRange(ydisplayrange, yrange, y)
+					
+					const complexNumber = '' + realPart + ' + ' +  imaginaryPart + 'i';
+					
+					labelx.innerText = `\${(realPart).toFixed(4)}`;
+					labely.innerText = `\${(imaginaryPart).toFixed(4)}im`;
+					labelDiv.style.left = `\${x+2}px`;
+					labelDiv.style.top = `\${y+2}px`;
+					
+					// Update the position of the point
+					point.style.left = `\${x}px`;
+					point.style.top = `\${y}px`;
+			    
+					complexNumberValueInput.value = complexNumber;
+		
+					let ev = new Event('input', { bubbles: true });
+					complexNumberValueInput.dispatchEvent(ev);
+		
+				} else {
+					// Mouse is outside the container, stop dragging
+					isDragging = false;
+				}
+			});
+			
+			grid.addEventListener('mouseup', function() {
+			    isDragging = false;
+			});
+		
+			</script>	
+
+		
 			<style>
 				.grid{
 					$grid_CSS
@@ -192,7 +505,7 @@ begin
 					$selectionLabelDiv_CSS
 				}
 
-				#selection {
+				.selection {
 				    position: absolute;
 				    width: 5px;
 				    height: 5px;
@@ -200,62 +513,6 @@ begin
 				    background: white;
 				}
 			</style>
-			
-			<script>
-			
-	
-			const complexCanvas = document.getElementById('complexCanvas');
-			const selectedComplexNumberSpan = document.getElementById('selectedComplexNumber');
-			const complexNumberValueInput = document.getElementById('complexNumberValue');
-			const point = document.getElementById('selection');
-			const labelx = document.getElementById('selectionLabelx')
-			const labely = document.getElementById('selectionLabely')
-			const labelDiv = document.getElementById('selectionLabelDiv')
-		
-			let isDragging = false;
-			const lastMousePosition = null;
-			
-			complexCanvas.addEventListener('mousedown', function(event) {
-			    isDragging = true;
-			    lastMousePosition = { x: event.clientX, y: event.clientY };
-			});
-			
-			complexCanvas.addEventListener('mousemove', function(event) {
-			    if (!isDragging) return;
-			
-			    const rect = this.getBoundingClientRect();
-			    const x = event.clientX - rect.left; //x position within the element.
-			    const y = event.clientY - rect.top; //y position within the element.
-			
-			    const centerX = rect.width / 2;
-			    const centerY = rect.height / 2;
-			
-			    const realPart = x - centerX;
-			    const imaginaryPart = y - centerY;
-			
-				const complexNumber = '' + realPart/$(input.scale) + ' + ' +  imaginaryPart/$(input.scale) + 'i';
-
-				labelx.innerText = `\${x.toFixed(4)}`;
-				labely.innerText = `\${y.toFixed(4)}im`;
-			    labelDiv.style.left = `\${x+2}px`;
-			    labelDiv.style.top = `\${y+2}px`;
-				
-				// Update the position of the point
-			    point.style.left = `\${x}px`;
-			    point.style.top = `\${y}px`;
-	
-			    
-			complexNumberValueInput.value = complexNumber;
-			let ev = new Event('input', { bubbles: true });
-				complexNumberValue.dispatchEvent(ev);
-		
-			});
-			
-			complexCanvas.addEventListener('mouseup', function() {
-			    isDragging = false;
-			});
-		
-			</script>									
 		""")
 		)
 	end
@@ -263,25 +520,63 @@ begin
 end
 
 # ╔═╡ 3843ad2b-4be5-451e-9a09-29512f8a84ca
-@bind scale Slider(100:1000)
+xminslider = @bind xmin Slider(-5:0.1:0, show_value = true, default = -2.5)
 
-# ╔═╡ 84f7cfea-3776-42b1-ab37-16aba88d7fde
-julia_img = Array{RGB{Float64}}(undef, scale, scale);
+# ╔═╡ 45e06cca-7d75-4cbb-ac38-c18c0cf7a9ab
+yminslider = @bind ymin Slider(-5:0.1:0, show_value = true, default = -2.5)
+
+# ╔═╡ 3495c968-c96a-4f72-9ff1-6e3886536965
+ymaxslider = @bind ymax Slider(0:0.1:5, show_value = true, default = 2.5)
+
+# ╔═╡ 9684c087-b2cc-4c99-9259-cb6aa135f16e
+xmaxslider = @bind xmax Slider(0:0.1:5, show_value = true, default = 2.5)
 
 # ╔═╡ 33feca8a-1ed9-45e3-83ed-fe770a1b3de7
-@bind max_iter Slider(10:1000)
+maxIterSlider = @bind max_iter Slider(10:500);
 
-# ╔═╡ 32e42097-8506-4b0b-81ed-8af6ba01e374
-@bind c_r Slider(-1:0.001:1)
+# ╔═╡ 437718b2-10c6-4056-a1b3-512a118a2d6a
+max_iter
 
-# ╔═╡ 295c70a0-8da5-4b30-ab14-530759e824af
-@bind c_i Slider(-1:0.001:1)
+# ╔═╡ b432c4f4-c98d-4b88-837b-438f6876b412
+scaleSlider = @bind scale Slider(50:1500, show_value=true)
+
+# ╔═╡ b7c39ae5-dfdf-44d1-8659-149fc9eee176
+xrange = range(xmin, xmax, length = scale)
+
+# ╔═╡ fe462e20-8bb5-430f-aa91-7babfb77dd70
+yrange = range(ymin, ymax, length = scale)
+
+# ╔═╡ c6a058fa-063a-4548-a098-3bcd3bbbff01
+begin
+	
+	mandel_img = generateFractal(mandelbrot, color_values=colors_values; img_width = 256, img_height = 256, yrange, xrange, max_iter)
+	mandel_img = imrotate(mandel_img, π/2) |> Matrix
+	# mandel_img = mandelbrot_set(Int(mandel_width), Int(mandel_height), max_iter)
+end
+
+# ╔═╡ bafac4db-b4c5-48bc-bc94-dd95d6c0a034
+inputRanges = (xrange, yrange)
 
 # ╔═╡ 82cb1e2e-872a-4b22-b2c3-396256e2261e
-@bind complexSelection TwoDimInput((-2:0.01:2,-2:0.01:2), scale = 100.0)
+complexSelectionPane = @bind complexSelection TwoDimInput(inputRanges, scale = 100.0,background=mandel_img, show_grid = false, show_value=true);
 
-# ╔═╡ ea7bc899-2f54-43fd-b77f-9cab050d42a3
-julia_set(complexSelection, scale, scale, max_iter, julia_img)
+# ╔═╡ 83e7096a-bc63-4ac6-af29-c857d4fee2a9
+sideBarWrapper(
+	@htl """
+	<div>
+		$complexSelectionPane
+		Xmin: $xminslider <br>
+		Xmax: $xmaxslider <br>
+		Ymin: $yminslider <br>
+		Ymax: $ymaxslider <br>
+		Scale: $scaleSlider <br>
+		$maxIterSlider
+	</div>
+	"""
+)
+
+# ╔═╡ 99d49e10-0ddb-417b-a47b-a6070bf51291
+generateFractal(julia; img_width = scale, img_height = scale, yrange, xrange, args = (complexSelection),  color_values=colors_values, max_iter)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -880,12 +1175,6 @@ git-tree-sha1 = "2fa9ee3e63fd3a4f7a9a4f4744a52f4856de82df"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 version = "0.5.13"
 
-[[MakieCore]]
-deps = ["Observables", "REPL"]
-git-tree-sha1 = "9b11acd07f21c4d035bd4156e789532e8ee2cc70"
-uuid = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
-version = "0.6.9"
-
 [[ManualMemory]]
 git-tree-sha1 = "bcaef4fc7a0cfe2cba636d84cda54b5e4e4ca3cd"
 uuid = "d125e4d3-2237-4719-b19c-fa641b8a4667"
@@ -928,12 +1217,6 @@ version = "0.3.4"
 [[MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 
-[[MutableArithmetics]]
-deps = ["LinearAlgebra", "SparseArrays", "Test"]
-git-tree-sha1 = "806eea990fb41f9b36f1253e5697aa645bf6a9f8"
-uuid = "d8a4904e-b15c-11e9-3269-09a3773c0cb0"
-version = "1.4.0"
-
 [[NaNMath]]
 deps = ["OpenLibm_jll"]
 git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
@@ -954,11 +1237,6 @@ version = "1.1.1"
 
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
-
-[[Observables]]
-git-tree-sha1 = "7438a59546cf62428fc9d1bc94729146d37a7225"
-uuid = "510215fc-4207-5dde-b226-833fc4488ee2"
-version = "0.5.5"
 
 [[OffsetArrays]]
 deps = ["Adapt"]
@@ -1040,10 +1318,10 @@ uuid = "1d0040c9-8b98-4ee7-8388-3f51789ca0ad"
 version = "0.2.1"
 
 [[Polynomials]]
-deps = ["ChainRulesCore", "LinearAlgebra", "MakieCore", "MutableArithmetics", "RecipesBase"]
-git-tree-sha1 = "3aa2bb4982e575acd7583f01531f241af077b163"
+deps = ["LinearAlgebra", "RecipesBase"]
+git-tree-sha1 = "a14a99e430e42a105c898fcc7f212334bc7be887"
 uuid = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
-version = "3.2.13"
+version = "3.2.4"
 
 [[PrecompileTools]]
 deps = ["Preferences"]
@@ -1352,6 +1630,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
+# ╠═d1674c72-783d-404f-81c2-fe43809733a7
 # ╠═918377d1-7598-415b-830c-bbea15519bf9
 # ╠═6d8a09af-43a0-41c3-8e09-3c58f2915f2d
 # ╠═70e6b568-dc10-43fb-a449-5b5ac82fbbd3
@@ -1359,16 +1638,34 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═53deda64-4123-436c-aced-f194a3eac4cf
 # ╠═63de0f85-fe1d-4adf-9a90-be28e795c9d7
 # ╟─c9419b37-4c10-4858-8bbd-7f81b8f1db83
-# ╠═2c7f9125-2970-4074-b36f-3116de2de726
+# ╠═34e7399f-ee06-471b-b25f-8d617431e95c
+# ╠═3302b5a1-4f2a-44d9-b8ce-a39b2c161cdd
 # ╠═bfa44ab2-3a35-4265-b6c2-9ba1bfd77db2
-# ╠═3843ad2b-4be5-451e-9a09-29512f8a84ca
-# ╠═33feca8a-1ed9-45e3-83ed-fe770a1b3de7
+# ╠═a8de65a7-efa2-4967-98e3-03be07f7ee8d
+# ╠═1b29c99b-d829-4088-9935-5d9c6035dbf0
 # ╠═84f7cfea-3776-42b1-ab37-16aba88d7fde
-# ╠═32e42097-8506-4b0b-81ed-8af6ba01e374
-# ╠═295c70a0-8da5-4b30-ab14-530759e824af
-# ╠═ea7bc899-2f54-43fd-b77f-9cab050d42a3
+# ╠═c6a058fa-063a-4548-a098-3bcd3bbbff01
+# ╠═437718b2-10c6-4056-a1b3-512a118a2d6a
+# ╠═3843ad2b-4be5-451e-9a09-29512f8a84ca
+# ╠═45e06cca-7d75-4cbb-ac38-c18c0cf7a9ab
+# ╠═3495c968-c96a-4f72-9ff1-6e3886536965
+# ╠═9684c087-b2cc-4c99-9259-cb6aa135f16e
+# ╠═33feca8a-1ed9-45e3-83ed-fe770a1b3de7
+# ╠═b432c4f4-c98d-4b88-837b-438f6876b412
+# ╠═b7c39ae5-dfdf-44d1-8659-149fc9eee176
+# ╠═fe462e20-8bb5-430f-aa91-7babfb77dd70
+# ╠═83e7096a-bc63-4ac6-af29-c857d4fee2a9
+# ╠═99d49e10-0ddb-417b-a47b-a6070bf51291
+# ╠═bafac4db-b4c5-48bc-bc94-dd95d6c0a034
 # ╠═82cb1e2e-872a-4b22-b2c3-396256e2261e
-# ╠═b917af53-f7e3-4b6a-bc0e-fd070f5e03ac
+# ╟─b917af53-f7e3-4b6a-bc0e-fd070f5e03ac
+# ╟─c4a03b8f-3fc0-4d93-a58c-10aee2d40a1a
+# ╠═0479f879-8db3-4c83-a56a-2bba1c24859c
+# ╟─5fdbc627-3b75-4acd-b884-01c3c5ff4bd9
+# ╟─ae992403-16b6-467b-80f2-d8fd9bb78870
+# ╟─7de6e5b0-5d98-40a2-9d83-f8842d6bff6b
+# ╟─6f9f5ab5-ef9b-4875-bc88-595155c375ee
+# ╟─9dc1f57a-44f3-4539-a6bf-b2cafa178315
 # ╠═4586984a-41b6-4a97-b1ff-52de5bbe13b2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
