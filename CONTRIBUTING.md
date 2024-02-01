@@ -11,11 +11,11 @@ That said, we also very much welcome experienced Julia programmers to share thei
 
 
 # What is a good fit?
-If you have an idea that you want to share, something that you think others would be excited about, then it's probably a good fit! That being said, here are some suggestions for suitable topics, and some things you might not have thought about.
+Pluto's *featured* notebooks is a collection of notebooks from the Julia community and the Pluto developers to **showcase what you can do with Julia and Pluto**, and to help you get started. Featured notebooks are intended to **get people excited**, and to **teach new skills**.
 
 
 ## Suitable topics
-Pluto's *featured* notebooks is a collection of notebooks from the Julia community and the Pluto developers to **showcase what you can do with Julia and Pluto**, and to help you get started. Featured notebooks are intended to **get people excited**, and to **teach new skills**.
+If you have an idea that you want to share, something that you think others would be excited about, then it's probably a good fit! That being said, here are some suggestions for suitable topics, and some things you might not have thought about.
 
 Some examples of great topics:
 - Tutorials about core Julia programming concepts, like arrays.
