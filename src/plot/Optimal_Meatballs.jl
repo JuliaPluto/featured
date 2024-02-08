@@ -8,7 +8,8 @@
 #> tags = ["circle-packing", "Plots.jl", "PlutoUI.jl"]
 #> description = "Learn about circle packing by optimizing the size of meatballs!  🍝"
 #> license = "Unlicense"
-#> 
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Polpettes_et_linguini_Pasta_%C3%A9_Pizza_%28Lyon%29_mars_2023_%282%29.jpg/540px-Polpettes_et_linguini_Pasta_%C3%A9_Pizza_%28Lyon%29_mars_2023_%282%29.jpg"
+#>
 #>     [[frontmatter.author]]
 #>     name = "Matt Helm"
 #>     url = "https://avatars.githubusercontent.com/u/30706758?v=4"
