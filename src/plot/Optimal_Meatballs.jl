@@ -12,7 +12,7 @@
 #>
 #>     [[frontmatter.author]]
 #>     name = "Matt Helm"
-#>     url = "https://avatars.githubusercontent.com/u/30706758?v=4"
+#>     url = "https://github.com/mthelm85"
 
 using Markdown
 using InteractiveUtils
