@@ -113,7 +113,7 @@ end
 # ╔═╡ d9c31dfa-d470-11ea-23b2-838975b71f7c
 md"""## Writing your own math functions
 
-The area of a pizza is ``A = \pi r^2``.  Lets try calculating the area of a pizza that has a radius of $r inches (**r = $6**).  Type **pi** to get the value of ``\pi`` and **r^2** to get the radius squared.
+The area of a pizza is ``A = \pi r^2``.  Lets try calculating the area of a pizza that has a radius of $r inches (**r = $r**). Type **pi** to get the value of ``\pi`` and **r^2** to get the radius squared.
 """
 
 # ╔═╡ 3c12f2b4-d471-11ea-2d37-539f061f7cf2
