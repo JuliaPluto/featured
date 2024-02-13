@@ -29,7 +29,7 @@ You can read and interact with featured notebooks in Pluto without having to run
 <img src="https://github.com/JuliaPluto/featured/assets/6933510/f2e06d64-5363-4291-8a49-f4ace85c9aa4" alt="Screenshot of the Pluto.jl IDE main menu, where featured notebooks are listed." width=400>
 
 ## 2. On the plutojl.org website
-When you visit Pluto's website: [plutojl.org](https://plutojl.org), you can click **Featured notebooks** on the top. This sends you to [featured.plutojl.org](featured.plutojl.org), the online website with all of our featured notebooks. You can read notebooks on this website without having to install Julia or Pluto, and it also works on your phone.
+When you visit Pluto's website: [plutojl.org](https://plutojl.org), you can click **Featured notebooks** on the top. This sends you to [featured.plutojl.org](https://featured.plutojl.org), the online website with all of our featured notebooks. You can read notebooks on this website without having to install Julia or Pluto, and it also works on your phone.
 
 We use [PlutoSliderServer.jl](https://github.com/JuliaPluto/PlutoSliderServer.jl) for this website, which means that people can interact with `@bind` interactions instantly on our website, without having to run the notebook!
 
