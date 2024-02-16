@@ -35,7 +35,7 @@ In this notebook, you get a chance to try to solve the problem while competing a
 
 #### How to Play
 
-In the cell below, set `N` to the number of cities (or houses in our case) that you would like to start with. These will be generated randomly. Then, in the following cell, set `your_solution` to the path that you believe is the shortest. There is no need to add the starting point to the end of the vector; there is code below that handles that for you. Once you have entered your solution, push the `Go!` button and see if you beat the computer!
+In the cell below, set `N` to the number of cities (or houses in our case) that you would like to start with. These will be generated randomly. Then, set `your_solution` to the path that you believe is the shortest. There is no need to add the starting point to the end of the vector; there is code below that handles that for you. Once you have entered your solution, push the `Go!` button and see if you beat the computer!
 
 To play another round, or to generate new points, re-run the cell that defines `N`.
 """
@@ -43,8 +43,8 @@ To play another round, or to generate new points, re-run the cell that defines `
 # ╔═╡ 243063ab-0556-4fcb-950a-f7533a2f88fa
 N = 5
 
-# ╔═╡ 2989e7f5-3656-4383-861b-53a1eae26d70
-your_solution = [1,2,5,3,4]
+# ╔═╡ 069a3cdc-6f8e-4470-a6a8-8312eb6b5df5
+your_solution = [1,2,4,5,3]
 
 # ╔═╡ d25e7bed-3aae-43a1-aa5c-ef44cca55242
 begin
@@ -166,10 +166,14 @@ function simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_
 	return best_tour
 end;
 
-# ╔═╡ 624c3dc0-2186-4185-9fba-87e522d4a163
+# ╔═╡ bb9d1888-9214-43d2-b002-b31ded8715a9
 begin
 	b = Bounds(100, 100, 450, 280)
 	points = create_points(b, N)
+end
+
+# ╔═╡ 624c3dc0-2186-4185-9fba-87e522d4a163
+begin
 	points_xs = get_points_xs(points)
 	points_ys = get_points_ys(points)
 	distances = pairwise(Euclidean(), [points_xs points_ys], dims=1)
@@ -480,7 +484,7 @@ version = "5.8.0+1"
 # ╔═╡ Cell order:
 # ╟─2ee01ff1-a85f-4ff9-8d25-6af053b2d8aa
 # ╠═243063ab-0556-4fcb-950a-f7533a2f88fa
-# ╠═2989e7f5-3656-4383-861b-53a1eae26d70
+# ╠═069a3cdc-6f8e-4470-a6a8-8312eb6b5df5
 # ╟─f3bf1b25-cb37-4594-b92b-fcd3f44429e9
 # ╠═5bf31410-c914-11ee-33f0-c5c134d6b4d8
 # ╠═d25e7bed-3aae-43a1-aa5c-ef44cca55242
@@ -490,6 +494,7 @@ version = "5.8.0+1"
 # ╠═fdfdbb5c-2204-434c-8249-bc9ad3e72531
 # ╠═7c0f26a0-a478-4887-91c8-e5a747b97c19
 # ╠═39556336-9d1c-417a-b3d7-4e424710902d
+# ╠═bb9d1888-9214-43d2-b002-b31ded8715a9
 # ╠═624c3dc0-2186-4185-9fba-87e522d4a163
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
