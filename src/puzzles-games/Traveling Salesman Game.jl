@@ -48,10 +48,10 @@ your_solution = [1,2,5,3,4]
 
 # ╔═╡ d25e7bed-3aae-43a1-aa5c-ef44cca55242
 begin
-	truck_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/truck.png"
-	truck2_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/truck2.png"
-	house_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/house.png"
-	map_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/dcf8e46f4cc01c7ba27418097eca1bdc7577d3a0/assets/map.png"
+	truck_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car2.png"
+	truck2_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car5.png"
+	house_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/house1.png"
+	map_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/grass.png"
 end;
 
 # ╔═╡ d9ca9f51-d5dd-4321-bae8-fec16a53d250
@@ -253,8 +253,8 @@ if length(your_solution) == N
 			function create() {
 				this.add.image(config.width / 2, config.height / 2, 'background');
 				bounds = new Phaser.Geom.Rectangle($(b.x), $(b.y), $(b.width), $(b.height));
-				text1 = defaultScene.add.text(30, 20, 'Player: 0', { font: '16px Courier', fill: '#00ff00' });
-				text2 = defaultScene.add.text(30, 40, 'Computer: 0', { font: '16px Courier', fill: '#00ff00' });
+				text1 = defaultScene.add.text(30, 20, 'Player: 0', { font: '18px Courier', fill: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.25)' });
+				text2 = defaultScene.add.text(30, 40, 'Computer: 0', { font: '18px Courier', fill: '#fff', backgroundColor: 'rgba(0, 0, 0, 0.25)' });
 			
 				textTween1 = defaultScene.tweens.addCounter({
 					from: 0,
