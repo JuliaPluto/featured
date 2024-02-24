@@ -2,9 +2,11 @@
 # v0.19.38
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/dcf7654da4aa802a2e5aa918792f288a7cf2c068/LICENSES/Unlicense"
 #> image = "https://github.com/JuliaPluto/featured/assets/43678097/b0f572d8-2a7d-4772-8997-249de61c2aff"
 #> title = "Pluto for scientists"
-#> tags = ["basics", "science"]
+#> tags = ["basic", "science"]
+#> license = "Unlicense"
 #> description = "How can Pluto help you in your research?"
 #> 
 #>     [[frontmatter.author]]
