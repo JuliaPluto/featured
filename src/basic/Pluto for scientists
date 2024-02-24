@@ -110,7 +110,12 @@ md"""
 md"""
 !!! tip "Importing data"
 
-	Typing data directly into the code, like we do in this example, is usually not very convenient; it's usually easier to import it from a separate file!
+	Typing data directly into the code, like we do in this example, is usually not very convenient; don't worry, you can also import with a library like `CSV`!
+"""
+
+# ╔═╡ 1c4b841f-cf04-42e5-a53c-8a2e06e160f9
+md"""
+Let's compare our model to the results from our experiment.
 """
 
 # ╔═╡ 5a95a12e-9e24-407c-b52f-ec1549253c69
@@ -1361,6 +1366,7 @@ version = "1.4.1+1"
 # ╟─0bbf56aa-bde5-463b-b449-85d6c6c98791
 # ╠═b355534c-6038-4703-a84c-93a0c6903d97
 # ╟─4ce2d75c-c1d8-40c3-8802-e55838670834
+# ╟─1c4b841f-cf04-42e5-a53c-8a2e06e160f9
 # ╠═7a880a17-41a4-453d-80ea-b572d348ec2a
 # ╠═9a2acb29-0f5f-4c6c-9e26-f6e52b01c650
 # ╟─5a95a12e-9e24-407c-b52f-ec1549253c69
@@ -1376,7 +1382,7 @@ version = "1.4.1+1"
 # ╟─59367e61-fe12-46de-898b-fe1047d6aed9
 # ╟─050179e8-54ca-463f-bd66-290c2087ca50
 # ╟─f3e106db-eb57-4325-9234-9f5dc400e9fd
-# ╠═58f6ac52-cdf5-4b70-9c50-491d0ac38b45
+# ╟─58f6ac52-cdf5-4b70-9c50-491d0ac38b45
 # ╟─17ae44d3-5009-4797-bdd7-d763670a5ab4
 # ╟─50814873-f51b-4fa6-9bf2-85dfe23846a5
 # ╟─22f72a1f-1b38-4f87-9806-bf33bd386f84
