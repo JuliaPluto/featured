@@ -33,9 +33,6 @@ md"""
 
 This notebook lets you make drawings with a **Turtle** 🐢! You can use **simple Julia code** to make pretty drawings, so this is a great way to practice some Julia.
 
-Turtles are a classic exercise in computer programming. When we make turtle drawings, we try to describe to our computer what the drawing should look like. We do that by imagining a *turtle* walking around on the drawing and leaving a trail.
-
-Let's see it in action!
 
 ## Moving around
 Every drawing is written with `turtle_drawing` like this:
@@ -48,9 +45,9 @@ Every drawing is written with `turtle_drawing` like this:
 end
 ```
 
-This code creates an empty drawing, with a turtle `t` in the middle.
+This code creates an empty drawing, with a turtle `t` in the middle. The turtle is holding a pencil, and so when the turtle walks around, they leave a trail.
 
-Let's make our first drawing. 
+Let's make our first drawing by moving the turtle.
 """
 
 # ╔═╡ 1ac7cee2-4aa7-497e-befe-8135d1d27d8d
@@ -84,23 +81,6 @@ md"""
 We know two commands, `forward!` and `left!`. You can also use `backward!` and `right!`
 
 Can you make a star? 🤩
-"""
-
-# ╔═╡ d3d14186-4182-4187-9670-95b8b886bb74
-md"""
-TODO: need to explain that you move, and that you leave a trace
-
-TODO: which commands are there?
-"""
-
-# ╔═╡ 7269e18f-8a63-4763-8114-d6f177d114fe
-md"""
-TODO: exercise, maybe fix some code?
-"""
-
-# ╔═╡ 0b3f4554-1a09-4b6b-b859-28ffbf393cef
-md"""
-TODO: button to start animation again
 """
 
 # ╔═╡ 3733bed0-5490-4d08-bfa6-45f7cc18051b
@@ -997,21 +977,6 @@ function with_lnn_registrations(ex::Expr; turtle_name::Symbol)
 	)
 end
 
-# ╔═╡ 1e7dd491-2f09-4104-8a5d-512593da83f1
-# ╠═╡ disabled = true
-#=╠═╡
-macro turtle_drawing(x)
-	@assert Meta.isexpr(x, Symbol("->"))
-	turtle_name = x.args[1].args[1]
-	turtle_drawing
-	with_lnn_registrations
-
-	quote
-		$(turtle_drawing)($(esc(with_lnn_registrations(x; turtle_name))))
-	end
-end
-  ╠═╡ =#
-
 # ╔═╡ 675d76e1-7f14-4f9d-97b3-5129d0ef68b9
 begin
 	turtle_drawing
@@ -1496,9 +1461,6 @@ version = "17.4.0+2"
 # ╟─04b3d54b-4e0b-46ad-bc92-f94ddfa890ef
 # ╟─04ac9226-c32a-4efd-b0b5-b896d218e5a1
 # ╠═3a485abf-8a9c-4ce6-a4a8-49a1be3f6b5f
-# ╟─d3d14186-4182-4187-9670-95b8b886bb74
-# ╟─7269e18f-8a63-4763-8114-d6f177d114fe
-# ╟─0b3f4554-1a09-4b6b-b859-28ffbf393cef
 # ╟─3733bed0-5490-4d08-bfa6-45f7cc18051b
 # ╠═15738a72-008d-4fe0-9f31-d0c7a94b9b61
 # ╟─634309bc-64e7-47ef-888b-a083a485e105
@@ -1573,7 +1535,6 @@ version = "17.4.0+2"
 # ╟─fc08d52f-91fb-47d4-9122-d45a287c0e7f
 # ╟─fbcf4e5b-e748-4e26-b334-5c7b25e2cf72
 # ╟─32a78ca2-7a1b-40a5-9158-911b576139db
-# ╟─1e7dd491-2f09-4104-8a5d-512593da83f1
 # ╟─675d76e1-7f14-4f9d-97b3-5129d0ef68b9
 # ╟─2722c8d8-58e0-4a3b-abdb-b810604384bf
 # ╟─e0e86411-62cb-4af1-b91f-9069a5a20508
