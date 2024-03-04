@@ -36,6 +36,10 @@ md"""
 
 This notebook lets you make drawings with a **Turtle** 🐢! You can use **simple Julia code** to make pretty drawings, so this is a great way to practice some Julia.
 
+Turtles are a classic exercise in computer programming. When we make turtle drawings, we try to describe to our computer what the drawing should look like. We do that by imagining a *turtle* walking around on the drawing and leaving a trail.
+
+Let's see it in action!
+
 ## Moving around
 Every drawing starts with a *description* that looks like this:
 
