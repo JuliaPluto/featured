@@ -41,7 +41,7 @@ Let's see it in action!
 Every drawing is written with `turtle_drawing` like this:
 
 ```julia
-turtle_drawing() do t
+@steps turtle_drawing() do t
 
 	# your code here!
 
@@ -130,7 +130,7 @@ You write this:
 end
 ```
 
-Re-run the cell below to see it in action!
+Restart the cell below to see it in action!
 """
 
 # ╔═╡ 634309bc-64e7-47ef-888b-a083a485e105
@@ -709,6 +709,9 @@ function turtle_drawing(f::Function;
 			position: absolute; 
 			left: 0; 
 			top: 0;
+		    display: flex;
+		    width: 100%;
+		    height: 100%;
 		`
 		const turtle_image = document.createElement("pl-turtle-image")
 		turtle_image.innerText = `🐢`
@@ -732,6 +735,21 @@ function turtle_drawing(f::Function;
 
 		const line_highlighter = document.createElement("style")
 		div.appendChild(line_highlighter)
+
+		const restart_btn = document.createElement("button")
+		restart_btn.innerText = "Restart"
+		restart_btn.style.cssText = `
+			position: absolute;
+			bottom: .3em;
+			right: .3em;
+			transition: opacity .3s ease-in-out; 
+		`
+		const set_restart_visible = (val) => {
+			restart_btn.style.opacity = val ? "1" : "0"
+			restart_btn.inert = !val;
+		}
+		set_restart_visible(false)
+		div.appendChild(restart_btn)
 		
 
 		let svg_data = null
@@ -770,7 +788,7 @@ function turtle_drawing(f::Function;
 			turtle.style.transform = `scale(\${current_scale}) translate(\${pos[0]}px, \${pos[1]}px) rotate(\${heading}deg)`
 		}
 
-		set_turtle_pos($(🐢.initial_pos), $(🐢.initial_heading * 180 / pi))
+		let reset_turtle_pos = () => set_turtle_pos($(🐢.initial_pos), $(🐢.initial_heading * 180 / pi))
 
 		const running = {current: true}
 		invalidation.then(() => {
@@ -833,6 +851,8 @@ function turtle_drawing(f::Function;
 			} else {
 				// done!
 				highlight_line(null)
+				turtle.style.opacity = "0"
+				setTimeout(() => set_restart_visible(true), 2000)
 			}
 		}
 
@@ -841,59 +861,26 @@ function turtle_drawing(f::Function;
 			invalidation.then(() => clearTimeout(ref))
 		}
 
-		delayed(() => {
-			svg_data = fetch(img.src).then(r => r.text())
-
+		const start = () => {
+			current_step = -1
+			current_num_lines = -1
+			current_pendown = true
+			reset_turtle_pos()
+			set_restart_visible(false)
 			turtle.style.opacity = "1"
 			blur_future_steps(-1)
 			delayed(step, 800)
+		}
+		delayed(() => {
+			svg_data = fetch(img.src).then(r => r.text())
+			start()
 		}, 800)
+		restart_btn.onclick = start
 
 		return div
 		</script>
 		""")
 	]; class="turtle-wrapper", style="position: relative; contain: all;")
-end
-
-# ╔═╡ e18d7225-5a06-4fbc-b836-17798c0eb198
-turtle_drawing() do t
-
-	# take 5 steps
-	forward!(t, 5)
-
-	# turn left, 90 degrees
-	left!(t, 90)
-
-	# take 10 steps
-	forward!(t, 10)
-
-end
-
-# ╔═╡ 90b40abf-caa3-4274-b164-e8c6d2f5b920
-turtle_drawing() do t
-
-	forward!(t, 5)
-
-	left!(t, 90)
-
-	forward!(t, 5)
-
-	# what's next?
-
-end
-
-# ╔═╡ 3a485abf-8a9c-4ce6-a4a8-49a1be3f6b5f
-turtle_drawing() do t
-
-	right!(t, 10)
-
-
-	forward!(t, 5)
-	right!(t, 160)
-	forward!(t, 5)
-
-	# what's next?
-	
 end
 
 # ╔═╡ 45e31b3e-7f25-411a-b7c7-a1a8a7c77ddd
@@ -1048,6 +1035,47 @@ begin
 			)
 		)
 	end
+end
+
+# ╔═╡ e18d7225-5a06-4fbc-b836-17798c0eb198
+@steps turtle_drawing() do t
+
+	# take 5 steps
+	forward!(t, 5)
+
+	# turn left, 90 degrees
+	left!(t, 90)
+
+	# take 10 steps
+	forward!(t, 10)
+
+end
+
+# ╔═╡ 90b40abf-caa3-4274-b164-e8c6d2f5b920
+@steps turtle_drawing() do t
+
+	forward!(t, 5)
+
+	left!(t, 90)
+
+	forward!(t, 5)
+
+	# what's next?
+
+end
+
+# ╔═╡ 3a485abf-8a9c-4ce6-a4a8-49a1be3f6b5f
+@steps turtle_drawing() do t
+
+	right!(t, 10)
+
+
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+
+	# what's next?
+	
 end
 
 # ╔═╡ 15738a72-008d-4fe0-9f31-d0c7a94b9b61
