@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.37
+# v0.19.40
 
 #> [frontmatter]
 #> image = "https://github.com/JuliaRegistries/General/assets/6933510/9a925232-6a75-47e7-9ab9-f384bc389602"
@@ -25,10 +25,7 @@ end
 using PlutoUI
 
 # ╔═╡ 1cca3d6d-a40a-455c-84d3-dec04f0b496a
-using AbstractPlutoDingetjes
-
-# ╔═╡ 0786bcb6-d782-4d45-abc1-fdf8cb064ca7
-using HypertextLiteral
+using AbstractPlutoDingetjes, HypertextLiteral
 
 # ╔═╡ 27d2fe04-a582-48f7-8d21-e2db7775f2c2
 md"""
@@ -41,7 +38,7 @@ Turtles are a classic exercise in computer programming. When we make turtle draw
 Let's see it in action!
 
 ## Moving around
-Every drawing starts with a *description* that looks like this:
+Every drawing is written with `turtle_drawing` like this:
 
 ```julia
 turtle_drawing() do t
@@ -69,15 +66,24 @@ md"""
 Your turn! Edit the code below to draw a square. 🟥
 """
 
+# ╔═╡ d78b93aa-ae37-4588-a975-575dbd9d1070
+md"""
+Can you make the square bigger? Smaller?
+"""
+
 # ╔═╡ 04b3d54b-4e0b-46ad-bc92-f94ddfa890ef
 md"""
 !!! warning "Bonus exercise!"
 	Did you manage to make a square? Can you also make a triangle? 🔺
 """
 
-# ╔═╡ 6eb9225b-dc7b-4fdb-acca-8d1d1d3bcc32
+# ╔═╡ 04ac9226-c32a-4efd-b0b5-b896d218e5a1
 md"""
-wat vormpjes die je kan maken met forward left
+### Turning right
+
+We know two commands, `forward!` and `left!`. You can also use `backward!` and `right!`
+
+Can you make a star? 🤩
 """
 
 # ╔═╡ d3d14186-4182-4187-9670-95b8b886bb74
@@ -97,6 +103,36 @@ md"""
 TODO: button to start animation again
 """
 
+# ╔═╡ 3733bed0-5490-4d08-bfa6-45f7cc18051b
+md"""
+## Seeing the `@steps`
+
+If you want to see which code line corresponds to which step, then you can use our handy `@steps` macro. Put it at the very start of the cell:
+
+Instead of this:
+
+
+```julia
+turtle_drawing() do t
+
+	# your code here!
+
+end
+```
+
+You write this:
+
+```julia
+@steps turtle_drawing() do t
+
+	# your code here!
+
+end
+```
+
+Re-run the cell below to see it in action!
+"""
+
 # ╔═╡ 634309bc-64e7-47ef-888b-a083a485e105
 md"""
 ## Using the `for` loop
@@ -108,12 +144,12 @@ Let's make a zig-zag line!
 md"""
 You see that we make a zig-zag by doing one up-down motion, and repeating this. But if we want to make the drawing very long, **our code will become very long**.
 
-This is why `for`-loops are useful: you can repeat the same block of code multiple times.
+This is why `for`-loops are useful: you can **repeat the same block of code multiple times**. Check it out:
 """
 
 # ╔═╡ 42f262dd-4208-4a84-bd2d-5f4be5c78964
 md"""
-Try it yourself! Write code in the `for` loop to make it repeat 10 times.
+**Try it yourself!** Write some code in the `for` loop, and it will repeat 10 times. Try whatever you want!
 """
 
 # ╔═╡ d742acd5-ad8d-4ee6-bab0-e54ab9313e0d
@@ -138,12 +174,13 @@ TODO
 md"""
 ## Adding color
 
-You can use `color!` to set the color of the turtle. This will determine the color of all future lines that you draw!
+You can use the `color!` function to set the color of the turtle. This will determine the color of all future lines that you draw!
 """
 
 # ╔═╡ 14c803ff-268b-48bc-90c9-faa88010f5fe
 md"""
-TODO: which colors can you use?
+### Which colors can I use?
+Most English words for colors will work! Like **`"red"`**, **`"gray"`** and **`"darkviolet"`**. For a complete list, see [this table](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color#value). You can also use [sytnax like **`"rgb(255 100 0)"`**](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#syntax).
 """
 
 # ╔═╡ 01b73386-ce68-4ad7-92af-17d91930f8f5
@@ -154,7 +191,7 @@ In a code cell, you can also create a **variable**, and use the value multiple t
 """
 
 # ╔═╡ aa3d15c6-f6c2-49cd-9a77-7d9951157897
-example_step = 2
+example_step = 1.5
 
 # ╔═╡ f3ced552-1b2e-47a1-be8a-6a0c20561ae1
 md"""
@@ -176,19 +213,13 @@ Now, go to [the definition of `example_step`](#example_step) and change the valu
 Do you see the drawing change?
 """
 
-# ╔═╡ e523c524-8043-47f8-aeb3-69fad38aa272
-md"""
-TODO: step by step execution from PlutoTest? to show how variable substitution works?
-"""
-
-# ╔═╡ 0b8e61ca-4938-4a5f-85c5-248579716562
-
-
 # ╔═╡ 5a32b0d4-6a72-4b11-96ab-b6c8374153ba
 md"""
 ## Interactivity with PlutoUI
 
 Let's do something fun! In the example above, you saw how you can change variables to control the image. In this section, we will use interactive elements from the package PlutoUI to **control Julia variables**. Let's try it!
+
+**👇 Move the slider and color picker below:**
 """
 
 # ╔═╡ 925a66b2-3564-480c-be12-0e626b01362f
@@ -199,6 +230,11 @@ Let's do something fun! In the example above, you saw how you can change variabl
 
 # ╔═╡ fac4f50a-ce65-4f22-af23-0fc73af936f2
 fun_angle, second_color
+
+# ╔═╡ ea5f57d5-1396-4d66-885e-bc08864475c1
+md"""
+## Functions
+"""
 
 # ╔═╡ 9a900923-e407-44a0-823a-f911a22a5ada
 html"""
@@ -255,14 +291,122 @@ fonsi (2020)"""
 # ╔═╡ 70160fec-b0c7-11ea-0c2a-35418346592e
 @bind angle Slider(0:90; default=20)
 
+# ╔═╡ 15b677af-5a9e-4c51-b8f4-0defe6de6acf
+html"""
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+"""
+
 # ╔═╡ ab083f08-b0c0-11ea-0c23-315c14607f1f
-md"# 🐢 definition"
+md"""
+# 🐢 Behind the scenes
+
+The code below defines the `turtle_drawing` and `forward!` etc functions.
+
+These functions are not available by default in Julia or Pluto. If you make another notebook where you want to make turtle drawing, you have two options:
+- Make a copy of this notebook, and remove all the exercises and demos above.
+- Make an empty notebook, and copy all the cells below into the new notebook.
+
+## How it works
+The basic idea of the turtle notebook is quite simple: the `turtle_drawing` function outputs an SVG drawing. For example, this code:
+
+```julia
+turtle_drawing_fast() do t
+
+	color!(t, "red")
+	forward!(t, 5)
+
+	right!(t, 90)
+
+	color!(t, "pink")
+	forward!(t, 10)
+
+end
+```
+
+Outputs this SVG:
+
+```svg
+<svg version="1.1"
+   baseProfile="full"
+   width="300" height="300"
+   xmlns="http://www.w3.org/2000/svg">
+
+<rect width="300" height="300" rx="10" fill="white" />
+
+<line x1="150.0" y1="150.0" x2="150.0" y2="100.0" stroke="red" stroke-width="4" />
+<line x1="150.0" y1="100.0" x2="250.0" y2="100.0" stroke="pink" stroke-width="4" />
+
+</svg>
+```
+
+SVG is actually quite easy to generate by hand, so that's what we did! The `Turtle` object (`t`) contains some internal state, like its current position, heading and color. Every time that `forward!` is called, a piece of SVG code is added to a vector: `"<line .../>"`. At the end, all these pieces are `join`ed together, and voilà!
+
+The functions `right!`, `color!`, etc were easy to implement. Take a look!
+
+If you want to understand the code, then the [original prototype](https://gist.github.com/fonsp/d88b3adc8c958dce780cf7c4df8fa437) might be easier to understand, since it does not contain any of the interactive functionality yet.
+
+### Interactive functionality
+There are two cool bonus features to help users debug their code: an **animated turtle character 🐢** and the **`@steps` macro** to highlight the line of code that corresponds to the current animation step.
+
+
+#### Animated turtle character 🐢
+The turtle character moves slowly, but this is not done by running the Julia code slowly (with `sleep`). In Pluto, you only see the result of a cell once it finished running, so that wouldn't work.
+
+Instead, the whole drawing code is executed, but every command (like `right!`) also adds an entry in the command log stored in the `Turtle`. This will create a list that looks like:
+
+```
+forward 10
+right 90
+color red
+penup true
+...
+```
+
+When the result is displayed, we create a `<div>` with the regular `<img>`, followed by a `<script>` with lots of functionality. This script receives the command log and after an initial delay (during which you can already see the final painting), it will create a turtle character and start replaying the steps.
+
+For each replayed step:
+- The turtle's position and heading is set (with a CSS transtition)
+- The `<img>` source is changed to an SVG where all not-yet-drawn lines have an extra attribute `style="opacity: .2;"`.
+
+### The `@steps` macro
+The steps macro works by inserting a new command at the start of every line:
+
+```julia
+# not exactly this but to demonstrate the point:
+turtle_drawing() do t
+	register_line_number!(t, 3); color!(t, "red")
+	register_line_number!(t, 5); forward!(t, 5)
+
+	register_line_number!(t, 6); right!(t, 90)
+
+	register_line_number!(t, 8); color!(t, "pink")
+	register_line_number!(t, 9); forward!(t, 10)
+end
+```
+"""
+
+# ╔═╡ 31410fde-3c7e-4adf-9671-6d93eea8975a
+md"""
+## Types
+"""
 
 # ╔═╡ 310a0c52-b0bf-11ea-3e32-69d685f2f45e
-Drawing = Vector{String}
+const Drawing = Vector{String}
 
 # ╔═╡ 6bbb674c-b0ba-11ea-2ff7-ebcde6573d5b
 begin
+	# This mutable struct contains the state of the turtle drawing:
 	Base.@kwdef mutable struct Turtle
 		pos::Tuple{Float64, Float64}
 		initial_pos::Tuple{Float64, Float64}
@@ -274,7 +418,7 @@ begin
 		history_actions::Vector{Tuple{UInt8,Any}} = Tuple{UInt8,Any}[]
 	end
 	
-	Turtle(pos::Tuple{Number, Number}, heading::Number; kwargs...) = Turtle(;
+	Turtle(pos::Tuple{Real, Real}, heading::Real; kwargs...) = Turtle(;
 		pos, heading,
 		initial_pos=pos,
 		initial_heading=heading,
@@ -284,6 +428,11 @@ end
 
 # ╔═╡ 5560ed36-b0c0-11ea-0104-49c31d171422
 md"## Turtle commands"
+
+# ╔═╡ 1d26071e-632c-4bdd-84d2-421634486ad6
+md"""
+### Hidden functions
+"""
 
 # ╔═╡ d6b0e49b-3144-4230-9c5a-9cc6f90ab0c9
 warn_too_many_actions(🐢::Turtle) = if length(🐢.history_actions) > 20000
@@ -325,10 +474,18 @@ end
 # ╔═╡ 47907302-b0c0-11ea-0b27-b5cd2b4720d8
 left!(🐢::Turtle, angle::Number) = right!(🐢, -angle)
 
-# ╔═╡ 8f7af43c-13fc-4a65-8cd6-ede6bbbbf80d
-function register_line_number!(🐢::Turtle, lnn::Some{LineNumberNode})
-	warn_too_many_actions(🐢)
-	push!(🐢.history_actions, (UInt8(20), something(lnn).line))
+# ╔═╡ 8f55e3f7-4082-4df9-b290-2b9183b067d8
+function drawhouse(t)
+	forward!(t, 6)
+	left!(t, 90)
+	forward!(t, 6)
+	left!(t, 45)
+	forward!(t, sqrt(2) * 3)
+	left!(t, 90)
+	forward!(t, sqrt(2) * 3)
+	left!(t, 45)
+	forward!(t, 6)
+	left!(t, 90)
 end
 
 # ╔═╡ 4c173318-b3de-11ea-2d4c-49dab9fa3877
@@ -431,31 +588,36 @@ function lindenmayer(turtle, depth, angle, tilt, base)
 	end
 end
 
-# ╔═╡ 358cb837-a2d1-4b67-a1d4-aa6f62126c89
-map([1,2,3,4,5,100,5000]) do i
-	d = 1.0 / sqrt(i)
-	l=d*i
-	(;i,d,l )
+# ╔═╡ 8f7af43c-13fc-4a65-8cd6-ede6bbbbf80d
+function register_line_number!(🐢::Turtle, lnn::Some{LineNumberNode})
+	warn_too_many_actions(🐢)
+	push!(🐢.history_actions, (UInt8(20), something(lnn).line))
 end
 
 # ╔═╡ 5aea06d4-b0c0-11ea-19f5-054b02e17675
 md"## Function to make turtle drawings with"
 
 # ╔═╡ 5030944f-efec-4226-9511-95ae3a4c179d
-make_svg(🐢::Turtle; background="white") = """<svg version="1.1"
+make_svg(🐢::Turtle; 
+	background="white",
+	size::Tuple{Real,Real}=(300, 300),
+) = """<svg version="1.1"
      baseProfile="full"
-     width="300" height="300"
+     width="$(size[1])" height="$(size[2])"
      xmlns="http://www.w3.org/2000/svg">
-  <rect width="300" height="300" rx="10" fill="$(background)" />$(
+  <rect width="$(size[1])" height="$(size[2])" rx="10" fill="$(background)" />$(
 	join(🐢.history_svg))</svg>"""
 
 # ╔═╡ 6dbce38e-b0bc-11ea-1126-a13e0d575339
-function turtle_drawing_fast(f::Function; background="white")
-	🐢 = Turtle((150, 150), pi*3/2)
+function turtle_drawing_fast(f::Function; 
+	background="white", 
+	size::Tuple{Real,Real}=(300, 300),
+)
+	🐢 = Turtle(size ./ 2, pi*3/2)
 	
 	f(🐢)
 	
-	return PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background))
+	return PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background, size))
 end
 
 # ╔═╡ 9dc072fe-b3db-11ea-1568-857a664ce4d2
@@ -480,6 +642,8 @@ starry_night = turtle_drawing_fast(background = "#000088") do t
 end
 
 # ╔═╡ e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
+# turtle_drawing_fast() is the same as turtle_drawing(), but it does not show a little turtle taking the individual steps
+
 mondriaan = turtle_drawing_fast() do t	
 	GO_mondriaan
 	size = 30
@@ -511,16 +675,24 @@ fractal = turtle_drawing_fast() do t
 	lindenmayer(t, 0, fractal_angle, fractal_tilt, fractal_base)
 end
 
+# ╔═╡ c6017be5-b9c7-45f3-8e37-4da8cbb3f3f9
+md"""
+### Animated JavaScript version
+"""
+
 # ╔═╡ 329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
-function turtle_drawing(f::Function; background="white")
-	🐢 = Turtle((150, 150), pi*3/2)
+function turtle_drawing(f::Function; 
+	background="white", 
+	size::Tuple{Real,Real}=(300, 300),
+)
+	🐢 = Turtle(size ./ 2, pi*3/2)
 	
 	f(🐢)
 
 	step_delay = 1.0 / sqrt(length(🐢.history_actions))
 	
 	PlutoUI.ExperimentalLayout.Div([
-		PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background)),
+		PlutoUI.Show(MIME"image/svg+xml"(), make_svg(🐢; background, size)),
 		@htl("""
 		<script>
 		const _x = $(rand())
@@ -586,11 +758,13 @@ function turtle_drawing(f::Function; background="white")
 
 		let current_pos = $(🐢.initial_pos)
 		let current_heading = $(🐢.initial_heading * 180 / pi)
+
+		let current_scale = 1
 		
 		let set_turtle_pos = (pos, heading) => {
 			current_pos = pos
 			current_heading = heading
-			turtle.style.transform = `translate(\${pos[0]}px, \${pos[1]}px) rotate(\${heading}deg)`
+			turtle.style.transform = `scale(\${current_scale}) translate(\${pos[0]}px, \${pos[1]}px) rotate(\${heading}deg)`
 		}
 
 		set_turtle_pos($(🐢.initial_pos), $(🐢.initial_heading * 180 / pi))
@@ -600,14 +774,33 @@ function turtle_drawing(f::Function; background="white")
 			running.current = false
 		})
 
-		
+		let calc_scale = () => {
+			current_scale = img.scrollWidth / $(size[1])
+			set_turtle_pos(current_pos, current_heading)
+		}
+		calc_scale()
+		const resizeObserver = new ResizeObserver(calc_scale)
+		resizeObserver.observe(img)
+		invalidation.then(() => resizeObserver.disconnect())
+
+		let last_styled_element = null
 		const highlight_line = (line) => {
 			delayed(() => {
-				line_highlighter.innerText = `pluto-cell#\${currentScript.closest("pluto-cell").id} pluto-input .cm-editor .cm-line:nth-child(\${line}) {
-					background: #a0b1ff45;
-				}`
+				if(last_styled_element != null) {
+					last_styled_element.style.background = null
+				}
+
+				if(line != null && running.current) {
+					let line_el = currentScript
+						.closest("pluto-cell")
+						.querySelector(`pluto-input .cm-editor .cm-line:nth-child(\${line})`)
+			
+					line_el.style.background = `#a0b1ff45`;
+					last_styled_element = line_el
+				}
 			}, step_delay * 2)
 		}
+		invalidation.then(() => highlight_line(null))
 
 
 		let current_num_lines = -1
@@ -634,6 +827,9 @@ function turtle_drawing(f::Function; background="white")
 			if(current_step < history.length && running.current) {
 				take_step(...history[current_step])
 				setTimeout(step, 1000 * $(step_delay))
+			} else {
+				// done!
+				highlight_line(null)
 			}
 		}
 
@@ -653,7 +849,7 @@ function turtle_drawing(f::Function; background="white")
 		return div
 		</script>
 		""")
-	]; class="turtle-wrapper", style="position: relative;")
+	]; class="turtle-wrapper", style="position: relative; contain: all;")
 end
 
 # ╔═╡ e18d7225-5a06-4fbc-b836-17798c0eb198
@@ -683,29 +879,33 @@ turtle_drawing() do t
 
 end
 
-# ╔═╡ 5f0a4d6a-2545-4610-b827-6adc50204136
+# ╔═╡ 3a485abf-8a9c-4ce6-a4a8-49a1be3f6b5f
 turtle_drawing() do t
 
-	for i in 1:10
-		# repeat something 10 times
-		# write your code here! for example:
-		forward!(t, 2)
+	right!(t, 10)
 
-	end
+
+	forward!(t, 5)
+	right!(t, 160)
+	forward!(t, 5)
+
+	# what's next?
 	
 end
 
-# ╔═╡ 448dc68d-cd0a-4491-82ad-0e7cc00782ad
+# ╔═╡ 45e31b3e-7f25-411a-b7c7-a1a8a7c77ddd
 turtle_drawing() do t
+	for color in ["red", "orange", "yellow", "green", "turquoise", "blue", "purple"]
+		# draw the line
+		color!(t, color)
+		forward!(t, 10)
+		backward!(t, 10)
 
-	color!(t, "red")
-	forward!(t, 5)
-
-	right!(t, 90)
-
-	color!(t, "pink")
-	forward!(t, 10)
-
+		# take a step left
+		left!(t, 90)
+		forward!(t, 0.4)
+		right!(t, 90)
+	end
 end
 
 # ╔═╡ 31847740-bb0b-41cc-9d4f-a42ee33bbc62
@@ -721,6 +921,38 @@ turtle_drawing() do t
 	
 end
 
+# ╔═╡ aa724bc5-563f-4421-a55c-84ebd766f364
+turtle_drawing() do t
+
+	for i in 1:10
+		color!(t, "black")
+		forward!(t, 3)
+
+		right!(t, fun_angle)
+
+		color!(t, second_color)
+		forward!(t, 3)
+	end
+	
+end
+
+# ╔═╡ 1f3a56d1-0756-410d-be55-504398052149
+map(1:5) do index
+	turtle_drawing(size=(800,200)) do t
+	right!(t, 90)
+	backward!(t, 40)
+
+		for i in 1:index
+	
+	drawhouse(t)
+	
+	penup!(t)
+	forward!(t, 7)
+	pendown!(t)
+		end
+end
+end
+
 # ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
 turtle_drawing() do t
 	
@@ -731,14 +963,46 @@ turtle_drawing() do t
 	
 end
 
+# ╔═╡ acc30d89-9e69-4131-876f-f802158a7496
+md"""
+## `@steps` macro
+"""
+
+# ╔═╡ fc08d52f-91fb-47d4-9122-d45a287c0e7f
+# ╠═╡ disabled = true
+#=╠═╡
+@steps turtle_drawing() do t
+
+	# take 5 steps
+	forward!(t, 5)
+	forward!(t, 5)
+
+	# turn right, 90 degrees
+	right!(t, 90)
+	right!(t, 90)
+	right!(t, 90)
+
+	# take 10 steps
+	forward!(t, 10)
+
+	penup!(t)
+
+	
+	right!(t, 120)
+	forward!(t, 5)
+
+	pendown!(t)
+
+	right!(t, 60)
+	forward!(t, 5)
+
+	right!(t, 60)
+	forward!(t, 5)
+end
+  ╠═╡ =#
+
 # ╔═╡ fbcf4e5b-e748-4e26-b334-5c7b25e2cf72
 with_lnn_registrations(x; turtle_name::Symbol) = x
-
-# ╔═╡ e11da6c1-6336-4f34-9ab3-4531b136daad
-:(x(z)) |> dump
-
-# ╔═╡ 87aa1a40-afb0-4e56-b3f0-7c7e13c04ce8
-
 
 # ╔═╡ 32a78ca2-7a1b-40a5-9158-911b576139db
 function with_lnn_registrations(ex::Expr; turtle_name::Symbol)
@@ -759,6 +1023,8 @@ function with_lnn_registrations(ex::Expr; turtle_name::Symbol)
 end
 
 # ╔═╡ 1e7dd491-2f09-4104-8a5d-512593da83f1
+# ╠═╡ disabled = true
+#=╠═╡
 macro turtle_drawing(x)
 	@assert Meta.isexpr(x, Symbol("->"))
 	turtle_name = x.args[1].args[1]
@@ -769,9 +1035,49 @@ macro turtle_drawing(x)
 		$(turtle_drawing)($(esc(with_lnn_registrations(x; turtle_name))))
 	end
 end
+  ╠═╡ =#
+
+# ╔═╡ 675d76e1-7f14-4f9d-97b3-5129d0ef68b9
+begin
+	turtle_drawing
+	with_lnn_registrations
+	macro steps(ex)
+		@assert (
+			Meta.isexpr(ex, :do, 2) &&
+			Meta.isexpr(ex.args[1], :call) && ex.args[1].args[1] === :turtle_drawing &&
+			Meta.isexpr(ex.args[2], Symbol("->"), 2) && 
+				Meta.isexpr(ex.args[2].args[1], :tuple)
+		) "Use me like this:\n\n@steps turtle_drawing() do t\n\t# my drawing here\n\t...\nend\n"
+			
+		turtle_name = ex.args[2].args[1].args[1]
+	
+		Expr(:do, 
+			ex.args[1], 
+			Expr(
+				Symbol("->"), 
+				esc(ex.args[2].args[1]), 
+				esc(with_lnn_registrations(ex.args[2].args[2]; turtle_name))
+			)
+		)
+	end
+end
+
+# ╔═╡ 15738a72-008d-4fe0-9f31-d0c7a94b9b61
+@steps turtle_drawing() do t
+
+	# take 5 steps
+	forward!(t, 5)
+
+	# turn left, 90 degrees
+	left!(t, 90)
+
+	# take 10 steps
+	forward!(t, 10)
+
+end
 
 # ╔═╡ 19abbdeb-efe3-4a26-85c9-011ae5939c8e
-@turtle_drawing() do t
+@steps turtle_drawing() do t
 
 	forward!(t, 5)
 	right!(t, 160) # turn right, 160 degrees (almost a 180 degree half turn)
@@ -800,7 +1106,7 @@ end
 end
 
 # ╔═╡ a84af845-7f7a-45eb-b1d4-dde8047cb8e8
-@turtle_drawing() do t
+@steps turtle_drawing() do t
 
 	for i in 1:10
 		forward!(t, 5)
@@ -811,49 +1117,29 @@ end
 	
 end
 
-# ╔═╡ aa724bc5-563f-4421-a55c-84ebd766f364
-@turtle_drawing() do t
+# ╔═╡ 5f0a4d6a-2545-4610-b827-6adc50204136
+@steps turtle_drawing() do t
 
 	for i in 1:10
-		color!(t, "black")
-		forward!(t, 3)
+		# repeat something 10 times
+		# write your code here! for example:
+		forward!(t, 2)
 
-		right!(t, fun_angle)
-
-		color!(t, second_color)
-		forward!(t, 3)
 	end
 	
 end
 
-# ╔═╡ fc08d52f-91fb-47d4-9122-d45a287c0e7f
-@turtle_drawing() do t
+# ╔═╡ 448dc68d-cd0a-4491-82ad-0e7cc00782ad
+@steps turtle_drawing() do t
 
-	# take 5 steps
+	color!(t, "red")
 	forward!(t, 5)
-	forward!(t, 5)
 
-	# turn right, 90 degrees
-	right!(t, 90)
-	right!(t, 90)
 	right!(t, 90)
 
-	# take 10 steps
+	color!(t, "pink")
 	forward!(t, 10)
 
-	penup!(t)
-
-	
-	right!(t, 120)
-	forward!(t, 5)
-
-	pendown!(t)
-
-	right!(t, 60)
-	forward!(t, 5)
-
-	right!(t, 60)
-	forward!(t, 5)
 end
 
 # ╔═╡ 2722c8d8-58e0-4a3b-abdb-b810604384bf
@@ -1174,11 +1460,15 @@ version = "17.4.0+2"
 # ╟─1ac7cee2-4aa7-497e-befe-8135d1d27d8d
 # ╟─46eebe4b-340b-468c-97c7-a4b5627b7163
 # ╠═90b40abf-caa3-4274-b164-e8c6d2f5b920
+# ╟─d78b93aa-ae37-4588-a975-575dbd9d1070
 # ╟─04b3d54b-4e0b-46ad-bc92-f94ddfa890ef
-# ╠═6eb9225b-dc7b-4fdb-acca-8d1d1d3bcc32
+# ╟─04ac9226-c32a-4efd-b0b5-b896d218e5a1
+# ╠═3a485abf-8a9c-4ce6-a4a8-49a1be3f6b5f
 # ╟─d3d14186-4182-4187-9670-95b8b886bb74
 # ╟─7269e18f-8a63-4763-8114-d6f177d114fe
 # ╟─0b3f4554-1a09-4b6b-b859-28ffbf393cef
+# ╟─3733bed0-5490-4d08-bfa6-45f7cc18051b
+# ╠═15738a72-008d-4fe0-9f31-d0c7a94b9b61
 # ╟─634309bc-64e7-47ef-888b-a083a485e105
 # ╠═19abbdeb-efe3-4a26-85c9-011ae5939c8e
 # ╟─2b245c13-82d7-40f6-b26b-d702962b37f3
@@ -1186,10 +1476,11 @@ version = "17.4.0+2"
 # ╟─42f262dd-4208-4a84-bd2d-5f4be5c78964
 # ╠═5f0a4d6a-2545-4610-b827-6adc50204136
 # ╟─d742acd5-ad8d-4ee6-bab0-e54ab9313e0d
-# ╟─15ba0e67-e1a8-43c7-a433-8e7e6d877376
+# ╠═15ba0e67-e1a8-43c7-a433-8e7e6d877376
 # ╟─71bb4346-7067-4db4-9a70-ab232e7c2ebc
 # ╠═448dc68d-cd0a-4491-82ad-0e7cc00782ad
 # ╟─14c803ff-268b-48bc-90c9-faa88010f5fe
+# ╠═45e31b3e-7f25-411a-b7c7-a1a8a7c77ddd
 # ╟─01b73386-ce68-4ad7-92af-17d91930f8f5
 # ╠═aa3d15c6-f6c2-49cd-9a77-7d9951157897
 # ╟─f3ced552-1b2e-47a1-be8a-6a0c20561ae1
@@ -1197,14 +1488,15 @@ version = "17.4.0+2"
 # ╟─160a5b22-6f1e-446d-861a-747cfe25bfda
 # ╠═31847740-bb0b-41cc-9d4f-a42ee33bbc62
 # ╟─468eb41d-fa5a-46cd-a5ef-2708c74e5ee0
-# ╟─e523c524-8043-47f8-aeb3-69fad38aa272
-# ╠═0b8e61ca-4938-4a5f-85c5-248579716562
 # ╟─5a32b0d4-6a72-4b11-96ab-b6c8374153ba
 # ╠═e814a124-f038-11ea-3b22-f109c99dbe03
 # ╠═925a66b2-3564-480c-be12-0e626b01362f
 # ╠═c347a8ad-c859-4eb2-8fdc-bb7f04c7f70e
 # ╠═fac4f50a-ce65-4f22-af23-0fc73af936f2
 # ╠═aa724bc5-563f-4421-a55c-84ebd766f364
+# ╠═ea5f57d5-1396-4d66-885e-bc08864475c1
+# ╠═8f55e3f7-4082-4df9-b290-2b9183b067d8
+# ╠═1f3a56d1-0756-410d-be55-504398052149
 # ╟─9a900923-e407-44a0-823a-f911a22a5ada
 # ╟─553d0488-f03b-11ea-2997-3d82493cd4d7
 # ╟─25dc5690-f03a-11ea-3c59-35ae694b03b5
@@ -1212,7 +1504,7 @@ version = "17.4.0+2"
 # ╟─d88440c2-b3dc-11ea-1944-0ba4a566d7c1
 # ╟─5d345ae8-f03a-11ea-1c2d-03f66115b590
 # ╟─b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
-# ╠═e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
+# ╟─e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
 # ╟─a255402c-d719-41fc-babc-7988a9aa5421
 # ╟─678850cc-b3e4-11ea-3cf0-a3445a3ac15a
 # ╟─cd442606-f03a-11ea-3d53-57e83c8cdb1f
@@ -1223,33 +1515,35 @@ version = "17.4.0+2"
 # ╟─d1ae2696-b3eb-11ea-2fcc-07b842217994
 # ╟─f132f376-f03a-11ea-33e2-775fc026faca
 # ╟─70160fec-b0c7-11ea-0c2a-35418346592e
-# ╟─d30c8f2a-b0bf-11ea-0557-19bb61118644
+# ╠═d30c8f2a-b0bf-11ea-0557-19bb61118644
+# ╟─15b677af-5a9e-4c51-b8f4-0defe6de6acf
 # ╟─ab083f08-b0c0-11ea-0c23-315c14607f1f
-# ╠═6bbb674c-b0ba-11ea-2ff7-ebcde6573d5b
-# ╠═310a0c52-b0bf-11ea-3e32-69d685f2f45e
+# ╟─31410fde-3c7e-4adf-9671-6d93eea8975a
+# ╟─6bbb674c-b0ba-11ea-2ff7-ebcde6573d5b
+# ╟─310a0c52-b0bf-11ea-3e32-69d685f2f45e
 # ╟─5560ed36-b0c0-11ea-0104-49c31d171422
-# ╠═e6c7e5be-b0bf-11ea-1f7e-73b9aae14382
-# ╠═d6b0e49b-3144-4230-9c5a-9cc6f90ab0c9
-# ╠═573c11b4-b0be-11ea-0416-31de4e217320
-# ╠═fc44503a-b0bf-11ea-0f28-510784847241
-# ╠═47907302-b0c0-11ea-0b27-b5cd2b4720d8
-# ╠═8f7af43c-13fc-4a65-8cd6-ede6bbbbf80d
-# ╠═1fb880a8-b3de-11ea-3181-478755ad354e
-# ╠═4c173318-b3de-11ea-2d4c-49dab9fa3877
-# ╠═2e7c8462-b3e2-11ea-1e41-a7085e012bb2
-# ╠═358cb837-a2d1-4b67-a1d4-aa6f62126c89
+# ╟─e6c7e5be-b0bf-11ea-1f7e-73b9aae14382
+# ╟─573c11b4-b0be-11ea-0416-31de4e217320
+# ╟─fc44503a-b0bf-11ea-0f28-510784847241
+# ╟─47907302-b0c0-11ea-0b27-b5cd2b4720d8
+# ╟─1fb880a8-b3de-11ea-3181-478755ad354e
+# ╟─4c173318-b3de-11ea-2d4c-49dab9fa3877
+# ╟─2e7c8462-b3e2-11ea-1e41-a7085e012bb2
+# ╟─1d26071e-632c-4bdd-84d2-421634486ad6
+# ╟─d6b0e49b-3144-4230-9c5a-9cc6f90ab0c9
+# ╟─8f7af43c-13fc-4a65-8cd6-ede6bbbbf80d
 # ╟─5aea06d4-b0c0-11ea-19f5-054b02e17675
-# ╟─6dbce38e-b0bc-11ea-1126-a13e0d575339
-# ╠═329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
-# ╠═fc08d52f-91fb-47d4-9122-d45a287c0e7f
 # ╟─5030944f-efec-4226-9511-95ae3a4c179d
+# ╟─6dbce38e-b0bc-11ea-1126-a13e0d575339
+# ╟─c6017be5-b9c7-45f3-8e37-4da8cbb3f3f9
 # ╠═1cca3d6d-a40a-455c-84d3-dec04f0b496a
-# ╠═0786bcb6-d782-4d45-abc1-fdf8cb064ca7
-# ╠═fbcf4e5b-e748-4e26-b334-5c7b25e2cf72
-# ╠═e11da6c1-6336-4f34-9ab3-4531b136daad
-# ╠═87aa1a40-afb0-4e56-b3f0-7c7e13c04ce8
-# ╠═32a78ca2-7a1b-40a5-9158-911b576139db
-# ╠═1e7dd491-2f09-4104-8a5d-512593da83f1
+# ╟─329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
+# ╟─acc30d89-9e69-4131-876f-f802158a7496
+# ╟─fc08d52f-91fb-47d4-9122-d45a287c0e7f
+# ╟─fbcf4e5b-e748-4e26-b334-5c7b25e2cf72
+# ╟─32a78ca2-7a1b-40a5-9158-911b576139db
+# ╟─1e7dd491-2f09-4104-8a5d-512593da83f1
+# ╟─675d76e1-7f14-4f9d-97b3-5129d0ef68b9
 # ╟─2722c8d8-58e0-4a3b-abdb-b810604384bf
 # ╟─e0e86411-62cb-4af1-b91f-9069a5a20508
 # ╟─03c983b3-42f2-418d-89c2-fdfe74a4032a
