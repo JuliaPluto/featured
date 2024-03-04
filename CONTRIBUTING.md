@@ -37,7 +37,7 @@ Things that might not be a good topic:
 ## Thing we like to see
 There are some things that make a featured notebook work extra well! Some examples:
 - Many interactive elements using `@bind`. When reading featured notebooks, `@bind` will be interactive instantly, while editing takes some time.
-- Pictures! Especially at the top of the notebook. 
+- Pictures! Especially at the top of the notebook. Many people will quickly scroll through the notebook looking for cool visuals before deciding to read the text.
 - Text! Explain what your code and interactions do, using simple language. Also think about labeling plots and interactive elements.
 - Links! If your notebook uses difficult concepts, consider adding links to resources online where people can learn more about it.
 - Code! Some featured notebooks have no visible code (the "magic demos"), but also consider showcasing your code! Can you make code part of the story? Perhaps you can put more technical code in helper functions that are hidden in the bottom.
