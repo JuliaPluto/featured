@@ -16,6 +16,8 @@ If you find a typo, bug, or another issue with an existing notebook, feel free t
 
 Pluto's *featured* notebooks is a collection of notebooks from the Julia community and the Pluto developers to **showcase what you can do with Julia and Pluto**, and to help you get started. Featured notebooks are intended to **get people excited**, and to **teach new skills**. We want to reach a diverse audience, with different backgrounds and skill levels, but we have a special interest in notebooks that might improve the accessibility of scientific computing. This might include notebooks that are accessible to Julia beginners, to high school students, or notebooks that are just really flashy and beautiful.
 
+Take a look at [`CONTRIBUTING.md`](https://github.com/JuliaPluto/featured/blob/main/CONTRIBUTING.md) to learn more about what makes a good notebook!
+
 # Where can people read my notebook?
 
 Featured notebooks have a large audience! People can find them in three different places:
