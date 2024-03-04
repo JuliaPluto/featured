@@ -161,15 +161,6 @@ Inside the `for` loop, you can use the variable `i`, which goes from `1` to `10`
 Do you understand what happens?
 """
 
-# ╔═╡ 15ba0e67-e1a8-43c7-a433-8e7e6d877376
-md"""
-## Understanding code with Logging
-
-Sometimes you want to the value of a variable 
-
-TODO
-"""
-
 # ╔═╡ 71bb4346-7067-4db4-9a70-ab232e7c2ebc
 md"""
 ## Adding color
@@ -234,6 +225,8 @@ fun_angle, second_color
 # ╔═╡ ea5f57d5-1396-4d66-885e-bc08864475c1
 md"""
 ## Functions
+
+You can extract some code into a function, and reuse it later! Here is some code that draws a house, and we can use it to make a street!
 """
 
 # ╔═╡ 9a900923-e407-44a0-823a-f911a22a5ada
@@ -259,17 +252,15 @@ md"# Some famous artwork"
 md"""## "_The Starry Night_" 
 Vincent van Gogh (1889)"""
 
+# ╔═╡ 064091ae-b4bb-4e7d-829b-b48d98e5cca0
+@bind GO_gogh CounterButton("Another one!")
+
 # ╔═╡ 5d345ae8-f03a-11ea-1c2d-03f66115b590
 md"""## "_Tableau I_"
 Piet Mondriaan (1913)"""
 
 # ╔═╡ b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
 @bind GO_mondriaan CounterButton("Another one!")
-
-# ╔═╡ a255402c-d719-41fc-babc-7988a9aa5421
-md"""
-It's like 3D printing!!
-"""
 
 # ╔═╡ cd442606-f03a-11ea-3d53-57e83c8cdb1f
 md"""## "_Een Boom_"
@@ -476,14 +467,21 @@ left!(🐢::Turtle, angle::Number) = right!(🐢, -angle)
 
 # ╔═╡ 8f55e3f7-4082-4df9-b290-2b9183b067d8
 function drawhouse(t)
+	# floor
 	forward!(t, 6)
+
+	# wall
 	left!(t, 90)
 	forward!(t, 6)
+
+	# roof
 	left!(t, 45)
 	forward!(t, sqrt(2) * 3)
 	left!(t, 90)
 	forward!(t, sqrt(2) * 3)
 	left!(t, 45)
+
+	# wall
 	forward!(t, 6)
 	left!(t, 90)
 end
@@ -600,20 +598,23 @@ md"## Function to make turtle drawings with"
 # ╔═╡ 5030944f-efec-4226-9511-95ae3a4c179d
 make_svg(🐢::Turtle; 
 	background="white",
-	size::Tuple{Real,Real}=(300, 300),
+	size::Tuple{Real,Real}=(30, 30),
 ) = """<svg version="1.1"
      baseProfile="full"
-     width="$(size[1])" height="$(size[2])"
+     width="$(10 * size[1])" height="$(10 * size[2])"
      xmlns="http://www.w3.org/2000/svg">
-  <rect width="$(size[1])" height="$(size[2])" rx="10" fill="$(background)" />$(
+  <rect width="$(10 * size[1])" height="$(10 * size[2])" rx="10" fill="$(background)" />$(
 	join(🐢.history_svg))</svg>"""
 
 # ╔═╡ 6dbce38e-b0bc-11ea-1126-a13e0d575339
+"""
+The same as `turtle_drawing`, but without the animated turtle. This makes it a bit faster for interactive drawings!
+"""
 function turtle_drawing_fast(f::Function; 
 	background="white", 
-	size::Tuple{Real,Real}=(300, 300),
+	size::Tuple{Real,Real}=(30, 30),
 )
-	🐢 = Turtle(size ./ 2, pi*3/2)
+	🐢 = Turtle(size .* 10 ./ 2, pi*3/2)
 	
 	f(🐢)
 	
@@ -622,6 +623,8 @@ end
 
 # ╔═╡ 9dc072fe-b3db-11ea-1568-857a664ce4d2
 starry_night = turtle_drawing_fast(background = "#000088") do t
+	GO_gogh
+	
 	star_count = 100
 	
 	color!(t, "yellow")
@@ -683,9 +686,9 @@ md"""
 # ╔═╡ 329138a4-4f37-4ccc-a5f0-f4bbfbd17a89
 function turtle_drawing(f::Function; 
 	background="white", 
-	size::Tuple{Real,Real}=(300, 300),
+	size::Tuple{Real,Real}=(30, 30),
 )
-	🐢 = Turtle(size ./ 2, pi*3/2)
+	🐢 = Turtle(size .* 10 ./ 2, pi*3/2)
 	
 	f(🐢)
 
@@ -775,7 +778,7 @@ function turtle_drawing(f::Function;
 		})
 
 		let calc_scale = () => {
-			current_scale = img.scrollWidth / $(size[1])
+			current_scale = img.scrollWidth / $(10 * size[1])
 			set_turtle_pos(current_pos, current_heading)
 		}
 		calc_scale()
@@ -902,9 +905,11 @@ turtle_drawing() do t
 		backward!(t, 10)
 
 		# take a step left
+		penup!(t)
 		left!(t, 90)
 		forward!(t, 0.4)
 		right!(t, 90)
+		pendown!(t)
 	end
 end
 
@@ -934,23 +939,6 @@ turtle_drawing() do t
 		forward!(t, 3)
 	end
 	
-end
-
-# ╔═╡ 1f3a56d1-0756-410d-be55-504398052149
-map(1:5) do index
-	turtle_drawing(size=(800,200)) do t
-	right!(t, 90)
-	backward!(t, 40)
-
-		for i in 1:index
-	
-	drawhouse(t)
-	
-	penup!(t)
-	forward!(t, 7)
-	pendown!(t)
-		end
-end
 end
 
 # ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
@@ -1140,6 +1128,22 @@ end
 	color!(t, "pink")
 	forward!(t, 10)
 
+end
+
+# ╔═╡ 1f3a56d1-0756-410d-be55-504398052149
+@steps turtle_drawing() do t
+	penup!(t)
+	right!(t, 90)
+	backward!(t, 14)
+	pendown!(t)
+
+	for i in 1:4
+		drawhouse(t)
+		
+		penup!(t)
+		forward!(t, 7)
+		pendown!(t)
+	end
 end
 
 # ╔═╡ 2722c8d8-58e0-4a3b-abdb-b810604384bf
@@ -1476,7 +1480,6 @@ version = "17.4.0+2"
 # ╟─42f262dd-4208-4a84-bd2d-5f4be5c78964
 # ╠═5f0a4d6a-2545-4610-b827-6adc50204136
 # ╟─d742acd5-ad8d-4ee6-bab0-e54ab9313e0d
-# ╠═15ba0e67-e1a8-43c7-a433-8e7e6d877376
 # ╟─71bb4346-7067-4db4-9a70-ab232e7c2ebc
 # ╠═448dc68d-cd0a-4491-82ad-0e7cc00782ad
 # ╟─14c803ff-268b-48bc-90c9-faa88010f5fe
@@ -1494,18 +1497,18 @@ version = "17.4.0+2"
 # ╠═c347a8ad-c859-4eb2-8fdc-bb7f04c7f70e
 # ╠═fac4f50a-ce65-4f22-af23-0fc73af936f2
 # ╠═aa724bc5-563f-4421-a55c-84ebd766f364
-# ╠═ea5f57d5-1396-4d66-885e-bc08864475c1
+# ╟─ea5f57d5-1396-4d66-885e-bc08864475c1
 # ╠═8f55e3f7-4082-4df9-b290-2b9183b067d8
 # ╠═1f3a56d1-0756-410d-be55-504398052149
 # ╟─9a900923-e407-44a0-823a-f911a22a5ada
 # ╟─553d0488-f03b-11ea-2997-3d82493cd4d7
 # ╟─25dc5690-f03a-11ea-3c59-35ae694b03b5
-# ╟─9dc072fe-b3db-11ea-1568-857a664ce4d2
+# ╟─064091ae-b4bb-4e7d-829b-b48d98e5cca0
+# ╠═9dc072fe-b3db-11ea-1568-857a664ce4d2
 # ╟─d88440c2-b3dc-11ea-1944-0ba4a566d7c1
 # ╟─5d345ae8-f03a-11ea-1c2d-03f66115b590
 # ╟─b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
 # ╟─e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
-# ╟─a255402c-d719-41fc-babc-7988a9aa5421
 # ╟─678850cc-b3e4-11ea-3cf0-a3445a3ac15a
 # ╟─cd442606-f03a-11ea-3d53-57e83c8cdb1f
 # ╟─4c1bcc58-b3ec-11ea-32d1-7f4cd113e43d
