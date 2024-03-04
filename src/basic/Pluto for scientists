@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.38
+# v0.19.40
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/dcf7654da4aa802a2e5aa918792f288a7cf2c068/LICENSES/Unlicense"
@@ -59,7 +59,7 @@ md"""
 
 	📚 *This explanation is based on [Pendulum mechanics (Wikipedia)](https://en.wikipedia.org/wiki/Pendulum_(mechanics))*
 
-	The duration of pendulum swings (``T``) depends on the length of the pendulum (``L``), the gravity constant (``g``), and the angle at the highest point (``\theta_0``).
+	The duration of one pendulum swing (``T``) depends on the length of the pendulum (``L``), the gravity constant (``g``), and the angle at the highest point (``\theta_0``).
 	
 	However, if ``\theta_0`` is small (that is, if the pendulum does not have a wide swing), it will have a negligible effect on the system, so we can leave it out of our equation.
 	
@@ -139,7 +139,7 @@ We'll use the `DataFrames` package to represent our experiment data.
 md"""
 !!! tip "Importing data"
 
-	Typing data directly into the code, like we do in this example, is usually not very convenient; don't worry, you can also import with a library like `CSV`!
+	Typing data directly into the code, like we do in this example, is usually not very convenient; don't worry, you can also import data with a library like `CSV`!
 """
 
 # ╔═╡ 1c4b841f-cf04-42e5-a53c-8a2e06e160f9
@@ -149,7 +149,7 @@ Let's compare our model to the results from our experiment.
 
 # ╔═╡ 7ee5f978-3a68-4942-ad04-844eaf7c3c51
 md"""
-That looks pretty good! But how about this ``g`` constant in our model - did we use the right value? 🤔
+That looks pretty good! But what about this constant ``g`` in our model - did we use the right value? 🤔
 """
 
 # ╔═╡ 5a95a12e-9e24-407c-b52f-ec1549253c69
@@ -165,11 +165,12 @@ Pluto's _reactivity_ makes it easy to explore your code! Let's start by setting 
 """
 
 # ╔═╡ cbfc8eb1-9615-4b80-a4ab-e9ab1b121b72
+# you can change this code!
 g_example = 9.0
 
 # ╔═╡ 6b9bd3d8-6e03-4639-aca2-5781e8849016
 md"""
-Now, you can adjust `g_example` and the plot will update instantly! ⚡ Try it out!
+Now, you can [edit the value of `g_example`](#g_example) and the plot will update instantly! ⚡ Try it out!
 
 Pluto's reactivity is designed to make this kind of exploration _easy_ and _intuitive_. You can play around with values and see their effect. Neat!
 """
@@ -191,7 +192,7 @@ On my screen, this is becoming a bit cumbersome: the slider is quite far away fr
 
 # ╔═╡ e0515b40-2abe-492e-b47c-b1cfe0ae31ef
 md"""
-By exploring the graph, we can get a good sense of the value of ``g`` should approximately be. Now, let's use some maths to get a more precise estimate.
+By exploring the graph, we can get a good sense of what the value of ``g`` should approximately be. Now, let's use some maths to get a more precise estimate.
 """
 
 # ╔═╡ a7a837f7-a404-4e5e-9687-d257bbd1e522
@@ -232,6 +233,11 @@ It often makes sense to develop a model in a notebook and visualise it on some e
 At this point, it will come in handy that _Pluto notebooks are also Julia scripts!_ If you have created a notebook `my_model.jl`, you can run it from the command line with `julia my_model.jl`. Similarly, it's no problem to import Pluto notebooks inside "regular" Julia scripts!
 
 So if you have developed your notebook with example data on your own laptop, you can move it to a remote server and run it from there. Or you can work in a notebook to define a `train_model(data)` function, and then write a small script that imports `train_model` and runs it on the big dataset. 🚀
+
+### Disable in File
+The function **Disable in File** can be really useful for this! (Edit this notebook and press the `(...)` context menu of this cell.) This makes the cell run in your notebook, but stored as a comment in the Julia file. This lets you have cells that are useful for visualisation (like a plot), that are not executed when you `include` the notebook file somewhere else. 
+
+**Disable in File** is also reactive: if you disable a cell, then all cells that depend on it will also get disabled automatically. This is really handy: often you can just disable the cell that loads your dataset, and then any cell that uses your data will be excluded, while your helper functions are still available!
 """
 
 # ╔═╡ 59367e61-fe12-46de-898b-fe1047d6aed9
@@ -249,6 +255,15 @@ But now that we have this nicely polished notebook, what can we do with it?
 While some of your colleagues will be interested to run your Pluto notebooks themselves (more on that later), you also want to share your code with people who don't have Pluto installed. How can they see your process?
 """
 
+# ╔═╡ 26f89649-5a0d-4349-b798-6ee8a74c0ca3
+md"""
+### Notebook file
+
+Pluto stores your notebook as a Julia file (`.jl`). The file contains your **code**, and a copy of your **package environment** (with the exact versions of packages that you used). Extra data that Pluto needs is stored as Julia comments.
+
+Sharing the **Notebook file** is ideal if you just want to share the code, without calculated results.
+"""
+
 # ╔═╡ 050179e8-54ca-463f-bd66-290c2087ca50
 md"""
 ### HTML export
@@ -259,7 +274,7 @@ This will create a single file, e.g. `my_model.html`, that you can e-mail to col
 
 You can try that right now! At the top of this page, click the "Export..." button, and select the "static HTML" option to download this notebook.
 
-This version looks like a "read-only" version of your notebook, but _it also includes your notebook code_! People who read it can click on a button to export the original notebook. Neat!
+This version looks like a "read-only" version of your notebook, but **it also includes your notebook code**! People who read it can click on a button to export the original notebook. Neat!
 """
 
 # ╔═╡ f3e106db-eb57-4325-9234-9f5dc400e9fd
@@ -267,6 +282,25 @@ md"""
 ### PDF export
 
 While Pluto is no full-featured publishing software, you can create PDF exports of notebooks! (In the same export menu for HTML). This can be useful if you want to create an attachment to a paper, or print out hand-outs for a lecture.
+"""
+
+# ╔═╡ de3c565a-5b29-4455-809a-7f4e2b6ad26b
+md"""
+### Record *(preview)*
+
+Pluto has a special feature: *recording mode*. It works quite similar to a screen recording: you click *record*, and you can move sliders, make code changes, and scroll around the notebook. If you enable microphone access, then you can tell a story! 
+
+The result is a video where people can play back what you demonstrated! Watch [this recording of *unitful sliders*](https://plutojl.org/unitful%20sliders/) to see an example.
+
+But unlike a regular screen recorder, the output file is not exactly a video (`.mp4` or `.mov`), but an HTML file (`.html`)! When people open the file, it will look exactly like a video player, but it's actually **Pluto magic**! Pluto didn't record the screen, but it recorded all *state changes*, and it can play them back in the static preview. This means that:
+- While watching the video, you can **scroll around**: you are not limited to watching the frame that was recorded.
+- You can watch the video with your own screen size! And it looks super sharp!
+- The **file size is tiny** compared to a video! That's because we only need to store text, data and audio.
+
+#### Future work
+The **Record** feature is still in preview. We are still working on two things:
+- Recording your cursor and changes as you type.
+- An easy way to share HTML files. We are working on a website to share and view recording files!
 """
 
 # ╔═╡ 58f6ac52-cdf5-4b70-9c50-491d0ac38b45
@@ -277,14 +311,14 @@ You can use Pluto notebooks to give presentations!
 
 You can use the "export..." menu to switch Pluto to "presentation mode" (and to switch it back to normal). When you're presenting, Pluto puts some spacing between the headers and you will get some navigation buttons to jump from header to header.
 
-This may be enough for a simple lecture, or you could add special formatting to create a really flashy presentation. For making basic presentations, Pluto isn't going to win out over dedicated presentation software in terms of usability, but being able to present from from a running notebook offers new options!
+This may be enough for a simple lecture, or you could add special formatting to create a really flashy presentation. For making basic presentations, Pluto isn't going to win out over dedicated presentation software in terms of usability, but being able to present from a running notebook offers new options!
 
 If you're interested in giving presentations or lectures with _interactive_ presentations of your research, or where you can quickly type in some code when you're answering a question, Pluto's presentation mode is a great option!
 """
 
 # ╔═╡ 50814873-f51b-4fa6-9bf2-85dfe23846a5
 md"""
-### Web server
+### Hosting an interactive website
 
 If you're looking for a more advanced presentation format, you can create a web server where visitors can view your notebooks and _play with interactive elements_ ⚡.
 
@@ -315,6 +349,9 @@ A big part of this is the _built-in package manager_. 📦 When you import packa
 
 # ╔═╡ f2f4398a-1c43-4a70-9e56-93dfe0c2b0b6
 import PlutoUI, DataFrames, Plots, StatsBase
+
+# ╔═╡ 31a40204-59b8-4cc7-adce-230e9d2e8a26
+PlutoUI.TableOfContents(include_definitions=true)
 
 # ╔═╡ 67b6075a-e58f-4311-aa0f-d7063ca60f8a
 function plot_pendulum_model(g::Number = 9.8)::Plots.Plot
@@ -368,7 +405,7 @@ end
 
 # ╔═╡ 95dcdf95-663d-4d46-a9cb-5a0d27139a10
 function find_optimal_g(min::Number, max::Number)
-	gs = range(min, max, length=50)
+	gs = range(min, max, length=5000)
 	argmin(error, gs)
 end
 
@@ -384,7 +421,7 @@ function plot_model_and_observations(g::Number = 9.8)::Plots.Plot
 end
 
 # ╔═╡ 9a2acb29-0f5f-4c6c-9e26-f6e52b01c650
-plot_model_and_observations()
+plot_model_and_observations(9.8)
 
 # ╔═╡ 3da81ee0-89f2-4427-adb9-562fe2c8ece2
 @bind g_slider PlutoUI.Slider(0.1:0.1:15.0, default=9.8)
@@ -1456,6 +1493,7 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
+# ╠═31a40204-59b8-4cc7-adce-230e9d2e8a26
 # ╟─41a406f0-d305-11ee-2ea6-856db6ede06d
 # ╟─afeb1feb-8e32-428a-a284-0f8dd5479baa
 # ╟─7a8c667a-317d-4cd0-ba51-8bc7a8cc402f
@@ -1496,11 +1534,11 @@ version = "1.4.1+1"
 # ╟─2125a69e-362e-4fe0-bf97-ecb678e4e19c
 # ╟─d2066968-8e23-4834-8314-d0ee5456e742
 # ╟─59367e61-fe12-46de-898b-fe1047d6aed9
+# ╟─26f89649-5a0d-4349-b798-6ee8a74c0ca3
 # ╟─050179e8-54ca-463f-bd66-290c2087ca50
 # ╟─f3e106db-eb57-4325-9234-9f5dc400e9fd
+# ╟─de3c565a-5b29-4455-809a-7f4e2b6ad26b
 # ╟─58f6ac52-cdf5-4b70-9c50-491d0ac38b45
 # ╟─50814873-f51b-4fa6-9bf2-85dfe23846a5
 # ╟─22f72a1f-1b38-4f87-9806-bf33bd386f84
-# ╟─f2f4398a-1c43-4a70-9e56-93dfe0c2b0b6
-# ╟─00000000-0000-0000-0000-000000000001
-# ╟─00000000-0000-0000-0000-000000000002
+# ╠═f2f4398a-1c43-4a70-9e56-93dfe0c2b0b6
