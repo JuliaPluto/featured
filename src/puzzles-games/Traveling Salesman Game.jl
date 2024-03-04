@@ -44,7 +44,7 @@ To play another round, or to generate new points, re-run the cell that defines `
 N = 5
 
 # ╔═╡ 069a3cdc-6f8e-4470-a6a8-8312eb6b5df5
-your_solution = [1,2,4,5,3]
+your_solution = [1,2,3,4,5]
 
 # ╔═╡ d25e7bed-3aae-43a1-aa5c-ef44cca55242
 begin
@@ -73,8 +73,10 @@ end
 function random_point(bounds, points)
     x = rand(bounds.x:bounds.x + bounds.width - 1)
     y = rand(bounds.y:bounds.y + bounds.height - 1)
-    
+
+	# make sure points aren't too close together
     threshold = 20
+	
     for point in points
         if abs(point.x - x) < threshold || abs(point.y - y) < threshold
             return random_point(bounds, points)
@@ -100,67 +102,51 @@ begin
 end;
 
 # ╔═╡ 7c0f26a0-a478-4887-91c8-e5a747b97c19
-begin
-	function total_distance(points)
-	    total_distance = 0.0
-	    n = length(points)
+function total_distance(points, tour)
+	total_distance = 0.0
+	n = length(points)
 	
-	    for i in 1:n-1
-	        x1, y1 = points[i]
-	        x2, y2 = points[i+1]
-	        total_distance += evaluate(Euclidean(), [x1,y1], [x2,y2])
-	    end
-	
-	    # Return to starting point
-	    x1, y1 = points[end]
-	    x2, y2 = points[1]
-	    total_distance += evaluate(Euclidean(), [x1,y1], [x2,y2])
-	
-	    return total_distance
+	for i in 1:n-1
+		p1 = points[tour[i]]
+		p2 = points[tour[i+1]]
+		total_distance += evaluate(Euclidean(), [p1.x, p1.y], [p2.x, p2.y])
 	end
-
 	
-	function total_distance(points, tour)
-	    total_distance = 0.0
-	    n = length(points)
-	    for i in 1:n-1
-			p1 = points[tour[i]]
-			p2 = points[tour[i+1]]
-	        total_distance += evaluate(Euclidean(), [p1.x, p1.y], [p2.x, p2.y])
-	    end
-		p_last = points[tour[end]]
-		p_first = points[tour[1]]
-	    total_distance += evaluate(Euclidean(), [p_last.x, p_last.y], [p_first.x, p_first.y])  # Return to the starting point
-	    return total_distance
-	end
+	p_last = points[tour[end]]
+	p_first = points[tour[1]]
+	# Return to the starting point
+	total_distance += evaluate(Euclidean(), [p_last.x, p_last.y], [p_first.x, p_first.y])  
+	return total_distance
 end;
 
 # ╔═╡ 39556336-9d1c-417a-b3d7-4e424710902d
 function simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
 	n = length(points)
-	current_tour = randperm(n)
-	best_tour = copy(current_tour)
+	current_tour = randperm(n) # Initialize with a random tour
+	best_tour = copy(current_tour) # Keep track of the best tour found
 	current_distance = total_distance(points, current_tour)
 	best_distance = current_distance
 	temperature = initial_temperature
 
 	for iter in 1:max_iter
-		next_tour = copy(current_tour)
-		i, j = rand(1:n, 2)
-		next_tour[i], next_tour[j] = next_tour[j], next_tour[i]  # Swap two cities
+		next_tour = copy(current_tour) # Make a copy of the current tour to modify
+		i, j = rand(1:n, 2) # Select two random indices
+		next_tour[i], next_tour[j] = next_tour[j], next_tour[i]  # Swap the cities at these indices
 		next_distance = total_distance(points, next_tour)
 		delta = next_distance - current_distance
 
+		# If the new tour is shorter, or if it is longer but accepted by the annealing probability
 		if delta < 0 || exp(-delta / temperature) > rand()
 			current_tour = copy(next_tour)
 			current_distance = next_distance
+			# If the new tour is the best found so far, update the best tour and distance
 			if current_distance < best_distance
 				best_tour = copy(current_tour)
 				best_distance = current_distance
 			end
 		end
 
-		temperature *= cooling_rate
+		temperature *= cooling_rate # Cool down the temperature
 	end
 
 	return best_tour
@@ -170,7 +156,7 @@ end;
 begin
 	b = Bounds(100, 100, 450, 280)
 	points = create_points(b, N)
-end
+end;
 
 # ╔═╡ 624c3dc0-2186-4185-9fba-87e522d4a163
 begin
@@ -184,11 +170,11 @@ begin
 	player_xs = get_points_xs(points[solution_player])
 	player_ys = get_points_ys(points[solution_player])
 	solution_computer = simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
-	push!(solution_computer, solution_computer[1])
+	push!(solution_computer, solution_computer[1]) # return to start
 	computer_xs = get_points_xs(points[solution_computer])
 	computer_ys = get_points_ys(points[solution_computer])
-	player_distance = total_distance([(z[1], z[2]) for z in zip(player_xs, player_ys)])
-	computer_distance = total_distance([(z[1], z[2]) for z in zip(computer_xs, computer_ys)])
+	player_distance = total_distance([Point(z[1], z[2]) for z in zip(player_xs, player_ys)], 1:size(player_xs, 1))
+	computer_distance = total_distance([Point(z[1], z[2]) for z in zip(computer_xs, computer_ys)], 1:size(computer_xs, 1))
 end;
 
 # ╔═╡ f3bf1b25-cb37-4594-b92b-fcd3f44429e9
@@ -394,7 +380,7 @@ HypertextLiteral = "~0.9.5"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0"
+julia_version = "1.10.1"
 manifest_format = "2.0"
 project_hash = "1adaeaec1fd57885bb7f86606f24f3c905de5e8d"
 
@@ -404,7 +390,7 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.1.0+0"
 
 [[deps.Distances]]
 deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
@@ -436,7 +422,7 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.23+4"
 
 [[deps.Random]]
 deps = ["SHA"]
