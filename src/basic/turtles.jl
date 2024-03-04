@@ -37,7 +37,7 @@ md"""
 This notebook lets you make drawings with a **Turtle** 🐢! You can use **simple Julia code** to make pretty drawings, so this is a great way to practice some Julia.
 
 ## Moving around
-Every drawing looks like this:
+Every drawing starts with a *description* that looks like this:
 
 ```julia
 turtle_drawing() do t
