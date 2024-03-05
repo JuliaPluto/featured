@@ -6,13 +6,13 @@
 #> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/9975Poblacion%2C_Baliuag%2C_Bulacan_06.jpg/640px-9975Poblacion%2C_Baliuag%2C_Bulacan_06.jpg"
 #> title = "Optimal Meatballs"
 #> date = "2024-02-08"
-#> tags = ["circle-packing", "Plots.jl", "PlutoUI.jl"]
+#> tags = ["puzzle", "circle-packing", "Plots.jl", "PlutoUI.jl"]
 #> description = "Learn about circle packing by optimizing the size of meatballs!  🍝"
 #> license = "Unlicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Matt Helm"
-#>     url = "https://avatars.githubusercontent.com/u/30706758?v=4"
+#>     url = "https://github.com/mthelm85"
 
 using Markdown
 using InteractiveUtils

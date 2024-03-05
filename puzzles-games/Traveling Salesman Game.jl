@@ -5,14 +5,14 @@
 #> license_url = "https://opensource.org/license/unlicense/"
 #> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Travelling_salesman_problem_solved_with_simulated_annealing.gif/640px-Travelling_salesman_problem_solved_with_simulated_annealing.gif"
 #> title = "Traveling Salesman Game"
-#> tags = ["optimization", "game", "traveling-salesman"]
+#> tags = ["optimization", "puzzle", "traveling-salesman"]
 #> license = "Unlicense"
 #> description = "A fun game to learn about the traveling salesman problem and the simulated annealing algorithm."
 #> date = "2024-02-16"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Matt Helm"
-#>     url = "https://avatars.githubusercontent.com/u/30706758?v=4"
+#>     url = "https://github.com/mthelm85"
 
 using Markdown
 using InteractiveUtils
