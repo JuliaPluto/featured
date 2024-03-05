@@ -69,7 +69,8 @@ If you take a look at [featured.plutojl.org](https://featured.plutojl.org), you 
 - `image`: should be a URL starting with `https://`. The image can be `.jpg`, `.png` or `.svg`, and about 600x400 pixels large. *(To use your own image, create a new issue in this repository, paste the image in the text to upload it to github and to get the URL. You can cancel creating the issue.)*
 - At least one author, with:
   - `name`: your name to display
-  - `url`: your github user page URL
+  - `url`: your user page URL, like `https://github.com/fonsp`. This is where people will go when they click on your name. If it's a github user URL, then it will also be used for the image.
+  - `image` *(optional)*: if you did *not* provide a github `url` that can be used for the image, or if you want to choose another image, use this for a custom avatar URL.
 - `tags`: fill in as many tags as you wish! This is where you choose in which category the notebook is listed, include at least one existing tag from [the collections configuration](https://github.com/JuliaPluto/featured/blob/main/src/pluto_export_configuration.json). *(lowercase, spaces allowed)*
 - `order` *(optional)*: this can be a number that is used to sort notebooks within a collection. Notebooks with lower orders show up first.
 
