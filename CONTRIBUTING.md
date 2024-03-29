@@ -101,6 +101,9 @@ Use Pluto's integrated package manager. *(If you are using an unregistered packa
 Your notebook should be written in **Julia 1.6**. If you wrote it in another version, then start Pluto in Julia 1.6 and open and run your notebook. *(Since Pluto is designed for Julia 1.6 and above, we want the featured notebooks to work for the same versions. We also found that an embedded Manifest.toml generated with Julia 1.6 has the highest chance of working directly on other Julia versions.)*
 
 
+# Creating a Pull Request
+
+TODO
 
 # Future maintenance
 Once a notebook is published
