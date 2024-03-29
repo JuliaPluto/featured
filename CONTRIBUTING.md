@@ -55,7 +55,7 @@ Things to avoid:
 
 
 # Technical information
-The information below describes the technical details for making a notebook work well in our _featured_ system. If this is intimidating or unclear, don't worry! You can skip all of this and just make a Pull Request, and we will figure it out together ☺️
+The information below describes the technical details for making a notebook work well in our _featured_ system. If this is intimidating or unclear, don't worry! You can skip all of this and just make a Pull Request, and we will figure it out together ☺️ Oh, and if working with `git`, Github and Pull Requests itself is of yet arcane magic to you, we have written a [gentle introduction below](#creating-a-pull-request).
 
 If you are experienced with these topics, you can also work through this list yourself, and make your own choices about the license, etc.
 
@@ -101,9 +101,6 @@ Use Pluto's integrated package manager. *(If you are using an unregistered packa
 Your notebook should be written in **Julia 1.6**. If you wrote it in another version, then start Pluto in Julia 1.6 and open and run your notebook. *(Since Pluto is designed for Julia 1.6 and above, we want the featured notebooks to work for the same versions. We also found that an embedded Manifest.toml generated with Julia 1.6 has the highest chance of working directly on other Julia versions.)*
 
 
-# Creating a Pull Request
-
-TODO
 
 # Future maintenance
 Once a notebook is published
@@ -124,4 +121,25 @@ TODO
 # Site maintenance
 
 Check out [these instructions](https://github.com/JuliaPluto/pluto-developer-instructions/blob/main/How%20to%20update%20the%20featured%20notebooks.md) to learn more about maintenance.
+
+
+# Creating a pull request
+
+TODO This is work-in-progress. I will tailor [Katharine Hyatt's guide](https://kshyatt.github.io/post/firstjuliapr/) to this repo.
+
+## Prerequisites
+
+TODO How much detail should we include in here? In particular, what level of `git` should we require?
+
+## Fork the repo
+
+TODO This part will be similar to Katharine's blog post.
+
+## Add your notebook
+
+TODO This will be unique to this repo.
+
+## Committing and pushing
+
+TODO This part will be similar to Katharine's blog post.
 
