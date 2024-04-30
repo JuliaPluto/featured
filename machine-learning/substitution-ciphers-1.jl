@@ -4,7 +4,7 @@
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://upload.wikimedia.org/wikipedia/commons/7/75/Caesar_substition_cipher.png?20160930042235"
-#> order = "1"
+#> order = "2.1"
 #> title = "Solving ciphers (part 1)"
 #> tags = ["optimization", "machine learning", "encryption", "ceasar cipher", "natural-language-processing"]
 #> license = "Unlicense"
