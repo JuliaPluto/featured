@@ -1,5 +1,7 @@
 # `featured`
 
+[**You can read all the featured notebooks here!**](https://featured.plutojl.org/)
+
 This repository contains Pluto's *featured* notebooks! Learn more about our featured notebook system [here](https://github.com/fonsp/Pluto.jl/pull/2048).
 
 ## Submit your notebook!
