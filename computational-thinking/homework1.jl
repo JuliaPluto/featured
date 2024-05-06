@@ -4,15 +4,15 @@
 #> [frontmatter]
 #> chapter = 1
 #> license_url = "https://github.com/mitmath/computational-thinking/blob/Fall23/LICENSE.md"
+#> layout = "layout.jlhtml"
 #> text_license = "CC-BY-SA-4.0"
+#> description = "Practice Julia basics by working with arrays of colors. At the end of this homework, you can see all of your filters applied to your webcam image!"
 #> code_license = "MIT"
 #> section = 2.5
 #> order = 2.5
 #> homework_number = 1
-#> title = "Images and Arrays"
-#> layout = "layout.jlhtml"
+#> title = "Homework 1"
 #> tags = ["homework", "module1", "image", "track_julia", "track_math", "track_climate", "track_data", "programming", "interactive", "type", "matrix"]
-#> description = "Practice Julia basics by working with arrays of colors. At the end of this homework, you can see all of your filters applied to your webcam image!"
 
 using Markdown
 using InteractiveUtils
