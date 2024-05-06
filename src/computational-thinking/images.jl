@@ -4,16 +4,16 @@
 #> [frontmatter]
 #> chapter = 1
 #> license_url = "https://github.com/mitmath/computational-thinking/blob/Fall23/LICENSE.md"
-#> text_license = "CC-BY-SA-4.0"
-#> code_license = "MIT"
+#> youtube_id = "3zTO3LEY-cM"
 #> video = "https://www.youtube.com/watch?v=3zTO3LEY-cM"
+#> layout = "layout.jlhtml"
+#> text_license = "CC-BY-SA-4.0"
+#> description = "How can an image be stored as an array of colored pixels? Can we transform this data?"
 #> image = "https://user-images.githubusercontent.com/6933510/136196634-2294d0a7-e79a-40d0-bbb8-81da70f4d398.png"
+#> code_license = "MIT"
 #> section = 1
 #> order = 1
-#> title = "Images as Data and Arrays"
-#> layout = "layout.jlhtml"
-#> youtube_id = "3zTO3LEY-cM"
-#> description = ""
+#> title = "Images as arrays"
 #> tags = ["lecture", "module1", "philip", "track_julia", "matrix", "image"]
 
 using Markdown
