@@ -125,21 +125,20 @@ Check out [these instructions](https://github.com/JuliaPluto/pluto-developer-ins
 
 # Creating a pull request
 
-TODO This is work-in-progress. I will tailor [Katharine Hyatt's guide](https://kshyatt.github.io/post/firstjuliapr/) to this repo.
+You've got a notebook (or an idea) that you'd like to contribute, but you're still unsure how to proceed?
+Why, just open a pull request.
+We can sort out all bits and bobs in the discussion.
 
-## Prerequisites
+But you've never collaborated on Github before?
+Don't worry.
+It's awesome that you want to give it a try!
+We're honored that you've chosen this project as your first step towards contributing to open source software.
+We'll try to guide you through it as best we can.
+In fact, we have created a [featured notebook](https://www.youtube.com/watch?v=dQw4w9WgXcQ) to help you get started.
 
-TODO How much detail should we include in here? In particular, what level of `git` should we require?
-
-## Fork the repo
-
-TODO This part will be similar to Katharine's blog post.
-
-## Add your notebook
-
-TODO This will be unique to this repo.
-
-## Committing and pushing
-
-TODO This part will be similar to Katharine's blog post.
-
+You've worked through the notebook, but still you haven't been able to create a pull request? 
+This means our explanation still needs improvement.
+In open source software terms, you have just discovered a bug (of sorts).
+You can still help us by telling us about it.
+Click on [this link](https://github.com/JuliaPluto/featured/issues/new?title=Help+wanted&body=Describe+your+problem), provide some more information in the text fields and click on the green button "Submit new issue".
+Congratulations, you've just contributed to open source software :smiling_face_with_three_hearts:
