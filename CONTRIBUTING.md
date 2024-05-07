@@ -141,4 +141,4 @@ This means our explanation still needs improvement.
 In open source software terms, you have just discovered a bug (of sorts).
 You can still help us by telling us about it.
 Click on [this link](https://github.com/JuliaPluto/featured/issues/new?title=Help+wanted&body=Describe+your+problem), provide some more information in the text fields and click on the green button "Submit new issue".
-Congratulations, you've just contributed to open source software :smiling_face_with_three_hearts:
+Congratulations, you've just contributed to open source software.
