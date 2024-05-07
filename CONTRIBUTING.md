@@ -55,7 +55,7 @@ Things to avoid:
 
 
 # Technical information
-The information below describes the technical details for making a notebook work well in our _featured_ system. If this is intimidating or unclear, don't worry! You can skip all of this and just make a Pull Request, and we will figure it out together ☺️ Oh, and if working with `git`, Github and Pull Requests itself is of yet arcane magic to you, we have written a [gentle introduction below](#creating-a-pull-request).
+The information below describes the technical details for making a notebook work well in our _featured_ system. If this is intimidating or unclear, don't worry! You can skip all of this and just make a Pull Request, and we will figure it out together ☺️ Oh, and if working with Github and Pull Requests is of yet arcane magic to you, we have some [more information below](#creating-a-pull-request).
 
 If you are experienced with these topics, you can also work through this list yourself, and make your own choices about the license, etc.
 
