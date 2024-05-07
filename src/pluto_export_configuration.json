@@ -15,6 +15,11 @@
             "tags": ["math"]
         },
         {
+            "title": "Course preview: computational thinking",
+            "description": "The free online course \"Computational Thinking\" from MIT is a great way to learn about programming and problem solving. Here are some lectures from the course, you can find the full course on computationalthinking.mit.edu",
+            "tags": ["track_julia", "track_math", "track_climate", "track_data"]
+        },
+        {
             "title": "Visualisation",
             "description": "Pluto is a great tool to visualise your results! Here are some examples.",
             "tags": ["visualisation", "plotting"]
