@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.41
+# v0.19.42
 
 #> [frontmatter]
 #> chapter = "1"
@@ -93,11 +93,12 @@ html"""
 </style>
 
 <div class="lecture-header">
+<!--
 <h6 class="number">Section</h6>
 <h1>Loading...</h1>
-
+-->
 <p>This lecture is part of <strong>Computational Thinking</strong>, a live online Julia/Pluto textbook. Go to <a href="https://computationalthinking.mit.edu/">computationalthinking.mit.edu</a> to read all 50 lectures for free.</p>
-
+<!--
 <div class="video">
 
 	<h4>Lecture Video</h4>
@@ -105,7 +106,7 @@ html"""
 		
 	</div>
 </div>
-
+-->
 
 
 <script>
