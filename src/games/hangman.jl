@@ -26,6 +26,12 @@ md"""
 - game needs to refresh every time the password field changes
 - Should we start with an empty password field or a random word?
 - Keep the requirement of every word being its own line or shall we also allow other seperators?
+- is there something like an immutable textfield that I could use to display the revelation?
+- handle special characters:
+  + in password
+  + in guesses
+- maybe regexs could be used to handle the str replaces, but god knows how or why [this](https://discourse.julialang.org/t/use-regex-replacement-strings/76729) works
+- how to make guesses permanent (i.e., prohibit deleting entered guesses?)
 """
 
 # ╔═╡ 1690c572-4112-11ef-0781-f979a8a12dca
@@ -35,7 +41,7 @@ md"""
 Using `PlutoUI`, it's really easy to code up a simple game of Hangman.
 For your entertainment, I've already provided the game logic.
 But the hangman picture could really use your Julia drawing skills.
-Can you even think of ways to modify the game itself?
+Maybe you even have ideas how to modify the game itself?
 
 But don't get hung up too much ;-)
 """
@@ -44,6 +50,19 @@ But don't get hung up too much ;-)
 md"""
 First, we need a secret word. If there's two people playing, just enter the textfield and type (it will be all stars like so ******). Otherwise, click `random word`.
 """
+
+# ╔═╡ 4b39a5ab-b612-4986-86c5-d3dd5ab5dc5a
+@bind guesses TextField(22, default="abcdefghijklmnopqrstuvwxyz")
+
+# ╔═╡ 8f4c5838-e895-49b4-89ae-60536f29f791
+md"""
+**todo** *delete after debugging*
+
+$guesses
+"""
+
+# ╔═╡ 163b6b19-dbe9-4a46-bef8-0af32dbba4b5
+num_guesses = length(unique(guesses))
 
 # ╔═╡ d3c1f0c1-eab7-4bbd-94ad-d42e16a6dc3c
 md"""
@@ -71,10 +90,19 @@ random_word = rand(collect(eachsplit(random_word_box)))
 
 # ╔═╡ 0644c3b7-2a90-4c86-b8c7-377ddca6d4d1
 md"""
-Currently, the password is
+**todo** *delete after debugging*
 
 $secret
 """
+
+# ╔═╡ ae098903-9c20-400b-9228-64479d349095
+revelation = map(c -> contains(lowercase(guesses), lowercase(c)) ? c : '*', secret)
+
+# ╔═╡ adee442c-bba4-4664-b082-50bb13962925
+hits = filter(c -> contains(lowercase(secret), lowercase(c)), guesses)
+
+# ╔═╡ 732db7c4-2408-45b2-ab8e-12630f7bb465
+num_misses = num_guesses - length(hits)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -351,11 +379,17 @@ version = "17.4.0+2"
 
 # ╔═╡ Cell order:
 # ╠═cd922998-3fee-4586-8458-7c2fa4a4bce1
-# ╠═1690c572-4112-11ef-0781-f979a8a12dca
+# ╟─1690c572-4112-11ef-0781-f979a8a12dca
 # ╠═84c2083b-7bc1-4ba2-8da3-4f2da8fe8449
-# ╠═033e6593-b0d2-475b-91bc-c1118db7725c
+# ╟─033e6593-b0d2-475b-91bc-c1118db7725c
 # ╠═61ff91c4-4257-470a-99d9-7080f52c11ba
 # ╠═0644c3b7-2a90-4c86-b8c7-377ddca6d4d1
+# ╠═4b39a5ab-b612-4986-86c5-d3dd5ab5dc5a
+# ╠═8f4c5838-e895-49b4-89ae-60536f29f791
+# ╠═ae098903-9c20-400b-9228-64479d349095
+# ╠═163b6b19-dbe9-4a46-bef8-0af32dbba4b5
+# ╠═adee442c-bba4-4664-b082-50bb13962925
+# ╠═732db7c4-2408-45b2-ab8e-12630f7bb465
 # ╟─d3c1f0c1-eab7-4bbd-94ad-d42e16a6dc3c
 # ╠═8bd64560-5e4e-4b4e-a95f-d16b4c20495f
 # ╠═f9a6d19e-7fcd-4b18-a551-9c8edabe8ed7
