@@ -32,6 +32,8 @@ md"""
   + in guesses
 - maybe regexs could be used to handle the str replaces, but god knows how or why [this](https://discourse.julialang.org/t/use-regex-replacement-strings/76729) works
 - how to make guesses permanent (i.e., prohibit deleting entered guesses?)
+- use turtle drawing to create the hangman
+- use a button to "commit" to a guess
 """
 
 # ╔═╡ 1690c572-4112-11ef-0781-f979a8a12dca
