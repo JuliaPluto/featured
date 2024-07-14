@@ -21,7 +21,7 @@ using PlutoUI
 md"""
 # TODO
 
-- which Julia drawing library could be added?
+- which Julia drawing library could be added? *=> the Turtle notebook creates its own SVG drawing code. Check on Zulip whether this should be turned into a module or whether it should be copy & pasted*
 - add `random word` button
 - game needs to refresh every time the password field changes
 - Should we start with an empty password field or a random word?
@@ -34,16 +34,17 @@ md"""
 - how to make guesses permanent (i.e., prohibit deleting entered guesses?)
 - use turtle drawing to create the hangman
 - use a button to "commit" to a guess
+- add internal links
+- fix the game description to actually include line breaks
 """
 
 # ╔═╡ 1690c572-4112-11ef-0781-f979a8a12dca
 md"""
-# Hangman
+# Simple Hangman
 
 Using `PlutoUI`, it's really easy to code up a simple game of Hangman.
 For your entertainment, I've already provided the game logic.
 But the hangman picture could really use your Julia drawing skills.
-Maybe you even have ideas how to modify the game itself?
 
 But don't get hung up too much ;-)
 """
@@ -54,7 +55,7 @@ First, we need a secret word. If there's two people playing, just enter the text
 """
 
 # ╔═╡ 4b39a5ab-b612-4986-86c5-d3dd5ab5dc5a
-@bind guesses TextField(22, default="abcdefghijklmnopqrstuvwxyz")
+@bind guesses TextField(22, default="")
 
 # ╔═╡ 8f4c5838-e895-49b4-89ae-60536f29f791
 md"""
@@ -66,9 +67,58 @@ $guesses
 # ╔═╡ 163b6b19-dbe9-4a46-bef8-0af32dbba4b5
 num_guesses = length(unique(guesses))
 
+# ╔═╡ b7c82f65-bdad-495a-bfbe-43cda1bad3b8
+description_entries = [
+	"A hill ...",
+	"... with an upright beam on top ...",
+	"... and a beam across ...",
+	"... and an diagonal beam for support ...",
+	"... a rope hanging in the air; ...",
+	"... a face already in the noose, ...",
+	"... the body attached, ...",
+	"... one arm, ...",
+	"... no, two arms visible; ...",
+	"... with one leg visible the air is getting thin; ...",
+	"... and the final leg is gone. GAME OVER :-("
+]
+
+# ╔═╡ 28e9f3e1-2634-405f-954e-8041b4350754
+md"""
+## Better graphics
+
+Hoosah, the game works. But the graphics suck. Let's change that!
+"""
+
+# ╔═╡ 1a7cd867-c199-4f95-ba63-fc2b36a89401
+md"""
+# Hangman
+
+The simple game logic above, it's easy to cheat for both players.
+Both the secret as well as the guesses can be modified at any time.
+So let's modify the game to make each player commit to their choices during a round.
+"""
+
+# ╔═╡ c1591133-f1ce-4f12-b68a-7edd126f2d58
+md"""
+## Best graphics
+
+Let's make the ultimate graphical user interface for the ultimate hangman game.
+(This might be disappointing-I'm not any good with graphic design. But, hey: maybe you are?)
+"""
+
+# ╔═╡ a47488dd-c702-4ab9-81b2-bae55f4fc762
+md"""
+# Behind the scenes
+
+Okay, maybe the few lines of code are not fully sufficient to get all the bells and whistles.
+For this reason, I've hidden a couple of code tidbits that I've needed to set the stage but which do not really add to the understanding of how to program hangman.
+But we don't have any secrets here!
+Leave no stone unturned and browse all my secrets to your heart's delight.
+"""
+
 # ╔═╡ d3c1f0c1-eab7-4bbd-94ad-d42e16a6dc3c
 md"""
-## Appendix: random word list
+## Random word list
 
 Below you'll find the pool of random words. Feel free to add or remove words, if the list is not to your liking. Each word must be on it's own line.
 """
@@ -82,7 +132,8 @@ Hangman
 Programmer
 Feature
 Bug
-Gamer")
+Gamer
+Developer")
 
 # ╔═╡ f9a6d19e-7fcd-4b18-a551-9c8edabe8ed7
 random_word = rand(collect(eachsplit(random_word_box)))
@@ -105,6 +156,16 @@ hits = filter(c -> contains(lowercase(secret), lowercase(c)), guesses)
 
 # ╔═╡ 732db7c4-2408-45b2-ab8e-12630f7bb465
 num_misses = num_guesses - length(hits)
+
+# ╔═╡ ba1886df-509a-4016-8a28-d43b4403c999
+description = join(description_entries[1:num_misses], "<br>")
+
+# ╔═╡ 26707dfc-d247-41ea-bea3-6c64fc248bbf
+md"""
+*Can you picture the scene?*
+
+($description)
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -381,18 +442,25 @@ version = "17.4.0+2"
 
 # ╔═╡ Cell order:
 # ╠═cd922998-3fee-4586-8458-7c2fa4a4bce1
-# ╟─1690c572-4112-11ef-0781-f979a8a12dca
+# ╠═1690c572-4112-11ef-0781-f979a8a12dca
 # ╠═84c2083b-7bc1-4ba2-8da3-4f2da8fe8449
 # ╟─033e6593-b0d2-475b-91bc-c1118db7725c
 # ╠═61ff91c4-4257-470a-99d9-7080f52c11ba
 # ╠═0644c3b7-2a90-4c86-b8c7-377ddca6d4d1
 # ╠═4b39a5ab-b612-4986-86c5-d3dd5ab5dc5a
 # ╠═8f4c5838-e895-49b4-89ae-60536f29f791
-# ╠═ae098903-9c20-400b-9228-64479d349095
-# ╠═163b6b19-dbe9-4a46-bef8-0af32dbba4b5
-# ╠═adee442c-bba4-4664-b082-50bb13962925
-# ╠═732db7c4-2408-45b2-ab8e-12630f7bb465
-# ╟─d3c1f0c1-eab7-4bbd-94ad-d42e16a6dc3c
+# ╟─ae098903-9c20-400b-9228-64479d349095
+# ╟─163b6b19-dbe9-4a46-bef8-0af32dbba4b5
+# ╟─adee442c-bba4-4664-b082-50bb13962925
+# ╟─732db7c4-2408-45b2-ab8e-12630f7bb465
+# ╟─b7c82f65-bdad-495a-bfbe-43cda1bad3b8
+# ╠═ba1886df-509a-4016-8a28-d43b4403c999
+# ╠═26707dfc-d247-41ea-bea3-6c64fc248bbf
+# ╠═28e9f3e1-2634-405f-954e-8041b4350754
+# ╠═1a7cd867-c199-4f95-ba63-fc2b36a89401
+# ╠═c1591133-f1ce-4f12-b68a-7edd126f2d58
+# ╠═a47488dd-c702-4ab9-81b2-bae55f4fc762
+# ╠═d3c1f0c1-eab7-4bbd-94ad-d42e16a6dc3c
 # ╠═8bd64560-5e4e-4b4e-a95f-d16b4c20495f
 # ╠═f9a6d19e-7fcd-4b18-a551-9c8edabe8ed7
 # ╟─00000000-0000-0000-0000-000000000001
