@@ -86,7 +86,7 @@ description_entries = [
 md"""
 ## Better graphics
 
-Hoosah, the game works. But the graphics suck. Let's change that!
+Hoosah, the game wo\rks. But the graphics suck. Let's change that!
 """
 
 # ╔═╡ 1a7cd867-c199-4f95-ba63-fc2b36a89401
@@ -158,14 +158,10 @@ hits = filter(c -> contains(lowercase(secret), lowercase(c)), guesses)
 num_misses = num_guesses - length(hits)
 
 # ╔═╡ ba1886df-509a-4016-8a28-d43b4403c999
-description = join(description_entries[1:num_misses], "<br>")
+description = join(description_entries[1:num_misses], "\\\n")
 
 # ╔═╡ 26707dfc-d247-41ea-bea3-6c64fc248bbf
-md"""
-*Can you picture the scene?*
-
-($description)
-"""
+Markdown.parse("Can you picture the scene?\\\n\\\n" * description)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
