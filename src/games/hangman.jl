@@ -69,9 +69,6 @@ For each wrong guess, you'll get one step closer to be hung.
 # ╔═╡ 4b39a5ab-b612-4986-86c5-d3dd5ab5dc5a
 @bind guesses TextField(22, default="")
 
-# ╔═╡ 7efe557a-2df0-462f-a8c0-4deb896ec3ac
-htl"<ul>$(map(description) do s @htl("<li>$s") end)</ul>"
-
 # ╔═╡ 163b6b19-dbe9-4a46-bef8-0af32dbba4b5
 num_guesses = length(unique(guesses));
 
@@ -182,6 +179,9 @@ hits = filter(c -> contains(lowercase(secret), lowercase(c)), guesses);
 
 # ╔═╡ 732db7c4-2408-45b2-ab8e-12630f7bb465
 num_misses = num_guesses - length(hits);
+
+# ╔═╡ 7efe557a-2df0-462f-a8c0-4deb896ec3ac
+@htl "<ul>$(map(description_entries[1:min(num_misses,length(description_entries))]) do s @htl("<li>$s") end)</ul>"
 
 # ╔═╡ ba1886df-509a-4016-8a28-d43b4403c999
 description = join(description_entries[1:min(num_misses,length(description_entries))], "\\\n");
