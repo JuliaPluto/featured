@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.43
+# v0.19.45
 
 using Markdown
 using InteractiveUtils
@@ -15,7 +15,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ 84c2083b-7bc1-4ba2-8da3-4f2da8fe8449
-using PlutoUI
+using PlutoUI, HypertextLiteral
 
 # ╔═╡ cd922998-3fee-4586-8458-7c2fa4a4bce1
 md"""
@@ -43,29 +43,37 @@ md"""
 # Simple Hangman
 
 Using `PlutoUI`, it's really easy to code up a simple game of Hangman.
-For your entertainment, I've already provided the game logic.
-But the hangman picture could really use your Julia drawing skills.
+If you're just here to play: go ahead, everything is set up for you.
+But maybe you can add some tweaks of your own?
 
 But don't get hung up too much ;-)
 """
 
 # ╔═╡ 033e6593-b0d2-475b-91bc-c1118db7725c
 md"""
-First, we need a secret word. If there's two people playing, just enter the textfield and type (it will be all stars like so ******). Otherwise, click `random word`.
+First, we'll need a secret word.
+I've initialized it with a random secret word of my own, but feel free to (have someone) modify it anytime.
+The box below is a `PasswordField`, so your secret will be safe with us.
+"""
+
+# ╔═╡ 669ce82f-495e-4edb-9c3f-e12484c767fa
+@bind new_word Button("New random word")
+
+# ╔═╡ 0644c3b7-2a90-4c86-b8c7-377ddca6d4d1
+md"""
+Type your guesses in the field below.
+If the letter appears in the `secret`, it will be revealed.
+For each wrong guess, you'll get one step closer to be hung.
 """
 
 # ╔═╡ 4b39a5ab-b612-4986-86c5-d3dd5ab5dc5a
 @bind guesses TextField(22, default="")
 
-# ╔═╡ 8f4c5838-e895-49b4-89ae-60536f29f791
-md"""
-**todo** *delete after debugging*
-
-$guesses
-"""
+# ╔═╡ 7efe557a-2df0-462f-a8c0-4deb896ec3ac
+htl"<ul>$(map(description) do s @htl("<li>$s") end)</ul>"
 
 # ╔═╡ 163b6b19-dbe9-4a46-bef8-0af32dbba4b5
-num_guesses = length(unique(guesses))
+num_guesses = length(unique(guesses));
 
 # ╔═╡ b7c82f65-bdad-495a-bfbe-43cda1bad3b8
 description_entries = [
@@ -80,7 +88,28 @@ description_entries = [
 	"... no, two arms visible; ...",
 	"... with one leg visible the air is getting thin; ...",
 	"... and the final leg is gone. GAME OVER :-("
-]
+];
+
+# ╔═╡ b0d0b7e4-72c6-4b0a-bf6e-1fc933b90994
+md"""
+Don't forget to send the following request for help:
+"""
+
+# ╔═╡ 494015e3-0e4b-4a7b-bc8e-1376fb2e9b59
+# should this be reported as bug somewhere?
+begin
+ test = "### haha"
+ @md_str test
+end
+
+# ╔═╡ f8d381c4-cf2f-4bc3-a1cd-02addd4ddb0c
+foo = []
+
+# ╔═╡ fbe1c11e-ec34-4301-a6f0-c5c5b6d78adc
+push!(foo, 2)
+
+# ╔═╡ 4e918fc4-762a-4aa0-984c-86569e808af6
+push!(foo, 1)
 
 # ╔═╡ 28e9f3e1-2634-405f-954e-8041b4350754
 md"""
@@ -123,9 +152,9 @@ md"""
 Below you'll find the pool of random words. Feel free to add or remove words, if the list is not to your liking. Each word must be on it's own line.
 """
 
-# ╔═╡ 8bd64560-5e4e-4b4e-a95f-d16b4c20495f
-@bind random_word_box TextField((20, 10), default=
-"Julia
+# ╔═╡ 8486bd1f-7dce-4f7f-ad60-c43f6dc6fc43
+random_word_list = """
+Julia
 Notebook
 Pluto
 Hangman
@@ -133,32 +162,29 @@ Programmer
 Feature
 Bug
 Gamer
-Developer")
+Developer
+""";
 
-# ╔═╡ f9a6d19e-7fcd-4b18-a551-9c8edabe8ed7
-random_word = rand(collect(eachsplit(random_word_box)))
+# ╔═╡ 7002f4f2-7b33-4a73-ab18-b97001282b0b
+begin
+	new_word
+	random_word = rand(collect(eachsplit(random_word_list)))
+end
 
 # ╔═╡ 61ff91c4-4257-470a-99d9-7080f52c11ba
 @bind secret PasswordField(default=random_word)
-
-# ╔═╡ 0644c3b7-2a90-4c86-b8c7-377ddca6d4d1
-md"""
-**todo** *delete after debugging*
-
-$secret
-"""
 
 # ╔═╡ ae098903-9c20-400b-9228-64479d349095
 revelation = map(c -> contains(lowercase(guesses), lowercase(c)) ? c : '*', secret)
 
 # ╔═╡ adee442c-bba4-4664-b082-50bb13962925
-hits = filter(c -> contains(lowercase(secret), lowercase(c)), guesses)
+hits = filter(c -> contains(lowercase(secret), lowercase(c)), guesses);
 
 # ╔═╡ 732db7c4-2408-45b2-ab8e-12630f7bb465
-num_misses = num_guesses - length(hits)
+num_misses = num_guesses - length(hits);
 
 # ╔═╡ ba1886df-509a-4016-8a28-d43b4403c999
-description = join(description_entries[1:num_misses], "\\\n")
+description = join(description_entries[1:min(num_misses,length(description_entries))], "\\\n");
 
 # ╔═╡ 26707dfc-d247-41ea-bea3-6c64fc248bbf
 Markdown.parse("Can you picture the scene?\\\n\\\n" * description)
@@ -166,9 +192,11 @@ Markdown.parse("Can you picture the scene?\\\n\\\n" * description)
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
+HypertextLiteral = "~0.9.5"
 PlutoUI = "~0.7.59"
 """
 
@@ -438,26 +466,32 @@ version = "17.4.0+2"
 
 # ╔═╡ Cell order:
 # ╠═cd922998-3fee-4586-8458-7c2fa4a4bce1
-# ╠═1690c572-4112-11ef-0781-f979a8a12dca
+# ╟─1690c572-4112-11ef-0781-f979a8a12dca
 # ╠═84c2083b-7bc1-4ba2-8da3-4f2da8fe8449
 # ╟─033e6593-b0d2-475b-91bc-c1118db7725c
 # ╠═61ff91c4-4257-470a-99d9-7080f52c11ba
-# ╠═0644c3b7-2a90-4c86-b8c7-377ddca6d4d1
+# ╠═669ce82f-495e-4edb-9c3f-e12484c767fa
+# ╠═7002f4f2-7b33-4a73-ab18-b97001282b0b
+# ╟─0644c3b7-2a90-4c86-b8c7-377ddca6d4d1
 # ╠═4b39a5ab-b612-4986-86c5-d3dd5ab5dc5a
-# ╠═8f4c5838-e895-49b4-89ae-60536f29f791
 # ╟─ae098903-9c20-400b-9228-64479d349095
-# ╟─163b6b19-dbe9-4a46-bef8-0af32dbba4b5
-# ╟─adee442c-bba4-4664-b082-50bb13962925
+# ╠═26707dfc-d247-41ea-bea3-6c64fc248bbf
+# ╠═7efe557a-2df0-462f-a8c0-4deb896ec3ac
+# ╠═163b6b19-dbe9-4a46-bef8-0af32dbba4b5
+# ╠═adee442c-bba4-4664-b082-50bb13962925
 # ╟─732db7c4-2408-45b2-ab8e-12630f7bb465
 # ╟─b7c82f65-bdad-495a-bfbe-43cda1bad3b8
-# ╠═ba1886df-509a-4016-8a28-d43b4403c999
-# ╠═26707dfc-d247-41ea-bea3-6c64fc248bbf
+# ╟─ba1886df-509a-4016-8a28-d43b4403c999
+# ╠═b0d0b7e4-72c6-4b0a-bf6e-1fc933b90994
+# ╠═494015e3-0e4b-4a7b-bc8e-1376fb2e9b59
+# ╠═f8d381c4-cf2f-4bc3-a1cd-02addd4ddb0c
+# ╠═fbe1c11e-ec34-4301-a6f0-c5c5b6d78adc
+# ╠═4e918fc4-762a-4aa0-984c-86569e808af6
 # ╠═28e9f3e1-2634-405f-954e-8041b4350754
 # ╠═1a7cd867-c199-4f95-ba63-fc2b36a89401
 # ╠═c1591133-f1ce-4f12-b68a-7edd126f2d58
 # ╠═a47488dd-c702-4ab9-81b2-bae55f4fc762
 # ╠═d3c1f0c1-eab7-4bbd-94ad-d42e16a6dc3c
-# ╠═8bd64560-5e4e-4b4e-a95f-d16b4c20495f
-# ╠═f9a6d19e-7fcd-4b18-a551-9c8edabe8ed7
+# ╠═8486bd1f-7dce-4f7f-ad60-c43f6dc6fc43
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
