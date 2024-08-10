@@ -5,7 +5,7 @@
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://github.com/JuliaRegistries/General/assets/6933510/9a925232-6a75-47e7-9ab9-f384bc389602"
 #> order = "5.1"
-#> title = "Turtle – showcase"
+#> title = "Turtles – showcase"
 #> date = "2024-08-10"
 #> tags = ["krat", "turtle", "basic"]
 #> description = "🐢 A couple of cool artworks made with simple Julia code"
