@@ -2,11 +2,18 @@
 # v0.19.45
 
 #> [frontmatter]
-#> image = "https://github.com/JuliaRegistries/General/assets/6933510/9a925232-6a75-47e7-9ab9-f384bc389602"
-#> title = "Painting with Turtles"
-#> date = "2024-01-23"
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
+#> image = "https://github.com/user-attachments/assets/5eb767e4-2f9c-44ff-ace6-eb7bfaee8fcf"
+#> order = "5"
+#> title = "Turtles – introduction"
+#> date = "2024-08-10"
 #> tags = ["krat", "turtle", "basic"]
-#> description = "🐢 Use simple Julia code to make a painting!  of kratje"
+#> description = "🐢 Use simple Julia code to make a painting!"
+#> license = "Unlicense"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Pluto.jl"
+#>     url = "https://github.com/JuliaPluto"
 
 using Markdown
 using InteractiveUtils
@@ -425,216 +432,6 @@ using PlutoTurtles
 ```
 """
 
-# ╔═╡ 9a900923-e407-44a0-823a-f911a22a5ada
-html"""
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-"""
-
-# ╔═╡ 553d0488-f03b-11ea-2997-3d82493cd4d7
-md"# Some famous artwork"
-
-# ╔═╡ 25dc5690-f03a-11ea-3c59-35ae694b03b5
-md"""## "_The Starry Night_" 
-Vincent van Gogh (1889)"""
-
-# ╔═╡ 064091ae-b4bb-4e7d-829b-b48d98e5cca0
-@bind GO_gogh CounterButton("Another one!")
-
-# ╔═╡ d88440c2-b3dc-11ea-1944-0ba4a566d7c1
-function draw_star(turtle, points, size)
-	for i in 1:points
-		right!(turtle, 360 / points)
-		forward!(turtle, size)
-		backward!(turtle, size)
-	end
-end
-
-# ╔═╡ 9dc072fe-b3db-11ea-1568-857a664ce4d2
-starry_night = turtle_drawing_fast(background = "#000088") do t
-	GO_gogh
-	
-	star_count = 100
-	
-	color!(t, "yellow")
-	
-	for i in 1:star_count
-		#move
-		penup!(t)
-		random_angle = rand() * 360
-		right!(t, random_angle)
-		random_distance = rand(1:8)
-		forward!(t, random_distance)
-		
-		#draw star
-		pendown!(t)
-		
-		draw_star(t, 5, 1)
-	end
-end
-
-# ╔═╡ 5d345ae8-f03a-11ea-1c2d-03f66115b590
-md"""## "_Tableau I_"
-Piet Mondriaan (1913)"""
-
-# ╔═╡ b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
-@bind GO_mondriaan CounterButton("Another one!")
-
-# ╔═╡ 678850cc-b3e4-11ea-3cf0-a3445a3ac15a
-function draw_mondriaan(turtle, width, height)
-	#propbability that we make a mondriaan split
-	p = if width * height < 8
-		0
-	else
-		((width * height) / 900) ^ 0.5
-	end
-		
-	if rand() < p
-		#split into halves
-		
-		split = rand(width * 0.1 : width * 0.9)
-
-		#draw split
-		forward!(turtle, split)
-		right!(turtle, 90)
-		color!(turtle, "black")
-		pendown!(turtle)
-		forward!(turtle, height)
-		penup!(turtle)
-
-		#fill in left of split
-		right!(turtle, 90)
-		forward!(turtle, split)
-		right!(turtle, 90)
-		draw_mondriaan(turtle, height, split)
-		
-		#fill in right of split
-		forward!(turtle, height)
-		right!(turtle, 90)
-		forward!(turtle, width)
-		right!(turtle, 90)
-		draw_mondriaan(turtle, height, width - split)
-		
-		#walk back
-		right!(turtle, 90)
-		forward!(turtle, width)
-		right!(turtle, 180)
-		
-	else
-		#draw a colored square
-		square_color = rand(["white", "white", "white", "red", "yellow", "blue"])
-		color!(turtle, square_color)
-		for x in (.4:.4:width - .4) ∪ [width - .4]
-			forward!(turtle, x)
-			right!(turtle, 90)
-			forward!(turtle, .2)
-			pendown!(turtle)
-			forward!(turtle, height - .4)
-			penup!(turtle)
-			right!(turtle, 180)
-			forward!(turtle, height - .2)
-			right!(turtle, 90)
-			backward!(turtle, x)
-		end
-	end
-end
-
-# ╔═╡ e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
-# turtle_drawing_fast() is the same as turtle_drawing(), but it does not show a little turtle taking the individual steps
-
-mondriaan = turtle_drawing_fast() do t	
-	GO_mondriaan
-	size = 30
-	
-	#go to top left corner
-	penup!(t)
-	forward!(t, size / 2)
-	left!(t, 90)
-	forward!(t, size / 2)
-	right!(t, 180)
-		
-	#draw painting
-	draw_mondriaan(t, size, size)
-	
-	#white border around painting
-	color!(t, "white")
-	pendown!(t)
-	for i in 1:4
-		forward!(t, size)
-		right!(t, 90)
-	end
-end
-
-# ╔═╡ cd442606-f03a-11ea-3d53-57e83c8cdb1f
-md"""## "_Een Boom_"
-Luka van der Plas (2020)"""
-
-# ╔═╡ 4c1bcc58-b3ec-11ea-32d1-7f4cd113e43d
-@bind fractal_angle Slider(0:90; default=49)
-
-# ╔═╡ a7e725d8-b3ee-11ea-0b84-8d252979e4ef
-@bind fractal_tilt Slider(0:90; default=36)
-
-# ╔═╡ 49ce3f9c-b3ee-11ea-0bb5-ed348475ea0b
-@bind fractal_base Slider(0:0.01:2; default=1)
-
-# ╔═╡ d1ae2696-b3eb-11ea-2fcc-07b842217994
-function lindenmayer(turtle, depth, angle, tilt, base)
-	if depth < 10
-		old_pos = turtle.pos
-		old_heading = turtle.heading
-
-		size = base * .5 ^ (depth * 0.5)
-
-		pendown!(turtle)
-		color!(turtle, "hsl($(depth * 30), 80%, 50%)")
-		forward!(turtle, size * 8)
-		right!(turtle, tilt / 2)
-		lindenmayer(turtle, depth + 1, angle, tilt, base)
-		left!(turtle, angle)
-		lindenmayer(turtle, depth + 1, angle, tilt, base)
-
-
-		turtle.pos = old_pos
-		turtle.heading = old_heading
-	end
-end
-
-# ╔═╡ 60b52a52-b3eb-11ea-2e3c-9d185f4fbc2b
-fractal = turtle_drawing_fast() do t
-	penup!(t)
-	backward!(t, 15)
-	pendown!(t)
-	lindenmayer(t, 0, fractal_angle, fractal_tilt, fractal_base)
-end
-
-# ╔═╡ f132f376-f03a-11ea-33e2-775fc026faca
-md"""## "_Een coole spiraal_" 
-fonsi (2020)"""
-
-# ╔═╡ 70160fec-b0c7-11ea-0c2a-35418346592e
-@bind angle Slider(0:90; default=20)
-
-# ╔═╡ d30c8f2a-b0bf-11ea-0557-19bb61118644
-turtle_drawing() do t
-	
-	for i in 0:.1:10
-		right!(t, angle)
-		forward!(t, i)
-	end
-	
-end
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -919,24 +716,5 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═8f55e3f7-4082-4df9-b290-2b9183b067d8
 # ╠═1f3a56d1-0756-410d-be55-504398052149
 # ╟─adce0892-05bd-45da-9e1f-3877af5e8f7f
-# ╟─9a900923-e407-44a0-823a-f911a22a5ada
-# ╟─553d0488-f03b-11ea-2997-3d82493cd4d7
-# ╟─25dc5690-f03a-11ea-3c59-35ae694b03b5
-# ╟─064091ae-b4bb-4e7d-829b-b48d98e5cca0
-# ╠═9dc072fe-b3db-11ea-1568-857a664ce4d2
-# ╟─d88440c2-b3dc-11ea-1944-0ba4a566d7c1
-# ╟─5d345ae8-f03a-11ea-1c2d-03f66115b590
-# ╟─b3f5877c-b3e9-11ea-03fe-3f3233ee2e1b
-# ╟─e04a9296-b3e3-11ea-01b5-8ff7dc0ced56
-# ╟─678850cc-b3e4-11ea-3cf0-a3445a3ac15a
-# ╟─cd442606-f03a-11ea-3d53-57e83c8cdb1f
-# ╟─4c1bcc58-b3ec-11ea-32d1-7f4cd113e43d
-# ╟─a7e725d8-b3ee-11ea-0b84-8d252979e4ef
-# ╟─49ce3f9c-b3ee-11ea-0bb5-ed348475ea0b
-# ╟─60b52a52-b3eb-11ea-2e3c-9d185f4fbc2b
-# ╟─d1ae2696-b3eb-11ea-2fcc-07b842217994
-# ╟─f132f376-f03a-11ea-33e2-775fc026faca
-# ╟─70160fec-b0c7-11ea-0c2a-35418346592e
-# ╠═d30c8f2a-b0bf-11ea-0557-19bb61118644
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
