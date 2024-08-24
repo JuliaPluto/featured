@@ -25,207 +25,311 @@ macro bind(def, element)
 end
 
 # ╔═╡ 2e3a7a3a-2fa7-11ef-1b80-d793aa08ee42
-using PlutoUI, Luxor, PlutoTeachingTools, PlutoImageCoordinatePicker, Images
+using PlutoUI, PlutoTeachingTools, PlutoImageCoordinatePicker, Images
 
 # ╔═╡ 98bca732-c2c6-4a79-b57b-f3d10a7d5845
 md" # Fractals: A Mathematical Concept 
 
 Hey there 👋 Do you remember the first time you ever saw a snowflake? ❄️ 
 
-Did you also know that if you zoom into a snowflake, you will see the same shape over and over again, no matter how deep you zoom in.
+Did you also know that if you zoom into a snowflake, you will see the same shape over and over again, no matter how deep you zoom in."
 
-Turns out, many objects have this same property, where they can be split into parts and each tiny part is a copy of the whole. We call them **Fractals**."
+# ╔═╡ 60ee1932-63c1-45c4-a9a1-a9822a19f925
+html"""
+<div style="width:100%;height:100%;padding-bottom:50%;position:relative;"><iframe src="https://giphy.com/embed/EMJXuqkTkMmDp0c5Xc" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
+"""
 
 # ╔═╡ 859fe2ac-4e1b-4d83-9bad-22042ed46d29
-md"Pretty cool, right? But what's even more cool is that fractals can be defined mathematically following a super simple formula! One famous such set of fractals is called the **Julia Set** "
+md"
+
+Turns out, many objects have this same property, where they can be split into parts and each tiny part is a copy of the whole. We call them **Fractals**.
+
+Pretty cool, right? But what's even more cool is that fractals can be defined mathematically following a super simple formula! One famous such set of fractals is called the **Julia Set** "
 
 # ╔═╡ 903617e4-e5c6-4a16-9f0f-586cdb803f3c
 aside((md"""
 !!! info "Lucky coincidence"
 	How convenient is it that we're learning about the Julia language ?! 🤯"""), v_offset=-100)
 
-# ╔═╡ 3e5824f5-a2ef-44bb-838c-66d9ed01d9a8
-aside((md"""
-!!! danger "Series"
-
-	In math, instead of dealing with numbers in a list, we can define a formula that looks like this: $z_{n+1} = z_n + 1$. This is called a **series**. 
-
-	It basically goes like this: 
-
-	* Choose our start value $z_0$ = 1
-	* Generate the next value using the formula so $z_1 = z_0 + 1 = 1+1 = 2$
-	* Once this generated we use it to generate the next number $z_2$ as follows $z_2 = z_1 + 1 = 2 +1 = 3$
-	* And so on ...
-"""), v_offset = 20)
-
 # ╔═╡ 3ca5960c-2352-41f5-ac89-e58e3a5dd1c9
-md"**A Fun Series to Work With**
+md"### A Fun Sequence to Work With
 
-First, we have to define our series:"
+Before we get to the fractals, there are a few things we want to talk about. 
 
-# ╔═╡ 59620b66-798a-4723-b14b-596a355462bc
-md"Then, choose an initial value: "
+So, in math, instead of dealing with numbers in a list, we can define a formula that looks like this: $z_{n+1} = z_n + 1$. This is called a **sequence**. Let's see how it works 😁"
 
-# ╔═╡ 1dfe4357-af4d-4db4-9a10-05219737041a
-@bind initial_value PlutoUI.Slider(-10:10, default = 1, show_value = true) 
-
-# ╔═╡ d5312fa2-5cf7-4c4b-860f-c18e4afe9841
-md"Finally a total number of terms in the series:"
-
-# ╔═╡ 3f8e294c-ddeb-4509-b5d5-4e86284dfd34
-@bind num_terms PlutoUI.Slider(3:10, default = 5, show_value = true) 
-
-# ╔═╡ 0fe952e4-3d35-408e-b48f-f9d624a92661
-md"Now observe how the series changes: "
-
-# ╔═╡ 221742a5-146e-4d7d-8d50-0f7bd5a30cb5
-TwoColumn(md"""
-	!!! hint "What happens when we keep doing this for a long time?"
-
-		For most initial values, our numbers are always increasing and getting bigger and bigger, so they're going to infinity. We say the series *diverges* """,
-	md"""
-		!!! hint "What if initial_value = 0 ? "
-			The series will go like this: 0 -> -1 -> 0 -> -1 -> 0 -> -1 ... 
-
-			In this case, the series doesn't go to infinity but moves back and forth between 0 and -1, and so it doesn't *diverge*. It oscillates.""")
-
-# ╔═╡ 98fbff5f-df70-4ee6-a2b3-7d56b6299140
-md"**Construct Fractals**
-
-Now, we have everything we need to construct a fractal from the Julia set. This is how we do that: 
-
-* Choose a complex number c: Move around in the 2D slider to pick the point
-* For all the numbers in our space, we calculate the values for our favorite series (here we chose $z_{n+1} = z_n^2 + c$)
-* If the series doesn't diverge we color the point. Otherwise we ignore it."
-
-# ╔═╡ e7f0f154-ddf6-432e-bc6f-5654fa4c5a14
-md"If you're interested to dive deep into the code, take a look below, it's so simple and atraighforward and yet we can create so many beautiful things with it!"
-
-# ╔═╡ 94f93268-2eac-4125-adad-052a38070896
-md" ## Fractal Art "
-
-# ╔═╡ 0040fc37-a12d-443a-87cc-5fe8bb6e7303
-md"### Different Fun Shapes
-
-[Inspiration Source](https://www.youtube.com/watch?v=N__wYH55NL0)"
-
-# ╔═╡ 6a859bea-831b-41e7-833e-d2adcf08f693
-# TODO: Add a bit of an introduction
-
-# TODO: Choose the shape by clicking on shapes as images instead of dropdown
-
-# TODO: Make transition faster and maybe animated
-
-# TODO: Maybe make this more colorful
-
-# ╔═╡ 5b2f361c-0ac6-434e-950f-885633042308
-md"Choose a shape below you want to see repeated in a fractal"
-
-# ╔═╡ 240d7431-8f8a-4316-9c8b-f48af10c9d4b
-md"Change the depth of details here"
-
-# ╔═╡ d8657cf1-b130-4528-afb0-cb13abc815a7
-@bind dep_shape PlutoUI.Slider(1:5, default = 3) # change that to change the deps
-
-# ╔═╡ 3f9dcc93-900a-496d-90b0-23bb2590cfe6
-md"## Shape generators"
-
-# ╔═╡ bb88bf82-056b-4df6-87cf-4a8b443884be
-function sierpinski_carpet(n)
-    x = fill(1, 1, 1)
-    for _ in 1:n
-        t = fill(0, size(x))
-        x = [x x x; x t x; x x x]
-    end
-    return x
-end
-
-# ╔═╡ 6ece2550-5953-45e1-a6b2-751f45ce5c87
-function sierpinski_triangle(n)
-	x = fill(1, 1, 1)
-	for _ in 1:n
-		h, w = size(x)
-		s = fill(0, h,(w + 1) ÷ 2)
-		t = fill(0, h,1)
-		x = [[s x s] ; [x t x]]
-	end
-	return x
-end
-
-# ╔═╡ a612cfee-fb9d-44dd-830d-58b3c7eb6187
-@bind func Select([sierpinski_carpet => "Sierpinski Carpet", sierpinski_triangle => "Sierpinski Triangle"])
-
-# ╔═╡ 322bb72f-0e69-432c-af9e-425e8798f509
-begin
-# Get the matrix with the elements making the shape
-matrix = func(dep_shape)
-	
-# Set the size of each square
-square_size = 2
-
-# Create a new drawing canvas
-canvas_size = 500
-Drawing(canvas_size, canvas_size, "matrix_plot.png")
-origin()
-
-# Set the starting point (optional, to center the drawing)
-Luxor.translate(-size(matrix, 2) * square_size / 2, -size(matrix, 1) * square_size / 2)
-	
-# Iterate over the matrix and draw the squares
-for i in 1:size(matrix, 1)
-    for j in 1:size(matrix, 2)
-        x = (j - 1) * square_size
-        y = (i - 1) * square_size
-        if matrix[i, j] == 1
-            sethue("black")
-            box(Luxor.Point(x, y), square_size, square_size, :fill)
-#        else
-#            sethue("white")
-#            box(Point(x, y), square_size, square_size, :fill)
-        end
-        #sethue("black")
-        #box(Point(x, y), square_size, square_size, :stroke)
-    end
-end
-	
-# Finish the drawing and save to file
-finish()
-preview()  # Use preview() to open the image in the default image viewer
-end
-
-# ╔═╡ 712ce6d2-c5d4-4699-8b2c-f6db11ac17af
-md"# Appendix"
-
-# ╔═╡ f8c01ee7-9a3e-47d5-b427-448c14def6d3
-md"## Functions"
-
-# ╔═╡ a4d2416c-db89-44b1-ba4d-7c10fd9d9c63
-begin
-function z_minus(z)
-		return z^2 - 1
-	end
-
-	function z_plus(z)
-		return z^2 + 1
-	end
-end
+# ╔═╡ aaf62a6f-a5bd-4f97-963f-446b52c1e0f0
+md"First, we have to define our function:"
 
 # ╔═╡ cab8c291-5c88-42ee-96aa-50d3b9df33ef
-@bind favourite_series Select([z_minus =>"z^2 - 1", z_plus => "z^2 + 1"])
+F(z) = z^2 + 1;
 
-# ╔═╡ 8540998d-92f0-45ae-af75-b7e1ca125df5
+# ╔═╡ 59620b66-798a-4723-b14b-596a355462bc
+md"Then, choose an initial value $z_0$ : "
+
+# ╔═╡ 1dfe4357-af4d-4db4-9a10-05219737041a
+initial_value_picker = @bind initial_value PlutoUI.Slider(-10:10, default = 1, show_value = true) 
+
+# ╔═╡ e2fb2563-61b2-4cc1-8b9d-2e150aafae75
+z₀ = initial_value 
+
+# ╔═╡ 9469dd0d-efb2-49a5-83f4-a6da7290af20
+md"Now, observe how the sequence changes:"
+
+# ╔═╡ 2e7f10f3-eb4d-40e0-ae48-c0b4563b99c4
+z₁ = z₀^2 + 1
+
+# ╔═╡ cf1f1d8a-c462-47b1-9e17-ea88357570aa
+z₂ = z₁^2 + 1
+
+# ╔═╡ b2a95d75-a254-4918-96d2-7ec5c2a60d8a
+z₃ = z₂^2 + 1
+
+# ╔═╡ 0c2b4fda-8c84-400c-abaf-5dcbc43169a3
+md"And so on ..
+
+Basically we calculate the next value by using the *same* function but each time we take the *last* value we calculated as our new z."
+
+# ╔═╡ 6c49089e-9b7c-47ff-adcb-62ca2af3acdd
+md"""
+	!!! danger "Fun Julia Alert!"
+
+		Now check out this piece of cool Julia code. Can you guess what it does?
+
+		"""
+
+# ╔═╡ 3f8e294c-ddeb-4509-b5d5-4e86284dfd34
+n = @bind max_n PlutoUI.Slider(1:10, default = 5, show_value = true) 
+
+# ╔═╡ 4135244d-fb5a-4e8d-ad4b-c4046781b70c
 begin
-# Define a function that computes the next element in the series (from Base)
-next_element(current, _ignore) = favourite_series(current)
+	Fⁿ(x, n) = ∘(fill(F, n)...)(x)
+	zₙ = Fⁿ(z₀, max_n)
+	md"zₙ = $zₙ"
+end
+  
+
+# ╔═╡ 171a7aed-dd5f-46bf-ab5c-170a1c594370
+checkbox = @bind show_answer CheckBox(default=false);
+
+# ╔═╡ 57819281-a466-4f6c-af96-ffe512594270
+begin 
+	if show_answer 
+	md"""
+	!!! correct "Answer!"
+	
+		If you guessed that the code calculates the $n^{th}$ number in the sequence then you guessed correctly! 🎉"""
+		
+	else
+		md"""
+		!!! hint "Did you guess what the code does?" 
+		
+			**Tip:** Move both the $n$ **and** the $z_0$ sliders around if you need help!"""
+	end
+	end
+
+# ╔═╡ dc9a7c58-0911-42ce-a985-c414ed5bba22
+md" $checkbox Show answer"
+
+# ╔═╡ 75a7a805-508b-4977-a667-0369421f7433
+md" ### The Sequence
+
+Now let's put it together! 
+
+This code generate the whole sequence up to our chosen n and saves it in a list. If you're interested in how to use Julia methods to write compact code, check it out! 
+
+But no worries if you don't understand it, it's not necessary for the rest."
+
+# ╔═╡ bccffd3d-46b5-43e8-b515-626640b0bb32
+function create_sequence(F, initial_value)
+# Define a function that computes the next element in the sequence 
+next_z(current, _ignore) = F(current)
 
 # Fill the placeholder array by using Base.accumulate to get the series values
-placeholders = ones(num_terms+1) 
+placeholders = ones(max_n+1) 
+series = accumulate(next_z, placeholders, init=initial_value)
+
+# Add initial element to the final series
+insert!(series, 1, initial_value)
+return series
+end;
+
+# ╔═╡ a3bce920-0be0-49cd-b639-4042a71b0001
+md"Change the initial value and n and observe how the series changes!"
+
+# ╔═╡ a473e78c-cd5a-407f-8466-4ffd1f71898c
+md""" 
+initial\_value = $(initial_value_picker)
+
+n = $(n)
+"""
+
+# ╔═╡ ee4df211-020e-43d4-a41d-513fbd6f31b7
+sequence = create_sequence(F, initial_value)
+
+# ╔═╡ d242a89b-8a02-42fd-bb14-92a31b50413e
+md"""
+	!!! info "Divergence!"
+
+		What happens when we keep doing this for a long time?
+
+		For most initial values, our numbers are always increasing and getting bigger and bigger, so they're going to infinity. We say the series *diverges* """
+
+# ╔═╡ 27591565-2676-4630-b6c1-ced4530086f8
+aside(md"""
+!!! warning "Negative Number?"
+	If you noticed that some numbers become negative when we continue calculating the sequence, you unlocked a very common bug in computing. 
+
+	Turns out computers cannot really count to infinity, they have a limit maximum (and minimum) number they count up (or down) to because they only have limited space on their memory to save each number. 
+
+	So what happens, once they get to this limit they loop back forward and start counting from the beginning, so they start from the biggest negative number and add continue counting from there. This computational bug is called an *overflow* error. 
+""", v_offset=-400)
+
+# ╔═╡ bfdf2bf9-775f-4621-a57c-8ee2dfec0a39
+md""" ### Fun Functions for a Fun Sequence
+
+Now that you (hopefully) got the gist of that. Let's make it a bit more complicated. 
+
+Remember how we chose the formula $z_{n+1} = z_n + 1$ before? Well, we can do this in a more general way as $z_{n+1} = z_n + C$. For us, we have **C = 1**."""
+
+# ╔═╡ cfa4842a-0b3f-4ad3-8c0f-6364ca8313d8
+C = -1
+
+# ╔═╡ 9c4c6455-b21c-4e9c-aaf6-ce6486cf4be2
+md"Let's define our function again in a more general setting"
+
+# ╔═╡ 717b615d-91a8-4c59-a484-555406b6071e
+Fc(z, c) = z^2 + c;
+
+# ╔═╡ 7f0c6b02-ff50-4dca-8690-79b6d93e5e41
+md"""Now let's use our code from above again with our new function this time. """
+
+# ╔═╡ 8a4de5d7-1e7f-4d7c-a3a9-02fa954aa38d
+function create_sequence_with_c(F, C, initial_value, max_n)
+# Define a function that computes the next element in the series (from Base)
+next_element(current, _ignore) = F(current, C)
+
+# Fill the placeholder array by using Base.accumulate to get the series values
+placeholders = ones(max_n+1) 
 series = accumulate(next_element, placeholders, init=initial_value)
 
 # Add initial element to the final series
 insert!(series, 1, initial_value)
-series
+return series
+end;
+
+# ╔═╡ bc4a4421-f543-4bfc-8214-3d97468f89e7
+initial_value_with_c_picker = @bind initial_value_with_c PlutoUI.Slider(-10:10, default = 1, show_value = true) 
+
+# ╔═╡ c12abce1-6109-4274-b260-835b5e1659df
+md"""Try setting **C = -1**. What happens to our `C_sequence` (if you chance nothing else)?"""
+
+# ╔═╡ ae6b02ce-180e-487b-9a25-2be9c6092293
+C_sequence = create_sequence_with_c(Fc, C, initial_value_with_c, max_n)
+
+# ╔═╡ b99f5d32-d017-4722-9226-13345cad6a2b
+md"If you noticed that we get a completely new sequence, that's correct!
+
+But, how about if we set **initial\_value\_with\_c = 1**. What happens? Do you notice anything special about this sequence?"
+
+# ╔═╡ 221742a5-146e-4d7d-8d50-0f7bd5a30cb5
+begin
+if initial_value_with_c == 1
+md"""
+	!!! correct "Answer"
+
+		In this case, the series **doesn't** go to infinity but moves back and forth between 0 and -1, and so it doesn't *diverge*. It oscillates. 
+
+		PS: The same thing happens if initial\_value\_with\_c = 0"""
+else
+	md""
 end
+end
+
+# ╔═╡ f47f2b4a-93e2-40ec-8123-73d004e9465d
+md"Now, to make things more fun, let's try more values of C and see if the same thing happens again. 
+
+To make it even more fun, let's make C a complex number!
+
+If you don't know about complex numbers, that's okay. For now, we can think of C as a **2D point**."
+
+# ╔═╡ c2b6b207-a485-48b8-8aff-c87cc6563555
+aside(md"""
+	!!! info "Complex Numbers"
+		If you want to learn about complex number, check this awesome [Youtube video](https://www.youtube.com/watch?v=sZrOxm5Gszk&t=418s). I find it a good introduction to grasp the concept. 😉""", v_offset=-150)
+
+# ╔═╡ c83c1af8-5f41-428d-b554-e3679fdbdf54
+md"**Click anywhere to chose a point!**"
+
+# ╔═╡ db2a3f19-a755-4863-9b38-2f1d4e235dd2
+md"Again, we get our code from above and set a fixed initial value. See how the sequence changes completely for even very similar c value? Pretty cool right!"
+
+# ╔═╡ 87eb68ff-5af9-4748-bbc9-95d192b53e70
+new_initial_value = 1
+
+# ╔═╡ ff4af62e-a90b-4fcd-a56d-5483a9fc444f
+new_n = @bind new_max_n PlutoUI.Slider(5:15, default = 7, show_value = true) 
+
+# ╔═╡ a979f1ad-8a2e-4687-ac64-3b7ac4eb1995
+aside(md"""
+!!! info "Explosion 🔥"
+	Can you notice that for n = 15 and some values of c, the values get so big that even Julia is overwhelmed and just returns `Inf` instead?
+
+	In this case, we smartly coded our numbers, to avoid overflow errors from before. """, v_offset=-300)
+
+# ╔═╡ 6827d3fd-91e2-49b2-b215-082fe0573723
+md"### One last thing "
+
+# ╔═╡ 119d2282-5d2e-494f-96cb-82e9c4f0bb92
+md"Chose 2 of your favorite colors (ideally they should match each other 😉):
+
+**Tip:** Use RGB values between 0-255 you want. To find the values for you favorite color, check out this color picker [tool](https://imagecolorpicker.com/)"
+
+# ╔═╡ 3a62c2e0-9e01-4bff-9823-4f8ce5a0c65e
+R1 = 252; G1 = 118; B1 = 106;
+
+# ╔═╡ f1337fb6-9ae0-4f1d-ab27-b161a88c8a6c
+color1 = RGB(R1/255, G1/255, B1/255);
+
+# ╔═╡ 0c2126d6-07d3-4ebd-85a9-610c32ef4fe3
+R2 = 180;G2 = 180; B2 = 180;
+
+# ╔═╡ fcf71933-70ec-48b0-8bef-6fc18d5c6308
+color2 = RGB(R2/255, G2/255, B2/255);
+
+# ╔═╡ bad211bc-220c-43dd-ade6-7b63f980f524
+TwoColumn(
+	md" First color: 
+	
+$color1",  
+md" Second color:
+
+$color2")
+
+# ╔═╡ ea723759-4971-4ed9-9654-d303ec69c217
+aside(md"""
+!!! info "Colors in Julia"
+	We must dividie by 255 to get the right format for the standard `Colors.RGB` in Julia. If you want to know more about RGB values and how colors work in Julia check [this](https://juliagraphics.github.io/Colors.jl/stable/) out.""", v_offset=-180)
+
+# ╔═╡ 98fbff5f-df70-4ee6-a2b3-7d56b6299140
+md" ## Construct Fractals
+
+Finally, we have everything we need to construct a fractal from the Julia set. This is how we do that: 
+
+* Just as before, we choose a complex number c
+* We're defining our favorite sequence $z_{n+1} = z_n^2 + c$ again
+* Now, we're going over **all** the points and take them as initial values for our favorite sequence. 
+* If the sequence doesn't diverge we color the point in $color1. 
+* Otherwise we color it in $color2."
+
+# ╔═╡ 9c83bdc9-8796-47cf-9a83-65dda43099bf
+md"**Click anywhere to chose a point!**"
+
+# ╔═╡ e7f0f154-ddf6-432e-bc6f-5654fa4c5a14
+md"If you're interested to dive deep into the code, take a look below, it's so simple and straighforward and yet we can create so many beautiful things with it!"
+
+# ╔═╡ 712ce6d2-c5d4-4699-8b2c-f6db11ac17af
+md"# Appendix"
 
 # ╔═╡ 98d7894e-3a9f-4df4-b282-fe4566d3c0f7
 function scale_tuple(tuple, new_min, new_max)
@@ -250,7 +354,7 @@ begin
 	    1
 	end
 
-	# This goes over all the points in the image and colors them dependingly on whether they diverge or not
+	# This goes over all the points in the image, considers the point an initial, check the sequence, colors accordingly depending on whether they diverge or not
 	function julia_fractal(depth, X, Y, c, f) 
 		img_matrix = zeros(Float32, img_size+1, img_size+1) 
 	    for x in X
@@ -266,7 +370,7 @@ begin
 end
 
 # ╔═╡ d8e315b1-022e-4412-8feb-3c49f89ed891
-md"## Code from Fons"
+md"**Code from Fons:**"
 
 # ╔═╡ 0cfe1f7a-bdae-443d-a1d2-4a503c05ea62
 begin
@@ -321,7 +425,7 @@ im_axes = """
     </g>
   </g>
 </svg>
-""" 
+""" ;
 #|> SVG
 
 # ╔═╡ aa9ba052-3d3f-4786-9075-a2e09d0601c5
@@ -339,8 +443,14 @@ function ComplexNumberPicker()
        end
 end
 
-# ╔═╡ 1768c056-82de-4b09-90b9-c259e7bd6150
-c_picker = @bind c ComplexNumberPicker();
+# ╔═╡ 7d05121b-1932-4018-ba1a-fdfecaefa54a
+c_picker = @bind c ComplexNumberPicker()
+
+# ╔═╡ 9155d298-7758-4715-913f-9624c22450bb
+md"Current  c = $c"
+
+# ╔═╡ 78da1442-19df-464f-8099-407b50d99303
+new_sequence = create_sequence_with_c(Fc, c, new_initial_value, new_max_n)
 
 # ╔═╡ c0cf20da-c76d-4931-becf-a49e12e63f0c
 md"Point chosen:   c = $c"
@@ -352,22 +462,21 @@ TwoColumn(
 
 	# Second column
 	begin	
-		fractal = julia_fractal(80, -1.5:0.005:1.5, -1.5:0.005:1.5, c, Complex);
-		Gray.(fractal)
+		fractal = julia_fractal(80, LinRange(-1.5,1.5,img_size + 1) ,LinRange(-1.5,1.5,img_size + 1), c, Complex);
+		colored_fractal = [fractal[i, j] == 1 ? color1 : color2 for i in 1:img_size, j in 1:img_size]
+		RGB.(colored_fractal)
 	end)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
-Luxor = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
 PlutoImageCoordinatePicker = "79686372-6169-7274-6170-6568746b6366"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 Images = "~0.26.1"
-Luxor = "~2.11.0"
 PlutoImageCoordinatePicker = "~1.2.0"
 PlutoTeachingTools = "~0.2.15"
 PlutoUI = "~0.7.59"
@@ -379,7 +488,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.4"
 manifest_format = "2.0"
-project_hash = "d2278830169ebb2bb1fed3e3600f2f9cffd14c78"
+project_hash = "bc74b6ee166f61a1ab30d05a515e716031acb9e4"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -470,12 +579,6 @@ git-tree-sha1 = "0c5f81f47bbbcf4aea7b2959135713459170798b"
 uuid = "62783981-4cbd-42fc-bca8-16325de8dc4b"
 version = "0.1.5"
 
-[[deps.Bzip2_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "9e2a6b69137e6969bab0152632dcb3bc108c8bdd"
-uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
-version = "1.0.8+1"
-
 [[deps.CEnum]]
 git-tree-sha1 = "389ad5c84de1ae7cf0e28e381131c98ea87d54fc"
 uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
@@ -486,18 +589,6 @@ deps = ["CpuId", "IfElse", "PrecompileTools", "Static"]
 git-tree-sha1 = "585a387a490f1c4bd88be67eea15b93da5e85db7"
 uuid = "2a0fbf3d-bb9c-48f3-b0a9-814d99fd7ab9"
 version = "0.2.5"
-
-[[deps.Cairo]]
-deps = ["Cairo_jll", "Colors", "Glib_jll", "Graphics", "Libdl", "Pango_jll"]
-git-tree-sha1 = "d0b3f8b4ad16cb0a2988c6788646a5e6a17b6b1b"
-uuid = "159f3aea-2a34-519c-b102-8c37f9878175"
-version = "1.0.5"
-
-[[deps.Cairo_jll]]
-deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "a2f1c8c668c8e3cb4cca4e57a8efdb09067bb3fd"
-uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
-version = "1.18.0+2"
 
 [[deps.CatIndices]]
 deps = ["CustomUnitRanges", "OffsetArrays"]
@@ -641,12 +732,6 @@ deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
 
-[[deps.Expat_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "1c6317308b9dc757616f0b5cb379db10494443a7"
-uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
-version = "2.6.2+0"
-
 [[deps.FFTViews]]
 deps = ["CustomUnitRanges", "FFTW"]
 git-tree-sha1 = "cbdf14d1e8c7c8aacbe8b19862e0179fd08321c2"
@@ -680,34 +765,10 @@ git-tree-sha1 = "05882d6995ae5c12bb5f36dd2ed3f61c98cbb172"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.5"
 
-[[deps.Fontconfig_jll]]
-deps = ["Artifacts", "Bzip2_jll", "Expat_jll", "FreeType2_jll", "JLLWrappers", "Libdl", "Libuuid_jll", "Zlib_jll"]
-git-tree-sha1 = "db16beca600632c95fc8aca29890d83788dd8b23"
-uuid = "a3f928ae-7b40-5064-980b-68af3947d34b"
-version = "2.13.96+0"
-
 [[deps.Format]]
 git-tree-sha1 = "9c68794ef81b08086aeb32eeaf33531668d5f5fc"
 uuid = "1fa38f19-a742-5d3f-a2b9-30dd87b9d5f8"
 version = "1.3.7"
-
-[[deps.FreeType2_jll]]
-deps = ["Artifacts", "Bzip2_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
-git-tree-sha1 = "5c1d8ae0efc6c2e7b1fc502cbe25def8f661b7bc"
-uuid = "d7e528f0-a631-5988-bf34-fe36492bcfd7"
-version = "2.13.2+0"
-
-[[deps.FriBidi_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "1ed150b39aebcc805c26b93a8d0122c940f64ce2"
-uuid = "559328eb-81f9-559d-9380-de523a88c83c"
-version = "1.0.14+0"
-
-[[deps.Gettext_jll]]
-deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "XML2_jll"]
-git-tree-sha1 = "9b02998aba7bf074d14de89f9d37ca24a1a0b046"
-uuid = "78b55507-aeef-58d4-861c-77aaff3498b1"
-version = "0.21.0+0"
 
 [[deps.Ghostscript_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -715,35 +776,17 @@ git-tree-sha1 = "43ba3d3c82c18d88471cfd2924931658838c9d8f"
 uuid = "61579ee1-b43e-5ca0-a5da-69d92c66a64b"
 version = "9.55.0+4"
 
-[[deps.Glib_jll]]
-deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Zlib_jll"]
-git-tree-sha1 = "7c82e6a6cd34e9d935e9aa4051b66c6ff3af59ba"
-uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
-version = "2.80.2+0"
-
 [[deps.Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
 git-tree-sha1 = "d61890399bc535850c4bf08e4e0d3a7ad0f21cbd"
 uuid = "a2bd30eb-e257-5431-a919-1863eab51364"
 version = "1.1.2"
 
-[[deps.Graphite2_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "344bf40dcab1073aca04aa0df4fb092f920e4011"
-uuid = "3b182d85-2403-5c21-9c21-1e1f0cc25472"
-version = "1.3.14+0"
-
 [[deps.Graphs]]
 deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
 git-tree-sha1 = "334d300809ae0a68ceee3444c6e99ded412bf0b3"
 uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
 version = "1.11.1"
-
-[[deps.HarfBuzz_jll]]
-deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg"]
-git-tree-sha1 = "129acf094d168394e80ee1dc4bc06ec835e510a3"
-uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
-version = "2.8.1+1"
 
 [[deps.HistogramThresholding]]
 deps = ["ImageBase", "LinearAlgebra", "MappedArrays"]
@@ -989,29 +1032,11 @@ git-tree-sha1 = "a6adc2dcfe4187c40dc7c2c9d2128e326360e90a"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.9.32"
 
-[[deps.Juno]]
-deps = ["Base64", "Logging", "Media", "Profile"]
-git-tree-sha1 = "07cb43290a840908a771552911a6274bc6c072c7"
-uuid = "e5e0dc1b-0480-54bc-9374-aad01c23163d"
-version = "0.8.4"
-
 [[deps.LERC_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "bf36f528eec6634efc60d7ec062008f171071434"
 uuid = "88015f11-f218-50d7-93a8-a6af411a945d"
 version = "3.0.0+1"
-
-[[deps.LLVMOpenMP_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "d986ce2d884d49126836ea94ed5bfb0f12679713"
-uuid = "1d63c593-3942-5779-bab2-d838dc0a180e"
-version = "15.0.7+0"
-
-[[deps.LZO_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "70c5da094887fd2cae843b8db33920bac4b6f07d"
-uuid = "dd4b983a-f0e5-5f8d-a1b7-129d4a5fb1ac"
-version = "2.10.2+0"
 
 [[deps.LaTeXStrings]]
 git-tree-sha1 = "50901ebc375ed41dbf8058da26f9de442febbbec"
@@ -1074,53 +1099,11 @@ version = "1.11.0+1"
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
-[[deps.Libffi_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "0b4a5d71f3e5200a7dff793393e09dfc2d874290"
-uuid = "e9f186c6-92d2-5b65-8a66-fee21dc1b490"
-version = "3.2.2+1"
-
-[[deps.Libgcrypt_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgpg_error_jll"]
-git-tree-sha1 = "9fd170c4bbfd8b935fdc5f8b7aa33532c991a673"
-uuid = "d4300ac3-e22c-5743-9152-c294e39db1e4"
-version = "1.8.11+0"
-
-[[deps.Libgpg_error_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "fbb1f2bef882392312feb1ede3615ddc1e9b99ed"
-uuid = "7add5ba3-2f88-524e-9cd5-f83b8a55f7b8"
-version = "1.49.0+0"
-
-[[deps.Libiconv_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "f9557a255370125b405568f9767d6d195822a175"
-uuid = "94ce4f54-9a6c-5748-9c1c-f9c7231a4531"
-version = "1.17.0+0"
-
-[[deps.Libmount_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "0c4f9c4f1a50d8f35048fa0532dabbadf702f81e"
-uuid = "4b2f31a3-9ecc-558c-b454-b3730dcb73e9"
-version = "2.40.1+0"
-
-[[deps.Librsvg_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pango_jll", "Pkg", "gdk_pixbuf_jll"]
-git-tree-sha1 = "ae0923dab7324e6bc980834f709c4cd83dd797ed"
-uuid = "925c91fb-5dd6-59dd-8e8c-345e74382d89"
-version = "2.54.5+0"
-
 [[deps.Libtiff_jll]]
 deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "LERC_jll", "Libdl", "Pkg", "Zlib_jll", "Zstd_jll"]
 git-tree-sha1 = "3eb79b0ca5764d4799c06699573fd8f533259713"
 uuid = "89763e89-9b03-5906-acba-b20f662cd828"
 version = "4.4.0+0"
-
-[[deps.Libuuid_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "5ee6203157c120d79034c748a2acba45b82b8807"
-uuid = "38a345b3-de98-5d2b-a5d3-14cd9215e700"
-version = "2.40.1+0"
 
 [[deps.LinearAlgebra]]
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
@@ -1172,12 +1155,6 @@ git-tree-sha1 = "c6a36b22d2cca0e1a903f00f600991f97bf5f426"
 uuid = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
 version = "2.4.6"
 
-[[deps.Luxor]]
-deps = ["Base64", "Cairo", "Colors", "Dates", "FileIO", "ImageMagick", "Juno", "QuartzImageIO", "Random", "Rsvg"]
-git-tree-sha1 = "6a56a893e2f048fa4d28bb69c5263f185bd0fe13"
-uuid = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
-version = "2.11.0"
-
 [[deps.MIMEs]]
 git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
@@ -1213,12 +1190,6 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 version = "2.28.2+1"
-
-[[deps.Media]]
-deps = ["MacroTools", "Test"]
-git-tree-sha1 = "75a54abd10709c01f1b86b84ec225d26e840ed58"
-uuid = "e89f7d12-3494-54d1-8411-f7d8b9ae1f27"
-version = "0.5.0"
 
 [[deps.MetaGraphs]]
 deps = ["Graphs", "JLD2", "Random"]
@@ -1309,11 +1280,6 @@ git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.6.3"
 
-[[deps.PCRE2_jll]]
-deps = ["Artifacts", "Libdl"]
-uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.42.0+1"
-
 [[deps.PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
 git-tree-sha1 = "67186a2bc9a90f9f85ff3cc8277868961fb57cbd"
@@ -1326,12 +1292,6 @@ git-tree-sha1 = "0fac6313486baae819364c52b4f483450a9d793f"
 uuid = "5432bcbf-9aad-5242-b902-cca2824c8663"
 version = "0.5.12"
 
-[[deps.Pango_jll]]
-deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "FriBidi_jll", "Glib_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "cb5a2ab6763464ae0f19c86c56c63d4a2b0f5bda"
-uuid = "36c8627f-9965-5494-a995-c6b170f724f3"
-version = "1.52.2+0"
-
 [[deps.Parameters]]
 deps = ["OrderedCollections", "UnPack"]
 git-tree-sha1 = "34c0e9ad262e5f7fc75b10a9952ca7692cfc5fbe"
@@ -1343,12 +1303,6 @@ deps = ["Dates", "PrecompileTools", "UUIDs"]
 git-tree-sha1 = "8489905bcdbcfac64d1daa51ca07c0d8f0283821"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
 version = "2.8.1"
-
-[[deps.Pixman_jll]]
-deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "LLVMOpenMP_jll", "Libdl"]
-git-tree-sha1 = "35621f10a7531bc8fa58f74610b1bfb70a3cfc6b"
-uuid = "30392449-352a-5448-841d-b1acce4e97dc"
-version = "0.43.4+0"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -1429,10 +1383,6 @@ version = "1.4.3"
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
-[[deps.Profile]]
-deps = ["Printf"]
-uuid = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
-
 [[deps.ProgressMeter]]
 deps = ["Distributed", "Printf"]
 git-tree-sha1 = "763a8ceb07833dd51bb9e3bbca372de32c0605ad"
@@ -1444,12 +1394,6 @@ deps = ["ColorTypes", "FileIO", "FixedPointNumbers"]
 git-tree-sha1 = "18e8f4d1426e965c7b532ddd260599e1510d26ce"
 uuid = "4b34888f-f399-49d4-9bb3-47ed5cae4e65"
 version = "1.0.0"
-
-[[deps.QuartzImageIO]]
-deps = ["FileIO", "ImageCore", "Libdl"]
-git-tree-sha1 = "b674d5959e6be88b40905bdc8c905986fc95d51d"
-uuid = "dca85d43-d64c-5e67-8c65-017450d5d020"
-version = "0.7.5"
 
 [[deps.Quaternions]]
 deps = ["LinearAlgebra", "Random", "RealDot"]
@@ -1524,12 +1468,6 @@ weakdeps = ["RecipesBase"]
 
     [deps.Rotations.extensions]
     RotationsRecipesBaseExt = "RecipesBase"
-
-[[deps.Rsvg]]
-deps = ["Cairo", "Glib_jll", "Librsvg_jll"]
-git-tree-sha1 = "3d3dc66eb46568fb3a5259034bfc752a0eb0c686"
-uuid = "c4c386cf-5103-5370-be45-f3a111cca3b8"
-version = "1.0.0"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -1737,66 +1675,6 @@ git-tree-sha1 = "c1a7aa6219628fcd757dede0ca95e245c5cd9511"
 uuid = "efce3f68-66dc-5838-9240-27a6d6f5f9b6"
 version = "1.0.0"
 
-[[deps.XML2_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Zlib_jll"]
-git-tree-sha1 = "52ff2af32e591541550bd753c0da8b9bc92bb9d9"
-uuid = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
-version = "2.12.7+0"
-
-[[deps.XSLT_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgcrypt_jll", "Libgpg_error_jll", "Libiconv_jll", "Pkg", "XML2_jll", "Zlib_jll"]
-git-tree-sha1 = "91844873c4085240b95e795f692c4cec4d805f8a"
-uuid = "aed1982a-8fda-507f-9586-7b0439959a61"
-version = "1.1.34+0"
-
-[[deps.Xorg_libX11_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libxcb_jll", "Xorg_xtrans_jll"]
-git-tree-sha1 = "afead5aba5aa507ad5a3bf01f58f82c8d1403495"
-uuid = "4f6342f7-b3d2-589e-9d20-edeb45f2b2bc"
-version = "1.8.6+0"
-
-[[deps.Xorg_libXau_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "6035850dcc70518ca32f012e46015b9beeda49d8"
-uuid = "0c0b7dd1-d40b-584c-a123-a41640f87eec"
-version = "1.0.11+0"
-
-[[deps.Xorg_libXdmcp_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "34d526d318358a859d7de23da945578e8e8727b7"
-uuid = "a3789734-cfe1-5b06-b2d0-1dd0d9d62d05"
-version = "1.1.4+0"
-
-[[deps.Xorg_libXext_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
-git-tree-sha1 = "d2d1a5c49fae4ba39983f63de6afcbea47194e85"
-uuid = "1082639a-0dae-5f34-9b06-72781eeb8cb3"
-version = "1.3.6+0"
-
-[[deps.Xorg_libXrender_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
-git-tree-sha1 = "47e45cd78224c53109495b3e324df0c37bb61fbe"
-uuid = "ea2f1a96-1ddc-540d-b46f-429655e07cfa"
-version = "0.9.11+0"
-
-[[deps.Xorg_libpthread_stubs_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "8fdda4c692503d44d04a0603d9ac0982054635f9"
-uuid = "14d82f49-176c-5ed1-bb49-ad3f5cbd8c74"
-version = "0.1.1+0"
-
-[[deps.Xorg_libxcb_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "XSLT_jll", "Xorg_libXau_jll", "Xorg_libXdmcp_jll", "Xorg_libpthread_stubs_jll"]
-git-tree-sha1 = "b4bfde5d5b652e22b9c790ad00af08b6d042b97d"
-uuid = "c7cfdc94-dc32-55de-ac96-5a1b8d977c5b"
-version = "1.15.0+0"
-
-[[deps.Xorg_xtrans_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "e92a1a012a10506618f10b7047e478403a046c77"
-uuid = "c5fb5394-a638-5e4d-96e5-b29de1b5cf10"
-version = "1.5.0+0"
-
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
@@ -1807,12 +1685,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "e678132f07ddb5bfa46857f0d7620fb9be675d3b"
 uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
 version = "1.5.6+0"
-
-[[deps.gdk_pixbuf_jll]]
-deps = ["Artifacts", "Glib_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Xorg_libX11_jll", "libpng_jll"]
-git-tree-sha1 = "e9190f9fb03f9c3b15b9fb0c380b0d57a3c8ea39"
-uuid = "da03df04-f53b-5353-a52f-6a8b0620ced0"
-version = "2.42.8+0"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1851,43 +1723,74 @@ version = "17.4.0+2"
 # ╔═╡ Cell order:
 # ╠═2e3a7a3a-2fa7-11ef-1b80-d793aa08ee42
 # ╟─98bca732-c2c6-4a79-b57b-f3d10a7d5845
+# ╟─60ee1932-63c1-45c4-a9a1-a9822a19f925
 # ╟─859fe2ac-4e1b-4d83-9bad-22042ed46d29
 # ╟─903617e4-e5c6-4a16-9f0f-586cdb803f3c
-# ╟─3e5824f5-a2ef-44bb-838c-66d9ed01d9a8
 # ╟─3ca5960c-2352-41f5-ac89-e58e3a5dd1c9
-# ╟─cab8c291-5c88-42ee-96aa-50d3b9df33ef
+# ╟─aaf62a6f-a5bd-4f97-963f-446b52c1e0f0
+# ╠═cab8c291-5c88-42ee-96aa-50d3b9df33ef
 # ╟─59620b66-798a-4723-b14b-596a355462bc
 # ╟─1dfe4357-af4d-4db4-9a10-05219737041a
-# ╟─d5312fa2-5cf7-4c4b-860f-c18e4afe9841
-# ╟─3f8e294c-ddeb-4509-b5d5-4e86284dfd34
-# ╟─0fe952e4-3d35-408e-b48f-f9d624a92661
-# ╟─8540998d-92f0-45ae-af75-b7e1ca125df5
+# ╠═e2fb2563-61b2-4cc1-8b9d-2e150aafae75
+# ╟─9469dd0d-efb2-49a5-83f4-a6da7290af20
+# ╠═2e7f10f3-eb4d-40e0-ae48-c0b4563b99c4
+# ╠═cf1f1d8a-c462-47b1-9e17-ea88357570aa
+# ╠═b2a95d75-a254-4918-96d2-7ec5c2a60d8a
+# ╟─0c2b4fda-8c84-400c-abaf-5dcbc43169a3
+# ╟─6c49089e-9b7c-47ff-adcb-62ca2af3acdd
+# ╠═4135244d-fb5a-4e8d-ad4b-c4046781b70c
+# ╠═3f8e294c-ddeb-4509-b5d5-4e86284dfd34
+# ╟─57819281-a466-4f6c-af96-ffe512594270
+# ╟─dc9a7c58-0911-42ce-a985-c414ed5bba22
+# ╟─171a7aed-dd5f-46bf-ab5c-170a1c594370
+# ╟─75a7a805-508b-4977-a667-0369421f7433
+# ╠═bccffd3d-46b5-43e8-b515-626640b0bb32
+# ╟─a3bce920-0be0-49cd-b639-4042a71b0001
+# ╟─a473e78c-cd5a-407f-8466-4ffd1f71898c
+# ╠═ee4df211-020e-43d4-a41d-513fbd6f31b7
+# ╟─d242a89b-8a02-42fd-bb14-92a31b50413e
+# ╟─27591565-2676-4630-b6c1-ced4530086f8
+# ╟─bfdf2bf9-775f-4621-a57c-8ee2dfec0a39
+# ╠═cfa4842a-0b3f-4ad3-8c0f-6364ca8313d8
+# ╟─9c4c6455-b21c-4e9c-aaf6-ce6486cf4be2
+# ╠═717b615d-91a8-4c59-a484-555406b6071e
+# ╟─7f0c6b02-ff50-4dca-8690-79b6d93e5e41
+# ╠═8a4de5d7-1e7f-4d7c-a3a9-02fa954aa38d
+# ╠═bc4a4421-f543-4bfc-8214-3d97468f89e7
+# ╟─c12abce1-6109-4274-b260-835b5e1659df
+# ╠═ae6b02ce-180e-487b-9a25-2be9c6092293
+# ╟─b99f5d32-d017-4722-9226-13345cad6a2b
 # ╟─221742a5-146e-4d7d-8d50-0f7bd5a30cb5
+# ╟─f47f2b4a-93e2-40ec-8123-73d004e9465d
+# ╟─c2b6b207-a485-48b8-8aff-c87cc6563555
+# ╟─c83c1af8-5f41-428d-b554-e3679fdbdf54
+# ╟─9155d298-7758-4715-913f-9624c22450bb
+# ╟─7d05121b-1932-4018-ba1a-fdfecaefa54a
+# ╟─db2a3f19-a755-4863-9b38-2f1d4e235dd2
+# ╠═87eb68ff-5af9-4748-bbc9-95d192b53e70
+# ╠═ff4af62e-a90b-4fcd-a56d-5483a9fc444f
+# ╠═78da1442-19df-464f-8099-407b50d99303
+# ╟─a979f1ad-8a2e-4687-ac64-3b7ac4eb1995
+# ╟─6827d3fd-91e2-49b2-b215-082fe0573723
+# ╟─119d2282-5d2e-494f-96cb-82e9c4f0bb92
+# ╟─bad211bc-220c-43dd-ade6-7b63f980f524
+# ╠═3a62c2e0-9e01-4bff-9823-4f8ce5a0c65e
+# ╠═f1337fb6-9ae0-4f1d-ab27-b161a88c8a6c
+# ╠═0c2126d6-07d3-4ebd-85a9-610c32ef4fe3
+# ╠═fcf71933-70ec-48b0-8bef-6fc18d5c6308
+# ╟─ea723759-4971-4ed9-9654-d303ec69c217
 # ╟─98fbff5f-df70-4ee6-a2b3-7d56b6299140
 # ╟─c0cf20da-c76d-4931-becf-a49e12e63f0c
-# ╠═1768c056-82de-4b09-90b9-c259e7bd6150
+# ╟─9c83bdc9-8796-47cf-9a83-65dda43099bf
 # ╠═7789450c-31d6-4286-9fd9-3e88b075b538
 # ╟─e7f0f154-ddf6-432e-bc6f-5654fa4c5a14
 # ╠═81afcd2c-28e9-4b2a-8dc0-828d5feec4f7
-# ╟─94f93268-2eac-4125-adad-052a38070896
-# ╟─0040fc37-a12d-443a-87cc-5fe8bb6e7303
-# ╠═6a859bea-831b-41e7-833e-d2adcf08f693
-# ╟─5b2f361c-0ac6-434e-950f-885633042308
-# ╟─a612cfee-fb9d-44dd-830d-58b3c7eb6187
-# ╟─240d7431-8f8a-4316-9c8b-f48af10c9d4b
-# ╟─d8657cf1-b130-4528-afb0-cb13abc815a7
-# ╠═322bb72f-0e69-432c-af9e-425e8798f509
-# ╟─3f9dcc93-900a-496d-90b0-23bb2590cfe6
-# ╠═bb88bf82-056b-4df6-87cf-4a8b443884be
-# ╠═6ece2550-5953-45e1-a6b2-751f45ce5c87
 # ╟─712ce6d2-c5d4-4699-8b2c-f6db11ac17af
-# ╠═f8c01ee7-9a3e-47d5-b427-448c14def6d3
-# ╠═a4d2416c-db89-44b1-ba4d-7c10fd9d9c63
-# ╠═98d7894e-3a9f-4df4-b282-fe4566d3c0f7
+# ╟─98d7894e-3a9f-4df4-b282-fe4566d3c0f7
 # ╟─d8e315b1-022e-4412-8feb-3c49f89ed891
-# ╠═6233f626-19e9-4012-ba72-e9ca2386ab27
+# ╟─6233f626-19e9-4012-ba72-e9ca2386ab27
 # ╠═0cfe1f7a-bdae-443d-a1d2-4a503c05ea62
-# ╠═aa9ba052-3d3f-4786-9075-a2e09d0601c5
+# ╟─aa9ba052-3d3f-4786-9075-a2e09d0601c5
 # ╟─ef869b3a-011f-4df5-90e8-f8f9a57e0375
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
