@@ -8,7 +8,7 @@
 #> title = "Interactivity"
 #> tags = ["basic", "interactivity", "classic"]
 #> license = "Unlicense"
-#> description = "Slider, buttons, dropdowns, and more using PlutoUI.jl!"
+#> description = "Sliders, buttons, dropdowns, and more using PlutoUI.jl!"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Pluto.jl"
