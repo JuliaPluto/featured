@@ -8,7 +8,7 @@
 #> date = "2023-12-16"
 #> license = "Unlicense"
 #> description = "An introduction to modeling with ModelingToolkit.jl through a Zombie Attack.  "
-#> tags = ["dynamical systems", "biology", "modelingtoolkit", "zombie outbreak", "modeling", "math"]
+#> notags = ["dynamical systems", "biology", "modelingtoolkit", "zombie outbreak", "modeling", "math"]
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Chris Damour"
