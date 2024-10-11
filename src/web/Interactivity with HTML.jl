@@ -1,13 +1,13 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.19.47
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://user-images.githubusercontent.com/6933510/174067982-904951c4-4bba-42c7-a340-102ceb7e8e10.png"
 #> order = "1"
 #> title = "Interactivity with HTML"
 #> tags = ["interactivity", "classic", "web"]
 #> license = "Unlicense"
-#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Write your own interactive controls with HTML!"
 #> 
 #>     [[frontmatter.author]]

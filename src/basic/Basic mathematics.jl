@@ -1,12 +1,12 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.47
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://user-images.githubusercontent.com/6933510/174066114-bc76964d-6ed1-491a-baa0-5063e3b08a17.png"
 #> order = "2"
 #> tags = ["basic", "classic"]
 #> license = "Unlicense"
-#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Learn mathematics in Julia using pizzas! 🍕"
 #> 
 #>     [[frontmatter.author]]

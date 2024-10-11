@@ -1,13 +1,13 @@
 ### A Pluto.jl notebook ###
-# v0.19.30
+# v0.19.47
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://upload.wikimedia.org/wikipedia/commons/a/a0/Textformatting.svg"
 #> order = "1.5"
 #> title = "Markdown"
 #> tags = ["markdown", "basic"]
 #> license = "Unlicense"
-#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Learn to write text cells with Markdown."
 #> 
 #>     [[frontmatter.author]]
@@ -41,8 +41,18 @@ md"""
 	In Pluto, there is **only one cell type**: a Julia cell. But you can use the Julia string macro `md"` to write Markdown inside of Julia! 🤯
 """
 
+# ╔═╡ 8f45d098-4041-4449-83c3-79280232691e
+md"""
+👉 Try it yourself! In the cell below, write some markdown text, and run the cell with the $(pluto_icon("caret-forward-circle", "play")) button on the bottom right of the cell (or **`Shift + Enter`**).
+"""
+
 # ╔═╡ 57e3bfde-b692-44e6-a764-7459626a8919
 
+
+# ╔═╡ 688a8ea9-1bff-45c5-8942-f8e96ed0ef79
+md"""
+When you are done, **hide the code** by clicking the $(pluto_icon("eye")) button on the left of the cell.
+"""
 
 # ╔═╡ 50fa8a8b-2c55-45b6-b4e0-8f510294586c
 
@@ -237,6 +247,13 @@ md"""
 # ╔═╡ 64a23ad5-0fa1-48dd-9786-dcfbc73a3b52
 
 
+# ╔═╡ e392d442-5c83-4711-bc45-c2dbedf62b7f
+md"""
+## Helper function
+
+We wrote a helper function to show Pluto's GUI buttons in the introduction text, like $(pluto_icon("eye")) and $(pluto_icon("caret-forward-circle")). A bit too advanced for this notebook, but hopefully it made the text easier to read!
+"""
+
 # ╔═╡ d6def1a3-cc96-4eb9-bfce-949d29ffe31f
 function pluto_icon(name, alt=name)
 
@@ -249,23 +266,6 @@ function pluto_icon(name, alt=name)
 		style="width: 1em; height: 1em; margin-bottom: -.2em;">
 	""")
 end
-
-# ╔═╡ 8f45d098-4041-4449-83c3-79280232691e
-md"""
-👉 Try it yourself! In the cell below, write some markdown text, and run the cell with the $(pluto_icon("caret-forward-circle", "play")) button on the bottom right of the cell (or **`Shift + Enter`**).
-"""
-
-# ╔═╡ 688a8ea9-1bff-45c5-8942-f8e96ed0ef79
-md"""
-When you are done, **hide the code** by clicking the $(pluto_icon("eye")) button on the left of the cell.
-"""
-
-# ╔═╡ e392d442-5c83-4711-bc45-c2dbedf62b7f
-md"""
-## Helper function
-
-We wrote a helper function to show Pluto's GUI buttons in the introduction text, like $(pluto_icon("eye")) and $(pluto_icon("caret-forward-circle")). A bit too advanced for this notebook, but hopefully it made the text easier to read!
-"""
 
 # ╔═╡ 58eb1225-6521-45ef-827a-78cdafbaf784
 pluto_icon_style = html"""

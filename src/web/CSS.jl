@@ -1,12 +1,12 @@
 ### A Pluto.jl notebook ###
-# v0.19.36
+# v0.19.47
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
 #> image = "https://github.com/JuliaPluto/featured/assets/43678097/ebcd0d6c-fa37-4d2b-8d82-6814854f726b"
+#> order = "2"
 #> title = "Styling with CSS"
 #> tags = ["web", "css"]
-#> order = "2"
 #> license = "Unlicense"
 #> description = "Learn how to use CSS to give a unique style to your notebooks!"
 #> 
