@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.36
+# v0.19.47
 
 #> [frontmatter]
 #> license_url = "https://opensource.org/license/unlicense/"
@@ -16,14 +16,6 @@
 
 using Markdown
 using InteractiveUtils
-
-# ╔═╡ 5bf31410-c914-11ee-33f0-c5c134d6b4d8
-begin
-	using Distances
-	using HypertextLiteral
-	using Random
-	using Statistics
-end
 
 # ╔═╡ 2ee01ff1-a85f-4ff9-8d25-6af053b2d8aa
 md"""
@@ -45,137 +37,6 @@ N = 5
 
 # ╔═╡ 069a3cdc-6f8e-4470-a6a8-8312eb6b5df5
 your_solution = [1,2,3,4,5]
-
-# ╔═╡ d25e7bed-3aae-43a1-aa5c-ef44cca55242
-begin
-	truck_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car2.png"
-	truck2_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car5.png"
-	house_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/house1.png"
-	map_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/grass.png"
-end;
-
-# ╔═╡ d9ca9f51-d5dd-4321-bae8-fec16a53d250
-begin
-	struct Bounds
-		x::Int
-		y::Int
-		width::Int
-		height::Int
-	end
-
-	struct Point
-		x::Int
-		y::Int
-	end
-end
-
-# ╔═╡ c5a0d444-770d-4dc8-8267-963d9f2be545
-function random_point(bounds, points)
-    x = rand(bounds.x:bounds.x + bounds.width - 1)
-    y = rand(bounds.y:bounds.y + bounds.height - 1)
-
-	# make sure points aren't too close together
-    threshold = 20
-	
-    for point in points
-        if abs(point.x - x) < threshold || abs(point.y - y) < threshold
-            return random_point(bounds, points)
-        end
-    end
-    
-    return Point(x, y)
-end;
-
-# ╔═╡ 739b8137-f6b6-4516-b28d-acdb79828be6
-function create_points(b, N)
-	points = []
-	for i in 1:N
-		push!(points, random_point(b, points))
-	end
-	return points
-end;
-
-# ╔═╡ fdfdbb5c-2204-434c-8249-bc9ad3e72531
-begin
-	get_points_xs(points) = [point.x for point in points]
-	get_points_ys(points) = [point.y for point in points]
-end;
-
-# ╔═╡ 7c0f26a0-a478-4887-91c8-e5a747b97c19
-function total_distance(points, tour)
-	total_distance = 0.0
-	n = length(points)
-	
-	for i in 1:n-1
-		p1 = points[tour[i]]
-		p2 = points[tour[i+1]]
-		total_distance += evaluate(Euclidean(), [p1.x, p1.y], [p2.x, p2.y])
-	end
-	
-	p_last = points[tour[end]]
-	p_first = points[tour[1]]
-	# Return to the starting point
-	total_distance += evaluate(Euclidean(), [p_last.x, p_last.y], [p_first.x, p_first.y])  
-	return total_distance
-end;
-
-# ╔═╡ 39556336-9d1c-417a-b3d7-4e424710902d
-function simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
-	n = length(points)
-	current_tour = randperm(n) # Initialize with a random tour
-	best_tour = copy(current_tour) # Keep track of the best tour found
-	current_distance = total_distance(points, current_tour)
-	best_distance = current_distance
-	temperature = initial_temperature
-
-	for iter in 1:max_iter
-		next_tour = copy(current_tour) # Make a copy of the current tour to modify
-		i, j = rand(1:n, 2) # Select two random indices
-		next_tour[i], next_tour[j] = next_tour[j], next_tour[i]  # Swap the cities at these indices
-		next_distance = total_distance(points, next_tour)
-		delta = next_distance - current_distance
-
-		# If the new tour is shorter, or if it is longer but accepted by the annealing probability
-		if delta < 0 || exp(-delta / temperature) > rand()
-			current_tour = copy(next_tour)
-			current_distance = next_distance
-			# If the new tour is the best found so far, update the best tour and distance
-			if current_distance < best_distance
-				best_tour = copy(current_tour)
-				best_distance = current_distance
-			end
-		end
-
-		temperature *= cooling_rate # Cool down the temperature
-	end
-
-	return best_tour
-end;
-
-# ╔═╡ bb9d1888-9214-43d2-b002-b31ded8715a9
-begin
-	b = Bounds(100, 100, 450, 280)
-	points = create_points(b, N)
-end;
-
-# ╔═╡ 624c3dc0-2186-4185-9fba-87e522d4a163
-begin
-	points_xs = get_points_xs(points)
-	points_ys = get_points_ys(points)
-	distances = pairwise(Euclidean(), [points_xs points_ys], dims=1)
-	max_iter = 1000
-	initial_temperature = mean(distances) + 3 * std(distances)
-	cooling_rate = 0.99
-	solution_player = vcat(your_solution, your_solution[1])
-	player_xs = get_points_xs(points[solution_player])
-	player_ys = get_points_ys(points[solution_player])
-	solution_computer = simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
-	push!(solution_computer, solution_computer[1]) # return to start
-	computer_xs = get_points_xs(points[solution_computer])
-	computer_ys = get_points_ys(points[solution_computer])
-	player_distance = total_distance([Point(z[1], z[2]) for z in zip(player_xs, player_ys)], 1:size(player_xs, 1))
-	computer_distance = total_distance([Point(z[1], z[2]) for z in zip(computer_xs, computer_ys)], 1:size(computer_xs, 1))
-end;
 
 # ╔═╡ f3bf1b25-cb37-4594-b92b-fcd3f44429e9
 if length(your_solution) == N
@@ -363,6 +224,145 @@ else
 	""")
 end
 
+# ╔═╡ 5bf31410-c914-11ee-33f0-c5c134d6b4d8
+begin
+	using Distances
+	using HypertextLiteral
+	using Random
+	using Statistics
+end
+
+# ╔═╡ d25e7bed-3aae-43a1-aa5c-ef44cca55242
+begin
+	truck_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car2.png"
+	truck2_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car5.png"
+	house_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/house1.png"
+	map_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/grass.png"
+end;
+
+# ╔═╡ d9ca9f51-d5dd-4321-bae8-fec16a53d250
+begin
+	struct Bounds
+		x::Int
+		y::Int
+		width::Int
+		height::Int
+	end
+
+	struct Point
+		x::Int
+		y::Int
+	end
+end
+
+# ╔═╡ c5a0d444-770d-4dc8-8267-963d9f2be545
+function random_point(bounds, points)
+    x = rand(bounds.x:bounds.x + bounds.width - 1)
+    y = rand(bounds.y:bounds.y + bounds.height - 1)
+
+	# make sure points aren't too close together
+    threshold = 20
+	
+    for point in points
+        if abs(point.x - x) < threshold || abs(point.y - y) < threshold
+            return random_point(bounds, points)
+        end
+    end
+    
+    return Point(x, y)
+end;
+
+# ╔═╡ 739b8137-f6b6-4516-b28d-acdb79828be6
+function create_points(b, N)
+	points = []
+	for i in 1:N
+		push!(points, random_point(b, points))
+	end
+	return points
+end;
+
+# ╔═╡ fdfdbb5c-2204-434c-8249-bc9ad3e72531
+begin
+	get_points_xs(points) = [point.x for point in points]
+	get_points_ys(points) = [point.y for point in points]
+end;
+
+# ╔═╡ 7c0f26a0-a478-4887-91c8-e5a747b97c19
+function total_distance(points, tour)
+	total_distance = 0.0
+	n = length(points)
+	
+	for i in 1:n-1
+		p1 = points[tour[i]]
+		p2 = points[tour[i+1]]
+		total_distance += evaluate(Euclidean(), [p1.x, p1.y], [p2.x, p2.y])
+	end
+	
+	p_last = points[tour[end]]
+	p_first = points[tour[1]]
+	# Return to the starting point
+	total_distance += evaluate(Euclidean(), [p_last.x, p_last.y], [p_first.x, p_first.y])  
+	return total_distance
+end;
+
+# ╔═╡ 39556336-9d1c-417a-b3d7-4e424710902d
+function simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
+	n = length(points)
+	current_tour = randperm(n) # Initialize with a random tour
+	best_tour = copy(current_tour) # Keep track of the best tour found
+	current_distance = total_distance(points, current_tour)
+	best_distance = current_distance
+	temperature = initial_temperature
+
+	for iter in 1:max_iter
+		next_tour = copy(current_tour) # Make a copy of the current tour to modify
+		i, j = rand(1:n, 2) # Select two random indices
+		next_tour[i], next_tour[j] = next_tour[j], next_tour[i]  # Swap the cities at these indices
+		next_distance = total_distance(points, next_tour)
+		delta = next_distance - current_distance
+
+		# If the new tour is shorter, or if it is longer but accepted by the annealing probability
+		if delta < 0 || exp(-delta / temperature) > rand()
+			current_tour = copy(next_tour)
+			current_distance = next_distance
+			# If the new tour is the best found so far, update the best tour and distance
+			if current_distance < best_distance
+				best_tour = copy(current_tour)
+				best_distance = current_distance
+			end
+		end
+
+		temperature *= cooling_rate # Cool down the temperature
+	end
+
+	return best_tour
+end;
+
+# ╔═╡ bb9d1888-9214-43d2-b002-b31ded8715a9
+begin
+	b = Bounds(100, 100, 450, 280)
+	points = create_points(b, N)
+end;
+
+# ╔═╡ 624c3dc0-2186-4185-9fba-87e522d4a163
+begin
+	points_xs = get_points_xs(points)
+	points_ys = get_points_ys(points)
+	distances = pairwise(Euclidean(), [points_xs points_ys], dims=1)
+	max_iter = 1000
+	initial_temperature = mean(distances) + 3 * std(distances)
+	cooling_rate = 0.99
+	solution_player = vcat(your_solution, your_solution[1])
+	player_xs = get_points_xs(points[solution_player])
+	player_ys = get_points_ys(points[solution_player])
+	solution_computer = simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
+	push!(solution_computer, solution_computer[1]) # return to start
+	computer_xs = get_points_xs(points[solution_computer])
+	computer_ys = get_points_ys(points[solution_computer])
+	player_distance = total_distance([Point(z[1], z[2]) for z in zip(player_xs, player_ys)], 1:size(player_xs, 1))
+	computer_distance = total_distance([Point(z[1], z[2]) for z in zip(computer_xs, computer_ys)], 1:size(computer_xs, 1))
+end;
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -374,23 +374,25 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 [compat]
 Distances = "~0.10.11"
 HypertextLiteral = "~0.9.5"
+Statistics = "~1.11.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.1"
+julia_version = "1.11.0"
 manifest_format = "2.0"
-project_hash = "1adaeaec1fd57885bb7f86606f24f3c905de5e8d"
+project_hash = "45dc8eef364a8c380ebb575053b67b7aa89bd8c4"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+version = "1.11.0"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.0+0"
+version = "1.1.1+0"
 
 [[deps.Distances]]
 deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
@@ -414,36 +416,38 @@ version = "0.9.5"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+version = "1.11.0"
 
 [[deps.LinearAlgebra]]
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+version = "1.11.0"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+4"
+version = "0.3.27+1"
 
 [[deps.Random]]
 deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+version = "1.11.0"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
-[[deps.Serialization]]
-uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
-
-[[deps.SparseArrays]]
-deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
-uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-version = "1.10.0"
-
 [[deps.Statistics]]
-deps = ["LinearAlgebra", "SparseArrays"]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "ae3bb1eb3bba077cd276bc5cfc337cc65c3075c0"
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-version = "1.10.0"
+version = "1.11.1"
+
+    [deps.Statistics.extensions]
+    SparseArraysExt = ["SparseArrays"]
+
+    [deps.Statistics.weakdeps]
+    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
@@ -451,20 +455,15 @@ git-tree-sha1 = "1ff449ad350c9c4cbc756624d6f8a8c3ef56d3ed"
 uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
 version = "1.7.0"
 
-[[deps.SuiteSparse_jll]]
-deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
-uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "7.2.1+1"
-
 [[deps.Tricks]]
-git-tree-sha1 = "eae1bb484cd63b36999ee58be2de6c178105112f"
+git-tree-sha1 = "7822b97e99a1672bfb1b49b668a6d46d58d8cbcb"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.8"
+version = "0.1.9"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+1"
+version = "5.11.0+0"
 """
 
 # ╔═╡ Cell order:
