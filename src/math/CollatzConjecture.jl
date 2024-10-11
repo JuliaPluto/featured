@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.42
+# v0.19.47
 
 #> [frontmatter]
 #> licence_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -25,61 +25,6 @@ macro bind(def, element)
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
-end
-
-# ╔═╡ c5673bfa-d2b0-4893-ad88-42a5b81f27b4
-begin
-	using Collatz
-	using Graphs
-	using FixedPointNumbers 
-	md"""
-	!!! info "Numerical Packages"
-		[Collatz](https://juliapackages.com/p/collatz): This package provide the methods to generate the hailstone sequence, the tree graph and stopping time for the collatz conjecture. 
-	
-		[Graphs](https://www.juliapackages.com/p/graphs): Used to deal with creating and modifying graphs. 
-	
-		[FixedPointNumbers](https://www.juliapackages.com/p/fixedpointnumbers): Package to deal with fixed point number, only used to handle colors.
-	"""
-end
-
-# ╔═╡ e4a76493-9aea-4379-9a56-6a9b9e8d6b54
-begin
-	# Notebook related packages
-	using PlutoUI
-	import PlutoUI: combine
-	using HypertextLiteral:@htl
-	using Parameters
-	md"""
-	!!! info "Notebook Packages"
-		[PlutoUI](https://www.juliapackages.com/p/PlutoUI): Extension for Pluto to handle interactivity, provides the Sliders, Checkboxes and Color Picker. 
-	
-		[HypertextLiteral](https://www.juliapackages.com/p/HypertextLiteral): Drawing library, specifically for graphs.
-	
-	"""
-end
-
-# ╔═╡ 13f52ec2-16b9-41a5-9560-177ca827a72e
-begin
-	using Plots
-	using Colors
-	using Luxor
-	using Karnak, NetworkLayout
-	using ImageIO ,ImageShow
-	gr()
-	md"""
-	!!! info "Ploting Packages"
-		[Plots](https://www.juliapackages.com/p/plots): Plotting library for the several plots in the notebook.
-		
-		[Luxor](https://www.juliapackages.com/p/luxor): Drawing library used for the visualiation.
-	
-		[Karnak](https://www.juliapackages.com/p/karnak): Drawing library, specifically for graphs.
-	
-		[NetworkLayout](https://www.juliapackages.com/p/networklayout): Used to compute the layout of the graphs.
-		
-		[ImageIO](https://www.juliapackages.com/p/ImageIO): Used to faciliate the handling of images.
-		
-		[ImageShow](https://www.juliapackages.com/p/ImageShow): Enhances the displaying of the images in the interactive visualization and the gallery.
-	"""
 end
 
 # ╔═╡ e60fcc3e-312c-4546-9b04-e6b558ba752a
@@ -132,6 +77,37 @@ md"""
 The sequence of values that you go through when iterating a number is often called the hailstone sequence, as the numbers go up and down through the sequence. 
 """
 
+# ╔═╡ e57da7e5-32bb-48a2-af27-5ac671cabdae
+@bind hailstone_params format_sliderParameter(title="Hailstone Sequence Parameters:",[
+	SliderParameter(lb=1,ub=1000,default=15,step=1,alias=:start_value,label="Starting Value")]
+	)
+
+# ╔═╡ 66fe673a-7679-4c55-bf59-146a8dd1241c
+begin
+	hailstone_seq = "Hailstone Sequence" ∈ generalize_collatz ? hailstone_sequence(hailstone_params.start_value; collatz_parameters... ,verbose=false) : hailstone_sequence(hailstone_params.start_value; verbose=false)
+	
+	pl = plot(leg = false)
+	xlabel!("Iterations")
+	ylabel!("Value")
+	title!("Hailstone sequence of: $(hailstone_params.start_value)")
+	
+	if(animate_hailstone)
+		# using with_terminal to remove the @info msg 
+		with_terminal(show_value=false) do
+			global gl = @gif for i in range(0,length(hailstone_seq),step=1) 
+				plot!(pl, hailstone_seq[1:i], linecolor=:lightblue)
+				scatter!(pl, hailstone_seq[1:i], marker = :star7, markersize=7, markercolor=:lightblue)
+			end fps = 4
+		end
+	else
+		plot!(pl, hailstone_seq, linecolor=:lightblue)
+		scatter!(pl, hailstone_seq, marker = :star7, markersize=7, markercolor=:lightblue)
+		global gl = pl
+	end
+	gl
+	
+end
+
 # ╔═╡ 10ab31ff-2d28-4ac3-a118-654f8366768e
 @htl(""" <div style="display: flex;padding: .5rem; gap: 10px"> <div>Animate?</div><div> $(@bind animate_hailstone PlutoUI.CheckBox(default=true))</div> </div>""")
 
@@ -145,6 +121,58 @@ We can visualize the path that each number takes with a graph.
 
 
 """
+
+# ╔═╡ 3550fe19-261e-4069-9bf6-6417dcaac102
+begin
+	collatz_graph = @drawsvg begin
+	    background("white")
+	    sethue("grey40")
+	    fontsize(25)
+	    drawgraph(g, 
+			layout=Stress(initialpos=[(0.0,0.0)]),
+			margin = 60,                         
+	        vertexlabels = map(x -> x[2], record),
+			vertexshapesizes = 40,
+	        vertexfillcolors = graph_colors
+	    )	
+	end 1600 1200
+			
+	collatz_graph
+end
+
+# ╔═╡ 43c4fd8d-bb44-43cd-91dd-d221629d1fd9
+begin
+graph_sliders = @bind graph_parameters format_sliderParameter(title="Collatz Graph Parameters:",[
+	SliderParameter(lb=1,ub=1000,default=1,step=1,alias=:start_value,label="Starting Value"),
+	SliderParameter(lb=1,ub=25,default=9,step=1,alias=:orbit,label="Maximum Orbit")
+	
+])
+	
+
+	@htl("""
+	<div class="slider_group">
+	<div>
+		$graph_sliders
+	</div>
+	
+	</div>
+	""")
+end
+
+# ╔═╡ 6693800b-e2bc-46e4-b5f8-004184ef472b
+begin
+	g, record = "Graph" ∈ generalize_collatz ?  make_collatz_graph(
+		graph_parameters.start_value,
+		graph_parameters.orbit;
+		collatz_parameters...
+	) :  make_collatz_graph(
+		graph_parameters.start_value,
+		graph_parameters.orbit;
+	)
+	
+	graph_colors = [RGB(rescale(record[i][1],1,graph_parameters.orbit, 1,0.3),.1,.3) 
+		               for i in 1:nv(g)]
+end;
 
 # ╔═╡ 6f68b20d-67e5-4872-a23b-1840bbbb06ec
 md"## The stopping time of a number"
@@ -165,8 +193,150 @@ Here is a plot to show the total stopping times of the numbers for up to 1000.
 
 
 
+# ╔═╡ 0fd7242c-46a1-4929-9c53-3c45768893b4
+@bind stopping_parameters format_sliderParameter(title="Stopping Time Plot Parameters",
+	[SliderParameter(lb=100, ub=30000, step=100, default=1000,alias=:ub, label="Upper Bound")]
+
+)
+
+# ╔═╡ 45ca6e2a-6a58-475e-9c02-4925e71625bd
+begin
+	# find values that that have not been previously been calculated
+	newValues = filter(x -> !(x ∈ keys(stopping_times)),collect(range(1,stopping_parameters.ub,step=1)) )
+	
+	# calculate the values and add them to the dictionary 
+	for newValue in newValues
+		push!(stopping_times, 
+			( newValue => "Stopping Time" ∈ generalize_collatz ? stopping_time(newValue, ;collatz_parameters..., total_stopping_time=true) : stopping_time(newValue, total_stopping_time=true))
+		)
+	end
+
+	scatter(
+		collect(values(sort(
+				filter(
+					key -> (key[1] ∈ range(1,stopping_parameters.ub,step=1))
+					, stopping_times)
+			)
+		)
+	), markersize = 1, leg = false)
+	
+	title!("Total stopping time of numbers up to $(stopping_parameters.ub)")
+	ylabel!("Stopping time")
+	xlabel!("Starting point")
+end
+
+# ╔═╡ 5f074850-b967-4de5-8ca3-b85a74052499
+begin
+	generalize_collatz
+	stopping_times = Dict();
+end;
+
 # ╔═╡ d0672735-8007-4a69-9fa5-0f40ac0685ea
 md"# Interactive Visualization"
+
+# ╔═╡ 50a423ad-ca90-4015-9ef6-577f60e4efe7
+begin
+	@htl("""
+	<div class="slider_group sidebar-left">
+		<div class="on_big_show">
+			<div class="slider_group_inner">
+				$viz_sliders
+			</div>
+
+		</div>	
+	</div>
+	
+	<div class="slider_group sidebar-right">
+		<div class="on_small_show">
+			<div class="slider_group_inner ">
+				$viz_sliders
+			</div>
+		</div>
+	
+		<div class="slider_group_inner">
+			$viz_specs_sliders
+		</div>
+	
+		<div class="slider_group_inner">
+			$colors_sliders
+		</div>
+	
+		<div class="slider_group_inner">
+			$viz_extra_sliders
+		</div>
+	</div>
+	<div class="sidebar-bottom">
+		<div class="on_tiny_show">
+			<div class="slider_group">
+				<div class="slider_group_inner">
+					$viz_sliders
+				</div>
+			
+				<div class="slider_group_inner ">
+					$viz_sliders
+				</div>
+			</div>
+		
+			<div class="slider_group">
+				<div class="slider_group_inner">
+					$viz_specs_sliders
+				</div>
+			
+				<div class="slider_group_inner">
+					$colors_sliders
+				</div>
+				<div class="slider_group_inner">
+					$viz_extra_sliders
+				</div>
+			</div>
+		</div>
+		<div>
+				
+		</div>
+	</div>
+	""")
+end
+
+# ╔═╡ 6d225dce-3362-4f5d-bba9-0b5312f6be5a
+begin
+	@unpack ( num_traject, turn_scale, line_length ) = viz_parameters
+	@unpack ( init_angle, x_start, y_start, stroke_width) = viz_specs_parameters
+	@unpack ( stroke_color, background_color ) = viz_colors_options
+	@unpack ( random_shade, vary_shade, edmund_style, chris_style ) = viz_extra_options
+
+
+	interactive_viz =  CollatzVisualization(
+		viz_parameters = (
+				num_traject = num_traject,
+				line_length = line_length,
+				turn_scale = turn_scale,
+				window_width = window_width,
+				window_height = window_height, 
+				x_start = x_start, 
+				y_start = y_start,
+				init_angle = init_angle, 
+				stroke_width = stroke_width, 
+				stroke_color = stroke_color, 
+				background_color = background_color, 
+				random_shade = random_shade,
+				vary_shade = vary_shade
+			),
+		collatz_parameters = (P=collatz_parameters.P,a = collatz_parameters.a, b= collatz_parameters.b),
+		shortcut = edmund_style,
+		ultra_shortcut = chris_style
+	)
+	
+	# trajectories = reverse_hailstone_sequences(range(5,num_traject); collatz_parameters...)
+	
+	# viz = @draw begin
+	# 	background(background_color)
+	# 	draw_hailstone_sequences(
+	# 		trajectories; line_length, turn_scale,
+	# 		window_width, window_height, init_angle, x_start, y_start,
+	# 		stroke_width, stroke_color, random_shade, vary_shade
+	# 	)
+	# end window_width window_height
+end
 
 # ╔═╡ aef6cb43-61c7-4436-ad66-7e7f0459610d
 @htl("""
@@ -176,6 +346,149 @@ Filename:
 				
 			</div>
 """)
+
+# ╔═╡ 1b48b435-e959-477f-a8d2-3507da73fc28
+@htl("""
+$(filename == "" ? PlutoUI.DownloadButton(interactive_viz,"MyCoolVisualization.png") : PlutoUI.DownloadButton(interactive_viz,"$filename.png"))
+"""
+)
+
+# ╔═╡ 0865f8a3-a959-481b-a9ae-adbca78a2749
+begin
+	window_size_sliders = @bind window_size_parameters format_numberFieldParameter(
+		title="Window Size",
+	[
+		NumberFieldParameter(
+			lb=100.0,
+			ub=10000.0,
+			default=700.0,
+			alias = :window_height, 
+			label = "Height", 
+		),
+		NumberFieldParameter(
+			lb=100.0,
+			ub=10000.0,
+			default=500.0,
+			alias=:window_width, 
+			label="Width")
+	]
+	)
+end
+
+
+# ╔═╡ 8a64e9e3-477e-4a7e-97f7-61cf5e428731
+@unpack window_height,window_width = window_size_parameters;
+
+# ╔═╡ 01cc5e4f-d94b-4211-b268-9ce0640cd23f
+colors_sliders = @bind viz_colors_options format_colorPicker(
+		title="Color Options",
+	[
+		ColorParameter(
+		alias = :stroke_color, 
+		label = "Stroke Color", 
+		default = RGB{N0f8}(
+			reinterpret(N0f8, UInt8(230)),
+			reinterpret(N0f8, UInt8(130)),
+			reinterpret(N0f8, UInt8(130)))
+		),
+		ColorParameter(
+			alias=:background_color, 
+			label="Background")
+	]
+	
+);
+
+# ╔═╡ 5ba5f885-1de1-4058-91bf-35e1b05d1941
+viz_sliders = @bind viz_parameters format_sliderParameter(
+			title = "Visualization Options:", 
+			[
+				SliderParameter(
+					lb = 100.0,
+					ub = 10000.0, 
+					default = 1000.0, 
+			 		step = 100.0, 
+					alias = :num_traject, 
+					label = "Numbers of trajectories"
+				),
+				SliderParameter(
+					lb = 1,
+					ub = 150, 
+					default = 20,
+					step = 1,
+					alias=:line_length, 
+					label="Step"),
+				SliderParameter(
+					lb = 0.0,
+					ub = 180.0, 
+					default = 10.0,
+					step = 0.1, 
+					alias = :turn_scale, 
+					label = "Rotation Angle (in degrees)"
+				),
+			]
+		);
+
+# ╔═╡ 7dbfb4dc-c9d0-464d-83b2-18db90d76878
+viz_specs_sliders = @bind viz_specs_parameters format_sliderParameter(
+			title = "Image Options:", 
+			[
+				SliderParameter(
+					lb = 0.0,
+					ub = 360.0,
+					default = 20.0,
+					step = 0.1,
+					alias = :init_angle, 
+					label = "Image Rotation (in degrees)"
+				),
+				SliderParameter(
+					lb = 0.0,
+					ub = window_width, 
+					default = window_width/2, 
+					step = 0.1, 
+					alias = :x_start, 
+					label = "Starting point (X)"
+				),
+				SliderParameter(
+					lb = 0.0, 
+					ub = window_height,
+					default = window_height, 
+					step = 0.1, 
+					alias = :y_start, 
+					label = "Starting point (Y)"
+				),
+				SliderParameter(
+					lb = 1.0, 
+					ub = 50.0,
+					default = 5.0, 
+					step = 0.1, 
+					alias = :stroke_width, 
+					label = "Stroke Width"
+				),
+			]
+		);
+
+# ╔═╡ f680e7ea-8e3a-41ac-ab92-a27c05103864
+viz_extra_sliders = @bind viz_extra_options format_checkBoxParameter(
+			title="Extra Options",
+			[
+				CheckBoxParameter(
+					alias=:random_shade, 
+					label="Random Color"
+				),
+				CheckBoxParameter(
+					alias=:vary_shade, 
+					label="Vary Shade"
+				),
+				CheckBoxParameter(
+					alias=:edmund_style, 
+					label="In Edmund Harris's style"
+				),
+				CheckBoxParameter(
+					alias=:chris_style, 
+					label="In Chris's style"
+				),
+			], 
+		);
 
 # ╔═╡ b56a1328-194c-4e1c-a033-9ca6e0ab3eeb
 md"---"
@@ -226,11 +539,18 @@ begin
 	end
 end
 
-# ╔═╡ 5f074850-b967-4de5-8ca3-b85a74052499
+# ╔═╡ f21f1e3e-a3ab-458e-a101-ce824731f0b6
 begin
-	generalize_collatz
-	stopping_times = Dict();
-end;
+collatz_sliders = @bind collatz_parameters format_sliderParameter(title="Collatz Parameters:",[
+	SliderParameter(lb=1,ub=10,step=1,default=2,label="P"),
+	SliderParameter(lb=1,ub=10,step=1,default=3,label="a"),
+	SliderParameter(lb=1,ub=10,step=1,label="b"),
+])
+	if(do_generalize_collatz)
+		collatz_sliders
+	else
+	end
+end
 
 # ╔═╡ af0c36ee-0534-4143-b59b-4ee041ef0f04
 do_generalize_collatz ? md"""
@@ -246,483 +566,28 @@ md"While playing around with the viusalization, I stumbled into some nice patter
 
 *(Note that the parameters are highly dependent on the size of the canvas so it might not be trivial to reproduced)*"
 
-# ╔═╡ b7b80bd8-7a16-4483-9b8f-b6a8da531b0a
-
-
-# ╔═╡ 3e9a6e74-a0ab-4c47-b493-4670fa828c45
-md"---"
-
-# ╔═╡ 546a2cf6-f54a-4482-9da5-af9d966b22eb
-md"---"
-
-# ╔═╡ cdfb638b-a04c-482c-9206-47f7dfd63766
-md"# Appendix"
-
-# ╔═╡ 3e6323cb-4b09-4fe9-a223-8c66cb0d3efc
-md"""
-Here a list of extra ressources in case you want to learn more. They inspired me a lot through this notebook so hope you find them usefull!
-
-
-- [Wikipedia page](https://en.wikipedia.org/wiki/Collatz_conjecture)
-- [The Numberphile video](https://www.youtube.com/watch?v=5mFpVDpKX70) ( [and the extras](https://www.youtube.com/watch?v=O2_h3z1YgEU) )
-- [The Coding Train](https://www.youtube.com/watch?v=EYLWxwo1Ed8)
-- [This amazing post from Luc Blassel] (https://lucblassel.com/posts/visualizing-the-collatz-conjecture/)
-- [Edmund Harris's website](https://maxwelldemon.com/) 
-"""
-
-# ╔═╡ 0fdafbdc-a6aa-42a6-a899-41b351b5e7e8
-md"## Packages"
-
-
-# ╔═╡ 091d8f63-d02a-48fa-be0c-e9e027409279
-md"## Custom Types"
-
-# ╔═╡ 8c854d1c-2f89-43f0-a810-ce174cf94af8
-"""
-A struct to store parameters related to the visualization
-
-```julia
-num_traject::Int64 = 100.0
-line_length::Float64 = 20.0
-turn_scale::Float64  = 10.0
-init_angle::Float64 = 90.0
-x_start::Float64 = 250.0
-y_start::Float64 = 500.0
-window_width::Float64 = 500.0
-window_height::Float64 = 500.0
-stroke_width::Float64 = 2.0
-stroke_color::Colors.RGBA = RGBA(1.0,1.0,1.0,1.0)
-background_color::Colors.RGBA = RGBA(0.0,0.0,0.0,1.0)
-vary_shade::Bool = false
-random_shade::Bool = false
-edmund_style::Bool = false
-```
-"""
-@with_kw struct VisualizationParameters
-	num_traject::Int64 = 100.0
-	line_length::Float64 = 20.0
-	turn_scale::Float64  = 10.0
-	init_angle::Float64 = 90.0
-	x_start::Float64 = 250.0
-	y_start::Float64 = 500.0
-	window_width::Float64 = 500.0
-	window_height::Float64 = 500.0
-	stroke_width::Float64 = 2.0
-	stroke_color::Colors.RGBA = RGBA(0.0,0.0,0.0,1.0)
-	background_color::Colors.RGBA = RGBA(1.0,1.0,1.0,1.0)
-	vary_shade::Bool = false
-	random_shade::Bool = false
-	edmund_style::Bool = false
-	chris_style::Bool = false
-end
-
-# ╔═╡ 9803f163-0027-4577-af8f-c66de195d182
-md"## Functions"
-
-# ╔═╡ 1e85c1af-3318-4f20-a358-25aa0999dc8a
-"""
-	hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1 )
-
-Extension for the `hailstone_sequence()` method from Collatz.jl to calculate list of hailstone sequence given a UnitRange. 
-
-## Args
-
-- `range::UnitRange{Int64}`: Unit Range in which to calculate the hailstone sequences.
-
-
-## Kwargs
-
-- `P::Integer = 2`: Modulus used to devide n, iff n is equivalent to (0 mod P).
-- `a::Integer = 3`: Factor by which to multiply n.
-- `b::Integer = 1`: Value to add to the scaled value of n.
-
-## Examples
-```jldoctest
-julia> hailstone_sequences(2:5) 
-[[2, 1], [3, 10, 5, 16, 8, 4, 2, 1], [4, 2, 1], [5, 16, 8, 4, 2, 1]]
-```
-```jldoctest
-julia> hailstone_sequences(1:5; P=4, a=1, b=3)
-[[1], [2, 5, 8, 2], [3, 6, 9, 12, 3], [4, 1], [5, 8, 2, 5]]
-```
-
-## See also
-[`hailstone_sequence`](@ref), [`reverse_hailstone_sequences`](@ref)
-"""
-function hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1 )
-	return [ 
-				hailstone_sequence(starting_number; P, a, b, verbose =false)  
-			
-			for starting_number in range
-		]
-end
-
-# ╔═╡ 40dd9659-abb9-4484-b5f1-f332e2abe90e
-"""
-	reverse_hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1)
-This function wraps the `hailstone_sequence()` method from Collatz.jl to calculate list of hailstone sequence given a UnitRange. 
-
-It return the reversed sequence where the endpoint is the first element of the result.
-
-## Args
-
-- `range::UnitRange{Int64}`: Unit Range in which to calculate the hailstone sequences.
-
-
-## Kwargs
-
-- `P::Integer = 2`: Modulus used to devide n, iff n is equivalent to (0 mod P).
-- `a::Integer = 3`: Factor by which to multiply n.
-- `b::Integer = 1`: Value to add to the scaled value of n.
-
-## Examples
-```jldoctest
-julia> hailstone_sequences(2:5) 
-[[1, 2], [1, 2, 4, 8, 16, 5, 10, 3], [1, 2, 4], [1, 2, 4, 8, 16, 5]]
-```
-```jldoctest
-julia> hailstone_sequences(1:5; P=4, a=1, b=3)
-[[1], [2, 8, 5, 2], [3, 12, 9, 6, 3], [1, 4], [5, 2, 8, 5]]
-```
-
-## See also
-[`hailstone_sequence`](@ref), [`hailstone_sequences`](@ref)
-"""
-function reverse_hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1 )
-	return [ 
-				reverse(hailstone_sequence(starting_number; P, a, b, verbose =false))
-			for starting_number in range
-		]
-end
-
-# ╔═╡ f02affaa-534b-4c72-81ae-c42ca3b455fd
-md"### Collatz"
-
-# ╔═╡ 4c991173-d9ff-4ba9-b217-8f9aafbbd631
-shortcut_collatz_cache = Dict{Int, Vector{Int}}()
-
-# ╔═╡ 240b4cc1-1bae-429b-863b-792897cd555b
-ultra_shortcut_collatz_cache = Dict{Int, Vector{Int}}()
-
-# ╔═╡ 23be8efa-b907-453f-9245-8bc46a37ad26
-"""
-	shortcut_collatz(n::Int)
-
-Calculate the collatz sequence of a number using the shortcut formulation:
-g(n) = (3n + 1) / 2 if odd and g(n) = n / 2 if even
-
-"""
-function shortcut_collatz(n::Int)
-   if n == 1
-	   return [1]
-   elseif haskey(shortcut_collatz_cache, n)
-	   return shortcut_collatz_cache[n]
-   elseif n % 2 == 0
-	   sequence = [n, shortcut_collatz(n ÷ 2)...]
-	   shortcut_collatz_cache[n] = sequence
-	   return sequence
-   else
-	   sequence = [n, shortcut_collatz(Int((3n + 1)/2))...]
-	   shortcut_collatz_cache[n] = sequence
-	   return sequence
-   end
-end
-
-
-# ╔═╡ a1a6130d-771a-43d7-ae94-049e3c9b81b3
-"""
-	ultra_shortcut_collatz(n::Int)
-
-Calculate the collatz sequence of a number using the absolute shortcut formulation:
-g(n) = (3n + 1) / 2^k  if odd where k is the highest power that divides 3n+1 and g(n) = n / 2 if even
-
-"""
-function ultra_shortcut_collatz(n::Int)
-   if n == 1
-	   return [1]
-   elseif haskey(ultra_shortcut_collatz_cache, n)
-	   return ultra_shortcut_collatz_cache[n]
-   elseif n % 2 == 0
-	   
-	   while n % 2 == 0
-		   n = n ÷ 2
-	   end
-	   
-	   if n == 1 return [1] end
-	   sequence = [n, ultra_shortcut_collatz(3n + 1)...]
-	   ultra_shortcut_collatz_cache[n] = sequence
-	   return sequence
-   else
-	   sequence = [n, ultra_shortcut_collatz(Int((3n + 1)/2))...]
-	   ultra_shortcut_collatz_cache[n] = sequence
-	   return sequence
-   end
-end
-
-
-# ╔═╡ 3153ba89-f2d4-4e31-9e79-00ec5ecbb91c
-"""
-	descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  tree::Dict, previous::Number=collect(keys(tree))[1], depth::Int=0)
+# ╔═╡ 53520512-fc88-4dd2-ae6d-a8ed0d599e42
+begin
+	@htl("""
+	<script>
 	
-This function is used to explore the tree return by `tree_graph` from Collatz.jl and modify the graph g given as input. 
-
-## Args 
-- `g::SimpleGraph`: The graph to modify 
-- `record::Array{Tuple{Number,Number}}`: An array that keeps track of each of the encountered values. Each value is stored as (depth, value) in order to keep track of what depth the value was encountered
-- `tree::Dict`: The tree graph returned by `tree_graph` 
-- `previous::Number`: The number passed by the previous call to the function 
-- `depth::Int`: The current depth of the search  
-"""
-function descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  tree::Dict, previous::Number=collect(keys(tree))[1], depth::Int=0)
 	
-	# loop over each branch
-	for key in  keys(tree)
+	const buffers = $([buffer_img_data(viz) for viz in gallery_vizs])
+	buffers.forEach((buffer, index) => {
 		
-		add_vertex!(g)
+		const canvas = document.getElementById("canvas"+index);
+		const ctx = canvas.getContext("2d");
+		const arr = new Uint8ClampedArray(buffer);
+		let imageData = new ImageData(arr, 500, 500);
+		ctx.putImageData(imageData, 0, 0);
 		
-		# check if previous number exist in record
-		previous_index = findfirst(x -> x == previous, map(x -> x[2], record))
 		
-		# if exist, create a edge in the graph 
-		isnothing(previous_index) ? "" : add_edge!(g, previous_index, length(record)+1)
-
-		# this check is there cos when reaching a cycle the tree has a non number key
-		if(isa(key, Number))
-			push!(record, (depth, key))
-		end
-
-		# call recursively to continue descending the tree 
-		descend_tree!(g, record,tree[key], key, depth +1)
-	end
-	# end
-end
-
-
-# ╔═╡ b79405c3-42d1-4289-bbc3-67b6eae2b135
-"""
-	descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  key::Int64, previous::Collatz._CC.CC, depth::Int=0)
-
-To handle the case where the search hits a cycle and previous is of type Collatz._CC.CC
-
-## Args 
-
-- `g::SimpleGraph`: The graph to modify 
-- `record::Array{Tuple{Number,Number}}`: An array that keeps track of each of the encountered values
-- `tree::Dict`: The tree graph returned by `tree_graph` 
-- `previous::Collatz._CC.CC`: The cycle value.
-- `depth::Int`: The current depth of the search  
-
-"""
-function descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  key::Int64, previous::Collatz._CC.CC, depth::Int=0)
-	
-	# check if previous number exist in record
-	previous_index = findfirst(x -> x == previous, map(x -> x[2], record))
-
-	# if exist, create a edge in the graph 
-	isnothing(previous_index) ? "" : add_edge!(g, previous,  length(record)+1)
-
-	# push key in record 
-	push!(record, (depth, key))
-	return
-end
-
-# ╔═╡ 319d784b-c62d-4f28-a5b3-ebf89c892afc
-"""
-	make_collatz_graph(initial_value::Int, max_orbit_distance::Int; P=2, a=3, b=1)
-
-This function returns a graph that represent the different branches that each number takes.
-
-## Args
-
-- `initial_value::Integer`: The starting value of the directed tree graph.
-
-- `max_orbit_distance::Integer`: Degree of seperation between the initial value and each value encountered. 
-
-## Kwargs
-
-- ```P::Integer=2```: Modulus used to devide n, iff n is equivalent to (0 mod P).
-
-- ```a::Integer=3```: Factor by which to multiply n.
-
-- ```b::Integer=1```: Value to add to the scaled value of n.
-
-
-## See also
-[`tree_graph`](@ref)
-"""
-function make_collatz_graph(initial_value::Int, max_orbit_distance::Int; P=2, a=3, b=1)
-	g = SimpleGraph()
-	record::Array{Tuple{Number,Number}} = []
-	tree = tree_graph(initial_value,max_orbit_distance; P, a,b )
-	descend_tree!(g, record, tree)
-	return g, record
-end
-
-# ╔═╡ cf545d05-7846-4881-a532-33cb2c1972a4
-md"### Drawing"
-
-# ╔═╡ 5683080b-7d4b-4e34-aa75-b3c68dc60314
-"""
-	draw_hailstone_sequence(hailstone_seq::Vector{Int64}; params::VisualizationParameters)
-
-This function is used to draw the trajectory of the hailstone sequence of a number. Using a Turtle, the function loops over each number in the sequence. For the sequence, a curve is drawn where for each step in the sequence, it will curves one way if the number is odd, and the other way if the number is even. 
-
-## See also
-[`VisualizationParameters`](@ref)
-
-"""
-function draw_hailstone_sequence(hailstone_seq::Vector{Int64}; params::VisualizationParameters=VisualizationParameters())
-
-	@unpack line_length, turn_scale, 
-	stroke_width, stroke_color, random_shade, vary_shade, edmund_style, chris_style = params
-	# Initiliaze turle
-	🐢 = Turtle()
-	
-	# set stroke width
-	Penwidth(🐢, stroke_width)
-
-	# Handle Color
-	if(random_shade)
-		Pencolor(🐢,RGB(rand(), rand(), rand()))
-		
-	elseif vary_shade
-		
-		color_offset = randn()/2
-		Pencolor(🐢,RGB(stroke_color.r + color_offset, stroke_color.g + color_offset, stroke_color.b + color_offset))
-	else
-		Pencolor(🐢,stroke_color)
-	end
-
-	# Move the turtle 
-	 for (index,number) in enumerate(hailstone_seq)
-
-		# decrease opacity as the sequence gets longer
-		setopacity(rescale(index, 1, length(hailstone_seq)*8
-			, 0.1,1))
-
-		if(chris_style)
-			if number % 3 == 1
-				Turn(🐢, turn_scale)
-			else
-				Turn(🐢, -turn_scale)	
-			end
-			Forward(🐢, line_length)
-			continue
-		end
-			
-		 
-		if number % 2 == 0
-			Turn(🐢, turn_scale)
-		else
-			if(edmund_style) 
-				Turn(🐢, -1/2*turn_scale)
-			else
-				Turn(🐢, -turn_scale)
-			end
-			
-		end
-			
-		
-		# if number < 0
-		# 	Turn(🐢, -90)
-		# end
-		 
-		Forward(🐢, line_length)
-	end
-	
-end
-
-
-# ╔═╡ 278572e6-5a74-4dad-b39b-68cc85e4339c
-"""
-	draw_hailstone_sequences(hailstone_seqs::Vector{Vector{Int64}}; params::VisualizationParameters)
-
-This function is used to draw each trajectory given an array of hailstone sequences.
-
-## See also
-
-[`VisualizationParameters`](@ref)
-
-"""
-function draw_hailstone_sequences(hailstone_seqs::Vector{Vector{Int64}}; params::VisualizationParameters)
-	
-	@unpack init_angle, x_start, y_start, window_width, window_height = params
-	
-	for hailstone_seq in hailstone_seqs
-		# reset to origin and setup windows accord to user parameter
-		origin()
-		Luxor.translate(
-			x_start - window_width  /2,
-			y_start - window_height /2
-		)
-		Luxor.rotate(deg2rad(init_angle)+π)
-
-		# draw sequence
-		draw_hailstone_sequence(hailstone_seq; params)
-	end
-end
-
-# ╔═╡ d6cc6642-018d-4a7f-b82a-dd50bff8e2fc
-"""
-A struct to bundle the parameters and the generated image together. 
-
-`viz_parameters::VisualizationParameters`
-`collatz_parameters::NamedTuple{(:P, :a, :b)}` = (P = 2, a = 3, b = 1)
-`imgdata::Matrix{RGBA{N0f8}}` = []
-`shortcut::Bool` = false
-`notes::String` = ""
-
-
-
-"""
-@with_kw struct CollatzVisualization
-	viz_parameters::VisualizationParameters
-	collatz_parameters::NamedTuple{(:P, :a, :b)} = (P=2,a=3,b=1)
-	imgdata::Matrix{RGBA{N0f8}} = []
-	shortcut::Bool = false
-	ultra_shortcut::Bool = false
-	notes::String = ""
-	
-	function CollatzVisualization(viz_parameters, collatz_parameters,imgdata, shortcut,ultra_shortcut, notes)
-		if((shortcut || ultra_shortcut)  &&  (collatz_parameters.P != 2 || collatz_parameters.a != 3 || collatz_parameters.b == 1)) 
-			@info "Custom style is applied, running with default collatz parameters.." 
-			collatz_parameters = (P = 2, a=3, b=1)
-		end
-		# convert to struct not supplied 
-		if(!isa(viz_parameters, VisualizationParameters))
-			viz_parameters = VisualizationParameters(edmund_style=shortcut,chris_style=ultra_shortcut;viz_parameters...)
-		end
-
-		
-	
-		# Caluclate reversed hailstone_sequences
-		if(ultra_shortcut)
-			hailstone_sequences = [ 
-				reverse(ultra_shortcut_collatz(starting_number))
-				for starting_number in 1:viz_parameters.num_traject
-			]
-		elseif(shortcut)
-			hailstone_sequences = [ 
-				reverse(shortcut_collatz(starting_number))
-				for starting_number in 1:viz_parameters.num_traject
-			]
-		else
-			hailstone_sequences = reverse_hailstone_sequences(1:viz_parameters.num_traject;
-						collatz_parameters...)
-		end
-		# Draw the sequence and store in an image matrix
-		imgdata = @imagematrix begin
-			background(viz_parameters.background_color)
-			draw_hailstone_sequences(
-				hailstone_sequences; params = viz_parameters
-			)
-		end viz_parameters.window_width viz_parameters.window_height
-
-		# Convert matrix to img 
-		imgdata = convert.(Colors.RGBA, imgdata)
-	
-		return new(viz_parameters, collatz_parameters ,imgdata, shortcut,ultra_shortcut, notes)
-	end
+	})
+	</script>
+	<div class="gallery">
+		$(makeCollatzGallery(gallery_vizs))
+	</div>
+	""")
 end
 
 # ╔═╡ b7161895-ba79-4b99-b2f1-eda7484708da
@@ -890,6 +755,273 @@ begin
 	
 end;
 
+# ╔═╡ b7b80bd8-7a16-4483-9b8f-b6a8da531b0a
+
+
+# ╔═╡ 3e9a6e74-a0ab-4c47-b493-4670fa828c45
+md"---"
+
+# ╔═╡ 546a2cf6-f54a-4482-9da5-af9d966b22eb
+md"---"
+
+# ╔═╡ cdfb638b-a04c-482c-9206-47f7dfd63766
+md"# Appendix"
+
+# ╔═╡ 3e6323cb-4b09-4fe9-a223-8c66cb0d3efc
+md"""
+Here a list of extra ressources in case you want to learn more. They inspired me a lot through this notebook so hope you find them usefull!
+
+
+- [Wikipedia page](https://en.wikipedia.org/wiki/Collatz_conjecture)
+- [The Numberphile video](https://www.youtube.com/watch?v=5mFpVDpKX70) ( [and the extras](https://www.youtube.com/watch?v=O2_h3z1YgEU) )
+- [The Coding Train](https://www.youtube.com/watch?v=EYLWxwo1Ed8)
+- [This amazing post from Luc Blassel] (https://lucblassel.com/posts/visualizing-the-collatz-conjecture/)
+- [Edmund Harris's website](https://maxwelldemon.com/) 
+"""
+
+# ╔═╡ 0fdafbdc-a6aa-42a6-a899-41b351b5e7e8
+md"## Packages"
+
+
+# ╔═╡ c5673bfa-d2b0-4893-ad88-42a5b81f27b4
+begin
+	using Collatz
+	using Graphs
+	using FixedPointNumbers 
+	md"""
+	!!! info "Numerical Packages"
+		[Collatz](https://juliapackages.com/p/collatz): This package provide the methods to generate the hailstone sequence, the tree graph and stopping time for the collatz conjecture. 
+	
+		[Graphs](https://www.juliapackages.com/p/graphs): Used to deal with creating and modifying graphs. 
+	
+		[FixedPointNumbers](https://www.juliapackages.com/p/fixedpointnumbers): Package to deal with fixed point number, only used to handle colors.
+	"""
+end
+
+# ╔═╡ e4a76493-9aea-4379-9a56-6a9b9e8d6b54
+begin
+	# Notebook related packages
+	using PlutoUI
+	import PlutoUI: combine
+	using HypertextLiteral:@htl
+	using Parameters
+	md"""
+	!!! info "Notebook Packages"
+		[PlutoUI](https://www.juliapackages.com/p/PlutoUI): Extension for Pluto to handle interactivity, provides the Sliders, Checkboxes and Color Picker. 
+	
+		[HypertextLiteral](https://www.juliapackages.com/p/HypertextLiteral): Drawing library, specifically for graphs.
+	
+	"""
+end
+
+# ╔═╡ 13f52ec2-16b9-41a5-9560-177ca827a72e
+begin
+	using Plots
+	using Colors
+	using Luxor
+	using Karnak, NetworkLayout
+	using ImageIO ,ImageShow
+	gr()
+	md"""
+	!!! info "Ploting Packages"
+		[Plots](https://www.juliapackages.com/p/plots): Plotting library for the several plots in the notebook.
+		
+		[Luxor](https://www.juliapackages.com/p/luxor): Drawing library used for the visualiation.
+	
+		[Karnak](https://www.juliapackages.com/p/karnak): Drawing library, specifically for graphs.
+	
+		[NetworkLayout](https://www.juliapackages.com/p/networklayout): Used to compute the layout of the graphs.
+		
+		[ImageIO](https://www.juliapackages.com/p/ImageIO): Used to faciliate the handling of images.
+		
+		[ImageShow](https://www.juliapackages.com/p/ImageShow): Enhances the displaying of the images in the interactive visualization and the gallery.
+	"""
+end
+
+# ╔═╡ 091d8f63-d02a-48fa-be0c-e9e027409279
+md"## Custom Types"
+
+# ╔═╡ d6cc6642-018d-4a7f-b82a-dd50bff8e2fc
+"""
+A struct to bundle the parameters and the generated image together. 
+
+`viz_parameters::VisualizationParameters`
+`collatz_parameters::NamedTuple{(:P, :a, :b)}` = (P = 2, a = 3, b = 1)
+`imgdata::Matrix{RGBA{N0f8}}` = []
+`shortcut::Bool` = false
+`notes::String` = ""
+
+
+
+"""
+@with_kw struct CollatzVisualization
+	viz_parameters::VisualizationParameters
+	collatz_parameters::NamedTuple{(:P, :a, :b)} = (P=2,a=3,b=1)
+	imgdata::Matrix{RGBA{N0f8}} = []
+	shortcut::Bool = false
+	ultra_shortcut::Bool = false
+	notes::String = ""
+	
+	function CollatzVisualization(viz_parameters, collatz_parameters,imgdata, shortcut,ultra_shortcut, notes)
+		if((shortcut || ultra_shortcut)  &&  (collatz_parameters.P != 2 || collatz_parameters.a != 3 || collatz_parameters.b == 1)) 
+			@info "Custom style is applied, running with default collatz parameters.." 
+			collatz_parameters = (P = 2, a=3, b=1)
+		end
+		# convert to struct not supplied 
+		if(!isa(viz_parameters, VisualizationParameters))
+			viz_parameters = VisualizationParameters(edmund_style=shortcut,chris_style=ultra_shortcut;viz_parameters...)
+		end
+
+		
+	
+		# Caluclate reversed hailstone_sequences
+		if(ultra_shortcut)
+			hailstone_sequences = [ 
+				reverse(ultra_shortcut_collatz(starting_number))
+				for starting_number in 1:viz_parameters.num_traject
+			]
+		elseif(shortcut)
+			hailstone_sequences = [ 
+				reverse(shortcut_collatz(starting_number))
+				for starting_number in 1:viz_parameters.num_traject
+			]
+		else
+			hailstone_sequences = reverse_hailstone_sequences(1:viz_parameters.num_traject;
+						collatz_parameters...)
+		end
+		# Draw the sequence and store in an image matrix
+		imgdata = @imagematrix begin
+			background(viz_parameters.background_color)
+			draw_hailstone_sequences(
+				hailstone_sequences; params = viz_parameters
+			)
+		end viz_parameters.window_width viz_parameters.window_height
+
+		# Convert matrix to img 
+		imgdata = convert.(Colors.RGBA, imgdata)
+	
+		return new(viz_parameters, collatz_parameters ,imgdata, shortcut,ultra_shortcut, notes)
+	end
+end
+
+# ╔═╡ 8c854d1c-2f89-43f0-a810-ce174cf94af8
+"""
+A struct to store parameters related to the visualization
+
+```julia
+num_traject::Int64 = 100.0
+line_length::Float64 = 20.0
+turn_scale::Float64  = 10.0
+init_angle::Float64 = 90.0
+x_start::Float64 = 250.0
+y_start::Float64 = 500.0
+window_width::Float64 = 500.0
+window_height::Float64 = 500.0
+stroke_width::Float64 = 2.0
+stroke_color::Colors.RGBA = RGBA(1.0,1.0,1.0,1.0)
+background_color::Colors.RGBA = RGBA(0.0,0.0,0.0,1.0)
+vary_shade::Bool = false
+random_shade::Bool = false
+edmund_style::Bool = false
+```
+"""
+@with_kw struct VisualizationParameters
+	num_traject::Int64 = 100.0
+	line_length::Float64 = 20.0
+	turn_scale::Float64  = 10.0
+	init_angle::Float64 = 90.0
+	x_start::Float64 = 250.0
+	y_start::Float64 = 500.0
+	window_width::Float64 = 500.0
+	window_height::Float64 = 500.0
+	stroke_width::Float64 = 2.0
+	stroke_color::Colors.RGBA = RGBA(0.0,0.0,0.0,1.0)
+	background_color::Colors.RGBA = RGBA(1.0,1.0,1.0,1.0)
+	vary_shade::Bool = false
+	random_shade::Bool = false
+	edmund_style::Bool = false
+	chris_style::Bool = false
+end
+
+# ╔═╡ 9803f163-0027-4577-af8f-c66de195d182
+md"## Functions"
+
+# ╔═╡ 1e85c1af-3318-4f20-a358-25aa0999dc8a
+"""
+	hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1 )
+
+Extension for the `hailstone_sequence()` method from Collatz.jl to calculate list of hailstone sequence given a UnitRange. 
+
+## Args
+
+- `range::UnitRange{Int64}`: Unit Range in which to calculate the hailstone sequences.
+
+
+## Kwargs
+
+- `P::Integer = 2`: Modulus used to devide n, iff n is equivalent to (0 mod P).
+- `a::Integer = 3`: Factor by which to multiply n.
+- `b::Integer = 1`: Value to add to the scaled value of n.
+
+## Examples
+```jldoctest
+julia> hailstone_sequences(2:5) 
+[[2, 1], [3, 10, 5, 16, 8, 4, 2, 1], [4, 2, 1], [5, 16, 8, 4, 2, 1]]
+```
+```jldoctest
+julia> hailstone_sequences(1:5; P=4, a=1, b=3)
+[[1], [2, 5, 8, 2], [3, 6, 9, 12, 3], [4, 1], [5, 8, 2, 5]]
+```
+
+## See also
+[`hailstone_sequence`](@ref), [`reverse_hailstone_sequences`](@ref)
+"""
+function hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1 )
+	return [ 
+				hailstone_sequence(starting_number; P, a, b, verbose =false)  
+			
+			for starting_number in range
+		]
+end
+
+# ╔═╡ 40dd9659-abb9-4484-b5f1-f332e2abe90e
+"""
+	reverse_hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1)
+This function wraps the `hailstone_sequence()` method from Collatz.jl to calculate list of hailstone sequence given a UnitRange. 
+
+It return the reversed sequence where the endpoint is the first element of the result.
+
+## Args
+
+- `range::UnitRange{Int64}`: Unit Range in which to calculate the hailstone sequences.
+
+
+## Kwargs
+
+- `P::Integer = 2`: Modulus used to devide n, iff n is equivalent to (0 mod P).
+- `a::Integer = 3`: Factor by which to multiply n.
+- `b::Integer = 1`: Value to add to the scaled value of n.
+
+## Examples
+```jldoctest
+julia> hailstone_sequences(2:5) 
+[[1, 2], [1, 2, 4, 8, 16, 5, 10, 3], [1, 2, 4], [1, 2, 4, 8, 16, 5]]
+```
+```jldoctest
+julia> hailstone_sequences(1:5; P=4, a=1, b=3)
+[[1], [2, 8, 5, 2], [3, 12, 9, 6, 3], [1, 4], [5, 2, 8, 5]]
+```
+
+## See also
+[`hailstone_sequence`](@ref), [`hailstone_sequences`](@ref)
+"""
+function reverse_hailstone_sequences(range::UnitRange{Int64}; P::Int=2, a::Int=3, b::Int=1 )
+	return [ 
+				reverse(hailstone_sequence(starting_number; P, a, b, verbose =false))
+			for starting_number in range
+		]
+end
+
 # ╔═╡ f718bbfd-2e86-45c5-96b3-ef3d810966a9
 """
 	buffer_img_data(vis::CollatzVisualization)
@@ -918,8 +1050,346 @@ function Base.show(io::IO, m::MIME"image/png",obj::CollatzVisualization)
 	show(io, m, obj.imgdata)
 end
 
+# ╔═╡ f02affaa-534b-4c72-81ae-c42ca3b455fd
+md"### Collatz"
+
+# ╔═╡ 4c991173-d9ff-4ba9-b217-8f9aafbbd631
+shortcut_collatz_cache = Dict{Int, Vector{Int}}()
+
+# ╔═╡ 240b4cc1-1bae-429b-863b-792897cd555b
+ultra_shortcut_collatz_cache = Dict{Int, Vector{Int}}()
+
+# ╔═╡ 23be8efa-b907-453f-9245-8bc46a37ad26
+"""
+	shortcut_collatz(n::Int)
+
+Calculate the collatz sequence of a number using the shortcut formulation:
+g(n) = (3n + 1) / 2 if odd and g(n) = n / 2 if even
+
+"""
+function shortcut_collatz(n::Int)
+   if n == 1
+	   return [1]
+   elseif haskey(shortcut_collatz_cache, n)
+	   return shortcut_collatz_cache[n]
+   elseif n % 2 == 0
+	   sequence = [n, shortcut_collatz(n ÷ 2)...]
+	   shortcut_collatz_cache[n] = sequence
+	   return sequence
+   else
+	   sequence = [n, shortcut_collatz(Int((3n + 1)/2))...]
+	   shortcut_collatz_cache[n] = sequence
+	   return sequence
+   end
+end
+
+
+# ╔═╡ a1a6130d-771a-43d7-ae94-049e3c9b81b3
+"""
+	ultra_shortcut_collatz(n::Int)
+
+Calculate the collatz sequence of a number using the absolute shortcut formulation:
+g(n) = (3n + 1) / 2^k  if odd where k is the highest power that divides 3n+1 and g(n) = n / 2 if even
+
+"""
+function ultra_shortcut_collatz(n::Int)
+   if n == 1
+	   return [1]
+   elseif haskey(ultra_shortcut_collatz_cache, n)
+	   return ultra_shortcut_collatz_cache[n]
+   elseif n % 2 == 0
+	   
+	   while n % 2 == 0
+		   n = n ÷ 2
+	   end
+	   
+	   if n == 1 return [1] end
+	   sequence = [n, ultra_shortcut_collatz(3n + 1)...]
+	   ultra_shortcut_collatz_cache[n] = sequence
+	   return sequence
+   else
+	   sequence = [n, ultra_shortcut_collatz(Int((3n + 1)/2))...]
+	   ultra_shortcut_collatz_cache[n] = sequence
+	   return sequence
+   end
+end
+
+
+# ╔═╡ 319d784b-c62d-4f28-a5b3-ebf89c892afc
+"""
+	make_collatz_graph(initial_value::Int, max_orbit_distance::Int; P=2, a=3, b=1)
+
+This function returns a graph that represent the different branches that each number takes.
+
+## Args
+
+- `initial_value::Integer`: The starting value of the directed tree graph.
+
+- `max_orbit_distance::Integer`: Degree of seperation between the initial value and each value encountered. 
+
+## Kwargs
+
+- ```P::Integer=2```: Modulus used to devide n, iff n is equivalent to (0 mod P).
+
+- ```a::Integer=3```: Factor by which to multiply n.
+
+- ```b::Integer=1```: Value to add to the scaled value of n.
+
+
+## See also
+[`tree_graph`](@ref)
+"""
+function make_collatz_graph(initial_value::Int, max_orbit_distance::Int; P=2, a=3, b=1)
+	g = SimpleGraph()
+	record::Array{Tuple{Number,Number}} = []
+	tree = tree_graph(initial_value,max_orbit_distance; P, a,b )
+	descend_tree!(g, record, tree)
+	return g, record
+end
+
+# ╔═╡ 3153ba89-f2d4-4e31-9e79-00ec5ecbb91c
+"""
+	descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  tree::Dict, previous::Number=collect(keys(tree))[1], depth::Int=0)
+	
+This function is used to explore the tree return by `tree_graph` from Collatz.jl and modify the graph g given as input. 
+
+## Args 
+- `g::SimpleGraph`: The graph to modify 
+- `record::Array{Tuple{Number,Number}}`: An array that keeps track of each of the encountered values. Each value is stored as (depth, value) in order to keep track of what depth the value was encountered
+- `tree::Dict`: The tree graph returned by `tree_graph` 
+- `previous::Number`: The number passed by the previous call to the function 
+- `depth::Int`: The current depth of the search  
+"""
+function descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  tree::Dict, previous::Number=collect(keys(tree))[1], depth::Int=0)
+	
+	# loop over each branch
+	for key in  keys(tree)
+		
+		add_vertex!(g)
+		
+		# check if previous number exist in record
+		previous_index = findfirst(x -> x == previous, map(x -> x[2], record))
+		
+		# if exist, create a edge in the graph 
+		isnothing(previous_index) ? "" : add_edge!(g, previous_index, length(record)+1)
+
+		# this check is there cos when reaching a cycle the tree has a non number key
+		if(isa(key, Number))
+			push!(record, (depth, key))
+		end
+
+		# call recursively to continue descending the tree 
+		descend_tree!(g, record,tree[key], key, depth +1)
+	end
+	# end
+end
+
+
+# ╔═╡ b79405c3-42d1-4289-bbc3-67b6eae2b135
+"""
+	descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  key::Int64, previous::Collatz._CC.CC, depth::Int=0)
+
+To handle the case where the search hits a cycle and previous is of type Collatz._CC.CC
+
+## Args 
+
+- `g::SimpleGraph`: The graph to modify 
+- `record::Array{Tuple{Number,Number}}`: An array that keeps track of each of the encountered values
+- `tree::Dict`: The tree graph returned by `tree_graph` 
+- `previous::Collatz._CC.CC`: The cycle value.
+- `depth::Int`: The current depth of the search  
+
+"""
+function descend_tree!(g::SimpleGraph{Int64}, record::Array{Tuple{Number,Number}},  key::Int64, previous::Collatz._CC.CC, depth::Int=0)
+	
+	# check if previous number exist in record
+	previous_index = findfirst(x -> x == previous, map(x -> x[2], record))
+
+	# if exist, create a edge in the graph 
+	isnothing(previous_index) ? "" : add_edge!(g, previous,  length(record)+1)
+
+	# push key in record 
+	push!(record, (depth, key))
+	return
+end
+
+# ╔═╡ cf545d05-7846-4881-a532-33cb2c1972a4
+md"### Drawing"
+
+# ╔═╡ 278572e6-5a74-4dad-b39b-68cc85e4339c
+"""
+	draw_hailstone_sequences(hailstone_seqs::Vector{Vector{Int64}}; params::VisualizationParameters)
+
+This function is used to draw each trajectory given an array of hailstone sequences.
+
+## See also
+
+[`VisualizationParameters`](@ref)
+
+"""
+function draw_hailstone_sequences(hailstone_seqs::Vector{Vector{Int64}}; params::VisualizationParameters)
+	
+	@unpack init_angle, x_start, y_start, window_width, window_height = params
+	
+	for hailstone_seq in hailstone_seqs
+		# reset to origin and setup windows accord to user parameter
+		origin()
+		Luxor.translate(
+			x_start - window_width  /2,
+			y_start - window_height /2
+		)
+		Luxor.rotate(deg2rad(init_angle)+π)
+
+		# draw sequence
+		draw_hailstone_sequence(hailstone_seq; params)
+	end
+end
+
+# ╔═╡ 5683080b-7d4b-4e34-aa75-b3c68dc60314
+"""
+	draw_hailstone_sequence(hailstone_seq::Vector{Int64}; params::VisualizationParameters)
+
+This function is used to draw the trajectory of the hailstone sequence of a number. Using a Turtle, the function loops over each number in the sequence. For the sequence, a curve is drawn where for each step in the sequence, it will curves one way if the number is odd, and the other way if the number is even. 
+
+## See also
+[`VisualizationParameters`](@ref)
+
+"""
+function draw_hailstone_sequence(hailstone_seq::Vector{Int64}; params::VisualizationParameters=VisualizationParameters())
+
+	@unpack line_length, turn_scale, 
+	stroke_width, stroke_color, random_shade, vary_shade, edmund_style, chris_style = params
+	# Initiliaze turle
+	🐢 = Turtle()
+	
+	# set stroke width
+	Penwidth(🐢, stroke_width)
+
+	# Handle Color
+	if(random_shade)
+		Pencolor(🐢,RGB(rand(), rand(), rand()))
+		
+	elseif vary_shade
+		
+		color_offset = randn()/2
+		Pencolor(🐢,RGB(stroke_color.r + color_offset, stroke_color.g + color_offset, stroke_color.b + color_offset))
+	else
+		Pencolor(🐢,stroke_color)
+	end
+
+	# Move the turtle 
+	 for (index,number) in enumerate(hailstone_seq)
+
+		# decrease opacity as the sequence gets longer
+		setopacity(rescale(index, 1, length(hailstone_seq)*8
+			, 0.1,1))
+
+		if(chris_style)
+			if number % 3 == 1
+				Turn(🐢, turn_scale)
+			else
+				Turn(🐢, -turn_scale)	
+			end
+			Forward(🐢, line_length)
+			continue
+		end
+			
+		 
+		if number % 2 == 0
+			Turn(🐢, turn_scale)
+		else
+			if(edmund_style) 
+				Turn(🐢, -1/2*turn_scale)
+			else
+				Turn(🐢, -turn_scale)
+			end
+			
+		end
+			
+		
+		# if number < 0
+		# 	Turn(🐢, -90)
+		# end
+		 
+		Forward(🐢, line_length)
+	end
+	
+end
+
+
 # ╔═╡ ae8c02c0-2944-42dc-8a19-a45fbdc16134
 md"### HTML Functions"
+
+# ╔═╡ 03eb05fa-57bc-45d0-9943-79034ed10211
+"""
+	makeCollatzGallery(visualizations::Vector{CollatzVisualization}; width::Int=500, height::Int=500)
+
+Helper function to format an array of visualizations into a scrollable gallery, with an panel below the image showing the parameters used to generate the visualization.
+
+## Kwargs
+-`width::Int`=500: Width of each image in pixels
+
+-`height::Int`=500: Height of each image in pixels
+
+"""
+function makeCollatzGallery(visualizations::Vector{CollatzVisualization}; width::Int=500, height::Int=500)
+	res = []
+	for (i,viz) in enumerate(visualizations)
+		push!(res, @htl("""
+		<div>
+			<div class="canvas-container">
+				<canvas id="canvas$(i-1)" width="$width" height="$height">
+				</canvas>
+			</div>
+			<div class="notes-container ">
+				<div class="notes-container-inner">
+					Parameters:
+					<br>
+					P: $(viz.P)
+					<br>
+					a: $(viz.a)
+					<br>
+					b: $(viz.b)
+					<br>
+				</div>
+				<div class="notes-container-inner">
+					Number of trajectories: $(get_num_trajects(viz))
+					<br>
+					Step length: $(get_line_length(viz))
+					<br>
+					Rotation Angle: $(get_turn_scale(viz))
+				</div>
+				<div class="notes-container-inner">
+					Window Width: $(get_window_width(viz))
+					<br>		
+					Window Height: $(get_window_height(viz))
+					<br>
+					Starting point (X): $(get_x_start(viz))
+					<br>
+					Starting point (Y): $(get_y_start(viz))
+					<br>
+					Rotation Angle: $(get_init_angle(viz))
+				</div>
+				<div class="notes-container-inner">
+					Stroke Width: $(get_stroke_width(viz))
+					<br>
+					Stroke Color: #$(get_stroke_color(viz))
+					<br>
+					Background Color: #$(get_background_color(viz))
+				</div>
+				<div class="notes-container-inner">
+					Shade Variation: $(get_vary_shade(viz))
+					<br>
+					Random Shade: $(get_random_shade(viz))
+				</div>
+
+				$(get_notes(viz))
+				
+			</div> 
+		</div>"""))
+	end
+	return res
+end
 
 # ╔═╡ f47eb656-67ec-4760-8906-713fa480cb47
 md"### Interactivity extensions"
@@ -1015,164 +1485,6 @@ function format_sliderParameter( params::Vector{SliderParameter};title::String,)
 	end
 end
 
-# ╔═╡ e57da7e5-32bb-48a2-af27-5ac671cabdae
-@bind hailstone_params format_sliderParameter(title="Hailstone Sequence Parameters:",[
-	SliderParameter(lb=1,ub=1000,default=15,step=1,alias=:start_value,label="Starting Value")]
-	)
-
-# ╔═╡ 43c4fd8d-bb44-43cd-91dd-d221629d1fd9
-begin
-graph_sliders = @bind graph_parameters format_sliderParameter(title="Collatz Graph Parameters:",[
-	SliderParameter(lb=1,ub=1000,default=1,step=1,alias=:start_value,label="Starting Value"),
-	SliderParameter(lb=1,ub=25,default=9,step=1,alias=:orbit,label="Maximum Orbit")
-	
-])
-	
-
-	@htl("""
-	<div class="slider_group">
-	<div>
-		$graph_sliders
-	</div>
-	
-	</div>
-	""")
-end
-
-# ╔═╡ 0fd7242c-46a1-4929-9c53-3c45768893b4
-@bind stopping_parameters format_sliderParameter(title="Stopping Time Plot Parameters",
-	[SliderParameter(lb=100, ub=30000, step=100, default=1000,alias=:ub, label="Upper Bound")]
-
-)
-
-# ╔═╡ 5ba5f885-1de1-4058-91bf-35e1b05d1941
-viz_sliders = @bind viz_parameters format_sliderParameter(
-			title = "Visualization Options:", 
-			[
-				SliderParameter(
-					lb = 100.0,
-					ub = 10000.0, 
-					default = 1000.0, 
-			 		step = 100.0, 
-					alias = :num_traject, 
-					label = "Numbers of trajectories"
-				),
-				SliderParameter(
-					lb = 1,
-					ub = 150, 
-					default = 20,
-					step = 1,
-					alias=:line_length, 
-					label="Step"),
-				SliderParameter(
-					lb = 0.0,
-					ub = 180.0, 
-					default = 10.0,
-					step = 0.1, 
-					alias = :turn_scale, 
-					label = "Rotation Angle (in degrees)"
-				),
-			]
-		);
-
-# ╔═╡ f21f1e3e-a3ab-458e-a101-ce824731f0b6
-begin
-collatz_sliders = @bind collatz_parameters format_sliderParameter(title="Collatz Parameters:",[
-	SliderParameter(lb=1,ub=10,step=1,default=2,label="P"),
-	SliderParameter(lb=1,ub=10,step=1,default=3,label="a"),
-	SliderParameter(lb=1,ub=10,step=1,label="b"),
-])
-	if(do_generalize_collatz)
-		collatz_sliders
-	else
-	end
-end
-
-# ╔═╡ 66fe673a-7679-4c55-bf59-146a8dd1241c
-begin
-	hailstone_seq = "Hailstone Sequence" ∈ generalize_collatz ? hailstone_sequence(hailstone_params.start_value; collatz_parameters... ,verbose=false) : hailstone_sequence(hailstone_params.start_value; verbose=false)
-	
-	pl = plot(leg = false)
-	xlabel!("Iterations")
-	ylabel!("Value")
-	title!("Hailstone sequence of: $(hailstone_params.start_value)")
-	
-	if(animate_hailstone)
-		# using with_terminal to remove the @info msg 
-		with_terminal(show_value=false) do
-			global gl = @gif for i in range(0,length(hailstone_seq),step=1) 
-				plot!(pl, hailstone_seq[1:i], linecolor=:lightblue)
-				scatter!(pl, hailstone_seq[1:i], marker = :star7, markersize=7, markercolor=:lightblue)
-			end fps = 4
-		end
-	else
-		plot!(pl, hailstone_seq, linecolor=:lightblue)
-		scatter!(pl, hailstone_seq, marker = :star7, markersize=7, markercolor=:lightblue)
-		global gl = pl
-	end
-	gl
-	
-end
-
-# ╔═╡ 6693800b-e2bc-46e4-b5f8-004184ef472b
-begin
-	g, record = "Graph" ∈ generalize_collatz ?  make_collatz_graph(
-		graph_parameters.start_value,
-		graph_parameters.orbit;
-		collatz_parameters...
-	) :  make_collatz_graph(
-		graph_parameters.start_value,
-		graph_parameters.orbit;
-	)
-	
-	graph_colors = [RGB(rescale(record[i][1],1,graph_parameters.orbit, 1,0.3),.1,.3) 
-		               for i in 1:nv(g)]
-end;
-
-# ╔═╡ 3550fe19-261e-4069-9bf6-6417dcaac102
-begin
-	collatz_graph = @drawsvg begin
-	    background("white")
-	    sethue("grey40")
-	    fontsize(25)
-	    drawgraph(g, 
-			layout=Stress(initialpos=[(0.0,0.0)]),
-			margin = 60,                         
-	        vertexlabels = map(x -> x[2], record),
-			vertexshapesizes = 40,
-	        vertexfillcolors = graph_colors
-	    )	
-	end 1600 1200
-			
-	collatz_graph
-end
-
-# ╔═╡ 45ca6e2a-6a58-475e-9c02-4925e71625bd
-begin
-	# find values that that have not been previously been calculated
-	newValues = filter(x -> !(x ∈ keys(stopping_times)),collect(range(1,stopping_parameters.ub,step=1)) )
-	
-	# calculate the values and add them to the dictionary 
-	for newValue in newValues
-		push!(stopping_times, 
-			( newValue => "Stopping Time" ∈ generalize_collatz ? stopping_time(newValue, ;collatz_parameters..., total_stopping_time=true) : stopping_time(newValue, total_stopping_time=true))
-		)
-	end
-
-	scatter(
-		collect(values(sort(
-				filter(
-					key -> (key[1] ∈ range(1,stopping_parameters.ub,step=1))
-					, stopping_times)
-			)
-		)
-	), markersize = 1, leg = false)
-	
-	title!("Total stopping time of numbers up to $(stopping_parameters.ub)")
-	ylabel!("Stopping time")
-	xlabel!("Starting point")
-end
-
 # ╔═╡ 5977a13d-93b8-4e51-8484-5b1882100c49
 function format_numberFieldParameter( params::Vector{NumberFieldParameter{T}};title::String,) where T
 	
@@ -1196,71 +1508,6 @@ function format_numberFieldParameter( params::Vector{NumberFieldParameter{T}};ti
 		"""
 	end
 end
-
-# ╔═╡ 0865f8a3-a959-481b-a9ae-adbca78a2749
-begin
-	window_size_sliders = @bind window_size_parameters format_numberFieldParameter(
-		title="Window Size",
-	[
-		NumberFieldParameter(
-			lb=100.0,
-			ub=10000.0,
-			default=700.0,
-			alias = :window_height, 
-			label = "Height", 
-		),
-		NumberFieldParameter(
-			lb=100.0,
-			ub=10000.0,
-			default=500.0,
-			alias=:window_width, 
-			label="Width")
-	]
-	)
-end
-
-
-# ╔═╡ 8a64e9e3-477e-4a7e-97f7-61cf5e428731
-@unpack window_height,window_width = window_size_parameters;
-
-# ╔═╡ 7dbfb4dc-c9d0-464d-83b2-18db90d76878
-viz_specs_sliders = @bind viz_specs_parameters format_sliderParameter(
-			title = "Image Options:", 
-			[
-				SliderParameter(
-					lb = 0.0,
-					ub = 360.0,
-					default = 20.0,
-					step = 0.1,
-					alias = :init_angle, 
-					label = "Image Rotation (in degrees)"
-				),
-				SliderParameter(
-					lb = 0.0,
-					ub = window_width, 
-					default = window_width/2, 
-					step = 0.1, 
-					alias = :x_start, 
-					label = "Starting point (X)"
-				),
-				SliderParameter(
-					lb = 0.0, 
-					ub = window_height,
-					default = window_height, 
-					step = 0.1, 
-					alias = :y_start, 
-					label = "Starting point (Y)"
-				),
-				SliderParameter(
-					lb = 1.0, 
-					ub = 50.0,
-					default = 5.0, 
-					step = 0.1, 
-					alias = :stroke_width, 
-					label = "Stroke Width"
-				),
-			]
-		);
 
 # ╔═╡ a7885279-3f73-4c5d-aeef-061dea1ce930
 function format_checkBoxParameter( params::Vector{CheckBoxParameter};title::String)
@@ -1288,29 +1535,6 @@ function format_checkBoxParameter( params::Vector{CheckBoxParameter};title::Stri
 	end
 end
 
-# ╔═╡ f680e7ea-8e3a-41ac-ab92-a27c05103864
-viz_extra_sliders = @bind viz_extra_options format_checkBoxParameter(
-			title="Extra Options",
-			[
-				CheckBoxParameter(
-					alias=:random_shade, 
-					label="Random Color"
-				),
-				CheckBoxParameter(
-					alias=:vary_shade, 
-					label="Vary Shade"
-				),
-				CheckBoxParameter(
-					alias=:edmund_style, 
-					label="In Edmund Harris's style"
-				),
-				CheckBoxParameter(
-					alias=:chris_style, 
-					label="In Chris's style"
-				),
-			], 
-		);
-
 # ╔═╡ 2d98aed3-9a51-4225-b914-a20b19f43908
 function format_colorPicker( params::Vector{ColorParameter};title::String)
 	
@@ -1337,135 +1561,6 @@ function format_colorPicker( params::Vector{ColorParameter};title::String)
 	end
 end
 
-# ╔═╡ 01cc5e4f-d94b-4211-b268-9ce0640cd23f
-colors_sliders = @bind viz_colors_options format_colorPicker(
-		title="Color Options",
-	[
-		ColorParameter(
-		alias = :stroke_color, 
-		label = "Stroke Color", 
-		default = RGB{N0f8}(
-			reinterpret(N0f8, UInt8(230)),
-			reinterpret(N0f8, UInt8(130)),
-			reinterpret(N0f8, UInt8(130)))
-		),
-		ColorParameter(
-			alias=:background_color, 
-			label="Background")
-	]
-	
-);
-
-# ╔═╡ 50a423ad-ca90-4015-9ef6-577f60e4efe7
-begin
-	@htl("""
-	<div class="slider_group sidebar-left">
-		<div class="on_big_show">
-			<div class="slider_group_inner">
-				$viz_sliders
-			</div>
-
-		</div>	
-	</div>
-	
-	<div class="slider_group sidebar-right">
-		<div class="on_small_show">
-			<div class="slider_group_inner ">
-				$viz_sliders
-			</div>
-		</div>
-	
-		<div class="slider_group_inner">
-			$viz_specs_sliders
-		</div>
-	
-		<div class="slider_group_inner">
-			$colors_sliders
-		</div>
-	
-		<div class="slider_group_inner">
-			$viz_extra_sliders
-		</div>
-	</div>
-	<div class="sidebar-bottom">
-		<div class="on_tiny_show">
-			<div class="slider_group">
-				<div class="slider_group_inner">
-					$viz_sliders
-				</div>
-			
-				<div class="slider_group_inner ">
-					$viz_sliders
-				</div>
-			</div>
-		
-			<div class="slider_group">
-				<div class="slider_group_inner">
-					$viz_specs_sliders
-				</div>
-			
-				<div class="slider_group_inner">
-					$colors_sliders
-				</div>
-				<div class="slider_group_inner">
-					$viz_extra_sliders
-				</div>
-			</div>
-		</div>
-		<div>
-				
-		</div>
-	</div>
-	""")
-end
-
-# ╔═╡ 6d225dce-3362-4f5d-bba9-0b5312f6be5a
-begin
-	@unpack ( num_traject, turn_scale, line_length ) = viz_parameters
-	@unpack ( init_angle, x_start, y_start, stroke_width) = viz_specs_parameters
-	@unpack ( stroke_color, background_color ) = viz_colors_options
-	@unpack ( random_shade, vary_shade, edmund_style, chris_style ) = viz_extra_options
-
-
-	interactive_viz =  CollatzVisualization(
-		viz_parameters = (
-				num_traject = num_traject,
-				line_length = line_length,
-				turn_scale = turn_scale,
-				window_width = window_width,
-				window_height = window_height, 
-				x_start = x_start, 
-				y_start = y_start,
-				init_angle = init_angle, 
-				stroke_width = stroke_width, 
-				stroke_color = stroke_color, 
-				background_color = background_color, 
-				random_shade = random_shade,
-				vary_shade = vary_shade
-			),
-		collatz_parameters = (P=collatz_parameters.P,a = collatz_parameters.a, b= collatz_parameters.b),
-		shortcut = edmund_style,
-		ultra_shortcut = chris_style
-	)
-	
-	# trajectories = reverse_hailstone_sequences(range(5,num_traject); collatz_parameters...)
-	
-	# viz = @draw begin
-	# 	background(background_color)
-	# 	draw_hailstone_sequences(
-	# 		trajectories; line_length, turn_scale,
-	# 		window_width, window_height, init_angle, x_start, y_start,
-	# 		stroke_width, stroke_color, random_shade, vary_shade
-	# 	)
-	# end window_width window_height
-end
-
-# ╔═╡ 1b48b435-e959-477f-a8d2-3507da73fc28
-@htl("""
-$(filename == "" ? PlutoUI.DownloadButton(interactive_viz,"MyCoolVisualization.png") : PlutoUI.DownloadButton(interactive_viz,"$filename.png"))
-"""
-)
-
 # ╔═╡ d9aaaadc-7d94-4e85-a1cb-c137e869ad2f
 md"### Extras"
 
@@ -1486,101 +1581,6 @@ begin
 	get_vary_shade(viz::CollatzVisualization) = viz.viz_parameters.vary_shade 
 	get_random_shade(viz::CollatzVisualization) = viz.viz_parameters.random_shade
 	get_notes(viz::CollatzVisualization) = viz.notes
-end
-
-# ╔═╡ 03eb05fa-57bc-45d0-9943-79034ed10211
-"""
-	makeCollatzGallery(visualizations::Vector{CollatzVisualization}; width::Int=500, height::Int=500)
-
-Helper function to format an array of visualizations into a scrollable gallery, with an panel below the image showing the parameters used to generate the visualization.
-
-## Kwargs
--`width::Int`=500: Width of each image in pixels
-
--`height::Int`=500: Height of each image in pixels
-
-"""
-function makeCollatzGallery(visualizations::Vector{CollatzVisualization}; width::Int=500, height::Int=500)
-	res = []
-	for (i,viz) in enumerate(visualizations)
-		push!(res, @htl("""
-		<div>
-			<div class="canvas-container">
-				<canvas id="canvas$(i-1)" width="$width" height="$height">
-				</canvas>
-			</div>
-			<div class="notes-container ">
-				<div class="notes-container-inner">
-					Parameters:
-					<br>
-					P: $(viz.P)
-					<br>
-					a: $(viz.a)
-					<br>
-					b: $(viz.b)
-					<br>
-				</div>
-				<div class="notes-container-inner">
-					Number of trajectories: $(get_num_trajects(viz))
-					<br>
-					Step length: $(get_line_length(viz))
-					<br>
-					Rotation Angle: $(get_turn_scale(viz))
-				</div>
-				<div class="notes-container-inner">
-					Window Width: $(get_window_width(viz))
-					<br>		
-					Window Height: $(get_window_height(viz))
-					<br>
-					Starting point (X): $(get_x_start(viz))
-					<br>
-					Starting point (Y): $(get_y_start(viz))
-					<br>
-					Rotation Angle: $(get_init_angle(viz))
-				</div>
-				<div class="notes-container-inner">
-					Stroke Width: $(get_stroke_width(viz))
-					<br>
-					Stroke Color: #$(get_stroke_color(viz))
-					<br>
-					Background Color: #$(get_background_color(viz))
-				</div>
-				<div class="notes-container-inner">
-					Shade Variation: $(get_vary_shade(viz))
-					<br>
-					Random Shade: $(get_random_shade(viz))
-				</div>
-
-				$(get_notes(viz))
-				
-			</div> 
-		</div>"""))
-	end
-	return res
-end
-
-# ╔═╡ 53520512-fc88-4dd2-ae6d-a8ed0d599e42
-begin
-	@htl("""
-	<script>
-	
-	
-	const buffers = $([buffer_img_data(viz) for viz in gallery_vizs])
-	buffers.forEach((buffer, index) => {
-		
-		const canvas = document.getElementById("canvas"+index);
-		const ctx = canvas.getContext("2d");
-		const arr = new Uint8ClampedArray(buffer);
-		let imageData = new ImageData(arr, 500, 500);
-		ctx.putImageData(imageData, 0, 0);
-		
-		
-	})
-	</script>
-	<div class="gallery">
-		$(makeCollatzGallery(gallery_vizs))
-	</div>
-	""")
 end
 
 # ╔═╡ 90dc6dd4-c4f3-4e4d-8e91-0fecafd258e1
@@ -1710,16 +1710,16 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Collatz = "~1.0.0"
 Colors = "~0.12.11"
 FixedPointNumbers = "~0.8.5"
-Graphs = "~1.11.0"
+Graphs = "~1.12.0"
 HypertextLiteral = "~0.9.5"
 ImageIO = "~0.6.8"
 ImageShow = "~0.3.8"
-Karnak = "~1.0.0"
-Luxor = "~3.8.0"
+Karnak = "~1.1.0"
+Luxor = "~4.1.0"
 NetworkLayout = "~0.4.6"
 Parameters = "~0.12.3"
-Plots = "~1.40.4"
-PlutoUI = "~0.7.59"
+Plots = "~1.40.8"
+PlutoUI = "~0.7.60"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -1732,14 +1732,9 @@ git-tree-sha1 = "6e1d2a35f2f90a4bc7c2ed98079b2ba09c35b83a"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
 version = "1.3.2"
 
-[[Adapt]]
-deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "cde29ddf7e5726c9fb511f340244ea3481267608"
-uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "3.7.2"
-
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
+version = "1.1.2"
 
 [[ArnoldiMethod]]
 deps = ["LinearAlgebra", "Random", "StaticArrays"]
@@ -1749,6 +1744,7 @@ version = "0.4.0"
 
 [[Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+version = "1.11.0"
 
 [[AxisArrays]]
 deps = ["Dates", "IntervalSets", "IterTools", "RangeArrays"]
@@ -1758,11 +1754,12 @@ version = "0.4.7"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+version = "1.11.0"
 
 [[BitFlags]]
-git-tree-sha1 = "2dc09997850d68179b69dafb58ae806167a32b1b"
+git-tree-sha1 = "0691e34b3bb8be9307330f88d1a3c3f25466c24d"
 uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
-version = "0.1.8"
+version = "0.1.9"
 
 [[Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1775,41 +1772,23 @@ git-tree-sha1 = "389ad5c84de1ae7cf0e28e381131c98ea87d54fc"
 uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
 version = "0.5.0"
 
-[[CSV]]
-deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "PrecompileTools", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings", "WorkerUtilities"]
-git-tree-sha1 = "6c834533dc1fabd820c1db03c839bf97e45a3fab"
-uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-version = "0.10.14"
-
 [[Cairo]]
 deps = ["Cairo_jll", "Colors", "Glib_jll", "Graphics", "Libdl", "Pango_jll"]
-git-tree-sha1 = "d0b3f8b4ad16cb0a2988c6788646a5e6a17b6b1b"
+git-tree-sha1 = "7b6ad8c35f4bc3bca8eb78127c8b99719506a5fb"
 uuid = "159f3aea-2a34-519c-b102-8c37f9878175"
-version = "1.0.5"
+version = "1.1.0"
 
 [[Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "a2f1c8c668c8e3cb4cca4e57a8efdb09067bb3fd"
+git-tree-sha1 = "009060c9a6168704143100f36ab08f06c2af4642"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
-version = "1.18.0+2"
-
-[[ChainRulesCore]]
-deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "575cd02e080939a33b6df6c5853d14924c08e35b"
-uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.23.0"
-
-[[ChangesOfVariables]]
-deps = ["InverseFunctions", "LinearAlgebra", "Test"]
-git-tree-sha1 = "2fba81a302a7be671aefe194f0525ef231104e7f"
-uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
-version = "0.1.8"
+version = "1.18.2+1"
 
 [[CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
-git-tree-sha1 = "59939d8a997469ee05c4b4944560a820f9ba0d73"
+git-tree-sha1 = "bce6804e5e6044c6daab27bb533d1295e4a2e759"
 uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
-version = "0.7.4"
+version = "0.7.6"
 
 [[Collatz]]
 git-tree-sha1 = "f2ebb33a345e086823cc57ed206e956eb8f1d4d8"
@@ -1818,9 +1797,9 @@ version = "1.0.0"
 
 [[ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
-git-tree-sha1 = "4b270d6465eb21ae89b732182c20dc165f8bf9f2"
+git-tree-sha1 = "b5278586822443594ff615963b0c09755771b3e0"
 uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
-version = "3.25.0"
+version = "3.26.0"
 
 [[ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
@@ -1834,6 +1813,12 @@ git-tree-sha1 = "a1f44953f2382ebb937d60dafbe2deea4bd23249"
 uuid = "c3611d14-8923-5661-9e6a-0046d554d3a4"
 version = "0.10.0"
 
+    [ColorVectorSpace.extensions]
+    SpecialFunctionsExt = "SpecialFunctions"
+
+    [ColorVectorSpace.weakdeps]
+    SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+
 [[Colors]]
 deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
 git-tree-sha1 = "362a287c3aa50601b0bc359053d5c2468f0e7ce0"
@@ -1841,47 +1826,46 @@ uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.11"
 
 [[Compat]]
-deps = ["Dates", "LinearAlgebra", "TOML", "UUIDs"]
-git-tree-sha1 = "b1c55339b7c6c350ee89f2c1604299660525b248"
+deps = ["TOML", "UUIDs"]
+git-tree-sha1 = "8ae8d32e09f0dcf42a36b90d4e17f5dd2e4c4215"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.15.0"
+version = "4.16.0"
+weakdeps = ["Dates", "LinearAlgebra"]
+
+    [Compat.extensions]
+    CompatLinearAlgebraExt = "LinearAlgebra"
 
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
+version = "1.1.1+0"
 
 [[ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
-git-tree-sha1 = "6cbbd4d241d7e6579ab354737f4dd95ca43946e1"
+git-tree-sha1 = "ea32b83ca4fefa1768dc84e504cc0a94fb1ab8d1"
 uuid = "f0e56b4a-5159-44fe-b623-3e5288b988bb"
-version = "2.4.1"
+version = "2.4.2"
 
 [[ConstructionBase]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "260fd2400ed2dab602a7c15cf10c1933c59930a2"
+git-tree-sha1 = "76219f1ed5771adbb096743bff43fb5fdd4c1157"
 uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
-version = "1.5.5"
+version = "1.5.8"
+weakdeps = ["IntervalSets", "LinearAlgebra", "StaticArrays"]
+
+    [ConstructionBase.extensions]
+    ConstructionBaseIntervalSetsExt = "IntervalSets"
+    ConstructionBaseLinearAlgebraExt = "LinearAlgebra"
+    ConstructionBaseStaticArraysExt = "StaticArrays"
 
 [[Contour]]
 git-tree-sha1 = "439e35b0b36e2e5881738abc8857bd92ad6ff9a8"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.3"
 
-[[Crayons]]
-git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
-uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "4.1.1"
-
 [[DataAPI]]
 git-tree-sha1 = "abe83f3a2f1b857aac70ef8b269080af17764bbe"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.16.0"
-
-[[DataFrames]]
-deps = ["Compat", "DataAPI", "DataStructures", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrecompileTools", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SentinelArrays", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "04c738083f29f86e62c8afc341f0967d8717bdb8"
-uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "1.6.1"
 
 [[DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -1897,14 +1881,24 @@ version = "1.0.0"
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+version = "1.11.0"
+
+[[Dbus_jll]]
+deps = ["Artifacts", "Expat_jll", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "fc173b380865f70627d7dd1190dc2fce6cc105af"
+uuid = "ee1fde0b-3d02-5ea6-8484-8dfef6360eab"
+version = "1.14.10+0"
 
 [[DelimitedFiles]]
 deps = ["Mmap"]
+git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+version = "1.9.1"
 
 [[Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+version = "1.11.0"
 
 [[DocStringExtensions]]
 deps = ["LibGit2"]
@@ -1913,8 +1907,9 @@ uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.9.3"
 
 [[Downloads]]
-deps = ["ArgTools", "LibCURL", "NetworkOptions"]
+deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+version = "1.6.0"
 
 [[EarCut_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1941,21 +1936,21 @@ uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
 version = "2.6.2+0"
 
 [[Extents]]
-git-tree-sha1 = "2140cd04483da90b2da7f99b2add0750504fc39c"
+git-tree-sha1 = "81023caa0021a41712685887db1fc03db26f41f5"
 uuid = "411431e0-e8b7-467b-b5e0-f676ba4f2910"
-version = "0.1.2"
+version = "0.1.4"
 
 [[FFMPEG]]
 deps = ["FFMPEG_jll"]
-git-tree-sha1 = "b57e3acbe22f8484b4b5ff66a7499717fe1a9cc8"
+git-tree-sha1 = "53ebe7511fa11d33bec688a9178fac4e49eeee00"
 uuid = "c87230d0-a227-11e9-1b43-d7ebe4e7570a"
-version = "0.4.1"
+version = "0.4.2"
 
 [[FFMPEG_jll]]
-deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "JLLWrappers", "LAME_jll", "Libdl", "Ogg_jll", "OpenSSL_jll", "Opus_jll", "PCRE2_jll", "Pkg", "Zlib_jll", "libaom_jll", "libass_jll", "libfdk_aac_jll", "libvorbis_jll", "x264_jll", "x265_jll"]
-git-tree-sha1 = "74faea50c1d007c85837327f6775bea60b5492dd"
+deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "JLLWrappers", "LAME_jll", "Libdl", "Ogg_jll", "OpenSSL_jll", "Opus_jll", "PCRE2_jll", "Zlib_jll", "libaom_jll", "libass_jll", "libfdk_aac_jll", "libvorbis_jll", "x264_jll", "x265_jll"]
+git-tree-sha1 = "466d45dc38e15794ec7d5d63ec03d776a9aff36e"
 uuid = "b22a6f82-2f65-5046-a5b2-351ab43fb4e5"
-version = "4.4.2+2"
+version = "4.4.4+1"
 
 [[FileIO]]
 deps = ["Pkg", "Requires", "UUIDs"]
@@ -1963,11 +1958,9 @@ git-tree-sha1 = "82d8afa92ecf4b52d78d869f038ebfb881267322"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 version = "1.16.3"
 
-[[FilePathsBase]]
-deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
-git-tree-sha1 = "9f00e42f8d99fdde64d40c8ea5d14269a2e2c1aa"
-uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
-version = "0.9.21"
+[[FileWatching]]
+uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
+version = "1.11.0"
 
 [[FixedPointNumbers]]
 deps = ["Statistics"]
@@ -1998,39 +1991,34 @@ git-tree-sha1 = "1ed150b39aebcc805c26b93a8d0122c940f64ce2"
 uuid = "559328eb-81f9-559d-9380-de523a88c83c"
 version = "1.0.14+0"
 
-[[Future]]
-deps = ["Random"]
-uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
-
 [[GLFW_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
-git-tree-sha1 = "ff38ba61beff76b8f4acad8ab0c97ef73bb670cb"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll", "libdecor_jll", "xkbcommon_jll"]
+git-tree-sha1 = "532f9126ad901533af1d4f5c198867227a7bb077"
 uuid = "0656b61e-2033-5cc2-a64a-77c0f6c09b89"
-version = "3.3.9+0"
-
-[[GPUArraysCore]]
-deps = ["Adapt"]
-git-tree-sha1 = "2d6ca471a6c7b536127afccfa7564b5b39227fe0"
-uuid = "46192b85-c4d5-4398-a991-12ede77f4527"
-version = "0.1.5"
+version = "3.4.0+1"
 
 [[GR]]
-deps = ["Artifacts", "Base64", "DelimitedFiles", "Downloads", "GR_jll", "HTTP", "JSON", "Libdl", "LinearAlgebra", "Preferences", "Printf", "Random", "Serialization", "Sockets", "TOML", "Tar", "Test", "p7zip_jll"]
-git-tree-sha1 = "ddda044ca260ee324c5fc07edb6d7cf3f0b9c350"
+deps = ["Artifacts", "Base64", "DelimitedFiles", "Downloads", "GR_jll", "HTTP", "JSON", "Libdl", "LinearAlgebra", "Preferences", "Printf", "Qt6Wayland_jll", "Random", "Serialization", "Sockets", "TOML", "Tar", "Test", "p7zip_jll"]
+git-tree-sha1 = "629693584cef594c3f6f99e76e7a7ad17e60e8d5"
 uuid = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-version = "0.73.5"
+version = "0.73.7"
 
 [[GR_jll]]
 deps = ["Artifacts", "Bzip2_jll", "Cairo_jll", "FFMPEG_jll", "Fontconfig_jll", "FreeType2_jll", "GLFW_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pixman_jll", "Qt6Base_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "278e5e0f820178e8a26df3184fcb2280717c79b1"
+git-tree-sha1 = "a8863b69c2a0859f2c2c87ebdc4c6712e88bdf0d"
 uuid = "d2c73de3-f751-5644-a686-071e5b155ba9"
-version = "0.73.5+0"
+version = "0.73.7+0"
+
+[[GeoFormatTypes]]
+git-tree-sha1 = "59107c179a586f0fe667024c5eb7033e81333271"
+uuid = "68eda718-8dee-11e9-39e7-89f7f65f511f"
+version = "0.4.2"
 
 [[GeoInterface]]
-deps = ["Extents"]
-git-tree-sha1 = "801aef8228f7f04972e596b09d4dba481807c913"
+deps = ["Extents", "GeoFormatTypes"]
+git-tree-sha1 = "2f6fce56cdb8373637a6614e14a5768a88450de2"
 uuid = "cf35fbd7-0cd7-5166-be24-54bfbe79505f"
-version = "1.3.4"
+version = "1.3.7"
 
 [[GeometryBasics]]
 deps = ["EarCut_jll", "Extents", "GeoInterface", "IterTools", "LinearAlgebra", "StaticArrays", "StructArrays", "Tables"]
@@ -2046,9 +2034,9 @@ version = "0.21.0+0"
 
 [[Glib_jll]]
 deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Zlib_jll"]
-git-tree-sha1 = "7c82e6a6cd34e9d935e9aa4051b66c6ff3af59ba"
+git-tree-sha1 = "674ff0db93fffcd11a3573986e550d66cd4fd71f"
 uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
-version = "2.80.2+0"
+version = "2.80.5+0"
 
 [[Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
@@ -2064,9 +2052,9 @@ version = "1.3.14+0"
 
 [[Graphs]]
 deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
-git-tree-sha1 = "4f2b57488ac7ee16124396de4f2bbdd51b2602ad"
+git-tree-sha1 = "1dc470db8b1131cfc7fb4c115de89fe391b9e780"
 uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
-version = "1.11.0"
+version = "1.12.0"
 
 [[Grisu]]
 git-tree-sha1 = "53bb909d1151e57e2484c3d1b53e19552b887fb2"
@@ -2080,10 +2068,10 @@ uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 version = "1.10.8"
 
 [[HarfBuzz_jll]]
-deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg"]
-git-tree-sha1 = "129acf094d168394e80ee1dc4bc06ec835e510a3"
+deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll"]
+git-tree-sha1 = "401e4f3f30f43af2c8478fc008da50096ea5240f"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
-version = "2.8.1+1"
+version = "8.3.1+0"
 
 [[Hyperscript]]
 deps = ["Test"]
@@ -2099,9 +2087,9 @@ version = "0.9.5"
 
 [[IOCapture]]
 deps = ["Logging", "Random"]
-git-tree-sha1 = "8b72179abc660bfab5e28472e019392b97d0985c"
+git-tree-sha1 = "b6d6bfdd7ce25b0f9b2f6b3dd56b2673a66c8770"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
-version = "0.2.4"
+version = "0.2.5"
 
 [[ImageAxes]]
 deps = ["AxisArrays", "ImageBase", "ImageCore", "Reexport", "SimpleTraits"]
@@ -2151,36 +2139,25 @@ uuid = "9b13fd28-a010-5f03-acff-a1bbcff69959"
 version = "1.0.0"
 
 [[Inflate]]
-git-tree-sha1 = "ea8031dea4aff6bd41f1df8f2fdfb25b33626381"
+git-tree-sha1 = "d1b1b796e47d94588b3757fe84fbf65a5ec4a80d"
 uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
-version = "0.1.4"
-
-[[InlineStrings]]
-deps = ["Parsers"]
-git-tree-sha1 = "9cc2baf75c6d09f9da536ddf58eb2f29dedaf461"
-uuid = "842dd82b-1e85-43dc-bf29-5d0ee9dffc48"
-version = "1.4.0"
+version = "0.1.5"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+version = "1.11.0"
 
 [[IntervalSets]]
-deps = ["Random", "RecipesBase", "Statistics"]
 git-tree-sha1 = "dba9ddf07f77f60450fe5d2e2beb9854d9a49bd0"
 uuid = "8197267c-284f-5f27-9208-e0e47529a953"
 version = "0.7.10"
+weakdeps = ["Random", "RecipesBase", "Statistics"]
 
-[[InverseFunctions]]
-deps = ["Dates", "Test"]
-git-tree-sha1 = "e7cbed5032c4c397a6ac23d1493f3289e01231c4"
-uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
-version = "0.1.14"
-
-[[InvertedIndices]]
-git-tree-sha1 = "0dc7b50b8d436461be01300fd8cd45aa0274b038"
-uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
-version = "1.3.0"
+    [IntervalSets.extensions]
+    IntervalSetsRandomExt = "Random"
+    IntervalSetsRecipesBaseExt = "RecipesBase"
+    IntervalSetsStatisticsExt = "Statistics"
 
 [[IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
@@ -2188,9 +2165,9 @@ uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
 version = "0.2.2"
 
 [[IterTools]]
-git-tree-sha1 = "fa6287a4469f5e048d763df38279ee729fbd44e5"
+git-tree-sha1 = "42d5f897009e7ff2cf88db414a389e5ed1bdd023"
 uuid = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
-version = "1.4.0"
+version = "1.10.0"
 
 [[IteratorInterfaceExtensions]]
 git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
@@ -2199,15 +2176,15 @@ version = "1.0.0"
 
 [[JLFzf]]
 deps = ["Pipe", "REPL", "Random", "fzf_jll"]
-git-tree-sha1 = "a53ebe394b71470c7f97c2e7e170d51df21b17af"
+git-tree-sha1 = "39d64b09147620f5ffbf6b2d3255be3c901bec63"
 uuid = "1019f520-868f-41f5-a6de-eb00f4b6a39c"
-version = "0.1.7"
+version = "0.1.8"
 
 [[JLLWrappers]]
 deps = ["Artifacts", "Preferences"]
-git-tree-sha1 = "7e5d6779a1e09a36db2a7b6cff50942a0a7d0fca"
+git-tree-sha1 = "f389674c99bfcde17dc57454011aa44d5a260a40"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
-version = "1.5.0"
+version = "1.6.0"
 
 [[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
@@ -2223,21 +2200,15 @@ version = "0.1.5"
 
 [[JpegTurbo_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "c84a835e1a09b289ffcd2271bf2a337bbdda6637"
+git-tree-sha1 = "25ee0be4d43d0269027024d75a24c24d6c6e590c"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
-version = "3.0.3+0"
-
-[[Juno]]
-deps = ["Base64", "Logging", "Media", "Profile"]
-git-tree-sha1 = "07cb43290a840908a771552911a6274bc6c072c7"
-uuid = "e5e0dc1b-0480-54bc-9374-aad01c23163d"
-version = "0.8.4"
+version = "3.0.4+0"
 
 [[Karnak]]
-deps = ["CSV", "Colors", "DataFrames", "DelimitedFiles", "Graphs", "InteractiveUtils", "Luxor", "NetworkLayout", "Reexport", "SimpleWeightedGraphs", "TOML"]
-git-tree-sha1 = "f578c724468443b0945669a9cb02cef58de6d1a8"
+deps = ["Colors", "Graphs", "InteractiveUtils", "Luxor", "NetworkLayout", "Reexport", "SimpleWeightedGraphs"]
+git-tree-sha1 = "5e81bf85c0b34c3f6d947ac975992eb11edd6fa6"
 uuid = "cd156443-31ad-4f6f-850f-a93ee5f75905"
-version = "1.0.0"
+version = "1.1.0"
 
 [[LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -2253,15 +2224,15 @@ version = "3.0.0+1"
 
 [[LLVMOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "d986ce2d884d49126836ea94ed5bfb0f12679713"
+git-tree-sha1 = "78211fb6cbc872f77cad3fc0b6cf647d923f4929"
 uuid = "1d63c593-3942-5779-bab2-d838dc0a180e"
-version = "15.0.7+0"
+version = "18.1.7+0"
 
 [[LZO_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "70c5da094887fd2cae843b8db33920bac4b6f07d"
+git-tree-sha1 = "854a9c268c43b77b0a27f22d7fab8d33cdb3a731"
 uuid = "dd4b983a-f0e5-5f8d-a1b7-129d4a5fb1ac"
-version = "2.10.2+0"
+version = "2.10.2+1"
 
 [[LaTeXStrings]]
 git-tree-sha1 = "50901ebc375ed41dbf8058da26f9de442febbbec"
@@ -2270,9 +2241,19 @@ version = "1.3.1"
 
 [[Latexify]]
 deps = ["Format", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "OrderedCollections", "Requires"]
-git-tree-sha1 = "e0b5cd21dc1b44ec6e64f351976f961e6f31d6c4"
+git-tree-sha1 = "ce5f5621cac23a86011836badfedf664a612cee4"
 uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
-version = "0.16.3"
+version = "0.16.5"
+
+    [Latexify.extensions]
+    DataFramesExt = "DataFrames"
+    SparseArraysExt = "SparseArrays"
+    SymEngineExt = "SymEngine"
+
+    [Latexify.weakdeps]
+    DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+    SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8"
 
 [[LazyModules]]
 git-tree-sha1 = "a560dd966b386ac9ae60bdd3a3d3a326062d3c3e"
@@ -2282,21 +2263,31 @@ version = "0.3.1"
 [[LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
+version = "0.6.4"
 
 [[LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
+version = "8.6.0+0"
 
 [[LibGit2]]
-deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
+deps = ["Base64", "LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
+version = "1.11.0"
+
+[[LibGit2_jll]]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll"]
+uuid = "e37daf67-58a4-590a-8e99-b0245dd2ffc5"
+version = "1.7.2+0"
 
 [[LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
+version = "1.11.0+1"
 
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+version = "1.11.0"
 
 [[Libffi_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2353,17 +2344,29 @@ uuid = "38a345b3-de98-5d2b-a5d3-14cd9215e700"
 version = "2.40.1+0"
 
 [[LinearAlgebra]]
-deps = ["Libdl"]
+deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+version = "1.11.0"
 
 [[LogExpFunctions]]
-deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "18144f3e9cbe9b15b070288eef858f71b291ce37"
+deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "a2d09619db4e765091ee5c6ffe8872849de0feea"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.27"
+version = "0.3.28"
+
+    [LogExpFunctions.extensions]
+    LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
+    LogExpFunctionsChangesOfVariablesExt = "ChangesOfVariables"
+    LogExpFunctionsInverseFunctionsExt = "InverseFunctions"
+
+    [LogExpFunctions.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    ChangesOfVariables = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
+    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+version = "1.11.0"
 
 [[LoggingExtras]]
 deps = ["Dates", "Logging"]
@@ -2372,10 +2375,17 @@ uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
 version = "1.0.3"
 
 [[Luxor]]
-deps = ["Base64", "Cairo", "Colors", "DataStructures", "Dates", "FFMPEG", "FileIO", "Juno", "LaTeXStrings", "PrecompileTools", "Random", "Requires", "Rsvg"]
-git-tree-sha1 = "aa3eb624552373a6204c19b00e95ce62ea932d32"
+deps = ["Base64", "Cairo", "Colors", "DataStructures", "Dates", "FFMPEG", "FileIO", "PolygonAlgorithms", "PrecompileTools", "Random", "Rsvg"]
+git-tree-sha1 = "134570038473304d709de27384621bd0810d23fa"
 uuid = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
-version = "3.8.0"
+version = "4.1.0"
+
+    [Luxor.extensions]
+    LuxorExtLatex = ["LaTeXStrings", "MathTeXEngine"]
+
+    [Luxor.weakdeps]
+    LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+    MathTeXEngine = "0a4f8689-d25c-4efe-a92b-7142dfc1aa53"
 
 [[MIMEs]]
 git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
@@ -2396,6 +2406,7 @@ version = "0.4.2"
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+version = "1.11.0"
 
 [[MbedTLS]]
 deps = ["Dates", "MbedTLS_jll", "MozillaCACerts_jll", "NetworkOptions", "Random", "Sockets"]
@@ -2406,17 +2417,12 @@ version = "1.1.9"
 [[MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
+version = "2.28.6+0"
 
 [[Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
 uuid = "442fdcdd-2543-5da2-b0f3-8c86c306513e"
 version = "0.3.2"
-
-[[Media]]
-deps = ["MacroTools", "Test"]
-git-tree-sha1 = "75a54abd10709c01f1b86b84ec225d26e840ed58"
-uuid = "e89f7d12-3494-54d1-8411-f7d8b9ae1f27"
-version = "0.5.0"
 
 [[Missings]]
 deps = ["DataAPI"]
@@ -2426,6 +2432,7 @@ version = "1.2.0"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
+version = "1.11.0"
 
 [[MosaicViews]]
 deps = ["MappedArrays", "OffsetArrays", "PaddedViews", "StackViews"]
@@ -2435,6 +2442,7 @@ version = "0.3.4"
 
 [[MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
+version = "2023.12.12"
 
 [[NaNMath]]
 deps = ["OpenLibm_jll"]
@@ -2453,21 +2461,36 @@ deps = ["GeometryBasics", "LinearAlgebra", "Random", "Requires", "StaticArrays"]
 git-tree-sha1 = "91bb2fedff8e43793650e7a677ccda6e6e6e166b"
 uuid = "46757867-2c16-5918-afeb-47bfcb05e46a"
 version = "0.4.6"
+weakdeps = ["Graphs"]
+
+    [NetworkLayout.extensions]
+    NetworkLayoutGraphsExt = "Graphs"
 
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
+version = "1.2.0"
 
 [[OffsetArrays]]
-deps = ["Adapt"]
-git-tree-sha1 = "e64b4f5ea6b7389f6f046d13d4896a8f9c1ba71e"
+git-tree-sha1 = "1a27764e945a152f7ca7efa04de513d473e9542e"
 uuid = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
-version = "1.14.0"
+version = "1.14.1"
+
+    [OffsetArrays.extensions]
+    OffsetArraysAdaptExt = "Adapt"
+
+    [OffsetArrays.weakdeps]
+    Adapt = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 
 [[Ogg_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "887579a3eb005446d514ab7aeac5d1d027658b8f"
 uuid = "e7412a2a-1a6e-54c0-be00-318e2571c051"
 version = "1.3.5+1"
+
+[[OpenBLAS_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
+uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
+version = "0.3.27+1"
 
 [[OpenEXR]]
 deps = ["Colors", "FileIO", "OpenEXR_jll"]
@@ -2484,6 +2507,7 @@ version = "3.2.4+0"
 [[OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
+version = "0.8.1+2"
 
 [[OpenSSL]]
 deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
@@ -2493,15 +2517,15 @@ version = "1.4.3"
 
 [[OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "a12e56c72edee3ce6b96667745e6cbbe5498f200"
+git-tree-sha1 = "7493f61f55a6cce7325f197443aa80d32554ba10"
 uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
-version = "1.1.23+0"
+version = "3.0.15+1"
 
 [[Opus_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "51a08fb14ec28da2ec7a927c4337e4332c2a4720"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "6703a85cb3781bd5909d48730a67205f3f31a575"
 uuid = "91d4177d-7536-5919-b921-800302f37372"
-version = "1.3.2+0"
+version = "1.3.3+0"
 
 [[OrderedCollections]]
 git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
@@ -2511,6 +2535,7 @@ version = "1.6.3"
 [[PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
+version = "10.42.0+1"
 
 [[PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
@@ -2526,9 +2551,9 @@ version = "0.5.12"
 
 [[Pango_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "FriBidi_jll", "Glib_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "cb5a2ab6763464ae0f19c86c56c63d4a2b0f5bda"
+git-tree-sha1 = "e127b609fb9ecba6f201ba7ab753d5a605d53801"
 uuid = "36c8627f-9965-5494-a995-c6b170f724f3"
-version = "1.52.2+0"
+version = "1.54.1+0"
 
 [[Parameters]]
 deps = ["OrderedCollections", "UnPack"]
@@ -2554,8 +2579,13 @@ uuid = "30392449-352a-5448-841d-b1acce4e97dc"
 version = "0.43.4+0"
 
 [[Pkg]]
-deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+version = "1.11.0"
+weakdeps = ["REPL"]
+
+    [Pkg.extensions]
+    REPLExt = "REPL"
 
 [[PkgVersion]]
 deps = ["Pkg"]
@@ -2565,9 +2595,9 @@ version = "0.3.3"
 
 [[PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
-git-tree-sha1 = "1f03a2d339f42dca4a4da149c7e15e9b896ad899"
+git-tree-sha1 = "6e55c6841ce3411ccb3457ee52fc48cb698d6fb0"
 uuid = "ccf2f8ad-2431-5c83-bf29-c5338b663b6a"
-version = "3.1.0"
+version = "3.2.0"
 
 [[PlotUtils]]
 deps = ["ColorSchemes", "Colors", "Dates", "PrecompileTools", "Printf", "Random", "Reexport", "Statistics"]
@@ -2576,22 +2606,35 @@ uuid = "995b91a9-d308-5afd-9ec6-746e21dbc043"
 version = "1.4.1"
 
 [[Plots]]
-deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
-git-tree-sha1 = "442e1e7ac27dd5ff8825c3fa62fbd1e86397974b"
+deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "TOML", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
+git-tree-sha1 = "45470145863035bb124ca51b320ed35d071cc6c2"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.40.4"
+version = "1.40.8"
+
+    [Plots.extensions]
+    FileIOExt = "FileIO"
+    GeometryBasicsExt = "GeometryBasics"
+    IJuliaExt = "IJulia"
+    ImageInTerminalExt = "ImageInTerminal"
+    UnitfulExt = "Unitful"
+
+    [Plots.weakdeps]
+    FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+    GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
+    IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
+    ImageInTerminal = "d8c32880-2388-543b-8c61-d9f865259254"
+    Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "ab55ee1510ad2af0ff674dbcced5e94921f867a9"
+git-tree-sha1 = "eba4810d5e6a01f612b948c9fa94f905b49087b0"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.59"
+version = "0.7.60"
 
-[[PooledArrays]]
-deps = ["DataAPI", "Future"]
-git-tree-sha1 = "36d8b4b899628fb92c2749eb488d884a926614d3"
-uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
-version = "1.4.3"
+[[PolygonAlgorithms]]
+git-tree-sha1 = "a5ded6396172cff3bacdd1354d190b93cb667c4b"
+uuid = "32a0d02f-32d9-4438-b5ed-3a2932b48f96"
+version = "0.2.0"
 
 [[PrecompileTools]]
 deps = ["Preferences"]
@@ -2605,25 +2648,16 @@ git-tree-sha1 = "9306f6085165d270f7e3db02af26a400d580f5c6"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
 version = "1.4.3"
 
-[[PrettyTables]]
-deps = ["Crayons", "LaTeXStrings", "Markdown", "PrecompileTools", "Printf", "Reexport", "StringManipulation", "Tables"]
-git-tree-sha1 = "88b895d13d53b5577fd53379d913b9ab9ac82660"
-uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "2.3.1"
-
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
-
-[[Profile]]
-deps = ["Printf"]
-uuid = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
+version = "1.11.0"
 
 [[ProgressMeter]]
 deps = ["Distributed", "Printf"]
-git-tree-sha1 = "763a8ceb07833dd51bb9e3bbca372de32c0605ad"
+git-tree-sha1 = "8f6bc219586aef8baf0ff9a5fe16ee9c70cb65e4"
 uuid = "92933f4c-e287-5a05-a399-4b506db050ca"
-version = "1.10.0"
+version = "1.10.2"
 
 [[QOI]]
 deps = ["ColorTypes", "FileIO", "FixedPointNumbers"]
@@ -2633,17 +2667,37 @@ version = "1.0.0"
 
 [[Qt6Base_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Fontconfig_jll", "Glib_jll", "JLLWrappers", "Libdl", "Libglvnd_jll", "OpenSSL_jll", "Vulkan_Loader_jll", "Xorg_libSM_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Xorg_libxcb_jll", "Xorg_xcb_util_cursor_jll", "Xorg_xcb_util_image_jll", "Xorg_xcb_util_keysyms_jll", "Xorg_xcb_util_renderutil_jll", "Xorg_xcb_util_wm_jll", "Zlib_jll", "libinput_jll", "xkbcommon_jll"]
-git-tree-sha1 = "7c29f0e8c575428bd84dc3c72ece5178caa67336"
+git-tree-sha1 = "492601870742dcd38f233b23c3ec629628c1d724"
 uuid = "c0090381-4147-56d7-9ebc-da0b1113ec56"
-version = "6.5.2+2"
+version = "6.7.1+1"
+
+[[Qt6Declarative_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Qt6Base_jll", "Qt6ShaderTools_jll"]
+git-tree-sha1 = "e5dd466bf2569fe08c91a2cc29c1003f4797ac3b"
+uuid = "629bc702-f1f5-5709-abd5-49b8460ea067"
+version = "6.7.1+2"
+
+[[Qt6ShaderTools_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Qt6Base_jll"]
+git-tree-sha1 = "1a180aeced866700d4bebc3120ea1451201f16bc"
+uuid = "ce943373-25bb-56aa-8eca-768745ed7b5a"
+version = "6.7.1+1"
+
+[[Qt6Wayland_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Qt6Base_jll", "Qt6Declarative_jll"]
+git-tree-sha1 = "729927532d48cf79f49070341e1d918a65aba6b0"
+uuid = "e99dba38-086e-5de3-a5b1-6e4c66e897c3"
+version = "6.7.1+1"
 
 [[REPL]]
-deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
+deps = ["InteractiveUtils", "Markdown", "Sockets", "StyledStrings", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+version = "1.11.0"
 
 [[Random]]
-deps = ["Serialization"]
+deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+version = "1.11.0"
 
 [[RangeArrays]]
 git-tree-sha1 = "b9039e93773ddcfc828f12aadf7115b4b4d225f5"
@@ -2687,12 +2741,13 @@ version = "1.0.0"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+version = "0.7.0"
 
 [[SIMD]]
 deps = ["PrecompileTools"]
-git-tree-sha1 = "2803cab51702db743f3fda07dd1745aadfbf43bd"
+git-tree-sha1 = "98ca7c29edd6fc79cd74c61accb7010a4e7aee33"
 uuid = "fdea26ae-647d-5447-a871-4b548cad5224"
-version = "3.5.0"
+version = "3.6.0"
 
 [[Scratch]]
 deps = ["Dates"]
@@ -2700,18 +2755,14 @@ git-tree-sha1 = "3bac05bc7e74a75fd9cba4295cde4045d9fe2386"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
 version = "1.2.1"
 
-[[SentinelArrays]]
-deps = ["Dates", "Random"]
-git-tree-sha1 = "90b4f68892337554d31cdcdbe19e48989f26c7e6"
-uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.4.3"
-
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+version = "1.11.0"
 
 [[SharedArrays]]
 deps = ["Distributed", "Mmap", "Random", "Serialization"]
 uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
+version = "1.11.0"
 
 [[Showoff]]
 deps = ["Dates", "Grisu"]
@@ -2720,9 +2771,9 @@ uuid = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
 version = "1.0.3"
 
 [[SimpleBufferStream]]
-git-tree-sha1 = "874e8867b33a00e784c8a7e4b60afe9e037b74e1"
+git-tree-sha1 = "f305871d2f381d21527c770d4788c06c097c9bc1"
 uuid = "777ac1f9-54b0-4bf8-805c-2214025038e7"
-version = "1.1.0"
+version = "1.2.0"
 
 [[SimpleTraits]]
 deps = ["InteractiveUtils", "MacroTools"]
@@ -2744,6 +2795,7 @@ version = "0.1.3"
 
 [[Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
+version = "1.11.0"
 
 [[SortingAlgorithms]]
 deps = ["DataStructures"]
@@ -2752,8 +2804,9 @@ uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
 version = "1.2.1"
 
 [[SparseArrays]]
-deps = ["LinearAlgebra", "Random"]
+deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+version = "1.11.0"
 
 [[StackViews]]
 deps = ["OffsetArrays"]
@@ -2762,19 +2815,33 @@ uuid = "cae243ae-269e-4f55-b966-ac2d0dc13c15"
 version = "0.1.1"
 
 [[StaticArrays]]
-deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "9ae599cd7529cfce7fea36cf00a62cfc56f0f37c"
+deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore"]
+git-tree-sha1 = "eeafab08ae20c62c44c8399ccb9354a04b80db50"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.9.4"
+version = "1.9.7"
+
+    [StaticArrays.extensions]
+    StaticArraysChainRulesCoreExt = "ChainRulesCore"
+    StaticArraysStatisticsExt = "Statistics"
+
+    [StaticArrays.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[StaticArraysCore]]
-git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
+git-tree-sha1 = "192954ef1208c7019899fbf8049e717f92959682"
 uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
-version = "1.4.2"
+version = "1.4.3"
 
 [[Statistics]]
-deps = ["LinearAlgebra", "SparseArrays"]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "ae3bb1eb3bba077cd276bc5cfc337cc65c3075c0"
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+version = "1.11.1"
+weakdeps = ["SparseArrays"]
+
+    [Statistics.extensions]
+    SparseArraysExt = ["SparseArrays"]
 
 [[StatsAPI]]
 deps = ["LinearAlgebra"]
@@ -2788,21 +2855,37 @@ git-tree-sha1 = "5cf7606d6cef84b543b483848d4ae08ad9832b21"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.34.3"
 
-[[StringManipulation]]
-deps = ["PrecompileTools"]
-git-tree-sha1 = "a04cabe79c5f01f4d723cc6704070ada0b9d46d5"
-uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
-version = "0.3.4"
-
 [[StructArrays]]
-deps = ["Adapt", "ConstructionBase", "DataAPI", "GPUArraysCore", "SparseArrays", "StaticArrays", "Tables"]
+deps = ["ConstructionBase", "DataAPI", "Tables"]
 git-tree-sha1 = "f4dc295e983502292c4c3f951dbb4e985e35b3be"
 uuid = "09ab397b-f2b6-538f-b94a-2f83cf4a842a"
 version = "0.6.18"
 
+    [StructArrays.extensions]
+    StructArraysAdaptExt = "Adapt"
+    StructArraysGPUArraysCoreExt = "GPUArraysCore"
+    StructArraysSparseArraysExt = "SparseArrays"
+    StructArraysStaticArraysExt = "StaticArrays"
+
+    [StructArrays.weakdeps]
+    Adapt = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
+    GPUArraysCore = "46192b85-c4d5-4398-a991-12ede77f4527"
+    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+    StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[[StyledStrings]]
+uuid = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
+version = "1.11.0"
+
+[[SuiteSparse_jll]]
+deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
+uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
+version = "7.7.0+0"
+
 [[TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+version = "1.0.3"
 
 [[TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
@@ -2811,14 +2894,15 @@ uuid = "3783bdb8-4a98-5b6b-af9a-565f29a5fe9c"
 version = "1.0.1"
 
 [[Tables]]
-deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits"]
-git-tree-sha1 = "cb76cf677714c095e535e3501ac7954732aeea2d"
+deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "OrderedCollections", "TableTraits"]
+git-tree-sha1 = "598cd7c1f68d1e205689b1c2fe65a9f85846f297"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.11.1"
+version = "1.12.0"
 
 [[Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
+version = "1.10.0"
 
 [[TensorCore]]
 deps = ["LinearAlgebra"]
@@ -2829,23 +2913,23 @@ version = "0.1.1"
 [[Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+version = "1.11.0"
 
 [[TiffImages]]
 deps = ["ColorTypes", "DataStructures", "DocStringExtensions", "FileIO", "FixedPointNumbers", "IndirectArrays", "Inflate", "Mmap", "OffsetArrays", "PkgVersion", "ProgressMeter", "SIMD", "UUIDs"]
-git-tree-sha1 = "bc7fd5c91041f44636b2c134041f7e5263ce58ae"
+git-tree-sha1 = "38f139cc4abf345dd4f22286ec000728d5e8e097"
 uuid = "731e570b-9d59-4bfa-96dc-6df516fadf69"
-version = "0.10.0"
+version = "0.10.2"
 
 [[TranscodingStreams]]
-deps = ["Random", "Test"]
-git-tree-sha1 = "5d54d076465da49d6746c647022f3b3674e64156"
+git-tree-sha1 = "0c45878dcfdcfa8480052b6ab162cdd138781742"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.8"
+version = "0.11.3"
 
 [[Tricks]]
-git-tree-sha1 = "eae1bb484cd63b36999ee58be2de6c178105112f"
+git-tree-sha1 = "7822b97e99a1672bfb1b49b668a6d46d58d8cbcb"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.8"
+version = "0.1.9"
 
 [[URIs]]
 git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
@@ -2855,6 +2939,7 @@ version = "1.5.1"
 [[UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+version = "1.11.0"
 
 [[UnPack]]
 git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
@@ -2863,6 +2948,7 @@ version = "1.0.2"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+version = "1.11.0"
 
 [[UnicodeFun]]
 deps = ["REPL"]
@@ -2871,21 +2957,29 @@ uuid = "1cfade01-22cf-5700-b092-accc4b62d6e1"
 version = "0.4.1"
 
 [[Unitful]]
-deps = ["ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "Random"]
-git-tree-sha1 = "dd260903fdabea27d9b6021689b3cd5401a57748"
+deps = ["Dates", "LinearAlgebra", "Random"]
+git-tree-sha1 = "d95fe458f26209c66a187b1114df96fd70839efd"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.20.0"
+version = "1.21.0"
+
+    [Unitful.extensions]
+    ConstructionBaseUnitfulExt = "ConstructionBase"
+    InverseFunctionsUnitfulExt = "InverseFunctions"
+
+    [Unitful.weakdeps]
+    ConstructionBase = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
+    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
 
 [[UnitfulLatexify]]
 deps = ["LaTeXStrings", "Latexify", "Unitful"]
-git-tree-sha1 = "e2d817cc500e960fdbafcf988ac8436ba3208bfd"
+git-tree-sha1 = "975c354fcd5f7e1ddcc1f1a23e6e091d99e99bc8"
 uuid = "45397f5d-5981-4c77-b2b3-fc36d6e9b728"
-version = "1.6.3"
+version = "1.6.4"
 
 [[Unzip]]
-git-tree-sha1 = "34db80951901073501137bdbc3d5a8e7bbd06670"
+git-tree-sha1 = "ca0969166a028236229f63514992fc073799bb78"
 uuid = "41fe7b60-77ed-43a1-b4f0-825fd5a5650d"
-version = "0.1.2"
+version = "0.2.0"
 
 [[Vulkan_Loader_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Wayland_jll", "Xorg_libX11_jll", "Xorg_libXrandr_jll", "xkbcommon_jll"]
@@ -2905,28 +2999,17 @@ git-tree-sha1 = "93f43ab61b16ddfb2fd3bb13b3ce241cafb0e6c9"
 uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.31.0+0"
 
-[[WeakRefStrings]]
-deps = ["DataAPI", "InlineStrings", "Parsers"]
-git-tree-sha1 = "b1be2855ed9ed8eac54e5caff2afcdb442d52c23"
-uuid = "ea10d353-3f73-51f8-a26c-33c1cb351aa5"
-version = "1.4.2"
-
-[[WorkerUtilities]]
-git-tree-sha1 = "cd1659ba0d57b71a464a29e64dbc67cfe83d54e7"
-uuid = "76eceee3-57b5-4d4a-8e66-0e911cebbf60"
-version = "1.6.1"
-
 [[XML2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Zlib_jll"]
-git-tree-sha1 = "52ff2af32e591541550bd753c0da8b9bc92bb9d9"
+git-tree-sha1 = "1165b0443d0eca63ac1e32b8c0eb69ed2f4f8127"
 uuid = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
-version = "2.12.7+0"
+version = "2.13.3+0"
 
 [[XSLT_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgcrypt_jll", "Libgpg_error_jll", "Libiconv_jll", "Pkg", "XML2_jll", "Zlib_jll"]
-git-tree-sha1 = "91844873c4085240b95e795f692c4cec4d805f8a"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgcrypt_jll", "Libgpg_error_jll", "Libiconv_jll", "XML2_jll", "Zlib_jll"]
+git-tree-sha1 = "a54ee957f4c86b526460a720dbc882fa5edcbefc"
 uuid = "aed1982a-8fda-507f-9586-7b0439959a61"
-version = "1.1.34+0"
+version = "1.1.41+0"
 
 [[XZ_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -3014,9 +3097,9 @@ version = "0.1.1+0"
 
 [[Xorg_libxcb_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "XSLT_jll", "Xorg_libXau_jll", "Xorg_libXdmcp_jll", "Xorg_libpthread_stubs_jll"]
-git-tree-sha1 = "b4bfde5d5b652e22b9c790ad00af08b6d042b97d"
+git-tree-sha1 = "bcd466676fef0878338c61e655629fa7bbc69d8e"
 uuid = "c7cfdc94-dc32-55de-ac96-5a1b8d977c5b"
-version = "1.15.0+0"
+version = "1.17.0+0"
 
 [[Xorg_libxkbfile_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
@@ -3081,12 +3164,13 @@ version = "1.5.0+0"
 [[Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
+version = "1.2.13+1"
 
 [[Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "e678132f07ddb5bfa46857f0d7620fb9be675d3b"
+git-tree-sha1 = "555d1076590a6cc2fdee2ef1469451f872d8b41b"
 uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
-version = "1.5.6+0"
+version = "1.5.6+1"
 
 [[eudev_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "gperf_jll"]
@@ -3096,9 +3180,9 @@ version = "3.2.9+0"
 
 [[fzf_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "a68c9655fbe6dfcab3d972808f1aafec151ce3f8"
+git-tree-sha1 = "936081b536ae4aa65415d869287d43ef3cb576b2"
 uuid = "214eeab7-80f7-51ab-84ad-2988db7cef09"
-version = "0.43.0+0"
+version = "0.53.0+0"
 
 [[gdk_pixbuf_jll]]
 deps = ["Artifacts", "Glib_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Xorg_libX11_jll", "libpng_jll"]
@@ -3119,10 +3203,21 @@ uuid = "a4ae2306-e953-59d6-aa16-d00cac43593b"
 version = "3.9.0+0"
 
 [[libass_jll]]
-deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "5982a94fcba20f02f42ace44b9894ee2b140fe47"
+deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
+git-tree-sha1 = "e17c115d55c5fbb7e52ebedb427a0dca79d4484e"
 uuid = "0ac62f75-1d6f-5e53-bd7c-93b484bb37c0"
-version = "0.15.1+0"
+version = "0.15.2+0"
+
+[[libblastrampoline_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
+version = "5.11.0+0"
+
+[[libdecor_jll]]
+deps = ["Artifacts", "Dbus_jll", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pango_jll", "Wayland_jll", "xkbcommon_jll"]
+git-tree-sha1 = "9bf7903af251d2050b467f76bdbe57ce541f7f4f"
+uuid = "1183f4f0-6f2a-5f1a-908b-139f9cdfea6f"
+version = "0.2.2+0"
 
 [[libevdev_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -3131,10 +3226,10 @@ uuid = "2db6ffa8-e38f-5e21-84af-90c45d0032cc"
 version = "1.11.0+0"
 
 [[libfdk_aac_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "daacc84a041563f965be61859a36e17c4e4fcd55"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "8a22cf860a7d27e4f3498a0fe0811a7957badb38"
 uuid = "f638f0a6-7fb0-5443-88ba-1cc74229b280"
-version = "2.0.2+0"
+version = "2.0.3+0"
 
 [[libinput_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "eudev_jll", "libevdev_jll", "mtdev_jll"]
@@ -3144,21 +3239,21 @@ version = "1.18.0+0"
 
 [[libpng_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Zlib_jll"]
-git-tree-sha1 = "d7015d2e18a5fd9a4f47de711837e980519781a4"
+git-tree-sha1 = "b70c870239dc3d7bc094eb2d6be9b73d27bef280"
 uuid = "b53b4c65-9356-5827-b1ea-8c7a1a84506f"
-version = "1.6.43+1"
+version = "1.6.44+0"
 
 [[libsixel_jll]]
 deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Pkg", "libpng_jll"]
-git-tree-sha1 = "d4f63314c8aa1e48cd22aa0c17ed76cd1ae48c3c"
+git-tree-sha1 = "7dfa0fd9c783d3d0cc43ea1af53d69ba45c447df"
 uuid = "075b6546-f08a-558a-be8f-8157d0f608a5"
-version = "1.10.3+0"
+version = "1.10.3+1"
 
 [[libvorbis_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Ogg_jll", "Pkg"]
-git-tree-sha1 = "b910cb81ef3fe6e78bf6acee440bda86fd6ae00c"
+git-tree-sha1 = "490376214c4721cdaca654041f635213c6165cb3"
 uuid = "f27f6e37-5d2b-51aa-960f-b287f2bc3b7a"
-version = "1.3.7+1"
+version = "1.3.7+2"
 
 [[mtdev_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -3169,10 +3264,12 @@ version = "1.1.6+0"
 [[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
+version = "1.59.0+0"
 
 [[p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
+version = "17.4.0+2"
 
 [[x264_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
