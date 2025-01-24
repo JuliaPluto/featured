@@ -1,17 +1,31 @@
 ### A Pluto.jl notebook ###
-# v0.19.45
+# v0.20.3
+
+#> [frontmatter]
+#> license_url = "https://opensource.org/license/unlicense"
+#> title = "Handcalcs"
+#> date = "2025-01-23"
+#> tags = ["math"]
+#> description = "Calculations you can read and reuse"
+#> license = "Unlicense"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Cole Miller"
+#>     url = "https://github.com/co1emi11er2/Handcalcs.jl"
 
 using Markdown
 using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
+    #! format: off
     quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
 
 # ╔═╡ 12d41162-b9aa-11ef-33d9-a32698d6f054
@@ -82,6 +96,12 @@ area
 
 # ╔═╡ f3a4d941-fcd4-421b-94e4-2d486e71da12
 md"The number of decimals in the above expression may be too much. Let change that."
+
+# ╔═╡ 69f31cc2-af12-4a8c-bbf1-9959f9d78b4f
+md"""
+!!! note
+	The number of decimals you see in the area calc may just be 2. The way pluto works, the cell below may have changed the output. Just know that without the cell below, the number of decimals would be too much.
+"""
 
 # ╔═╡ 79f4fb1c-e512-4af6-835c-ea0865d80c5e
 begin
@@ -197,7 +217,7 @@ md"## The BEST Part - Function Examples"
 md"""
 The @handcalcs macro will automatically try to "unroll" the expressions within a function when the expression has the following pattern: `variable = function_name(args...; kwargs...)`. Note that this is recursive, so if you have a function that calls other functions where the expressions that call the function are of the format mentioned, it will continue to step into each function to "unroll" all expressions.
 
-One issue that can arise are for the functions that you do not want to unroll. Consider the expression: `y = sin(x)` or `y = x + 5`. Both of these expressions match the format: `variable = function_name(args...; kwargs...)` and would be unrolled. This would result in an error since these functions don't have generic math expressions that can be latexified defining the function. You will need to use the `not_funcs` keyword to manually tell the @handcalcs macro to pass over these functions. Some of the common math functions that you will not want to unroll are automatically passed over. See examples below.
+One issue that can arise are for the functions that you do not want to unroll. Consider the expression: `y = sin(x)` or `y = x + 5`. Both of these expressions match the format: `variable = function_name(args...; kwargs...)` and would be unrolled. This would result in an error since these functions don't have generic math expressions that can be latexified. You will need to use the `not_funcs` keyword to manually tell the @handcalcs macro to pass over these functions. Some of the common math functions that you will not want to unroll are automatically passed over. See examples below.
 """
 
 # ╔═╡ 3f2d9d3e-82f9-4cc7-bf06-18bd33dde4c0
@@ -267,8 +287,8 @@ If you want to add functions to your specific project, you can do the following:
 set_handcalcs(not_funcs = [:foo :bar :baz])
 ```
 
-Current Limitations for `@handcalcs`
-- The function needs to be defined in another package. The @code_expr macro from CodeTracking.jl does not see functions in Main for some reason (unless in the REPL).
+!!! warning "Current Limitations for `@handcalcs`"
+	- The function needs to be defined in another package. The `@code_expr` macro from `CodeTracking.jl` does not see functions in Main for some reason (unless in the REPL).
 """
 
 # ╔═╡ c2252cdb-4151-4a2a-b421-2e808bb26883
@@ -279,10 +299,10 @@ md"""
 So you might be thinking, 
 
 \"Does that mean I can write packages filled with julia functions and this just works?\" 
-- Yes, that is exactly what you can do and what the package is being being developed for. 
+- Yes, that is exactly what you can do and what the package is being developed for. 
 
 \"What julia language features work (if statements, for loops, vectors, etc)\"
-- General mathmatic expressions work
+- General mathmatical expressions work
 - If statements work in some ways but are limited (this is the next area of improvement). Latexify is limited, so it is a matter of figuring out where to add the improvments.
 - For loops is not something Latexify can do. Although, the idea of this tool is to show the work of what is being done. Since for loops repeat the work being done, I recommend showing the work inside the loop and then running the loop separate.
 - Vectors do work. However, they need to be relatively small or the expression just gets too big. This is another one where I would recommend showing the expressions for one element in the vector or vectors and do the operation with the vectors separate. 
@@ -290,7 +310,7 @@ So you might be thinking,
 \"This looks pretty cool, but is this slow?\"
 - Compared to the pure julia expressions, yes.
 - The non-function unrolling expressions are controlled by the speed of Latexify, so if Latexify gets faster, this will. I haven't found the need for it yet though.
-- The function-unrolling parts are even slower. It is currently using `@eval`, but I am not sure how to get rid of it. I want to improve this as well if possible, but I currently don't find the need for it yet either.
+- The function-unrolling parts are even slower. It is currently using `@eval`, but I am not sure how to get rid of it. I want to improve this as well if possible, but I currently don't have the need for it yet either.
 """
 
 # ╔═╡ a7064738-e518-42c6-9aa8-f8bc2e013f2d
@@ -574,7 +594,7 @@ md"## Reporting"
 
 # ╔═╡ 103caf9f-123d-470d-8141-3739f60cd6df
 md"""
-You can create report with this tool as well. See [here](https://github.com/co1emi11er2/Handcalcs.jl/blob/master/examples/aisc_example.pdf) for an example that was made using quarto.
+You can create reports with this tool as well. See [here](https://github.com/co1emi11er2/Handcalcs.jl/blob/master/examples/aisc_example.pdf) for an example that was made using quarto.
 
 There currently isn't a great way to integrate Quarto and Pluto. It is best to use Jupyter or a qmd file at the moment. Hopefully Pluto will get better integration in the future.
 """
@@ -615,7 +635,7 @@ TestHandcalcFunctions = "~0.2.4"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.6"
+julia_version = "1.10.7"
 manifest_format = "2.0"
 project_hash = "bbf4e19e2a54f0b4f4ec6fdbf49f56970245584a"
 
@@ -1956,6 +1976,7 @@ version = "1.4.1+1"
 # ╟─2a7e9993-74f9-48f8-964b-e858e3b96672
 # ╠═3589a61a-84a2-4413-9fb9-3454105f6df2
 # ╟─f3a4d941-fcd4-421b-94e4-2d486e71da12
+# ╟─69f31cc2-af12-4a8c-bbf1-9959f9d78b4f
 # ╠═79f4fb1c-e512-4af6-835c-ea0865d80c5e
 # ╟─cd4ab653-0627-44e4-8b58-c475e0a0a251
 # ╟─99730005-9dca-48aa-a409-5b0438660220
