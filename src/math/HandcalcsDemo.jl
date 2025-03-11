@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.3
+# v0.20.4
 
 #> [frontmatter]
 #> license_url = "https://opensource.org/license/unlicense"
@@ -21,7 +21,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     #! format: off
-    quote
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
@@ -31,9 +31,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ 12d41162-b9aa-11ef-33d9-a32698d6f054
-begin
-	using Handcalcs, StructuralUnits, PlutoUI, LaTeXStrings, Plots, Markdown, TestHandcalcFunctions
-end
+using Handcalcs, StructuralUnits, PlutoUI, LaTeXStrings, Plots, Markdown, TestHandcalcFunctions
 
 # ╔═╡ 5ac917a4-79bf-419e-9eff-6501c2d15d28
 PlutoUI.TableOfContents()
@@ -42,7 +40,7 @@ PlutoUI.TableOfContents()
 md"# Handcalcs.jl"
 
 # ╔═╡ a8bb7d69-55a4-4381-aa98-b2169d3064d7
-md"[Handcalcs.jl](https://co1emi11er2.github.io/Handcalcs.jl/dev/) is a package that was design to be used in Pluto! This package supplies macros to generate $LaTeX$ formatted strings from mathmatical formulas. Handcalcs.jl takes inspiration from [handcalcs.py](https://github.com/connorferster/handcalcs) which is a python package that works best in jupyter notebooks. "
+md"[Handcalcs.jl](https://co1emi11er2.github.io/Handcalcs.jl/dev/) is a package that was designed to be used in Pluto! This package supplies macros to generate $LaTeX$ formatted strings from mathmatical formulas. Handcalcs.jl takes inspiration from [handcalcs.py](https://github.com/connorferster/handcalcs), a python package that works best in jupyter notebooks. "
 
 # ╔═╡ 897f866e-40ef-4c47-993e-40f58f8c340b
 md"# Brief Tutorial of Handcalcs"
@@ -100,9 +98,7 @@ md"""
 """
 
 # ╔═╡ 79f4fb1c-e512-4af6-835c-ea0865d80c5e
-begin
-	set_handcalcs(precision=2)
-end
+set_handcalcs(precision=2)
 
 # ╔═╡ cd4ab653-0627-44e4-8b58-c475e0a0a251
 md"You can use `set_handcalcs` using the `precision` keyword to change the default precision shown. Alternatively, Handcalcs uses [Latexify.jl](https://github.com/korsbo/Latexify.jl) under the hood, so you can use the `set_default` function from Latexify to change the default settings of the output, or you can add it to the end of the handcalcs expression similar to the `@latexdefine` macro in Latexify.
@@ -163,9 +159,9 @@ You can also add a comment using the syntax shown below."
 
 # ╔═╡ 4b8d463f-b186-4d1f-9b80-62ff7a5a886d
 let # adding let here to avoid pluto variable clash
-@handcalcs begin
-	x_1 = (-b + sqrt(b^2 - 4*a*c))/ (2*a); "this is a comment";
-end len = :long
+	@handcalcs begin
+		x_1 = (-b + sqrt(b^2 - 4*a*c))/ (2*a); "this is a comment";
+	end len = :long
 end
 
 # ╔═╡ 24c12e97-4090-48a4-8c66-bb5d2068e1e4
@@ -186,9 +182,9 @@ md"This package integrates with [Unitful.jl](https://painterqubits.github.io/Uni
 
 # ╔═╡ 5dd3bce5-9f12-480d-9000-ec84766c18be
 let
-a = 2u"inch"
-b = -5u"inch"
-@handcalcs c = sqrt(a^2 + b^2)
+	a = 2u"inch"
+	b = -5u"inch"
+	@handcalcs c = sqrt(a^2 + b^2)
 end
 
 # ╔═╡ 07ff6778-df02-4dc1-81ba-661afaec6320
@@ -232,9 +228,9 @@ Lets try to call that function within our `@handcalcs` macro."
 
 # ╔═╡ 4b9ff29b-d777-4694-926a-5c95851e81e7
 let
-b = 5 # width
-h = 15 # height
-@handcalcs Ix = calc_Ix(b, h)
+	b = 5 # width
+	h = 15 # height
+	@handcalcs Ix = calc_Ix(b, h)
 end
 
 # ╔═╡ 7c09b665-e48b-4825-bd75-4540ba12afeb
@@ -668,21 +664,21 @@ else
 	@handcalcs begin ϕM_n = ϕ_b*min(M_n1, M_n2, M_n3, M_n4) end
 end
 
-# ╔═╡ 062bee62-420c-4e34-b74e-8e6420fa037f
-md"## Reporting"
-
 # ╔═╡ 103caf9f-123d-470d-8141-3739f60cd6df
 md"""
+## Reporting
+
 You can create reports with this tool as well. See [here](https://github.com/co1emi11er2/Handcalcs.jl/blob/master/examples/aisc_example.pdf) for an example that was made using quarto.
 
 There currently isn't a great way to integrate Quarto and Pluto. It is best to use Jupyter or a qmd file at the moment. Hopefully Pluto will get better integration in the future.
 """
 
-# ╔═╡ 7a6a87b5-d6b3-40e3-828f-c4c9a5720ebf
-md"# Thank you"
-
 # ╔═╡ 8b234519-539d-4774-b18f-2f65377606c6
-md"Thank you for taking your time to read about Handcalcs.jl. I hope you find the package useful. Feel free to contact me through Github at the [Handcalcs Github Page](https://github.com/co1emi11er2/Handcalcs.jl) if you have any questions or find any bugs!"
+md"""
+# Thank you
+
+Thank you for taking your time to read about Handcalcs.jl. I hope you find the package useful. Feel free to contact me through Github at the [Handcalcs Github Page](https://github.com/co1emi11er2/Handcalcs.jl) if you have any questions or find any bugs!
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2038,7 +2034,7 @@ version = "1.4.1+2"
 
 # ╔═╡ Cell order:
 # ╠═12d41162-b9aa-11ef-33d9-a32698d6f054
-# ╠═5ac917a4-79bf-419e-9eff-6501c2d15d28
+# ╟─5ac917a4-79bf-419e-9eff-6501c2d15d28
 # ╟─bd811c3e-6802-4c5a-9904-9e6044c976be
 # ╟─a8bb7d69-55a4-4381-aa98-b2169d3064d7
 # ╟─897f866e-40ef-4c47-993e-40f58f8c340b
@@ -2135,9 +2131,7 @@ version = "1.4.1+2"
 # ╟─08fc9b39-5910-4760-9cb0-14505f88ab15
 # ╟─20fa8d0b-3223-48ff-9dc2-1fe4dbadedbe
 # ╟─a0b5b142-6f8a-4662-b8b9-dbbf90ab5f73
-# ╟─062bee62-420c-4e34-b74e-8e6420fa037f
 # ╟─103caf9f-123d-470d-8141-3739f60cd6df
-# ╟─7a6a87b5-d6b3-40e3-828f-c4c9a5720ebf
 # ╟─8b234519-539d-4774-b18f-2f65377606c6
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
