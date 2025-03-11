@@ -7,7 +7,7 @@
 #> title = "Picking coins"
 #> date = "2025-03-10"
 #> tags = ["puzzle", "recursion", "dynamic programming"]
-#> description = "Learn about recursion and dynamic programming with a coin picking problem!  💰"
+#> description = "Learn about recursion and programming with a coin picking problem!  💰"
 #> license = "Unlicense"
 #> 
 #>     [[frontmatter.author]]
