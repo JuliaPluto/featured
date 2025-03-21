@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.47
+# v0.20.5
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
@@ -16,6 +16,21 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    #! format: off
+    return quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+    #! format: on
+end
+
+# ╔═╡ db1ef6d1-7921-4035-8705-a0820048b785
+using PlutoUI
+
 # ╔═╡ cdbcc440-858c-11ee-25d2-dd9d69531eef
 md"""
 # Pluto for Jupyter users
@@ -29,20 +44,20 @@ We'll go over some key differences between Pluto and Jupyter. Let's get started!
 md"""
 ## Reactivity
 
-The most notable difference between Pluto and Jupyter is *reactivity*.
+The most notable difference between Pluto and Jupyter is **reactivity**.
 
-Here we have two cells: one defines `x`, and one defines `y`, which depends on `x`. Try changing the value of `x` here, and see what happens!
+Here we have two cells: one defines `apples`, and one defines `oranges`, which depends on `apples`. Try changing the value of `apples` here, and see what happens!
 """
 
 # ╔═╡ b25c812b-7ec2-4e17-aa1b-e1a1407d29fb
-x = 1
+apples = 1
 
 # ╔═╡ 8e1faf5f-7b60-4b57-9902-e9d2531f0961
-y = x + 1
+oranges = apples + 50
 
 # ╔═╡ 03d3ade3-056a-4f16-9b31-d259879082c9
 md"""
-When you change `x`, `y` is immediately updated with it! ⚡
+When you change `apples`, `oranges` is immediately updated with it! ⚡
 """
 
 # ╔═╡ 3ed1ed94-8741-48a0-9d23-bb78499eec91
@@ -73,14 +88,14 @@ Write your own code in the cells below!
 md"""
 ## Cell order
 
-Like Jupyter, Pluto doesn't mind if your cells don't match execution order. Here the `mice` cell depends on `mouse`, but `mouse` comes second:
+You can put Pluto cells in **any order**, you code does not need to run top to bottom! Here the **`group_of_mice`** cell depends on **`mouse`**, but **`mouse`** comes second:
 """
-
-# ╔═╡ 807b1586-8b3e-4cb1-9a9d-8ca66a28ec3e
-mice = repeat(mouse, 3)
 
 # ╔═╡ 3bca136c-115f-4dd1-ac4d-d14c23c538ce
 mouse = "🐭"
+
+# ╔═╡ 807b1586-8b3e-4cb1-9a9d-8ca66a28ec3e
+group_of_mice = repeat(mouse, 3)
 
 # ╔═╡ 2b91d104-921a-4d66-ac1f-a940cdb2d14c
 md"""
@@ -89,44 +104,79 @@ This is also fine in Jupyter, but it's discouraged. Running cells yourself is ea
 Because Pluto analyses the dependencies in your code, playing with the order of cells is no problem at all! You can place cells in the order that you want to *present* them in – you might want to show results first, and put your functions and calculations at the bottom of the notebook.
 """
 
+# ╔═╡ 3103e636-3f0a-4e16-94f7-3da1a573ec3d
+md"""
+## Hidden code
+In Pluto, you can **choose to hide/show** the code for any cell. 
+
+**For example:** The cell below has **hidden code** – you only see the output. You need to edit this notebook to see the code behind the output.
+"""
+
+# ╔═╡ 0948181e-b26c-421b-83b5-c9dceb71e804
+train = let
+	locomotive = "🚂"
+	wagon = "🚃"
+
+	Text("$(locomotive)$(join(fill(wagon, 6)))")
+end
+
+# ╔═╡ 9c3cfd5e-b89c-4df2-9982-d581e9fc3730
+md"""
+## Hidden output
+Just like in Jupyter and the Julia REPL, you can **hide output** by adding a `;` at the end of you code.
+
+**For example:** this cell has **visible code** but **hidden output**.
+"""
+
+# ╔═╡ f6e66043-6773-470a-9a07-17283c878d79
+1 + 1;
+
+# ╔═╡ 2a84a64a-b819-4246-8f77-99679691da61
+md"""
+## Interactivity with `@bind`
+You can use **`@bind`** and [PlutoUI.jl](https://github.com/JuliaPluto/PlutoUI.jl) to write interactive notebooks!
+"""
+
+# ╔═╡ 3323e930-31be-4b0b-8cf2-71a07a017758
+@bind yourname TextField(default="Frida")
+
+# ╔═╡ c702dde3-6cb4-4444-ab1d-f1db95e6776a
+@bind count Slider(1:100)
+
+# ╔═╡ b04a791f-7eb9-40eb-9cab-ff38fbc6cca6
+md"""
+Now we have two global variables, **`yourname`** and **`count`** that we can use in other cells:
+"""
+
+# ╔═╡ def86a18-7106-490d-a1f0-c3e48b42b8f6
+repeat(yourname, count)
+
+# ╔═╡ ec2bcfd5-bd38-4801-ac38-2339bc782147
+
+
+# ╔═╡ 1086228a-e28d-45c7-9153-c79378239e54
+md"""
+To learn more, take a look at the other featured notebooks!
+"""
+
 # ╔═╡ 447f49ce-1738-4987-a976-094174971ccb
 md"""
 ## Re-assigning variables
 
-Here' s something that you can't do in Pluto:
+Here' s something that you **cannot do** in Pluto:
 """
-
-# ╔═╡ aff0754c-8e3a-4cbc-9697-0797e5d32fc2
-greatness = 0
-
-# ╔═╡ c12c3f7d-f91b-4395-9323-52a582a79bc6
-greatness = greatness + 1
-
-# ╔═╡ 5dd0949a-82d1-4b27-8318-9b42065d0957
-greatness = greatness * 2
 
 # ╔═╡ c4ece2cd-31f4-4c91-a59b-e520de13dedd
 md"""
 We tried to create multiple cells that set the value of `greatness`, but that's not possible!
 
-This is because Pluto's reactivity. This cell depends on `greatness`, but which value should it use?
-"""
+> #### Why is this not allowed?
+> This is because Pluto's reactivity. What should the value of **`greatness`** be in this notebook?
+> 
+> Pluto also can't decide the proper dependency order between the three cells. Should `greatness` be `(0 + 10) * 2)` or `(0 * 2) + 10` ?
+> 
+> We can't give an answer that everyone will agree on in every situation - so for clarity, Pluto just prohibits this kind of ambiguity. So the restriction forces you to write a notebook that is **reproducible**: it will give the same result no matter when/how you run the cells.
 
-# ╔═╡ 162513a8-4ca9-4cae-9e43-1ae09827f7a4
-badness = -greatness
-
-# ╔═╡ 5c958b92-c511-48b0-aeb2-a8b5fe4514cb
-md"""
-Pluto also can't decide the proper dependency order between the three cells. Should `greatness` be `(0 + 1) * 2)` or `(0 * 2) + 1` ?
-"""
-
-# ╔═╡ ee7adb33-b394-484d-8071-122642ea867b
-md"""
-We can't give an answer that everyone will agree on in every situation - so for clarity, Pluto just prohibits this kind of ambiguity.
-"""
-
-# ╔═╡ 4fe5a14c-a482-4d77-9472-d9c0a793e91e
-md"""
 If you run into this error, you can do two things:
 
 - Wrap all definitions together into a single cell
@@ -168,12 +218,12 @@ end
 
 # ╔═╡ 4df1d31c-db13-49a1-963b-337550cd2bda
 md"""
-### Why?
-Coming from Jupyter, this can feel a bit frustrating. Jupyter programmers often divide up their notebook in "sections" or code, with each cell containing 3-10 expressions, rather than 1.
-
-Grouping expressions like this makes sense in Jupyter because you're in charge of rerunning cells. It's just more efficient and less error-prone to group related statements in a single cell.
-
-In Pluto, you don't have to worry about that! Instead, Pluto's analysis of dependencies in your code works best when each cell defines only a single variable. We find that it is **almost always a good idea to split your code into more cells**. The more cells, the more intermediate results that you can see.
+> #### Why is this not allowed?
+> Coming from Jupyter, this can feel a bit frustrating. Jupyter programmers often divide up their notebook in "sections" or code, with each cell containing 3-10 expressions. Grouping expressions like this makes sense in Jupyter because you're in charge of rerunning cells. It's just more efficient and less error-prone to group related statements in a single cell.
+> 
+> In Pluto, you don't have to worry about that! Instead, Pluto's analysis of dependencies in your code works best when each cell defines only a single variable.
+>
+> We find that it is **almost always a good idea to split your code into more cells**. The more cells, the more intermediate results that you can see.
 """
 
 # ╔═╡ a7ea9146-86f6-4d2a-85a3-950f2e7bc102
@@ -182,13 +232,10 @@ md"""
 
 Here is a neat thing in Pluto: it will manage your packages for you!
 
-To use a package to your notebook, just write a cell importing it, and Pluto will automatically make sure that the right packages are installed. If you import a new package, it will be installed behind the scenes. If you remove the import, then Pluto will uninstall it.
+**To use a package to your notebook, just write a cell importing it**, and Pluto will automatically make sure that the right packages are installed. If you import a new package, it will be installed behind the scenes. If you remove the import, then Pluto will uninstall it.
 
 In the cell below, click the ✔ button next to `using PlutoUI` to learn more about its status.
 """
-
-# ╔═╡ db1ef6d1-7921-4035-8705-a0820048b785
-using PlutoUI
 
 # ╔═╡ d8b4d774-258d-4ef8-9bd9-586d19c785d2
 md"""
@@ -245,7 +292,7 @@ This cell contains some **text** in *Markdown*!
 md"""
 !!! tip
 
-	Use `ctrl + M` / `cmd + M` in a cell to wrap it in `md""\"` markers!
+	Use `Ctrl + M` in a cell to wrap it in `md""\"` markers!
 """
 
 # ╔═╡ e99b9c02-a31a-46d9-a5f1-9849c9d3cbe0
@@ -302,6 +349,15 @@ That's it!
 
 I encourage you to make your own notebooks and play around with Pluto yourself. You can also take a look at Pluto's featured notebooks (on the home page) which show you a bit more of what you can do with Pluto!
 """
+
+# ╔═╡ 5dd0949a-82d1-4b27-8318-9b42065d0957
+greatness = greatness * 2
+
+# ╔═╡ aff0754c-8e3a-4cbc-9697-0797e5d32fc2
+greatness = 0
+
+# ╔═╡ c12c3f7d-f91b-4395-9323-52a582a79bc6
+greatness = greatness + 10
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -603,15 +659,22 @@ version = "17.4.0+2"
 # ╠═807b1586-8b3e-4cb1-9a9d-8ca66a28ec3e
 # ╠═3bca136c-115f-4dd1-ac4d-d14c23c538ce
 # ╟─2b91d104-921a-4d66-ac1f-a940cdb2d14c
+# ╟─3103e636-3f0a-4e16-94f7-3da1a573ec3d
+# ╟─0948181e-b26c-421b-83b5-c9dceb71e804
+# ╟─9c3cfd5e-b89c-4df2-9982-d581e9fc3730
+# ╠═f6e66043-6773-470a-9a07-17283c878d79
+# ╟─2a84a64a-b819-4246-8f77-99679691da61
+# ╠═3323e930-31be-4b0b-8cf2-71a07a017758
+# ╠═c702dde3-6cb4-4444-ab1d-f1db95e6776a
+# ╟─b04a791f-7eb9-40eb-9cab-ff38fbc6cca6
+# ╠═def86a18-7106-490d-a1f0-c3e48b42b8f6
+# ╟─ec2bcfd5-bd38-4801-ac38-2339bc782147
+# ╟─1086228a-e28d-45c7-9153-c79378239e54
 # ╟─447f49ce-1738-4987-a976-094174971ccb
 # ╠═aff0754c-8e3a-4cbc-9697-0797e5d32fc2
 # ╠═c12c3f7d-f91b-4395-9323-52a582a79bc6
 # ╠═5dd0949a-82d1-4b27-8318-9b42065d0957
 # ╟─c4ece2cd-31f4-4c91-a59b-e520de13dedd
-# ╠═162513a8-4ca9-4cae-9e43-1ae09827f7a4
-# ╟─5c958b92-c511-48b0-aeb2-a8b5fe4514cb
-# ╟─ee7adb33-b394-484d-8071-122642ea867b
-# ╟─4fe5a14c-a482-4d77-9472-d9c0a793e91e
 # ╟─5200e802-8080-4394-aa85-e2604c7279c8
 # ╠═94991d24-6aad-4361-a8e5-5e2c1f15c53c
 # ╟─244ca1ba-c2dc-4713-9dd0-57ed0d19ba70
