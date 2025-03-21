@@ -57,8 +57,15 @@ oranges = apples + 50
 
 # ╔═╡ 03d3ade3-056a-4f16-9b31-d259879082c9
 md"""
-When you change `apples`, `oranges` is immediately updated with it! ⚡
+When you change `apples`, then `oranges` is immediately updated! ⚡
 """
+
+# ╔═╡ 1512a488-3d77-4161-9fd0-0ade53e75c34
+details("Can't change code?", md"""
+If you are reading this notebook online, you need to install Pluto to run the notebook. Here is a video recording!
+
+![Screen capture video where I cange the value of apples, and oranges updates to match](https://github.com/user-attachments/assets/fade5851-8493-4f93-a960-766d3048acec)
+""")
 
 # ╔═╡ 3ed1ed94-8741-48a0-9d23-bb78499eec91
 md"""
@@ -657,6 +664,7 @@ version = "17.4.0+2"
 # ╠═b25c812b-7ec2-4e17-aa1b-e1a1407d29fb
 # ╠═8e1faf5f-7b60-4b57-9902-e9d2531f0961
 # ╟─03d3ade3-056a-4f16-9b31-d259879082c9
+# ╟─1512a488-3d77-4161-9fd0-0ade53e75c34
 # ╟─3ed1ed94-8741-48a0-9d23-bb78499eec91
 # ╟─773ac617-4e5d-46b9-92ff-b0d9a23e42f1
 # ╠═6ba28587-3612-45bb-a5fa-5e1ce8fa3aa6
