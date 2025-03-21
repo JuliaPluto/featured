@@ -67,10 +67,16 @@ That's what we mean by reactivity in Pluto. Pluto analyses the _dependencies_ be
 
 # ╔═╡ 773ac617-4e5d-46b9-92ff-b0d9a23e42f1
 md"""
-### Why?
-Reactivity can save you some tedious work of having to rerun several cells when you change a variable, but it's more than a time-saver!
-
-Because the output of your cells is always kept up-to-date, you won't have weird errors that depend on some code that you ran in your session but deleted over an hour ago. Likewise, when you shut down Pluto and open it the next day, all your notebooks will work exactly like yesterday.
+> #### Why reactive?
+> Reactivity can save you some tedious work of having to rerun several cells when you change a variable, but it's more than a time-saver!
+> 
+> Because the output of your cells is always kept up-to-date, you won't have weird errors that depend on some code that you ran in your session but deleted over an hour ago. Likewise, when you shut down Pluto and open it the next day, all your notebooks will work exactly like yesterday.
+>
+>
+> ##### Descriptive programming
+> Pluto offers an environment where changed code takes effect instantly and where deleted code leaves no trace. Unlike Jupyter or Matlab, there is **no mutable workspace**, but rather, an important guarantee:
+>
+> > _**At any instant**, the program state is **completely described** by the code you see._
 
 ### Try it!
 
