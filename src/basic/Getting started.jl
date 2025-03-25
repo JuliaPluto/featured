@@ -5,7 +5,7 @@
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://user-images.githubusercontent.com/6933510/174066314-d338f28b-36cf-48e0-981f-dd0f140ad66c.png"
 #> order = "1"
-#> tags = ["basic", "classic"]
+#> tags = ["classic"]
 #> license = "Unlicense"
 #> description = "Welcome to Pluto!"
 #> 
