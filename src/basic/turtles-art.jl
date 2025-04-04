@@ -7,7 +7,7 @@
 #> order = "5.1"
 #> title = "Turtles – showcase"
 #> date = "2024-08-10"
-#> tags = ["krat", "turtle", "basic"]
+#> tags = ["turtle", "basic"]
 #> description = "🐢 A couple of cool artworks made with simple Julia code"
 #> license = "Unlicense"
 #> 
