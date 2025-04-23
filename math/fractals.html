@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <meta charset="utf-8" />
-
-    <title>Fractals and Fractal Art</title>
+<!DOCTYPE html><html lang="en"><head><meta name="viewport" content="width=device-width"><meta charset="utf-8"><title>Fractals and Fractal Art</title>
 <meta name="description" content='Math + fractals, generate your own fractal art!'>
 <meta property="og:article:tag" content='fractals'>
 <meta property="og:article:tag" content='math'>
@@ -17,76 +10,20 @@
 <meta property='og:description' content='Math + fractals, generate your own fractal art!'>
 
 <meta name="pluto-insertion-spot-meta">
-
-
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a2928">
-    <meta name="color-scheme" content="light dark">
-
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/img/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/img/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/img/favicon-96x96.png" />
-    <link rel="pluto-external-source" id="pluto-logo-big" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/img/logo.svg" />
-    <link rel="pluto-external-source" id="pluto-logo-small" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/img/favicon_unsaturated.svg" />
-
-    <script defer>
-        console.log(
-            "Pluto.jl, by Fons van der Plas (https://github.com/fonsp), Mikołaj Bochenski (https://github.com/malyvsen), Michiel Dral (https://github.com/dralletje) and friends 🌈"
-        )
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@observablehq/stdlib@3.3.1/dist/stdlib.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.11/js/iframeResizer.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/ansi_up@5.1.0/ansi_up.min.js" defer></script>
-
-    <link rel="pluto-external-source" id="vmsg-wasm" href="https://unpkg.com/vmsg@0.4.0/vmsg.wasm">
-    <link rel="pluto-external-source" id="arrow_up_circle_icon" href="https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/arrow-up-circle-outline.svg">
-    <link rel="pluto-external-source" id="document_text_icon" href="https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/document-text-outline.svg">
-    <link rel="pluto-external-source" id="help_circle_icon" href="https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/help-circle-outline.svg">
-    <link rel="pluto-external-source" id="open_icon" href="https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/open-outline.svg">
-
-    <!-- This doesn't do anything unless activated, and it makes sure parcel bundles this -->
-    <script id="iframe-resizer-content-window-script" src="https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.11/js/iframeResizer.contentWindow.min.js" crossorigin="anonymous" defer></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/editor.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/hide-ui.css" type="text/css" media="all" data-pluto-file="hide-ui" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/binder.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/treeview.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/highlightjs.css" type="text/css">
-
-    <script data-pluto-file="launch-parameters">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="white"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a2928"><meta name="color-scheme" content="light dark"><link rel="icon" type="image/png" sizes="16x16" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/favicon-16x16.267aebbe.png"><link rel="icon" type="image/png" sizes="32x32" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/favicon-32x32.1b9d3e70.png"><link rel="icon" type="image/png" sizes="96x96" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/favicon-96x96.26e08763.png"><link rel="pluto-external-source" id="pluto-logo-big" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/logo.49a14041.svg"><link rel="pluto-external-source" id="pluto-logo-small" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/favicon_unsaturated.c11d4d33.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.b5bd8bc8.css"><script type="module" src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/index.e10141f8.js"></script><script type="module" src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.runtime.b146f9f7.js"></script><script defer>console.log("Pluto.jl, by Fons van der Plas (https://github.com/fonsp), Mikołaj Bochenski (https://github.com/malyvsen), Michiel Dral (https://github.com/dralletje) and friends \uD83C\uDF08");</script><script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/index.65d5caa1.js" defer></script><script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/index.2db9e182.js" defer></script><script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.21e3b1fd.js" defer></script><script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.97d6fa3c.js" defer></script><link rel="pluto-external-source" id="vmsg-wasm" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/vmsg.56bb9389.wasm"><link rel="pluto-external-source" id="arrow_up_circle_icon" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/arrow-up-circle-outline.3f146ffe.svg"><link rel="pluto-external-source" id="document_text_icon" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/document-text-outline.8d1e2333.svg"><link rel="pluto-external-source" id="help_circle_icon" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/help-circle-outline.a023036a.svg"><link rel="pluto-external-source" id="open_icon" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/open-outline.87533923.svg"><script id="iframe-resizer-content-window-script" src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.69996afe.js" crossorigin defer></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.0139db4c.css" type="text/css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.bf06bf57.css" type="text/css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.7eb8c2ea.css" type="text/css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.d203a2fe.css" type="text/css"><script data-pluto-file="launch-parameters">
 window.pluto_notebook_id = undefined;
 window.pluto_isolated_cell_ids = undefined;
 window.pluto_notebookfile = "fractals.jl";
 window.pluto_disable_ui = true;
 window.pluto_slider_server_url = "https://fonsi.armada.silentech.gr";
-window.pluto_binder_url = "https://mybinder.org/v2/gh/fonsp/pluto-on-binder/v0.20.4";
+window.pluto_binder_url = "https://mybinder.org/v2/gh/fonsp/pluto-on-binder/v0.20.6";
 window.pluto_statefile = "fractals.plutostate";
 window.pluto_preamble_html = undefined;
 </script>
 
 <meta name="pluto-insertion-spot-parameters">
-
-    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/editor.js" type="module" defer></script>
-    <script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@86b18812/frontend/warn_old_browsers.js"></script>
-
-    <!-- This script will be enabled by JS after the notebook has initialized to prevent taking up bandwidth during the initial load. -->
-    <link rel="pluto-external-source" id="MathJax-script" href="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js" type="text/javascript">
-    
-    
+<script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/editor.0fd8de4e.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/index.11569726.js"></script><link rel="pluto-external-source" id="MathJax-script" href="https://cdn.jsdelivr.net/gh/fonsp/Pluto.jl@0.20.6/frontend-dist/tex-svg-full.f72d1ae1.js" type="text/javascript">
 <link rel="preload" as="fetch" href="fractals.plutostate" crossorigin>
 
 <meta name="pluto-insertion-spot-preload">
-
-</head>
-
-<body class="loading no-MαθJax">
-    <div style="display: flex; min-height: 100vh;">
-        <pluto-editor class="fullscreen">
-            <progress style="filter: grayscale(1)" class="statefile-fetch-progress delete-me-when-live" max="100"></progress>
-        </pluto-editor>
-    </div>
-</body>
-
-</html>
+</head><body class="no-MαθJax"> <div style="min-height:100vh;display:flex"> <pluto-editor class="fullscreen loading"> <progress style="filter:grayscale()" class="delete-me-when-live statefile-fetch-progress" max="100"></progress> </pluto-editor> </div> </body></html>
