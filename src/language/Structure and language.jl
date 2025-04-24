@@ -601,8 +601,7 @@ else
 			transition_frequency(c) = sample_freq_matrix[
 				index_of_letter('w'), index_of_letter(c)
 			]
-			most_frequent_index = argmax(transition_frequency, alphabet)
-			result == alphabet[most_frequent_index]
+			result == argmax(transition_frequency, alphabet)
 		end
 			correct()
 		else
@@ -637,8 +636,7 @@ else
 			transition_frequency(c) = sample_freq_matrix[
 				index_of_letter(c), index_of_letter('w')
 			]
-			most_frequent_index = argmax(transition_frequency, alphabet)
-			result == alphabet[most_frequent_index]
+			result == argmax(transition_frequency, alphabet)
 		end
 			correct()
 		else
