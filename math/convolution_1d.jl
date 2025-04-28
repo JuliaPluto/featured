@@ -291,7 +291,7 @@ end
 begin
 	# Makie can't display emojis directly, so we have to grab them from github - sorry
 	import PNGFiles
-	emoji_pill_pic = PNGFiles.load(download("https://raw.githubusercontent.com/pranabdas/github-emoji-assets/main/assets/pill.png")) .|> RGBA{Float64};
+	emoji_pill_pic = PNGFiles.load(download("https://cdn.jsdelivr.net/gh/pranabdas/github-emojis@c0632da/assets/png/pill.png")) .|> RGBA{Float64};
 end;
 
 # ╔═╡ 9fab3bbb-5c7f-4464-97c9-847f52754845
