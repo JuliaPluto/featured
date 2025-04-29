@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.47
+# v0.20.5
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -19,13 +19,18 @@ using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
-    quote
+    #! format: off
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
+
+# ╔═╡ 071d9ca5-9b42-4583-ad96-a48f93453a0e
+using PlutoUI
 
 # ╔═╡ bc532cd2-c75b-11ea-313f-8b5e771c9227
 md"""# PlutoUI.jl
@@ -42,14 +47,8 @@ md"""
 Simply import the `PlutoUI` package, and Pluto's built-in package manager takes care of the rest!
 """
 
-# ╔═╡ 071d9ca5-9b42-4583-ad96-a48f93453a0e
-using PlutoUI
-
 # ╔═╡ deadce6b-4abc-42b0-9997-07be8637ee94
 TableOfContents()
-
-# ╔═╡ fb6142f6-c765-11ea-29fd-7ff4e823c02b
-space
 
 # ╔═╡ fddb794c-c75c-11ea-1f55-eb9c178424cd
 md"""
@@ -115,9 +114,6 @@ A `NumberField` can be used just like a `Slider`, it just looks different:"
 
 # ╔═╡ 314cb85a-c761-11ea-1cba-b73f84a52be8
 @bind x_different NumberField(0:100, default=20)
-
-# ╔═╡ 3c68b25c-c761-11ea-226a-4f46579a6732
-Resource(dog_url, :width => x * x_different)
 
 # ╔═╡ 104b55ce-cc4f-11ea-1273-092a1717e399
 
@@ -309,9 +305,6 @@ md"The file picker is useful if you want to show off your notebook on a dataset 
 
 The caveat is that large files might take a long time to get processed: everything needs to pass through the browser. If you are using large datasets, a better option is to use `Select` to let the reader pick a filename. You can then read the file using `Base.read(filename, type)`"
 
-# ╔═╡ ebfc61b0-c765-11ea-1d66-cbf1dcdb8bdb
-space
-
 # ╔═╡ 3e5dd7d2-c760-11ea-1dca-6d8720b3558d
 md"# Extras"
 
@@ -359,8 +352,19 @@ DownloadButton(poem, "poem.txt")
 # ╔═╡ 067cbcde-cc4c-11ea-3eed-972dc6d7bb3b
 DownloadButton([0x01, 0x02, 0x03], "secret_data.bin")
 
-# ╔═╡ f69a5d5e-c765-11ea-3fa0-230c6c619730
-space
+# ╔═╡ 909057da-6f9d-443e-b58f-6c75ee21ab63
+
+
+# ╔═╡ 51a717b3-0658-4ead-889a-f89bf541e579
+md"## details"
+
+# ╔═╡ ef4c3dc2-3cfc-4888-87eb-fd495f785e69
+md"""
+As another output element, `PlutoUI` provides a `details` function to create a block with an always-visible title and foldable further content. This is useful for showing overly verbose details that would disrupt the normal flow of the text, or to hide, e.g., solutions of exercises in a tutorial notebook.
+"""
+
+# ╔═╡ 5c191df7-54b9-49c5-b03f-e4c5767ee25b
+details(md"Full documentation of the `details` function", @doc PlutoUI.details)
 
 # ╔═╡ 7da30d97-b28a-4eb9-a2ef-fad599b549d1
 md"""
@@ -405,15 +409,6 @@ import PlutoUI: combine
 # ╔═╡ a4837897-caae-447a-8db9-7775e7a4d0c8
 
 
-# ╔═╡ f5c421cc-dbdb-459a-9bb4-d648507a87d2
-@bind speeds wind_speed_input(["North", "East", "South", "West"])
-
-# ╔═╡ a4eac824-ba87-473a-b39a-783c4de3f933
-speeds
-
-# ╔═╡ f9052ed8-84cc-4cca-abb2-9363aafc6040
-speeds.North
-
 # ╔═╡ d278189e-6a5b-428a-8c81-ce3d206b042c
 function wind_speed_input(directions::Vector)
 	
@@ -434,15 +429,21 @@ function wind_speed_input(directions::Vector)
 	end
 end
 
+# ╔═╡ f5c421cc-dbdb-459a-9bb4-d648507a87d2
+@bind speeds wind_speed_input(["North", "East", "South", "West"])
+
+# ╔═╡ a4eac824-ba87-473a-b39a-783c4de3f933
+speeds
+
+# ╔═╡ f9052ed8-84cc-4cca-abb2-9363aafc6040
+speeds.North
+
 # ╔═╡ 4ca9c749-08ee-467f-af2c-9b2f13199d72
 md"""
 Use the Live Docs to learn more about `combine` and to see additional examples. 
 
 > 🙋 `combine` is very useful in combination with [HypertextLiteral.jl](https://github.com/MechanicalRabbit/HypertextLiteral.jl), which you can learn using our JavaScript sample notebook. 
 """
-
-# ╔═╡ 0b66c781-ecf2-445e-b2aa-82cb13371e46
-space
 
 # ╔═╡ ad8e9b30-c75d-11ea-1fd0-0b53592135bf
 md"""# Loading resources
@@ -477,6 +478,9 @@ md"Here is a _dog_: ![](https://fonsp.com/img/doggoSmall.jpg)"
 
 # ╔═╡ 6a7e7e54-c75e-11ea-2ea7-ed3da37e9e96
 dog_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Welsh_Springer_Spaniel.jpg/640px-Welsh_Springer_Spaniel.jpg"
+
+# ╔═╡ 3c68b25c-c761-11ea-226a-4f46579a6732
+Resource(dog_url, :width => x * x_different)
 
 # ╔═╡ 9ac7921c-c75e-11ea-30f5-c35e6ee370cb
 t_rex_url = "https://upload.wikimedia.org/wikipedia/commons/transcoded/6/62/Meow.ogg/Meow.ogg.mp3"
@@ -582,9 +586,6 @@ Addressing _local files_ is fragile: if someone else opens the notebook, or if y
 
 Putting images online might be a hassle, but once it works, it will work everywhere! The stateless nature of URLs means that the images will work regardless of how the notebook file is accessed, while keeping a minimal file format."
 
-# ╔═╡ 35523932-cc4f-11ea-0908-2d51c57176b7
-space
-
 # ╔═╡ a245dddc-cc59-11ea-3e1d-1763673ff706
 md"# PlutoUI without Pluto
 
@@ -611,14 +612,29 @@ and you run it without Pluto, then this statement simply assigns `x = 10`.
 # ╔═╡ 0da7bc30-cc64-11ea-1dde-2b7f2dd76036
 md"`Pluto` and `PlutoUI` work independently of each other! In fact, _you_ could write a package with fun input elements, or add `@bind`able values to existing packages."
 
-# ╔═╡ d163f434-cc5a-11ea-19e9-9319ba994efa
-space
-
 # ╔═╡ 512fe760-cc4c-11ea-1c5b-2b32da035aad
 md"# Appendix"
 
 # ╔═╡ 55bcdbf8-cc4c-11ea-1549-87c076a59ff4
 space = html"<br><br><br>"
+
+# ╔═╡ fb6142f6-c765-11ea-29fd-7ff4e823c02b
+space
+
+# ╔═╡ ebfc61b0-c765-11ea-1d66-cbf1dcdb8bdb
+space
+
+# ╔═╡ f69a5d5e-c765-11ea-3fa0-230c6c619730
+space
+
+# ╔═╡ 0b66c781-ecf2-445e-b2aa-82cb13371e46
+space
+
+# ╔═╡ 35523932-cc4f-11ea-0908-2d51c57176b7
+space
+
+# ╔═╡ d163f434-cc5a-11ea-19e9-9319ba994efa
+space
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1002,6 +1018,10 @@ version = "17.4.0+2"
 # ╟─ea00721c-cc4b-11ea-1e82-0b3dbe6a7f1e
 # ╠═fc12280c-c768-11ea-3ebc-ebcd6b3459c1
 # ╠═067cbcde-cc4c-11ea-3eed-972dc6d7bb3b
+# ╟─909057da-6f9d-443e-b58f-6c75ee21ab63
+# ╟─51a717b3-0658-4ead-889a-f89bf541e579
+# ╟─ef4c3dc2-3cfc-4888-87eb-fd495f785e69
+# ╠═5c191df7-54b9-49c5-b03f-e4c5767ee25b
 # ╟─f69a5d5e-c765-11ea-3fa0-230c6c619730
 # ╟─7da30d97-b28a-4eb9-a2ef-fad599b549d1
 # ╟─170089cd-f366-4c0a-b58d-fe6e36049db7
