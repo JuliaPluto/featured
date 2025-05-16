@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.4
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://opensource.org/license/unlicense"
@@ -21,7 +21,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     #! format: off
-    quote
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
@@ -757,11 +757,11 @@ StructuralUnits = "ec81c399-378c-4a82-baa1-80fb2fc85b6c"
 TestHandcalcFunctions = "6ba57fb7-81df-4b24-8e8e-a3885b6fcae7"
 
 [compat]
-AISCSteel = "~0.2.0"
-Handcalcs = "~0.5.0"
+AISCSteel = "~0.2.6"
+Handcalcs = "~0.5.1"
 LaTeXStrings = "~1.4.0"
 PlutoPlotly = "~0.6.2"
-PlutoUI = "~0.7.61"
+PlutoUI = "~0.7.62"
 StructuralUnits = "~0.2.0"
 TestHandcalcFunctions = "~0.2.4"
 """
@@ -770,15 +770,15 @@ TestHandcalcFunctions = "~0.2.4"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.4"
+julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "bd82353ea3ac37dfc8d2b57125b8e8e588b535cf"
+project_hash = "5a77e5bbbe0f4d6a76b953ee92006b17f362bbbc"
 
 [[deps.AISCSteel]]
 deps = ["CSV", "DataFramesMeta", "EnumX", "StructuralUnits"]
-git-tree-sha1 = "24ce089a7a31dcd73a89e4442e2f053a542fd797"
+git-tree-sha1 = "e2ca38da3aa0124b4d2753f72a1a0cae21acf865"
 uuid = "599de4a1-440e-403d-8b33-ce14758023a2"
-version = "0.2.0"
+version = "0.2.6"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -816,9 +816,9 @@ version = "0.6.0"
 
 [[deps.CodeTracking]]
 deps = ["InteractiveUtils", "UUIDs"]
-git-tree-sha1 = "7eee164f122511d3e4e1ebadb7956939ea7e1c77"
+git-tree-sha1 = "062c5e1a5bf6ada13db96a4ae4749a4c2234f521"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "1.3.6"
+version = "1.3.9"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -895,9 +895,9 @@ version = "0.15.4"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "1d0a14036acb104d9e89698bd408f63ab58cdc82"
+git-tree-sha1 = "4e1fe97fdaed23e9dc21d4d664bea76b65fc50a0"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.20"
+version = "0.18.22"
 
 [[deps.DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -916,10 +916,9 @@ uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
 
 [[deps.DocStringExtensions]]
-deps = ["LibGit2"]
-git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
+git-tree-sha1 = "e7b7e6f178525d17c720ab9c081e4ef04429f860"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-version = "0.9.3"
+version = "0.9.4"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -927,9 +926,9 @@ uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
 
 [[deps.EnumX]]
-git-tree-sha1 = "bdb1942cd4c45e3c678fd11569d5cccd80976237"
+git-tree-sha1 = "bddad79635af6aec424f53ed8aad5d7555dc6f00"
 uuid = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
-version = "1.0.4"
+version = "1.0.5"
 
 [[deps.FilePathsBase]]
 deps = ["Compat", "Dates"]
@@ -964,9 +963,9 @@ version = "1.11.0"
 
 [[deps.Handcalcs]]
 deps = ["AbstractTrees", "CodeTracking", "InteractiveUtils", "LaTeXStrings", "Latexify", "MacroTools", "PrecompileTools", "Revise", "TestHandcalcFunctions"]
-git-tree-sha1 = "1bb18c94645287fa0c499da38a6f04f74ef8f66d"
+git-tree-sha1 = "13ea045e74df71c6580dcf036546f9b781861292"
 uuid = "e8a07092-c156-4455-ab8e-ed8bc81edefb"
-version = "0.5.0"
+version = "0.5.1"
 
 [[deps.HashArrayMappedTries]]
 git-tree-sha1 = "2eaa69a7cab70a52b9687c8bf950a5a93ec895ae"
@@ -1027,9 +1026,9 @@ version = "0.21.4"
 
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "a434e811d10e7cbf4f0674285542e697dca605d0"
+git-tree-sha1 = "6ac9e4acc417a5b534ace12690bc6973c25b862f"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.9.42"
+version = "0.10.3"
 
 [[deps.LaTeXStrings]]
 git-tree-sha1 = "dda21b8cbd6a6c40d9d02a73230f9d70fed6918c"
@@ -1038,9 +1037,9 @@ version = "1.4.0"
 
 [[deps.Latexify]]
 deps = ["Format", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "OrderedCollections", "Requires"]
-git-tree-sha1 = "cd714447457c660382fe634710fb56eb255ee42e"
+git-tree-sha1 = "cd10d2cc78d34c0e2a3a36420ab607b611debfbb"
 uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
-version = "0.16.6"
+version = "0.16.7"
 
     [deps.Latexify.extensions]
     DataFramesExt = "DataFrames"
@@ -1092,19 +1091,19 @@ version = "1.11.0"
 
 [[deps.LoweredCodeUtils]]
 deps = ["JuliaInterpreter"]
-git-tree-sha1 = "688d6d9e098109051ae33d126fcfc88c4ce4a021"
+git-tree-sha1 = "4ef1c538614e3ec30cb6383b9eb0326a5c3a9763"
 uuid = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
-version = "3.1.0"
+version = "3.3.0"
 
 [[deps.MIMEs]]
-git-tree-sha1 = "1833212fd6f580c20d4291da9c1b4e8a655b128e"
+git-tree-sha1 = "c64d943587f7187e751162b3b84445bbbd79f691"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
-version = "1.0.0"
+version = "1.1.0"
 
 [[deps.MacroTools]]
-git-tree-sha1 = "72aebe0b5051e5143a079a4685a46da330a40472"
+git-tree-sha1 = "1e0228a030642014fe5cfe68c2c0a818f9e3f522"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
-version = "0.5.15"
+version = "0.5.16"
 
 [[deps.Markdown]]
 deps = ["Base64"]
@@ -1152,9 +1151,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "8489905bcdbcfac64d1daa51ca07c0d8f0283821"
+git-tree-sha1 = "7d2f8f21da5db6a806faf7b9b292296da42b2810"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.1"
+version = "2.8.3"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -1167,9 +1166,9 @@ weakdeps = ["REPL"]
 
 [[deps.PlotlyBase]]
 deps = ["ColorSchemes", "Colors", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "90af5c9238c1b3b25421f1fdfffd1e8fca7a7133"
+git-tree-sha1 = "28278bb0053da0fd73537be94afd1682cc5a0a83"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.8.20"
+version = "0.8.21"
 
     [deps.PlotlyBase.extensions]
     DataFramesExt = "DataFrames"
@@ -1199,9 +1198,9 @@ version = "0.6.2"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "7e71a55b87222942f0f9337be62e26b1f103d3e4"
+git-tree-sha1 = "d3de2694b52a01ce61a036f18ea9c0f61c4a9230"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.61"
+version = "0.7.62"
 
 [[deps.PooledArrays]]
 deps = ["DataAPI", "Future"]
@@ -1255,9 +1254,9 @@ version = "1.3.1"
 
 [[deps.Revise]]
 deps = ["CodeTracking", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "REPL", "Requires", "UUIDs", "Unicode"]
-git-tree-sha1 = "9bb80533cb9769933954ea4ffbecb3025a783198"
+git-tree-sha1 = "cedc9f9013f7beabd8a9c6d2e22c0ca7c5c2a8ed"
 uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
-version = "3.7.2"
+version = "3.7.6"
 
     [deps.Revise.extensions]
     DistributedExt = "Distributed"
@@ -1384,9 +1383,9 @@ uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.10"
 
 [[deps.URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.2"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -1404,9 +1403,9 @@ version = "1.11.0"
 
 [[deps.Unitful]]
 deps = ["Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "c0667a8e676c53d390a09dc6870b3d8d6650e2bf"
+git-tree-sha1 = "d62610ec45e4efeabf7032d67de2ffdea8344bed"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.22.0"
+version = "1.22.1"
 
     [deps.Unitful.extensions]
     ConstructionBaseUnitfulExt = "ConstructionBase"

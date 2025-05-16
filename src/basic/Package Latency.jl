@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.6
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
@@ -726,7 +726,7 @@ HypertextLiteral = "~0.9.5"
 Intervals = "~1.10.0"
 JSON = "~0.21.4"
 Memoization = "~0.2.2"
-ObservablePlotExperiment = "~0.1.0"
+ObservablePlotExperiment = "~0.1.1"
 OrderedCollections = "~1.8.0"
 PlutoUI = "~0.7.62"
 """
@@ -735,9 +735,9 @@ PlutoUI = "~0.7.62"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.5"
+julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "f734a4e0e4581f3e48e504023b2ab27e9ae335e7"
+project_hash = "0170e176192ebcc14462283f86e5e8982589f531"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -895,9 +895,9 @@ uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
 version = "1.1.0"
 
 [[deps.MacroTools]]
-git-tree-sha1 = "72aebe0b5051e5143a079a4685a46da330a40472"
+git-tree-sha1 = "1e0228a030642014fe5cfe68c2c0a818f9e3f522"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
-version = "0.5.15"
+version = "0.5.16"
 
 [[deps.Markdown]]
 deps = ["Base64"]
@@ -935,9 +935,9 @@ version = "1.2.0"
 
 [[deps.ObservablePlotExperiment]]
 deps = ["AbstractPlutoDingetjes", "Dates", "HypertextLiteral"]
-git-tree-sha1 = "13283cf9f18bc0afa4340dc9fd54009fd5331d31"
+git-tree-sha1 = "a0611a6921fc43d1079d266da82da050da92f540"
 uuid = "216e6a69-7265-646e-696e-656d6d65777a"
-version = "0.1.0"
+version = "0.1.1"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
@@ -951,9 +951,9 @@ version = "1.8.0"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "44f6c1f38f77cafef9450ff93946c53bd9ca16ff"
+git-tree-sha1 = "7d2f8f21da5db6a806faf7b9b292296da42b2810"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.2"
+version = "2.8.3"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]

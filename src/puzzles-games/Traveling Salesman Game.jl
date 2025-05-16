@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.47
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://opensource.org/license/unlicense/"
@@ -16,6 +16,14 @@
 
 using Markdown
 using InteractiveUtils
+
+# ╔═╡ 5bf31410-c914-11ee-33f0-c5c134d6b4d8
+begin
+	using Distances
+	using HypertextLiteral
+	using Random
+	using Statistics
+end
 
 # ╔═╡ 2ee01ff1-a85f-4ff9-8d25-6af053b2d8aa
 md"""
@@ -37,6 +45,137 @@ N = 5
 
 # ╔═╡ 069a3cdc-6f8e-4470-a6a8-8312eb6b5df5
 your_solution = [1,2,3,4,5]
+
+# ╔═╡ d25e7bed-3aae-43a1-aa5c-ef44cca55242
+begin
+	truck_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car2.png"
+	truck2_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car5.png"
+	house_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/house1.png"
+	map_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/grass.png"
+end;
+
+# ╔═╡ d9ca9f51-d5dd-4321-bae8-fec16a53d250
+begin
+	struct Bounds
+		x::Int
+		y::Int
+		width::Int
+		height::Int
+	end
+
+	struct Point
+		x::Int
+		y::Int
+	end
+end
+
+# ╔═╡ c5a0d444-770d-4dc8-8267-963d9f2be545
+function random_point(bounds, points)
+    x = rand(bounds.x:bounds.x + bounds.width - 1)
+    y = rand(bounds.y:bounds.y + bounds.height - 1)
+
+	# make sure points aren't too close together
+    threshold = 20
+	
+    for point in points
+        if abs(point.x - x) < threshold || abs(point.y - y) < threshold
+            return random_point(bounds, points)
+        end
+    end
+    
+    return Point(x, y)
+end;
+
+# ╔═╡ 739b8137-f6b6-4516-b28d-acdb79828be6
+function create_points(b, N)
+	points = []
+	for i in 1:N
+		push!(points, random_point(b, points))
+	end
+	return points
+end;
+
+# ╔═╡ fdfdbb5c-2204-434c-8249-bc9ad3e72531
+begin
+	get_points_xs(points) = [point.x for point in points]
+	get_points_ys(points) = [point.y for point in points]
+end;
+
+# ╔═╡ 7c0f26a0-a478-4887-91c8-e5a747b97c19
+function total_distance(points, tour)
+	total_distance = 0.0
+	n = length(points)
+	
+	for i in 1:n-1
+		p1 = points[tour[i]]
+		p2 = points[tour[i+1]]
+		total_distance += evaluate(Euclidean(), [p1.x, p1.y], [p2.x, p2.y])
+	end
+	
+	p_last = points[tour[end]]
+	p_first = points[tour[1]]
+	# Return to the starting point
+	total_distance += evaluate(Euclidean(), [p_last.x, p_last.y], [p_first.x, p_first.y])  
+	return total_distance
+end;
+
+# ╔═╡ 39556336-9d1c-417a-b3d7-4e424710902d
+function simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
+	n = length(points)
+	current_tour = randperm(n) # Initialize with a random tour
+	best_tour = copy(current_tour) # Keep track of the best tour found
+	current_distance = total_distance(points, current_tour)
+	best_distance = current_distance
+	temperature = initial_temperature
+
+	for iter in 1:max_iter
+		next_tour = copy(current_tour) # Make a copy of the current tour to modify
+		i, j = rand(1:n, 2) # Select two random indices
+		next_tour[i], next_tour[j] = next_tour[j], next_tour[i]  # Swap the cities at these indices
+		next_distance = total_distance(points, next_tour)
+		delta = next_distance - current_distance
+
+		# If the new tour is shorter, or if it is longer but accepted by the annealing probability
+		if delta < 0 || exp(-delta / temperature) > rand()
+			current_tour = copy(next_tour)
+			current_distance = next_distance
+			# If the new tour is the best found so far, update the best tour and distance
+			if current_distance < best_distance
+				best_tour = copy(current_tour)
+				best_distance = current_distance
+			end
+		end
+
+		temperature *= cooling_rate # Cool down the temperature
+	end
+
+	return best_tour
+end;
+
+# ╔═╡ bb9d1888-9214-43d2-b002-b31ded8715a9
+begin
+	b = Bounds(100, 100, 450, 280)
+	points = create_points(b, N)
+end;
+
+# ╔═╡ 624c3dc0-2186-4185-9fba-87e522d4a163
+begin
+	points_xs = get_points_xs(points)
+	points_ys = get_points_ys(points)
+	distances = pairwise(Euclidean(), [points_xs points_ys], dims=1)
+	max_iter = 1000
+	initial_temperature = mean(distances) + 3 * std(distances)
+	cooling_rate = 0.99
+	solution_player = vcat(your_solution, your_solution[1])
+	player_xs = get_points_xs(points[solution_player])
+	player_ys = get_points_ys(points[solution_player])
+	solution_computer = simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
+	push!(solution_computer, solution_computer[1]) # return to start
+	computer_xs = get_points_xs(points[solution_computer])
+	computer_ys = get_points_ys(points[solution_computer])
+	player_distance = total_distance([Point(z[1], z[2]) for z in zip(player_xs, player_ys)], 1:size(player_xs, 1))
+	computer_distance = total_distance([Point(z[1], z[2]) for z in zip(computer_xs, computer_ys)], 1:size(computer_xs, 1))
+end;
 
 # ╔═╡ f3bf1b25-cb37-4594-b92b-fcd3f44429e9
 if length(your_solution) == N
@@ -224,145 +363,6 @@ else
 	""")
 end
 
-# ╔═╡ 5bf31410-c914-11ee-33f0-c5c134d6b4d8
-begin
-	using Distances
-	using HypertextLiteral
-	using Random
-	using Statistics
-end
-
-# ╔═╡ d25e7bed-3aae-43a1-aa5c-ef44cca55242
-begin
-	truck_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car2.png"
-	truck2_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/car5.png"
-	house_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/house1.png"
-	map_url = "https://raw.githubusercontent.com/mthelm85/travelling-salesman-game/main/assets/grass.png"
-end;
-
-# ╔═╡ d9ca9f51-d5dd-4321-bae8-fec16a53d250
-begin
-	struct Bounds
-		x::Int
-		y::Int
-		width::Int
-		height::Int
-	end
-
-	struct Point
-		x::Int
-		y::Int
-	end
-end
-
-# ╔═╡ c5a0d444-770d-4dc8-8267-963d9f2be545
-function random_point(bounds, points)
-    x = rand(bounds.x:bounds.x + bounds.width - 1)
-    y = rand(bounds.y:bounds.y + bounds.height - 1)
-
-	# make sure points aren't too close together
-    threshold = 20
-	
-    for point in points
-        if abs(point.x - x) < threshold || abs(point.y - y) < threshold
-            return random_point(bounds, points)
-        end
-    end
-    
-    return Point(x, y)
-end;
-
-# ╔═╡ 739b8137-f6b6-4516-b28d-acdb79828be6
-function create_points(b, N)
-	points = []
-	for i in 1:N
-		push!(points, random_point(b, points))
-	end
-	return points
-end;
-
-# ╔═╡ fdfdbb5c-2204-434c-8249-bc9ad3e72531
-begin
-	get_points_xs(points) = [point.x for point in points]
-	get_points_ys(points) = [point.y for point in points]
-end;
-
-# ╔═╡ 7c0f26a0-a478-4887-91c8-e5a747b97c19
-function total_distance(points, tour)
-	total_distance = 0.0
-	n = length(points)
-	
-	for i in 1:n-1
-		p1 = points[tour[i]]
-		p2 = points[tour[i+1]]
-		total_distance += evaluate(Euclidean(), [p1.x, p1.y], [p2.x, p2.y])
-	end
-	
-	p_last = points[tour[end]]
-	p_first = points[tour[1]]
-	# Return to the starting point
-	total_distance += evaluate(Euclidean(), [p_last.x, p_last.y], [p_first.x, p_first.y])  
-	return total_distance
-end;
-
-# ╔═╡ 39556336-9d1c-417a-b3d7-4e424710902d
-function simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
-	n = length(points)
-	current_tour = randperm(n) # Initialize with a random tour
-	best_tour = copy(current_tour) # Keep track of the best tour found
-	current_distance = total_distance(points, current_tour)
-	best_distance = current_distance
-	temperature = initial_temperature
-
-	for iter in 1:max_iter
-		next_tour = copy(current_tour) # Make a copy of the current tour to modify
-		i, j = rand(1:n, 2) # Select two random indices
-		next_tour[i], next_tour[j] = next_tour[j], next_tour[i]  # Swap the cities at these indices
-		next_distance = total_distance(points, next_tour)
-		delta = next_distance - current_distance
-
-		# If the new tour is shorter, or if it is longer but accepted by the annealing probability
-		if delta < 0 || exp(-delta / temperature) > rand()
-			current_tour = copy(next_tour)
-			current_distance = next_distance
-			# If the new tour is the best found so far, update the best tour and distance
-			if current_distance < best_distance
-				best_tour = copy(current_tour)
-				best_distance = current_distance
-			end
-		end
-
-		temperature *= cooling_rate # Cool down the temperature
-	end
-
-	return best_tour
-end;
-
-# ╔═╡ bb9d1888-9214-43d2-b002-b31ded8715a9
-begin
-	b = Bounds(100, 100, 450, 280)
-	points = create_points(b, N)
-end;
-
-# ╔═╡ 624c3dc0-2186-4185-9fba-87e522d4a163
-begin
-	points_xs = get_points_xs(points)
-	points_ys = get_points_ys(points)
-	distances = pairwise(Euclidean(), [points_xs points_ys], dims=1)
-	max_iter = 1000
-	initial_temperature = mean(distances) + 3 * std(distances)
-	cooling_rate = 0.99
-	solution_player = vcat(your_solution, your_solution[1])
-	player_xs = get_points_xs(points[solution_player])
-	player_ys = get_points_ys(points[solution_player])
-	solution_computer = simulated_annealing_tsp(points, max_iter, initial_temperature, cooling_rate)
-	push!(solution_computer, solution_computer[1]) # return to start
-	computer_xs = get_points_xs(points[solution_computer])
-	computer_ys = get_points_ys(points[solution_computer])
-	player_distance = total_distance([Point(z[1], z[2]) for z in zip(player_xs, player_ys)], 1:size(player_xs, 1))
-	computer_distance = total_distance([Point(z[1], z[2]) for z in zip(computer_xs, computer_ys)], 1:size(computer_xs, 1))
-end;
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -372,18 +372,17 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
-Distances = "~0.10.11"
+Distances = "~0.10.12"
 HypertextLiteral = "~0.9.5"
-Statistics = "~1.11.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.0"
+julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "45dc8eef364a8c380ebb575053b67b7aa89bd8c4"
+project_hash = "18c97f20a700ea1470257177064fa52d2dc1c969"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -396,9 +395,9 @@ version = "1.1.1+0"
 
 [[deps.Distances]]
 deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
-git-tree-sha1 = "66c4c81f259586e8f002eacebc177e1fb06363b0"
+git-tree-sha1 = "c7e3a542b999843086e2f29dac96a618c105be1d"
 uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
-version = "0.10.11"
+version = "0.10.12"
 
     [deps.Distances.extensions]
     DistancesChainRulesCoreExt = "ChainRulesCore"
@@ -456,9 +455,9 @@ uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
 version = "1.7.0"
 
 [[deps.Tricks]]
-git-tree-sha1 = "7822b97e99a1672bfb1b49b668a6d46d58d8cbcb"
+git-tree-sha1 = "6cae795a5a9313bbb4f60683f7263318fc7d1505"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.9"
+version = "0.1.10"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]

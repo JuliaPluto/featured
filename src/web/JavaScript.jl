@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.47
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -18,13 +18,18 @@ using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
-    quote
+    #! format: off
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
+
+# ╔═╡ 571613a1-6b4b-496d-9a68-aac3f6a83a4b
+using PlutoUI, HypertextLiteral
 
 # ╔═╡ 97914842-76d2-11eb-0c48-a7eedca870fb
 md"""
@@ -34,9 +39,6 @@ You have already seen that Pluto is designed to be _interactive_. You can make f
 
 _However_, if you want to take your interactive document one step further, then Pluto offers a great framework for **combining Julia with HTML, CSS and _JavaScript_**.
 """
-
-# ╔═╡ 571613a1-6b4b-496d-9a68-aac3f6a83a4b
-using PlutoUI, HypertextLiteral
 
 # ╔═╡ 168e13f7-2ff2-4207-be56-e57755041d36
 md"""
@@ -157,6 +159,13 @@ md"""
 	<p> Hello $(who)!</p>
 	""")
 
+# ╔═╡ e7d3db79-8253-4cbd-9832-5afb7dff0abf
+cool_features = [
+	md"Interpolate any **HTML-showable object**, such as plots and images, or another `@htl` literal."
+	md"Interpolated lists are expanded _(like in this cell!)_."
+	"Easy syntax for CSS"
+	]
+
 # ╔═╡ bf592202-a9a4-4e9b-8433-fed55e3aa3bc
 @htl("""
 	<p>It has a bunch of very cool features! Including:</p>
@@ -167,13 +176,6 @@ md"""
 		for item in cool_features
 	])</ul>
 	""")
-
-# ╔═╡ e7d3db79-8253-4cbd-9832-5afb7dff0abf
-cool_features = [
-	md"Interpolate any **HTML-showable object**, such as plots and images, or another `@htl` literal."
-	md"Interpolated lists are expanded _(like in this cell!)_."
-	"Easy syntax for CSS"
-	]
 
 # ╔═╡ 5ac5b984-8c02-4b8d-a342-d0f05f7909ec
 md"""
@@ -226,15 +228,15 @@ md"""
 **Let's look at a more exciting example:**
 """
 
+# ╔═╡ 00d97588-d591-4dad-9f7d-223c237deefd
+@bind fantastic_x Slider(0:400)
+
 # ╔═╡ 01ce31a9-6856-4ee7-8bce-7ce635167457
 my_data = [
 	(name="Cool", coordinate=[100, 100]),
 	(name="Awesome", coordinate=[200, 100]),
 	(name="Fantastic!", coordinate=[fantastic_x, 150]),
 ]
-
-# ╔═╡ 00d97588-d591-4dad-9f7d-223c237deefd
-@bind fantastic_x Slider(0:400)
 
 # ╔═╡ 21f57310-9ceb-423c-a9ce-5beb1060a5a3
 @htl("""
@@ -259,32 +261,6 @@ my_data = [
 	return svg
 	</script>
 """)
-
-# ╔═╡ 94561cb1-2325-49b6-8b22-943923fdd91b
-details(md"""
-	```htmlmixed
-	<script src="https://cdn.jsdelivr.net/npm/d3@6.2.0/dist/d3.min.js"></script>
-
-	<script>
-
-	// interpolate the data 🐸
-	const data = $(my_data)
-
-	const svg = DOM.svg(600,200)
-	const s = d3.select(svg)
-
-	s.selectAll("text")
-		.data(data)
-		.join("text")
-		.attr("x", d => d.coordinate[0])
-		.attr("y", d => d.coordinate[1])
-		.style("fill", "red")
-		.text(d => d.name)
-
-	return svg
-	</script>
-	```
-	""", "Show with syntax highlighting")
 
 # ╔═╡ 0866afc2-fd42-42b7-a572-9d824cf8b83b
 md"""
@@ -337,42 +313,6 @@ ClickCounter(text="Click") = @htl("""
 </script>
 </span>
 """)
-
-# ╔═╡ b0c246ed-b871-461b-9541-280e49b49136
-details(md"""
-```htmlmixed
-<div>
-<button>$(text)</button>
-
-<script>
-
-	// Select elements relative to `currentScript`
-	const div = currentScript.parentElement
-	const button = div.querySelector("button")
-
-	// we wrapped the button in a `div` to hide its default behaviour from Pluto
-
-	let count = 0
-
-	button.addEventListener("click", (e) => {
-		count += 1
-
-		// we dispatch the input event on the div, not the button, because 
-		// Pluto's `@bind` mechanism listens for events on the **first element** in the
-		// HTML output. In our case, that's the div.
-
-		div.value = count
-		div.dispatchEvent(new CustomEvent("input"))
-		e.preventDefault()
-	})
-
-	// Set the initial value
-	div.value = count
-
-</script>
-</div>
-```
-""", "Show with syntax highlighting")
 
 # ╔═╡ 9346d8e2-9ba0-4475-a21f-11bdd018bc60
 @bind num_clicks ClickCounter()
@@ -570,6 +510,16 @@ md"""
 (Though using `HypertextLiteral.jl` would make more sense for this purpose.)
 """
 
+# ╔═╡ fc8984c8-4668-418a-b258-a1718809470c
+
+
+# ╔═╡ 846354c8-ba3b-4be7-926c-d3c9cc9add5f
+films = [
+	(title="Frances Ha", director="Noah Baumbach", year=2012),
+	(title="Portrait de la jeune fille en feu", director="Céline Sciamma", year=2019),
+	(title="De noorderlingen", director="Alex van Warmerdam", year=1992),
+];
+
 # ╔═╡ c857bb4b-4cf4-426e-b340-592cf7700434
 @htl("""
 	<script>
@@ -593,42 +543,6 @@ md"""
 	
 	</script>
 	""")
-
-# ╔═╡ d121e085-c69b-490f-b315-c11a9abd57a6
-details(md"""
-	```htmlmixed
-	<script>
-	
-	let data = $(films)
-	
-	// html`...` is from https://github.com/observablehq/stdlib
-	// note the escaped dollar signs:
-	let Film = ({title, director, year}) => html`
-		<li class="film">
-			<b>\${title}</b> by <em>\${director}</em> (\${year})
-		</li>
-	`
-	
-	// the returned HTML node is rendered
-	return html`
-		<ul>
-			\${data.map(Film)}
-		</ul>
-	`
-	
-	</script>
-	```
-	""", "Show with syntax highlighting")
-
-# ╔═╡ fc8984c8-4668-418a-b258-a1718809470c
-
-
-# ╔═╡ 846354c8-ba3b-4be7-926c-d3c9cc9add5f
-films = [
-	(title="Frances Ha", director="Noah Baumbach", year=2012),
-	(title="Portrait de la jeune fille en feu", director="Céline Sciamma", year=2019),
-	(title="De noorderlingen", director="Alex van Warmerdam", year=1992),
-];
 
 # ╔═╡ a33c7d7a-8071-448e-abd6-4e38b5444a3a
 md"""
@@ -670,24 +584,6 @@ let
 	</script>
 	"""
 end
-
-# ╔═╡ d4bdc4fe-2af8-402f-950f-2afaf77c62de
-details(md"""
-	```htmlmixed
-	<script id="something">
-	
-	console.log("'this' is currently:", this)
-
-	if(this == null) {
-		return html`<blockquote>I am running for the first time!</blockqoute>`
-	} else {
-		return html`<blockquote><b>I was triggered by reactivity!</b></blockqoute>`
-	}
-
-
-	</script>
-	```
-	""", "Show with syntax highlighting")
 
 # ╔═╡ e77cfefc-429d-49db-8135-f4604f6a9f0b
 md"""
@@ -743,36 +639,6 @@ return output
 
 """)
 
-# ╔═╡ e910982c-8508-4729-a75d-8b5b847918b6
-details(md"""
-```htmlmixed
-<script src="https://cdn.jsdelivr.net/npm/d3@6.2.0/dist/d3.min.js"></script>
-
-<script id="hello">
-
-const positions = $(dot_positions)
-
-const svg = this == null ? DOM.svg(600,200) : this
-const s = this == null ? d3.select(svg) : this.s
-
-s.selectAll("circle")
-	.data(positions)
-	.join("circle")
-	.transition()
-	.duration(300)
-	.attr("cx", d => d)
-	.attr("cy", 100)
-	.attr("r", 10)
-	.attr("fill", "gray")
-
-
-const output = svg
-output.s = s
-return output
-</script>
-```
-""", "Show with syntax highlighting")
-
 # ╔═╡ 781adedc-2da7-4394-b323-e508d614afae
 md"""
 ### Example: Preact with persistent state
@@ -785,6 +651,11 @@ Modify `x`, add and remove elements, and notice that preact maintains its state.
 
 # ╔═╡ 85483b28-341e-4ed6-bb1e-66c33613725e
 x = ["hello pluton!", 232000,2,2,12 ,12,2,21,1,2, 120000]
+
+# ╔═╡ 3266f9e6-42ad-4103-8db3-b87d2c315290
+state = Dict(
+	:x => x
+	)
 
 # ╔═╡ 9e37c18c-3ebb-443a-9663-bb4064391d6e
 @htl("""
@@ -845,6 +716,186 @@ x = ["hello pluton!", 232000,2,2,12 ,12,2,21,1,2, 120000]
 	
 """)
 
+# ╔═╡ 7d9d6c28-131a-4b2a-84f8-5c085f387e85
+md"""
+## Embedding Julia data directly into JavaScript!
+
+You can use `AbstractPlutoDingetjes.Display.published_to_js` to embed data directly into JavaScript, using Pluto's built-in, optimized data transfer. See [the documentation](https://plutojl.org/en/docs/abstractplutodingetjes/#published_to_js) for more info.
+
+Example usage:
+
+```julia
+let
+	x = rand(UInt8, 10_000)
+	
+	d = Dict(
+		"some_raw_data" => x,
+		"wow" => 1000,
+	)
+	
+	@htl(\"\"\"
+	<script>
+		
+	const d = $(AbstractPlutoDingetjes.Display.published_to_js(d))
+	console.log(d)
+	
+	</script>
+	\"\"\")
+end
+```
+
+In this example, the `const d` is populated from a hook into Pluto's data transfer. For large amounts of typed vector data (e.g. `Vector{UInt8}` or `Vector{Float64}`), this is *much* more efficient than interpolating the data directly with HypertextLiteral using `$(d)`, which would use a JSON-like string serialization.
+"""
+
+# ╔═╡ da7091f5-8ba2-498b-aa8d-bbf3b4505b81
+md"""
+# Appendix
+"""
+
+# ╔═╡ 64cbf19c-a4e3-4cdb-b4ec-1fbe24be55ad
+details(x, summary="Show more") = @htl("""
+	<details>
+		<summary>$(summary)</summary>
+		$(x)
+	</details>
+	""")
+
+# ╔═╡ 94561cb1-2325-49b6-8b22-943923fdd91b
+details(md"""
+	```htmlmixed
+	<script src="https://cdn.jsdelivr.net/npm/d3@6.2.0/dist/d3.min.js"></script>
+
+	<script>
+
+	// interpolate the data 🐸
+	const data = $(my_data)
+
+	const svg = DOM.svg(600,200)
+	const s = d3.select(svg)
+
+	s.selectAll("text")
+		.data(data)
+		.join("text")
+		.attr("x", d => d.coordinate[0])
+		.attr("y", d => d.coordinate[1])
+		.style("fill", "red")
+		.text(d => d.name)
+
+	return svg
+	</script>
+	```
+	""", "Show with syntax highlighting")
+
+# ╔═╡ b0c246ed-b871-461b-9541-280e49b49136
+details(md"""
+```htmlmixed
+<div>
+<button>$(text)</button>
+
+<script>
+
+	// Select elements relative to `currentScript`
+	const div = currentScript.parentElement
+	const button = div.querySelector("button")
+
+	// we wrapped the button in a `div` to hide its default behaviour from Pluto
+
+	let count = 0
+
+	button.addEventListener("click", (e) => {
+		count += 1
+
+		// we dispatch the input event on the div, not the button, because 
+		// Pluto's `@bind` mechanism listens for events on the **first element** in the
+		// HTML output. In our case, that's the div.
+
+		div.value = count
+		div.dispatchEvent(new CustomEvent("input"))
+		e.preventDefault()
+	})
+
+	// Set the initial value
+	div.value = count
+
+</script>
+</div>
+```
+""", "Show with syntax highlighting")
+
+# ╔═╡ d121e085-c69b-490f-b315-c11a9abd57a6
+details(md"""
+	```htmlmixed
+	<script>
+	
+	let data = $(films)
+	
+	// html`...` is from https://github.com/observablehq/stdlib
+	// note the escaped dollar signs:
+	let Film = ({title, director, year}) => html`
+		<li class="film">
+			<b>\${title}</b> by <em>\${director}</em> (\${year})
+		</li>
+	`
+	
+	// the returned HTML node is rendered
+	return html`
+		<ul>
+			\${data.map(Film)}
+		</ul>
+	`
+	
+	</script>
+	```
+	""", "Show with syntax highlighting")
+
+# ╔═╡ d4bdc4fe-2af8-402f-950f-2afaf77c62de
+details(md"""
+	```htmlmixed
+	<script id="something">
+	
+	console.log("'this' is currently:", this)
+
+	if(this == null) {
+		return html`<blockquote>I am running for the first time!</blockqoute>`
+	} else {
+		return html`<blockquote><b>I was triggered by reactivity!</b></blockqoute>`
+	}
+
+
+	</script>
+	```
+	""", "Show with syntax highlighting")
+
+# ╔═╡ e910982c-8508-4729-a75d-8b5b847918b6
+details(md"""
+```htmlmixed
+<script src="https://cdn.jsdelivr.net/npm/d3@6.2.0/dist/d3.min.js"></script>
+
+<script id="hello">
+
+const positions = $(dot_positions)
+
+const svg = this == null ? DOM.svg(600,200) : this
+const s = this == null ? d3.select(svg) : this.s
+
+s.selectAll("circle")
+	.data(positions)
+	.join("circle")
+	.transition()
+	.duration(300)
+	.attr("cx", d => d)
+	.attr("cy", 100)
+	.attr("r", 10)
+	.attr("fill", "gray")
+
+
+const output = svg
+output.s = s
+return output
+</script>
+```
+""", "Show with syntax highlighting")
+
 # ╔═╡ 05d28aa2-9622-4e62-ab39-ca4c7dde6eb4
 details(md"""
 	```htmlmixed
@@ -904,41 +955,15 @@ details(md"""
 	```
 	""", "Show with syntax highlighting")
 
-# ╔═╡ 3266f9e6-42ad-4103-8db3-b87d2c315290
-state = Dict(
-	:x => x
-	)
-
-# ╔═╡ 7d9d6c28-131a-4b2a-84f8-5c085f387e85
-md"""
-## Embedding Julia data directly into JavaScript!
-
-You can use `AbstractPlutoDingetjes.Display.published_to_js` to embed data directly into JavaScript, using Pluto's built-in, optimized data transfer. See [the documentation](https://plutojl.org/en/docs/abstractplutodingetjes/#published_to_js) for more info.
-
-Example usage:
-
-```julia
-let
-	x = rand(UInt8, 10_000)
-	
-	d = Dict(
-		"some_raw_data" => x,
-		"wow" => 1000,
-	)
-	
-	@htl(\"\"\"
-	<script>
-		
-	const d = $(AbstractPlutoDingetjes.Display.published_to_js(d))
-	console.log(d)
-	
-	</script>
-	\"\"\")
+# ╔═╡ cc318a19-316f-4fd9-8436-fb1d42f888a3
+demo_img = let
+	url = "https://user-images.githubusercontent.com/6933510/116753174-fa40ab80-aa06-11eb-94d7-88f4171970b2.jpeg"
+	data = read(download(url))
+	PlutoUI.Show(MIME"image/jpg"(), data)
 end
-```
 
-In this example, the `const d` is populated from a hook into Pluto's data transfer. For large amounts of typed vector data (e.g. `Vector{UInt8}` or `Vector{Float64}`), this is *much* more efficient than interpolating the data directly with HypertextLiteral using `$(d)`, which would use a JSON-like string serialization.
-"""
+# ╔═╡ 7aacdd8c-1571-4461-ba6e-0fd65dd8d788
+demo_html = @htl("<b style='font-family: cursive;'>Hello!</b>")
 
 # ╔═╡ ebec177c-4c33-45a4-bdbd-f16944631aff
 md"""
@@ -973,29 +998,6 @@ $(embed_display(rand(4)))
 You can [learn more](https://github.com/fonsp/Pluto.jl/pull/1126) about how this feature works, or how to use it inside packages.
 """
 
-# ╔═╡ da7091f5-8ba2-498b-aa8d-bbf3b4505b81
-md"""
-# Appendix
-"""
-
-# ╔═╡ 64cbf19c-a4e3-4cdb-b4ec-1fbe24be55ad
-details(x, summary="Show more") = @htl("""
-	<details>
-		<summary>$(summary)</summary>
-		$(x)
-	</details>
-	""")
-
-# ╔═╡ cc318a19-316f-4fd9-8436-fb1d42f888a3
-demo_img = let
-	url = "https://user-images.githubusercontent.com/6933510/116753174-fa40ab80-aa06-11eb-94d7-88f4171970b2.jpeg"
-	data = read(download(url))
-	PlutoUI.Show(MIME"image/jpg"(), data)
-end
-
-# ╔═╡ 7aacdd8c-1571-4461-ba6e-0fd65dd8d788
-demo_html = @htl("<b style='font-family: cursive;'>Hello!</b>")
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1011,7 +1013,7 @@ PlutoUI = "~0.7.34"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.0"
+julia_version = "1.11.3"
 manifest_format = "2.0"
 project_hash = "ec79c67b4ef3937661bc2b16e56e34892aeecf12"
 
@@ -1132,9 +1134,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 version = "1.11.0"
 
 [[deps.MIMEs]]
-git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+git-tree-sha1 = "c64d943587f7187e751162b3b84445bbbd79f691"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
-version = "0.1.4"
+version = "1.1.0"
 
 [[deps.Markdown]]
 deps = ["Base64"]
@@ -1165,9 +1167,9 @@ version = "0.3.27+1"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "8489905bcdbcfac64d1daa51ca07c0d8f0283821"
+git-tree-sha1 = "7d2f8f21da5db6a806faf7b9b292296da42b2810"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.1"
+version = "2.8.3"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -1182,9 +1184,9 @@ version = "1.11.0"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "eba4810d5e6a01f612b948c9fa94f905b49087b0"
+git-tree-sha1 = "d3de2694b52a01ce61a036f18ea9c0f61c4a9230"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.60"
+version = "0.7.62"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -1249,14 +1251,14 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 version = "1.11.0"
 
 [[deps.Tricks]]
-git-tree-sha1 = "7822b97e99a1672bfb1b49b668a6d46d58d8cbcb"
+git-tree-sha1 = "6cae795a5a9313bbb4f60683f7263318fc7d1505"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.9"
+version = "0.1.10"
 
 [[deps.URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.2"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
