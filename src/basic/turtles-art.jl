@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.47
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -20,13 +20,18 @@ using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
-    quote
+    #! format: off
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
+
+# ╔═╡ 1ff23021-4eb3-458d-a07e-0c5083eb4c4f
+using PlutoTurtles, PlutoUI
 
 # ╔═╡ 86e25a9c-b877-45cb-8a57-4643dd1fc266
 md"""
@@ -35,38 +40,12 @@ md"""
 This notebook uses [PlutoTurtles.jl](https://github.com/JuliaPluto/PlutoTurtles.jl) to recreate some famous works of art!
 """
 
-# ╔═╡ 1ff23021-4eb3-458d-a07e-0c5083eb4c4f
-using PlutoTurtles, PlutoUI
-
 # ╔═╡ 0d7fb9e7-3437-4ff9-9de6-1f3f8a93dfff
 md"""## "_The Starry Night_" 
 Vincent van Gogh (1889)"""
 
 # ╔═╡ abe23881-0354-4068-8115-451f7b3307c7
 @bind GO_gogh CounterButton("Another one!")
-
-# ╔═╡ 70402e12-22c2-47fd-99be-aa6cd15ce2c3
-starry_night = turtle_drawing_fast(background = "#000088") do t
-	rng = Random.MersenneTwister(GO_gogh + 7)
-	
-	star_count = 100
-	
-	color!(t, "yellow")
-	
-	for i in 1:star_count
-		#move
-		penup!(t)
-		random_angle = rand(rng) * 360
-		right!(t, random_angle)
-		random_distance = rand(rng, 1:8)
-		forward!(t, random_distance)
-		
-		#draw star
-		pendown!(t)
-		
-		draw_star(t, 5, 1)
-	end
-end
 
 # ╔═╡ 75b23160-aada-4e48-8b16-ddd2c6c8df1f
 function draw_star(turtle, points, size)
@@ -83,32 +62,6 @@ Piet Mondriaan (1913)"""
 
 # ╔═╡ f30d72d7-7894-4229-8f25-509195563097
 @bind GO_mondriaan CounterButton("Another one!")
-
-# ╔═╡ d400d8d6-de2c-4886-86b9-ffd9e5f4e073
-# turtle_drawing_fast() is the same as turtle_drawing(), but it does not show a little turtle taking the individual steps
-
-mondriaan = turtle_drawing_fast() do t	
-	rng = Random.MersenneTwister(GO_mondriaan + 7)
-	size = 30
-	
-	#go to top left corner
-	penup!(t)
-	forward!(t, size / 2)
-	left!(t, 90)
-	forward!(t, size / 2)
-	right!(t, 180)
-		
-	#draw painting
-	draw_mondriaan(rng, t, size, size)
-	
-	#white border around painting
-	color!(t, "white")
-	pendown!(t)
-	for i in 1:4
-		forward!(t, size)
-		right!(t, 90)
-	end
-end
 
 # ╔═╡ ab4d46eb-d441-47c3-b061-2611b2e44009
 function draw_mondriaan(rng, turtle, width, height)
@@ -182,14 +135,6 @@ Luka van der Plas (2020)"""
 # ╔═╡ 5f6beed8-33ae-463c-9d28-09e3a4235936
 @bind fractal_base Slider(0:0.01:2; default=1)
 
-# ╔═╡ 83cd894b-2be0-48c7-b5e7-8db7ed96c13f
-fractal = turtle_drawing_fast() do t
-	penup!(t)
-	backward!(t, 15)
-	pendown!(t)
-	lindenmayer(t, 0, fractal_angle, fractal_tilt, fractal_base)
-end
-
 # ╔═╡ 18a97ce6-ae85-46a2-b294-830473fe80cd
 function lindenmayer(turtle, depth, angle, tilt, base)
 	if depth < 10
@@ -210,6 +155,14 @@ function lindenmayer(turtle, depth, angle, tilt, base)
 		turtle.pos = old_pos
 		turtle.heading = old_heading
 	end
+end
+
+# ╔═╡ 83cd894b-2be0-48c7-b5e7-8db7ed96c13f
+fractal = turtle_drawing_fast() do t
+	penup!(t)
+	backward!(t, 15)
+	pendown!(t)
+	lindenmayer(t, 0, fractal_angle, fractal_tilt, fractal_base)
 end
 
 # ╔═╡ e51d4b19-fa30-4643-8d12-407941a4757d
@@ -234,6 +187,55 @@ end
 # ╔═╡ 897cc639-5ab6-48fe-bdba-19aa4e8bad15
 import Random
 
+# ╔═╡ 70402e12-22c2-47fd-99be-aa6cd15ce2c3
+starry_night = turtle_drawing_fast(background = "#000088") do t
+	rng = Random.MersenneTwister(GO_gogh + 7)
+	
+	star_count = 100
+	
+	color!(t, "yellow")
+	
+	for i in 1:star_count
+		#move
+		penup!(t)
+		random_angle = rand(rng) * 360
+		right!(t, random_angle)
+		random_distance = rand(rng, 1:8)
+		forward!(t, random_distance)
+		
+		#draw star
+		pendown!(t)
+		
+		draw_star(t, 5, 1)
+	end
+end
+
+# ╔═╡ d400d8d6-de2c-4886-86b9-ffd9e5f4e073
+# turtle_drawing_fast() is the same as turtle_drawing(), but it does not show a little turtle taking the individual steps
+
+mondriaan = turtle_drawing_fast() do t	
+	rng = Random.MersenneTwister(GO_mondriaan + 7)
+	size = 30
+	
+	#go to top left corner
+	penup!(t)
+	forward!(t, size / 2)
+	left!(t, 90)
+	forward!(t, size / 2)
+	right!(t, 180)
+		
+	#draw painting
+	draw_mondriaan(rng, t, size, size)
+	
+	#white border around painting
+	color!(t, "white")
+	pendown!(t)
+	for i in 1:4
+		forward!(t, size)
+		right!(t, 90)
+	end
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -243,7 +245,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
 PlutoTurtles = "~1.0.1"
-PlutoUI = "~0.7.60"
+PlutoUI = "~0.7.62"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -377,9 +379,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 version = "1.11.0"
 
 [[MIMEs]]
-git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+git-tree-sha1 = "c64d943587f7187e751162b3b84445bbbd79f691"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
-version = "0.1.4"
+version = "1.1.0"
 
 [[Markdown]]
 deps = ["Base64"]
@@ -410,9 +412,9 @@ version = "0.3.27+1"
 
 [[Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "8489905bcdbcfac64d1daa51ca07c0d8f0283821"
+git-tree-sha1 = "7d2f8f21da5db6a806faf7b9b292296da42b2810"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.1"
+version = "2.8.3"
 
 [[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -433,9 +435,9 @@ version = "1.0.1"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "eba4810d5e6a01f612b948c9fa94f905b49087b0"
+git-tree-sha1 = "d3de2694b52a01ce61a036f18ea9c0f61c4a9230"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.60"
+version = "0.7.62"
 
 [[PrecompileTools]]
 deps = ["Preferences"]
@@ -500,14 +502,14 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 version = "1.11.0"
 
 [[Tricks]]
-git-tree-sha1 = "7822b97e99a1672bfb1b49b668a6d46d58d8cbcb"
+git-tree-sha1 = "6cae795a5a9313bbb4f60683f7263318fc7d1505"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.9"
+version = "0.1.10"
 
 [[URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.2"
 
 [[UUIDs]]
 deps = ["Random", "SHA"]
