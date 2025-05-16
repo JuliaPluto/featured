@@ -22,18 +22,16 @@ end
 cd(source)
 
 using Pkg
-Pkg.activate(joinpath(source, "pluto-slider-server-environment"))
+Pkg.activate(joinpath(source, "pluto-deployment-environment"))
 Pkg.instantiate()
 
 using PlutoNotebookComparison
-
-include(joinpath(@__DIR__, "DramaBrokenLink.jl"))
 
 
 sources_old = [
     PSSCache(pluto_state_cache)
     WebsiteDir(gh_pages_dir)
-    WebsiteAddress("https://bmlip.github.io/colorized/")
+    WebsiteAddress("https://featured.plutojl.org/")
     SafePreview()
 ]
 
@@ -43,7 +41,6 @@ sources_new = [
 ]
 
 drama_checkers = [
-    DramaBrokenLink()
     DramaRestartRequired()
     DramaNewError()
     DramaBrokenImport()
