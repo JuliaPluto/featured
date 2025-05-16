@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.47
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -20,13 +20,21 @@ using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
-    quote
+    #! format: off
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
+
+# ╔═╡ 600b676e-19aa-11ef-0a02-cd61e0a3dff3
+using HypertextLiteral
+
+# ╔═╡ 48d03cad-0d61-4996-8458-ba39aa42efee
+using PlutoUI
 
 # ╔═╡ e1d35685-4024-476b-848f-1984ef8d12b4
 md"""
@@ -91,16 +99,10 @@ md"""
 If you want to learn more about ES6 library imports in Pluto:
 """
 
-# ╔═╡ 302ebe5d-9637-47cf-8d56-064d14633511
-learn_about_importing_in_pluto
-
 # ╔═╡ 51cca7ca-f716-4738-8dea-008c33f7ddbb
 md"""
 Let's run this code, using [`@htl` from HypertextLiteral.jl](https://github.com/JuliaPluto/HypertextLiteral.jl). We use [`console.log`](https://github.com/JuliaPluto/pluto-developer-instructions/blob/main/How%20to%20open%20the%20Browser%20Dev%20Tools.md) to see what we got.
 """
-
-# ╔═╡ 600b676e-19aa-11ef-0a02-cd61e0a3dff3
-using HypertextLiteral
 
 # ╔═╡ b5065b18-6e2f-497d-ab03-178b17b350e8
 @htl """
@@ -338,9 +340,6 @@ Let's see it in action! Move these sliders:
 # ╔═╡ 83d86f2e-55f5-42c7-b14a-19dc2901fc08
 @bind cubes_test Slider(1:50; default=4)
 
-# ╔═╡ 1c00f6c1-524f-4949-b6e4-c7800ab093d3
-visualise_shapes(cubes=cubes_test, spheres=spheres_test)
-
 # ╔═╡ 76ff5a12-0868-4fe3-b8ef-c76c52da493c
 md"""
 Cool right! I will never again have trouble understanding that 9 is bigger than 5!
@@ -410,6 +409,9 @@ function visualise_shapes(; cubes::Int64=0, spheres::Int64=0)
 	</div>
 	"""
 end
+
+# ╔═╡ 1c00f6c1-524f-4949-b6e4-c7800ab093d3
+visualise_shapes(cubes=cubes_test, spheres=spheres_test)
 
 # ╔═╡ 111382a2-ec1c-456d-8c53-94420241c82a
 md"""
@@ -596,9 +598,6 @@ return renderer.domElement
 </div>
 """
 
-# ╔═╡ 48d03cad-0d61-4996-8458-ba39aa42efee
-using PlutoUI
-
 # ╔═╡ 1ecc0095-5ef4-4661-9df9-3d7b34614b83
 learn_about_importing_in_pluto = PlutoUI.details(
 	"🙋 Importing a JS library in Pluto",
@@ -639,6 +638,9 @@ learn_about_importing_in_pluto = PlutoUI.details(
 	"""
 );
 
+# ╔═╡ 302ebe5d-9637-47cf-8d56-064d14633511
+learn_about_importing_in_pluto
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -654,7 +656,7 @@ PlutoUI = "~0.7.59"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.0"
+julia_version = "1.11.3"
 manifest_format = "2.0"
 project_hash = "65877c43b0e7adba5f4c93d8d0c98988bb337300"
 
@@ -775,9 +777,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 version = "1.11.0"
 
 [[deps.MIMEs]]
-git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+git-tree-sha1 = "c64d943587f7187e751162b3b84445bbbd79f691"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
-version = "0.1.4"
+version = "1.1.0"
 
 [[deps.Markdown]]
 deps = ["Base64"]
@@ -808,9 +810,9 @@ version = "0.3.27+1"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "8489905bcdbcfac64d1daa51ca07c0d8f0283821"
+git-tree-sha1 = "7d2f8f21da5db6a806faf7b9b292296da42b2810"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.1"
+version = "2.8.3"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -825,9 +827,9 @@ version = "1.11.0"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "eba4810d5e6a01f612b948c9fa94f905b49087b0"
+git-tree-sha1 = "d3de2694b52a01ce61a036f18ea9c0f61c4a9230"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.60"
+version = "0.7.62"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -892,14 +894,14 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 version = "1.11.0"
 
 [[deps.Tricks]]
-git-tree-sha1 = "7822b97e99a1672bfb1b49b668a6d46d58d8cbcb"
+git-tree-sha1 = "6cae795a5a9313bbb4f60683f7263318fc7d1505"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.9"
+version = "0.1.10"
 
 [[deps.URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.2"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
