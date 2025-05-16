@@ -29,8 +29,8 @@ all_notebooks = filter(Pluto.is_pluto_notebook, all_files_recursive)
 
 level = getfield(Pkg, Symbol("UPLEVEL_$(ARGS[1])"))
 
-for n in all_notebooks
-    @info "Updating" n
+for (i,n) in enumerate(all_notebooks)
+    @info "Updating [$i/$(length(all_notebooks))] $n"
     Pluto.update_notebook_environment(n; backup=false, level)
 end
 
