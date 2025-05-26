@@ -8,8 +8,8 @@ if !isdir("pluto-deployment-environment") || length(ARGS) != 1
     """)
 end
 
-if !(v"1.6.0-aaa" < VERSION < v"1.7.0")
-    error("Our notebook package environments need to be updated with Julia 1.6. Go to julialang.org/downloads to install it.")
+if !(v"1.11.0-aaa" < VERSION < v"1.12.0")
+    error("Our notebook package environments need to be updated with Julia 1.11. Go to julialang.org/downloads to install it.")
 end
 
 import Pkg

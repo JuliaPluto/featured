@@ -1,12 +1,12 @@
 ### A Pluto.jl notebook ###
-# v0.19.36
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
 #> image = "https://github.com/JuliaPluto/featured/assets/43678097/ebcd0d6c-fa37-4d2b-8d82-6814854f726b"
+#> order = "2"
 #> title = "Styling with CSS"
 #> tags = ["web", "css"]
-#> order = "2"
 #> license = "Unlicense"
 #> description = "Learn how to use CSS to give a unique style to your notebooks!"
 #> 
@@ -403,6 +403,22 @@ Keep in mind that Pluto doesn't guarantee a stable API for styling. That is to s
 That said, Pluto has been around for a while, so you can expect it to be reasonably stable.
 """
 
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+PLUTO_PROJECT_TOML_CONTENTS = """
+[deps]
+"""
+
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+PLUTO_MANIFEST_TOML_CONTENTS = """
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.11.3"
+manifest_format = "2.0"
+project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+
+[deps]
+"""
+
 # ╔═╡ Cell order:
 # ╟─9e7188e0-9e7f-11ee-1fef-b56479103e4a
 # ╟─01455807-c26e-478b-a871-f2b28526b5d9
@@ -440,3 +456,5 @@ That said, Pluto has been around for a while, so you can expect it to be reasona
 # ╟─a08b40ea-9d80-4552-83bc-50d0c1bdaa13
 # ╠═838600d7-1965-445d-ab79-cc81866eca24
 # ╟─d9ac05cc-3c54-46fc-bf28-ad38418fe413
+# ╟─00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002

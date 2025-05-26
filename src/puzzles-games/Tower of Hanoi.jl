@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.36
+# v0.20.8
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -247,6 +247,22 @@ else
 	"""
 end
 
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+PLUTO_PROJECT_TOML_CONTENTS = """
+[deps]
+"""
+
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+PLUTO_MANIFEST_TOML_CONTENTS = """
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.11.3"
+manifest_format = "2.0"
+project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+
+[deps]
+"""
+
 # ╔═╡ Cell order:
 # ╟─5b2ee40e-a2b8-11ea-0fef-c35fe6918860
 # ╟─95fbd0d2-a2b9-11ea-0682-fdf783251797
@@ -276,3 +292,5 @@ end
 # ╠═10fb1c56-a2c5-11ea-2a06-0d8c36bfa138
 # ╠═8ea7f944-a329-11ea-22cc-4dbd11ec0610
 # ╟─e54add0a-a330-11ea-2eeb-1d42f552ba38
+# ╟─00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002

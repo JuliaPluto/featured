@@ -1,12 +1,12 @@
 ### A Pluto.jl notebook ###
-# v0.19.30
+# v0.20.8
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://user-images.githubusercontent.com/6933510/174066314-d338f28b-36cf-48e0-981f-dd0f140ad66c.png"
 #> order = "1"
-#> tags = ["basic", "classic"]
+#> tags = ["classic"]
 #> license = "Unlicense"
-#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Welcome to Pluto!"
 #> 
 #>     [[frontmatter.author]]
@@ -18,12 +18,14 @@ using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
-    quote
+    #! format: off
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
 
 # ╔═╡ b129ba7c-953a-11ea-3379-17adae34924c
@@ -182,6 +184,22 @@ html"""
 </style>
 """
 
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+PLUTO_PROJECT_TOML_CONTENTS = """
+[deps]
+"""
+
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+PLUTO_MANIFEST_TOML_CONTENTS = """
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.11.3"
+manifest_format = "2.0"
+project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+
+[deps]
+"""
+
 # ╔═╡ Cell order:
 # ╟─b129ba7c-953a-11ea-3379-17adae34924c
 # ╟─4d88b926-9543-11ea-293a-1379b1b5ae64
@@ -219,3 +237,5 @@ html"""
 # ╟─7366f1b6-954c-11ea-3f68-b12444c902c3
 # ╟─1deaaf36-9554-11ea-3dae-85851f73dbc6
 # ╟─f7588ff8-4eac-4c5a-bc06-0983bc4d5ee1
+# ╟─00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002
