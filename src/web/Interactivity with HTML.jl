@@ -1,13 +1,13 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.20.8
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://user-images.githubusercontent.com/6933510/174067982-904951c4-4bba-42c7-a340-102ceb7e8e10.png"
 #> order = "1"
 #> title = "Interactivity with HTML"
 #> tags = ["interactivity", "classic", "web"]
 #> license = "Unlicense"
-#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> description = "Write your own interactive controls with HTML!"
 #> 
 #>     [[frontmatter.author]]
@@ -19,12 +19,14 @@ using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
-    quote
+    #! format: off
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
 
 # ╔═╡ 73c8532e-09a6-429b-b8f6-530c00d92428
@@ -389,6 +391,22 @@ This makes it super easy to create nice HTML/JS-based interaction elements - a p
 
 _If you want to learn more about using Javascript in Pluto, check out the [JavaScript sample notebook](https://featured.plutojl.org/web/javascript)!_"
 
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+PLUTO_PROJECT_TOML_CONTENTS = """
+[deps]
+"""
+
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+PLUTO_MANIFEST_TOML_CONTENTS = """
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.11.3"
+manifest_format = "2.0"
+project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+
+[deps]
+"""
+
 # ╔═╡ Cell order:
 # ╟─73c8532e-09a6-429b-b8f6-530c00d92428
 # ╟─db24490e-7eac-11ea-094e-9d3fc8f22784
@@ -438,3 +456,5 @@ _If you want to learn more about using Javascript in Pluto, check out the [JavaS
 # ╟─582769e6-7eb1-11ea-077d-d9b4a3226aac
 # ╟─8f829274-7eb1-11ea-3888-13c00b3ba70f
 # ╟─ced18648-7eb2-11ea-2052-07795685f0da
+# ╟─00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002
