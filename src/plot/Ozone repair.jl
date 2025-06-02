@@ -1,6 +1,18 @@
 ### A Pluto.jl notebook ###
 # v0.20.8
 
+#> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
+#> image = "https://github.com/user-attachments/assets/d3d6ee66-5739-4090-b92a-65cdd36d3939"
+#> date = "2025-06-02"
+#> tags = ["plotting", "PlutoPlotly", "PlotlyJS", "plotly", "geo", "interactive"]
+#> description = "Learn about how the ozone layer was saved! Interactive maps with plotly!"
+#> license = "Unlicense"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "JuliaPluto"
+#>     url = "https://github.com/JuliaPluto"
+
 using Markdown
 using InteractiveUtils
 
