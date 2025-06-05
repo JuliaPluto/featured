@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.8
+# v0.20.9
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -31,6 +31,9 @@ end
 
 # ╔═╡ 071d9ca5-9b42-4583-ad96-a48f93453a0e
 using PlutoUI
+
+# ╔═╡ d24696d2-6232-4759-90a9-3b2998b08e22
+using HypertextLiteral
 
 # ╔═╡ bc532cd2-c75b-11ea-313f-8b5e771c9227
 md"""# PlutoUI.jl
@@ -560,9 +563,6 @@ Here are **two tips** for getting local images to work correctly:
 
 """
 
-# ╔═╡ c48b48f6-cc5d-11ea-0f3b-d3481238625d
-
-
 # ╔═╡ ea6ade22-cc5a-11ea-1782-97f2464fd148
 md"#### Why does it have to be so difficult?
 
@@ -571,6 +571,67 @@ Pluto only stores _code_ in the notebook file, not images. This minimal file for
 Addressing _local files_ is fragile: if someone else opens the notebook, or if you move the notebook to a different folder, that image file needs to be available at exactly the same path. This is difficult to do correctly, and if it works for you, it is hard to tell if it will work for someone else. 
 
 Putting images online might be a hassle, but once it works, it will work everywhere! The stateless nature of URLs means that the images will work regardless of how the notebook file is accessed, while keeping a minimal file format."
+
+# ╔═╡ 84c703f0-3b48-459b-bd99-75113995396f
+md"""
+# Display and layout
+
+We are working on more options for controlling layout in notebooks: putting things in boxes, grids, side-by-side, etc.
+"""
+
+# ╔═╡ 1f1de9f8-b495-42b0-9b1c-df091f3d6c29
+md"""
+## WideCell
+You can use `WideCell` from PlutoUI to show something in an extra wide cell. **If the screen is big enough**, this cell will be extra wide, breaking out of the usual 700px wide margins of the Pluto notebook.
+
+On a narrow screen (like a phone or a small window), the cell will fit to the screen width, like any other cell. This avoids overflow, where content is not visible.
+"""
+
+# ╔═╡ 38dd4bde-c535-4caa-bd92-20e96dae50cf
+WideCell(
+	md"""
+	#### Hello from an extra wide cell! I can fit so so so so so so so so so so so so so so so so much in here!
+	Here is a picture:
+	
+	![](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/2560px-Red_Sunset_Panorama_-_Canada1.jpg)
+	"""
+)
+
+# ╔═╡ b97c8a1f-6602-48e4-8432-f1ae1ff568e8
+md"""
+The nicest way to use this is with the `|>` arrow operator in Julia. You can add it at the end of a cell:
+"""
+
+# ╔═╡ f41bfaa0-5898-4af3-9f12-642cf4f57d88
+let
+	x = 1:25
+	y = 4:13
+
+	M = [
+		a*b
+		for b in y, a in x
+	]
+
+	all_text = repr(MIME"text/plain"(), M)
+	Text(all_text)
+	
+end |> WideCell
+
+# ╔═╡ 95a33467-04c7-48f4-aa5f-6f1ba1fe9c82
+md"""
+You can also specify the width. Take a look at the complete docstring:
+"""
+
+# ╔═╡ 83c00a49-22ae-475f-8988-902f09ecc9da
+md"""
+## ExperimentalLayout
+You can use `PlutoUI.ExperimentalLayout` to display multiple objects together in one cell. Play around and explore!
+
+We are still figure out what API to expose, and where to publish it, hence the _"Experimental"_.
+"""
+
+# ╔═╡ c48b48f6-cc5d-11ea-0f3b-d3481238625d
+
 
 # ╔═╡ a245dddc-cc59-11ea-3e1d-1763673ff706
 md"# PlutoUI without Pluto
@@ -616,18 +677,93 @@ space
 # ╔═╡ 0b66c781-ecf2-445e-b2aa-82cb13371e46
 space
 
+# ╔═╡ a11e6f08-d743-4ff5-8648-30e8d739b5cc
+space
+
 # ╔═╡ 35523932-cc4f-11ea-0908-2d51c57176b7
 space
 
 # ╔═╡ d163f434-cc5a-11ea-19e9-9319ba994efa
 space
 
+# ╔═╡ b4a1efbf-b86b-4c9c-a9a2-a4eb50f37a24
+HiddenDocs(mod, name) = details(
+	@htl("Show docstring for <code>$name</code>"), 
+	@htl """
+	<div class="pluto-docs-binding">
+	<span id="$(name)">$(name)</span>
+	$(Base.Docs.doc(Base.Docs.Binding(mod, name)))
+	</div>
+	""")
+
+# ╔═╡ 4f911e20-5a22-47ad-ad64-f5aa432d9921
+HiddenDocs(name::Symbol) = HiddenDocs(PlutoUI, name)
+
+# ╔═╡ ffadc41d-bc18-44e6-8cb1-ee530e8e080f
+HiddenDocs(:Slider)
+
+# ╔═╡ c6ef1873-459f-432f-9614-0e64258103c7
+HiddenDocs(:Scrubbable)
+
+# ╔═╡ 0f9623fc-ec9f-4c0a-936d-677bf79fa2e3
+HiddenDocs(:NumberField)
+
+# ╔═╡ 8ec1a56e-ad91-439d-a3b2-4d154e730cb9
+HiddenDocs(:CheckBox)
+
+# ╔═╡ 9d68baef-fb1d-441b-b973-37ca1054d5c9
+HiddenDocs(:TextField)
+
+# ╔═╡ 87bb1c87-c704-4903-9653-6c92a349ba1c
+HiddenDocs(:Select)
+
+# ╔═╡ 58df6236-1ca9-41e6-8196-0298444791fa
+HiddenDocs(:MultiSelect)
+
+# ╔═╡ 13df0c18-9157-4cdd-bf2e-e340e0fde626
+HiddenDocs(:MultiCheckBox)
+
+# ╔═╡ 364e7477-7991-428e-a1d5-fec55eec28bc
+HiddenDocs(:Button)
+
+# ╔═╡ 8253f022-74c8-4801-9a20-5a105ec8fdd7
+HiddenDocs(:FilePicker)
+
+# ╔═╡ 34543b76-28d8-48a4-a8ac-3847f73e01ab
+HiddenDocs(:Clock)
+
+# ╔═╡ a511879b-135d-4e83-b576-eb602d3ee6bd
+HiddenDocs(:DownloadButton)
+
+# ╔═╡ e3e29b54-9f20-4db6-8c1a-46202a308f84
+HiddenDocs(:Confirm)
+
+# ╔═╡ 85194e82-1b15-4740-9ae6-6ed9b2f3e37c
+HiddenDocs(:combine)
+
+# ╔═╡ 12ec8c08-abd6-4bb6-83b9-fbf9c181f34d
+HiddenDocs(:Resource)
+
+# ╔═╡ 1c8db4bd-d243-47ac-bb0c-a630333e11d4
+HiddenDocs(:LocalResource)
+
+# ╔═╡ 8950fab5-d416-4a75-8701-96df4335dd5e
+HiddenDocs(:WideCell)
+
+# ╔═╡ faadc603-5132-499e-87c5-a1ca8eec8acf
+HiddenDocs(:ExperimentalLayout)
+
+# ╔═╡ 2ac1fb90-bd4d-4bf4-92ee-b376f44ec148
+HiddenDocs(PlutoUI, :Slider)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
+HypertextLiteral = "~0.9.5"
 PlutoUI = "~0.7.52"
 """
 
@@ -643,15 +779,13 @@ version = "1.3.2"
 
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
-version = "1.1.2"
+version = "1.1.1"
 
 [[Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
-version = "1.11.0"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-version = "1.11.0"
 
 [[ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
@@ -667,7 +801,6 @@ version = "1.1.1+0"
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
-version = "1.11.0"
 
 [[Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -676,7 +809,6 @@ version = "1.6.0"
 
 [[FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
-version = "1.11.0"
 
 [[FixedPointNumbers]]
 deps = ["Statistics"]
@@ -705,7 +837,6 @@ version = "0.2.5"
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-version = "1.11.0"
 
 [[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
@@ -721,17 +852,16 @@ version = "0.6.4"
 [[LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "8.6.0+0"
+version = "8.4.0+0"
 
 [[LibGit2]]
 deps = ["Base64", "LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
-version = "1.11.0"
 
 [[LibGit2_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll"]
 uuid = "e37daf67-58a4-590a-8e99-b0245dd2ffc5"
-version = "1.7.2+0"
+version = "1.6.4+0"
 
 [[LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
@@ -740,16 +870,13 @@ version = "1.11.0+1"
 
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
-version = "1.11.0"
 
 [[LinearAlgebra]]
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-version = "1.11.0"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
-version = "1.11.0"
 
 [[MIMEs]]
 git-tree-sha1 = "c64d943587f7187e751162b3b84445bbbd79f691"
@@ -759,20 +886,18 @@ version = "1.1.0"
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
-version = "1.11.0"
 
 [[MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.6+0"
+version = "2.28.2+1"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
-version = "1.11.0"
 
 [[MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2023.12.12"
+version = "2023.1.10"
 
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
@@ -781,7 +906,7 @@ version = "1.2.0"
 [[OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.27+1"
+version = "0.3.23+4"
 
 [[Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -790,21 +915,15 @@ uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
 version = "2.8.3"
 
 [[Pkg]]
-deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.11.0"
-
-    [Pkg.extensions]
-    REPLExt = "REPL"
-
-    [Pkg.weakdeps]
-    REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+version = "1.10.0"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "d3de2694b52a01ce61a036f18ea9c0f61c4a9230"
+git-tree-sha1 = "3876f0ab0390136ae0b5e3f064a109b87fa1e56e"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.62"
+version = "0.7.63"
 
 [[PrecompileTools]]
 deps = ["Preferences"]
@@ -821,12 +940,14 @@ version = "1.4.3"
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
-version = "1.11.0"
+
+[[REPL]]
+deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
+uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[Random]]
 deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-version = "1.11.0"
 
 [[Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
@@ -839,19 +960,24 @@ version = "0.7.0"
 
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
-version = "1.11.0"
+
+[[Sockets]]
+uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
+
+[[SparseArrays]]
+deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
+uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+version = "1.10.0"
 
 [[Statistics]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "ae3bb1eb3bba077cd276bc5cfc337cc65c3075c0"
+deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-version = "1.11.1"
+version = "1.10.0"
 
-    [Statistics.extensions]
-    SparseArraysExt = ["SparseArrays"]
-
-    [Statistics.weakdeps]
-    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+[[SuiteSparse_jll]]
+deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
+uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
+version = "7.2.1+1"
 
 [[TOML]]
 deps = ["Dates"]
@@ -866,7 +992,6 @@ version = "1.10.0"
 [[Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-version = "1.11.0"
 
 [[Tricks]]
 git-tree-sha1 = "6cae795a5a9313bbb4f60683f7263318fc7d1505"
@@ -881,11 +1006,9 @@ version = "1.5.2"
 [[UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
-version = "1.11.0"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
-version = "1.11.0"
 
 [[Zlib_jll]]
 deps = ["Libdl"]
@@ -900,7 +1023,7 @@ version = "5.11.0+0"
 [[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.59.0+0"
+version = "1.52.0+1"
 
 [[p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -923,15 +1046,18 @@ version = "17.4.0+2"
 # ╟─a709fd2e-c760-11ea-05c5-7bf673990de1
 # ╠═d3811ac2-c760-11ea-0811-131d9f1d3910
 # ╠═dfe10b6c-c760-11ea-2f77-79cc4cfa8dc4
+# ╟─ffadc41d-bc18-44e6-8cb1-ee530e8e080f
 # ╟─06962cde-cc4f-11ea-0d96-69a8cb7eeda2
 # ╟─6605d010-d0d1-4cc8-a34d-3158b8572b5d
 # ╠═756e2c82-6e2f-4d7b-a1ed-5de97be04269
 # ╠═c07c5a9e-61f9-4247-86e7-7c3f9956d0ff
 # ╟─c3fea1b2-fc11-4c19-9c01-a8e03fda2817
+# ╟─c6ef1873-459f-432f-9614-0e64258103c7
 # ╟─221c308e-3cbe-4689-aa67-8970957f8cb0
 # ╟─e49623ac-c760-11ea-3689-c15f2e2f6081
 # ╠═314cb85a-c761-11ea-1cba-b73f84a52be8
 # ╟─3c68b25c-c761-11ea-226a-4f46579a6732
+# ╟─0f9623fc-ec9f-4c0a-936d-677bf79fa2e3
 # ╟─104b55ce-cc4f-11ea-1273-092a1717e399
 # ╟─4513b730-c761-11ea-1460-2dca56081fcf
 # ╠═4f8e4e1e-c761-11ea-1787-419cab59bb12
@@ -942,6 +1068,7 @@ version = "17.4.0+2"
 # ╟─adcf4e68-c761-11ea-00bb-c3b15c6dedc0
 # ╟─1a562ad4-cc50-11ea-2485-cdec6e1a78dc
 # ╟─5d420570-c764-11ea-396b-cf0db01d34aa
+# ╟─8ec1a56e-ad91-439d-a3b2-4d154e730cb9
 # ╟─09393bf2-cc4f-11ea-1e48-cfbedab8e6b4
 # ╟─cd1b5872-c761-11ea-2179-57a3cb34d235
 # ╠═d9e85ed0-c761-11ea-30bf-83ce272526e0
@@ -954,6 +1081,7 @@ version = "17.4.0+2"
 # ╟─0136af80-c762-11ea-2f1a-9dccff334a11
 # ╠═0e6f0508-c762-11ea-0352-09bd694a9b35
 # ╠═3dcd7002-c765-11ea-323d-a1fb49409011
+# ╟─9d68baef-fb1d-441b-b973-37ca1054d5c9
 # ╟─0aa3c85e-cc4f-11ea-2fba-4bdd513d9217
 # ╟─5833f7f4-c763-11ea-0b95-9b21a40192a9
 # ╠═690cf3ac-c763-11ea-10f0-b3e28c380be9
@@ -964,11 +1092,13 @@ version = "17.4.0+2"
 # ╟─787a2c88-c763-11ea-0a32-bb91ca60113d
 # ╠═ac8c4dee-c763-11ea-1b2d-c590a2d50d7e
 # ╠═dcda9ad2-c763-11ea-3ec6-093b823ba66d
+# ╟─87bb1c87-c704-4903-9653-6c92a349ba1c
 # ╟─0c3ab1f8-cc4f-11ea-0cfb-8f076d2c9836
 # ╟─62c6f866-f0fe-11ea-0961-319f28d040d4
 # ╠═a01c8096-f0fe-11ea-3e78-ad8551e84fa1
 # ╠═a20e30f2-f0fe-11ea-0ca7-c5195c9eb24a
 # ╟─c819ef3e-f0fe-11ea-1213-9df7597e4e89
+# ╟─58df6236-1ca9-41e6-8196-0298444791fa
 # ╟─b104ba6d-0293-4378-9652-f628f1d08d97
 # ╠═16f2218d-f1bc-4b34-a355-53acfa77fbf5
 # ╠═2c7811cb-d9ea-470c-8cb7-2b3803489f3f
@@ -976,6 +1106,7 @@ version = "17.4.0+2"
 # ╠═90d84f1b-042c-444e-8bac-fe358b6d68a1
 # ╠═b97cfb04-0c39-4709-9419-9294e677a872
 # ╟─283d1177-c605-4652-905b-9a70354cf878
+# ╟─13df0c18-9157-4cdd-bf2e-e340e0fde626
 # ╟─0b1ce22e-c764-11ea-3d60-e799d58aee30
 # ╠═6d9108a8-c765-11ea-0a38-09a1364998b1
 # ╠═7a14e496-c765-11ea-20a1-6fb960009251
@@ -983,11 +1114,13 @@ version = "17.4.0+2"
 # ╟─7e10fb52-c765-11ea-2a71-0fc347d09885
 # ╠═b91764e8-c765-11ea-27a2-4ba5777fbd89
 # ╠═bb356b12-c765-11ea-2c36-697f4314bb93
+# ╟─364e7477-7991-428e-a1d5-fec55eec28bc
 # ╟─9276da28-cc4f-11ea-17b3-65eec41a181e
 # ╟─92def54a-cc4f-11ea-12c5-652f2bb46413
 # ╠═9920e56c-cc4f-11ea-2d5e-f5371c79f048
 # ╠═44591b34-cc50-11ea-2005-2f7075e6f2db
 # ╟─4fda3072-cc50-11ea-2804-197b6391b269
+# ╟─8253f022-74c8-4801-9a20-5a105ec8fdd7
 # ╟─ebfc61b0-c765-11ea-1d66-cbf1dcdb8bdb
 # ╟─3e5dd7d2-c760-11ea-1dca-6d8720b3558d
 # ╟─f31668c6-c768-11ea-1501-5f41afa7c83b
@@ -999,17 +1132,20 @@ version = "17.4.0+2"
 # ╠═5be148cc-c760-11ea-0819-a7bb403d27ff
 # ╟─347e3d06-cc51-11ea-012c-43e824eaffa2
 # ╟─343d7118-cc51-11ea-387a-fb22d8c73506
+# ╟─34543b76-28d8-48a4-a8ac-3847f73e01ab
 # ╟─32e41ac2-cc51-11ea-3358-bbead9c68123
 # ╟─f74f434a-c768-11ea-079c-fb707e6ba17b
 # ╟─ea00721c-cc4b-11ea-1e82-0b3dbe6a7f1e
 # ╠═fc12280c-c768-11ea-3ebc-ebcd6b3459c1
 # ╠═067cbcde-cc4c-11ea-3eed-972dc6d7bb3b
+# ╟─a511879b-135d-4e83-b576-eb602d3ee6bd
 # ╟─f69a5d5e-c765-11ea-3fa0-230c6c619730
 # ╟─7da30d97-b28a-4eb9-a2ef-fad599b549d1
 # ╟─170089cd-f366-4c0a-b58d-fe6e36049db7
 # ╠═b29215cb-8e7e-4382-822c-cdaa4c473ba1
 # ╠═00f9f608-85bd-4932-b585-39f74dcf53b4
 # ╟─48a9ffbd-cac7-4c4e-85e5-c3d0693e5550
+# ╟─e3e29b54-9f20-4db6-8c1a-46202a308f84
 # ╟─5c85ee41-da68-4f5f-b45e-e1de7996747d
 # ╟─8c51343f-cb35-4ff9-9fd8-642ffab57e22
 # ╠═621f2e82-5ab4-4ab9-a0ff-fb1cc1b41295
@@ -1019,6 +1155,7 @@ version = "17.4.0+2"
 # ╠═f9052ed8-84cc-4cca-abb2-9363aafc6040
 # ╠═d278189e-6a5b-428a-8c81-ce3d206b042c
 # ╟─4ca9c749-08ee-467f-af2c-9b2f13199d72
+# ╟─85194e82-1b15-4740-9ae6-6ed9b2f3e37c
 # ╟─0b66c781-ecf2-445e-b2aa-82cb13371e46
 # ╟─ad8e9b30-c75d-11ea-1fd0-0b53592135bf
 # ╟─87d088d0-cc54-11ea-02c6-bd673b95b9d3
@@ -1033,14 +1170,26 @@ version = "17.4.0+2"
 # ╠═382d41d8-c75e-11ea-2ae3-2ffe96e04b5a
 # ╟─958ab19c-cc56-11ea-162e-d3664e66ff66
 # ╠═8477619c-cc57-11ea-0618-1778c502d28f
+# ╟─12ec8c08-abd6-4bb6-83b9-fbf9c181f34d
 # ╟─f743076c-cc57-11ea-1a8e-8799d9db985a
 # ╟─c65d28a2-c75d-11ea-2e13-7332f93d9c5e
 # ╟─c16dff74-cc5d-11ea-380c-aff1639b5551
 # ╟─dada2154-c75d-11ea-2312-b9156a9a531e
 # ╠═f809110c-cc55-11ea-1551-e138c28d5d82
 # ╟─1c930364-cc58-11ea-36c8-0ddf7c4700cd
-# ╟─c48b48f6-cc5d-11ea-0f3b-d3481238625d
 # ╟─ea6ade22-cc5a-11ea-1782-97f2464fd148
+# ╟─1c8db4bd-d243-47ac-bb0c-a630333e11d4
+# ╟─a11e6f08-d743-4ff5-8648-30e8d739b5cc
+# ╟─84c703f0-3b48-459b-bd99-75113995396f
+# ╟─1f1de9f8-b495-42b0-9b1c-df091f3d6c29
+# ╠═38dd4bde-c535-4caa-bd92-20e96dae50cf
+# ╟─b97c8a1f-6602-48e4-8432-f1ae1ff568e8
+# ╠═f41bfaa0-5898-4af3-9f12-642cf4f57d88
+# ╟─95a33467-04c7-48f4-aa5f-6f1ba1fe9c82
+# ╟─8950fab5-d416-4a75-8701-96df4335dd5e
+# ╟─83c00a49-22ae-475f-8988-902f09ecc9da
+# ╟─faadc603-5132-499e-87c5-a1ca8eec8acf
+# ╟─c48b48f6-cc5d-11ea-0f3b-d3481238625d
 # ╟─35523932-cc4f-11ea-0908-2d51c57176b7
 # ╟─a245dddc-cc59-11ea-3e1d-1763673ff706
 # ╟─0cda8986-cc64-11ea-2acc-b5c38fdf17e5
@@ -1048,5 +1197,9 @@ version = "17.4.0+2"
 # ╟─d163f434-cc5a-11ea-19e9-9319ba994efa
 # ╟─512fe760-cc4c-11ea-1c5b-2b32da035aad
 # ╠═55bcdbf8-cc4c-11ea-1549-87c076a59ff4
+# ╠═d24696d2-6232-4759-90a9-3b2998b08e22
+# ╟─b4a1efbf-b86b-4c9c-a9a2-a4eb50f37a24
+# ╟─4f911e20-5a22-47ad-ad64-f5aa432d9921
+# ╠═2ac1fb90-bd4d-4bf4-92ee-b376f44ec148
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
