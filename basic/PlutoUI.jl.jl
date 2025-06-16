@@ -586,6 +586,8 @@ md"""
 Using `details`, you can create a block with an always-visible title and foldable further content. Users need to click to read the content.
 
 This is useful for showing overly verbose details that would disrupt the normal flow of the text, or to hide, e.g., solutions of exercises in a tutorial notebook.
+
+_In the example below, the code behind the cell is shown (to demonstrate how to use `details`). Normally, you would use `details` in a cell with hidden code._
 """
 
 # ╔═╡ b8779a4f-314d-45e0-8571-4bb3c2748573
