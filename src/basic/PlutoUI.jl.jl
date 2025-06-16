@@ -579,6 +579,31 @@ md"""
 We are working on more options for controlling layout in notebooks: putting things in boxes, grids, side-by-side, etc.
 """
 
+# ╔═╡ 3abec86a-6ec3-41ec-adb4-36c52f233883
+md"""
+## details
+
+Using `details`, you can create a block with an always-visible title and foldable further content. Users need to click to read the content.
+
+This is useful for showing overly verbose details that would disrupt the normal flow of the text, or to hide, e.g., solutions of exercises in a tutorial notebook.
+"""
+
+# ╔═╡ b8779a4f-314d-45e0-8571-4bb3c2748573
+details(
+	"Read a long text",
+	md"""
+	#### Here is some very long text
+	Did you know that Pluto was written in Julia and JavaScript? Pluto is open source, which means that you can read its source code and learn exactly how it works! 
+	
+	Open source also means that you are invited to contribute to Pluto – you can [report issues](https://github.com/fonsp/Pluto.jl/issues), suggest features, or even [submit your own code changes](https://github.com/fonsp/Pluto.jl/pulls) to help improve it. Whether you’re fixing a small typo or designing a big new feature, every contribution is welcome. By participating, you not only help others, but also learn more about Julia, web technologies, and interactive computing. 🌱
+	"""
+)
+
+# ╔═╡ 7290c1d1-65a1-433c-86c3-fb88255ad2c2
+md"""
+Using the `open` keyword argument, you can say whether the box should initialize in an open state.
+"""
+
 # ╔═╡ 1f1de9f8-b495-42b0-9b1c-df091f3d6c29
 md"""
 ## WideCell
@@ -629,6 +654,15 @@ You can use `PlutoUI.ExperimentalLayout` to display multiple objects together in
 
 We are still figure out what API to expose, and where to publish it, hence the _"Experimental"_.
 """
+
+# ╔═╡ 387f152a-da56-4329-a21f-0d00265ce7d5
+md"""
+## NotebookCard
+You can use `NotebookCard` to create an inviting link to another notebook. This is available for notebooks on sites generated using PlutoPages.jl and PlutoSliderServer.jl. The image, title and description are taken from notebook frontmatter. Check out the docstring to learn more!
+"""
+
+# ╔═╡ a662e44f-ce67-4269-926b-9c0e4a87801e
+NotebookCard("https://plutojl.org/en/docs/expressionexplorer/")
 
 # ╔═╡ c48b48f6-cc5d-11ea-0f3b-d3481238625d
 
@@ -747,11 +781,17 @@ HiddenDocs(:Resource)
 # ╔═╡ 1c8db4bd-d243-47ac-bb0c-a630333e11d4
 HiddenDocs(:LocalResource)
 
+# ╔═╡ 664b538e-b370-43b3-8b0c-5abf696fba0e
+HiddenDocs(:details)
+
 # ╔═╡ 8950fab5-d416-4a75-8701-96df4335dd5e
 HiddenDocs(:WideCell)
 
 # ╔═╡ faadc603-5132-499e-87c5-a1ca8eec8acf
 HiddenDocs(:ExperimentalLayout)
+
+# ╔═╡ b5e32ef9-0c85-4bf3-a63e-48d1658083ee
+HiddenDocs(:NotebookCard)
 
 # ╔═╡ 2ac1fb90-bd4d-4bf4-92ee-b376f44ec148
 HiddenDocs(PlutoUI, :Slider)
@@ -789,9 +829,15 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
-git-tree-sha1 = "b10d0b65641d57b8b4d5e234446582de5047050d"
+git-tree-sha1 = "67e11ee83a43eb71ddc950302c53bf33f0690dfe"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
-version = "0.11.5"
+version = "0.12.1"
+
+    [ColorTypes.extensions]
+    StyledStringsExt = "StyledStrings"
+
+    [ColorTypes.weakdeps]
+    StyledStrings = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
 
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -920,10 +966,10 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 version = "1.10.0"
 
 [[PlutoUI]]
-deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "3876f0ab0390136ae0b5e3f064a109b87fa1e56e"
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Downloads", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "3151a0c8061cc3f887019beebf359e6c4b3daa08"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.63"
+version = "0.7.65"
 
 [[PrecompileTools]]
 deps = ["Preferences"]
@@ -1181,6 +1227,10 @@ version = "17.4.0+2"
 # ╟─1c8db4bd-d243-47ac-bb0c-a630333e11d4
 # ╟─a11e6f08-d743-4ff5-8648-30e8d739b5cc
 # ╟─84c703f0-3b48-459b-bd99-75113995396f
+# ╟─3abec86a-6ec3-41ec-adb4-36c52f233883
+# ╠═b8779a4f-314d-45e0-8571-4bb3c2748573
+# ╟─7290c1d1-65a1-433c-86c3-fb88255ad2c2
+# ╟─664b538e-b370-43b3-8b0c-5abf696fba0e
 # ╟─1f1de9f8-b495-42b0-9b1c-df091f3d6c29
 # ╠═38dd4bde-c535-4caa-bd92-20e96dae50cf
 # ╟─b97c8a1f-6602-48e4-8432-f1ae1ff568e8
@@ -1189,6 +1239,9 @@ version = "17.4.0+2"
 # ╟─8950fab5-d416-4a75-8701-96df4335dd5e
 # ╟─83c00a49-22ae-475f-8988-902f09ecc9da
 # ╟─faadc603-5132-499e-87c5-a1ca8eec8acf
+# ╟─387f152a-da56-4329-a21f-0d00265ce7d5
+# ╠═a662e44f-ce67-4269-926b-9c0e4a87801e
+# ╟─b5e32ef9-0c85-4bf3-a63e-48d1658083ee
 # ╟─c48b48f6-cc5d-11ea-0f3b-d3481238625d
 # ╟─35523932-cc4f-11ea-0908-2d51c57176b7
 # ╟─a245dddc-cc59-11ea-3e1d-1763673ff706
