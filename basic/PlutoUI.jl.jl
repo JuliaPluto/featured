@@ -67,17 +67,31 @@ md"## Slider"
 # ╔═╡ a4488984-c760-11ea-2930-871f6b400ef5
 x
 
-# ╔═╡ 1048d1e0-cc50-11ea-1bf3-d76cae42740a
-
-
 # ╔═╡ a709fd2e-c760-11ea-05c5-7bf673990de1
-md"The first argument is a `Vector` or range. You can set the _default value_ using a keyword argument:"
+md"""
+Using keyword arguments, you can set the **default value**, and you can ask to **show the current value**:
+"""
 
 # ╔═╡ d3811ac2-c760-11ea-0811-131d9f1d3910
-@bind y Slider(20:0.1:30, default=25)
+@bind y Slider(20:0.1:30; default=25, show_value=true)
 
 # ╔═╡ dfe10b6c-c760-11ea-2f77-79cc4cfa8dc4
 y
+
+# ╔═╡ 1048d1e0-cc50-11ea-1bf3-d76cae42740a
+
+
+# ╔═╡ 3db2cae5-2fd7-4e0b-9221-92edbbf49855
+md"""
+### Not just number ranges!
+The first argument is range, but it can also be a Vector (not necessarily in increasing order). And the elements can be of any type, not just numbers!
+"""
+
+# ╔═╡ 6b1152cc-7c2c-40b3-8bac-fe8fd99486bb
+@bind which_function Slider([sin, cos, sqrt])
+
+# ╔═╡ b7788c4c-feb6-45cd-87ca-ae28c5ba3d07
+which_function(π)
 
 # ╔═╡ 06962cde-cc4f-11ea-0d96-69a8cb7eeda2
 
@@ -86,7 +100,7 @@ y
 md"""
 ## Scrubbable
 
-`Scrubbable` makes a number interactive, you can **click and drag** its value left or right. 
+`Scrubbable` makes a number interactive – you can **click and drag** its value left or right using your mouse or touch screen. 
 
 Try it in the text below:
 """
@@ -111,9 +125,11 @@ Use the Live Docs to learn more about `Scrubbable`!
 
 
 # ╔═╡ e49623ac-c760-11ea-3689-c15f2e2f6081
-md"## NumberField
+md"""
+## NumberField
 
-A `NumberField` can be used just like a `Slider`, it just looks different:"
+A `NumberField` can be used just like a `Slider`, it just looks different:
+"""
 
 # ╔═╡ 314cb85a-c761-11ea-1cba-b73f84a52be8
 @bind x_different NumberField(0:100, default=20)
@@ -122,7 +138,9 @@ A `NumberField` can be used just like a `Slider`, it just looks different:"
 
 
 # ╔═╡ 4513b730-c761-11ea-1460-2dca56081fcf
-md"## CheckBox"
+md"""
+## CheckBox
+"""
 
 # ╔═╡ 4f8e4e1e-c761-11ea-1787-419cab59bb12
 @bind z CheckBox()
@@ -142,11 +160,42 @@ md"Default value:"
 # ╔═╡ adcf4e68-c761-11ea-00bb-c3b15c6dedc0
 having_fun
 
+# ╔═╡ 5d420570-c764-11ea-396b-cf0db01d34aa
+having_fun ? md"🎈🎈" : md"☕"
+
 # ╔═╡ 1a562ad4-cc50-11ea-2485-cdec6e1a78dc
 
 
-# ╔═╡ 5d420570-c764-11ea-396b-cf0db01d34aa
-having_fun ? md"🎈🎈" : md"☕"
+# ╔═╡ 378c44c7-8565-49bf-8ccb-12fe6831ccce
+md"""
+!!! tip
+	The `CheckBox` is simple, but you can use it in very powerful ways with reactivity! For example, you can use these two cells to switch between a beginner/expert explanation of a topic:
+
+	```julia
+	md""\"
+	Show a simplified version: $(@bind simplified CheckBox(default=true))
+	""\"
+	```
+
+	```julia
+	if simplified
+		md""\"
+		Just use `a² + b² = c²` when it feels right.
+		"\""
+	else
+		md"\""
+		Suppose you have a right triangle with sides *a*, *b*, and hypotenuse *c*. Imagine building squares on each side of the triangle. The **area** of the square on side *a* is *a²*, on *b* is...
+		"\""
+	end
+	```
+
+	You can also use `simplified` in other parts of your code. E.g. to change a plot label:
+	```julia
+	plot(x, y; 
+		label=simplified ? "Data" : "Monte Carlo simulation results"
+	)
+	```
+"""
 
 # ╔═╡ 09393bf2-cc4f-11ea-1e48-cfbedab8e6b4
 
@@ -179,7 +228,7 @@ sentence
 md"You can also create a **multi-line** text box!"
 
 # ╔═╡ 0e6f0508-c762-11ea-0352-09bd694a9b35
-@bind poem TextField((30, 3), "Je opent en sluit je armen,\nMaar houdt niets vast.\nHet is net zwemmen")
+@bind poem TextField((30, 3), "Je opent en sluit je armen,\nMaar houdt niets vast.\nHet is net zwemmen.")
 
 # (poem by: Sanne de Kroon)
 
@@ -216,8 +265,10 @@ md"Instead of an array of values, you can also give an array of **pairs**, where
 # ╔═╡ dcda9ad2-c763-11ea-3ec6-093b823ba66d
 fruit
 
-# ╔═╡ 0c3ab1f8-cc4f-11ea-0cfb-8f076d2c9836
-
+# ╔═╡ c8657127-85ba-4336-9d47-411b50d2de07
+md"""
+Like [`Slider`](#Slider), you use a vector with any type of object, not just Strings. The `default` keyword argument controls the initial setting.
+"""
 
 # ╔═╡ 62c6f866-f0fe-11ea-0961-319f28d040d4
 md"""
@@ -263,10 +314,10 @@ You can use `MultiSelect` and `MultiCheckBox` with any vector of objects, not ju
 md"Just like `Select`, you can also give an array of pairs. See the Live Docs for `MultiCheckBox` for all the customization options!"
 
 # ╔═╡ 0b1ce22e-c764-11ea-3d60-e799d58aee30
-md"## Button"
+md"## CounterButton"
 
 # ╔═╡ 6d9108a8-c765-11ea-0a38-09a1364998b1
-@bind clicked Button("Hello world")
+@bind clicked CounterButton("Hello world")
 
 # ╔═╡ 7a14e496-c765-11ea-20a1-6fb960009251
 clicked
@@ -282,7 +333,7 @@ In the example above, _any cell that references `clicked` will re-evaluate_ when
 """
 
 # ╔═╡ b91764e8-c765-11ea-27a2-4ba5777fbd89
-@bind go Button("Recompute")
+@bind go CounterButton("Recompute")
 
 # ╔═╡ bb356b12-c765-11ea-2c36-697f4314bb93
 let
@@ -290,6 +341,14 @@ let
 	
 	md"I am $(rand(1:15)) years old!"
 end
+
+# ╔═╡ ef5d2487-5675-4acc-a7bd-84369009093a
+md"""
+### Button
+There is also the widget `LabelButton`, which returns the button label as reactive value. 
+
+`LabelButton` is currently bound to the alias **`Button`**, but in a future release of PlutoUI, `Button` will be changed to alias `CounterButton`, since it is more useful.
+"""
 
 # ╔═╡ 9276da28-cc4f-11ea-17b3-65eec41a181e
 
@@ -308,11 +367,24 @@ md"The file picker is useful if you want to show off your notebook on a dataset 
 
 The caveat is that large files might take a long time to get processed: everything needs to pass through the browser. If you are using large datasets, a better option is to use `Select` to let the reader pick a filename. You can then read the file using `Base.read(filename, type)`"
 
-# ╔═╡ 3e5dd7d2-c760-11ea-1dca-6d8720b3558d
-md"# Extras"
+# ╔═╡ f74f434a-c768-11ea-079c-fb707e6ba17b
+md"## DownloadButton"
+
+# ╔═╡ ea00721c-cc4b-11ea-1e82-0b3dbe6a7f1e
+md"""
+The download button is **not an input** element that you can `@bind` to, it's an **output** that you can use to get processed data from your notebook easily. The second argument is the _output filename_.
+"""
+
+# ╔═╡ fc12280c-c768-11ea-3ebc-ebcd6b3459c1
+DownloadButton(poem, "poem.txt")
+
+# ╔═╡ 067cbcde-cc4c-11ea-3eed-972dc6d7bb3b
+DownloadButton([0x01, 0x02, 0x03], "secret_data.bin")
 
 # ╔═╡ f31668c6-c768-11ea-1501-5f41afa7c83b
-md"## Clock"
+md"""
+## Clock
+"""
 
 # ╔═╡ 417390ba-c760-11ea-27df-5908858ae88c
 @bind t Clock()
@@ -340,20 +412,6 @@ md"You can use a `Clock` to drive an animation! Or use it to repeat the same com
 
 # ╔═╡ 32e41ac2-cc51-11ea-3358-bbead9c68123
 
-
-# ╔═╡ f74f434a-c768-11ea-079c-fb707e6ba17b
-md"## DownloadButton"
-
-# ╔═╡ ea00721c-cc4b-11ea-1e82-0b3dbe6a7f1e
-md"""
-The download button is **not an input** element that you can `@bind` to, it's an **output** that you can use to get processed data from your notebook easily. The second argument is the _output filename_.
-"""
-
-# ╔═╡ fc12280c-c768-11ea-3ebc-ebcd6b3459c1
-DownloadButton(poem, "poem.txt")
-
-# ╔═╡ 067cbcde-cc4c-11ea-3eed-972dc6d7bb3b
-DownloadButton([0x01, 0x02, 0x03], "secret_data.bin")
 
 # ╔═╡ 7da30d97-b28a-4eb9-a2ef-fad599b549d1
 md"""
@@ -704,6 +762,9 @@ space = html"<br><br><br>"
 # ╔═╡ fb6142f6-c765-11ea-29fd-7ff4e823c02b
 space
 
+# ╔═╡ d99c30c9-b171-41fe-bcd4-a9708fdf0fa9
+space
+
 # ╔═╡ ebfc61b0-c765-11ea-1d66-cbf1dcdb8bdb
 space
 
@@ -759,17 +820,20 @@ HiddenDocs(:MultiSelect)
 # ╔═╡ 13df0c18-9157-4cdd-bf2e-e340e0fde626
 HiddenDocs(:MultiCheckBox)
 
+# ╔═╡ 42963cc8-ba37-447d-a524-e404d3e2d405
+HiddenDocs(:CounterButton)
+
 # ╔═╡ 364e7477-7991-428e-a1d5-fec55eec28bc
-HiddenDocs(:Button)
+HiddenDocs(:LabelButton)
 
 # ╔═╡ 8253f022-74c8-4801-9a20-5a105ec8fdd7
 HiddenDocs(:FilePicker)
 
-# ╔═╡ 34543b76-28d8-48a4-a8ac-3847f73e01ab
-HiddenDocs(:Clock)
-
 # ╔═╡ a511879b-135d-4e83-b576-eb602d3ee6bd
 HiddenDocs(:DownloadButton)
+
+# ╔═╡ 34543b76-28d8-48a4-a8ac-3847f73e01ab
+HiddenDocs(:Clock)
 
 # ╔═╡ e3e29b54-9f20-4db6-8c1a-46202a308f84
 HiddenDocs(:Confirm)
@@ -1090,10 +1154,13 @@ version = "17.4.0+2"
 # ╟─b819e9a8-c760-11ea-11ee-dd01da663b5c
 # ╠═34ebf81e-c760-11ea-05bb-376173e7ed10
 # ╠═a4488984-c760-11ea-2930-871f6b400ef5
-# ╟─1048d1e0-cc50-11ea-1bf3-d76cae42740a
 # ╟─a709fd2e-c760-11ea-05c5-7bf673990de1
 # ╠═d3811ac2-c760-11ea-0811-131d9f1d3910
 # ╠═dfe10b6c-c760-11ea-2f77-79cc4cfa8dc4
+# ╟─1048d1e0-cc50-11ea-1bf3-d76cae42740a
+# ╟─3db2cae5-2fd7-4e0b-9221-92edbbf49855
+# ╠═6b1152cc-7c2c-40b3-8bac-fe8fd99486bb
+# ╠═b7788c4c-feb6-45cd-87ca-ae28c5ba3d07
 # ╟─ffadc41d-bc18-44e6-8cb1-ee530e8e080f
 # ╟─06962cde-cc4f-11ea-0d96-69a8cb7eeda2
 # ╟─6605d010-d0d1-4cc8-a34d-3158b8572b5d
@@ -1113,10 +1180,11 @@ version = "17.4.0+2"
 # ╟─177e6bf0-cc50-11ea-0de2-e77544f5c615
 # ╟─b08c347e-c761-11ea-1b61-7b69631d078b
 # ╠═b53c8ffa-c761-11ea-38d1-2d4ad96a7bee
-# ╟─adcf4e68-c761-11ea-00bb-c3b15c6dedc0
+# ╠═adcf4e68-c761-11ea-00bb-c3b15c6dedc0
+# ╠═5d420570-c764-11ea-396b-cf0db01d34aa
 # ╟─1a562ad4-cc50-11ea-2485-cdec6e1a78dc
-# ╟─5d420570-c764-11ea-396b-cf0db01d34aa
 # ╟─8ec1a56e-ad91-439d-a3b2-4d154e730cb9
+# ╟─378c44c7-8565-49bf-8ccb-12fe6831ccce
 # ╟─09393bf2-cc4f-11ea-1e48-cfbedab8e6b4
 # ╟─cd1b5872-c761-11ea-2179-57a3cb34d235
 # ╠═d9e85ed0-c761-11ea-30bf-83ce272526e0
@@ -1140,8 +1208,8 @@ version = "17.4.0+2"
 # ╟─787a2c88-c763-11ea-0a32-bb91ca60113d
 # ╠═ac8c4dee-c763-11ea-1b2d-c590a2d50d7e
 # ╠═dcda9ad2-c763-11ea-3ec6-093b823ba66d
+# ╟─c8657127-85ba-4336-9d47-411b50d2de07
 # ╟─87bb1c87-c704-4903-9653-6c92a349ba1c
-# ╟─0c3ab1f8-cc4f-11ea-0cfb-8f076d2c9836
 # ╟─62c6f866-f0fe-11ea-0961-319f28d040d4
 # ╠═a01c8096-f0fe-11ea-3e78-ad8551e84fa1
 # ╠═a20e30f2-f0fe-11ea-0ca7-c5195c9eb24a
@@ -1155,6 +1223,7 @@ version = "17.4.0+2"
 # ╠═b97cfb04-0c39-4709-9419-9294e677a872
 # ╟─283d1177-c605-4652-905b-9a70354cf878
 # ╟─13df0c18-9157-4cdd-bf2e-e340e0fde626
+# ╟─d99c30c9-b171-41fe-bcd4-a9708fdf0fa9
 # ╟─0b1ce22e-c764-11ea-3d60-e799d58aee30
 # ╠═6d9108a8-c765-11ea-0a38-09a1364998b1
 # ╠═7a14e496-c765-11ea-20a1-6fb960009251
@@ -1162,6 +1231,8 @@ version = "17.4.0+2"
 # ╟─7e10fb52-c765-11ea-2a71-0fc347d09885
 # ╠═b91764e8-c765-11ea-27a2-4ba5777fbd89
 # ╠═bb356b12-c765-11ea-2c36-697f4314bb93
+# ╟─42963cc8-ba37-447d-a524-e404d3e2d405
+# ╟─ef5d2487-5675-4acc-a7bd-84369009093a
 # ╟─364e7477-7991-428e-a1d5-fec55eec28bc
 # ╟─9276da28-cc4f-11ea-17b3-65eec41a181e
 # ╟─92def54a-cc4f-11ea-12c5-652f2bb46413
@@ -1170,7 +1241,12 @@ version = "17.4.0+2"
 # ╟─4fda3072-cc50-11ea-2804-197b6391b269
 # ╟─8253f022-74c8-4801-9a20-5a105ec8fdd7
 # ╟─ebfc61b0-c765-11ea-1d66-cbf1dcdb8bdb
-# ╟─3e5dd7d2-c760-11ea-1dca-6d8720b3558d
+# ╟─f74f434a-c768-11ea-079c-fb707e6ba17b
+# ╟─ea00721c-cc4b-11ea-1e82-0b3dbe6a7f1e
+# ╠═fc12280c-c768-11ea-3ebc-ebcd6b3459c1
+# ╠═067cbcde-cc4c-11ea-3eed-972dc6d7bb3b
+# ╟─a511879b-135d-4e83-b576-eb602d3ee6bd
+# ╟─f69a5d5e-c765-11ea-3fa0-230c6c619730
 # ╟─f31668c6-c768-11ea-1501-5f41afa7c83b
 # ╠═417390ba-c760-11ea-27df-5908858ae88c
 # ╠═49e7cd06-c760-11ea-3f5d-2741d94278a6
@@ -1182,12 +1258,6 @@ version = "17.4.0+2"
 # ╟─343d7118-cc51-11ea-387a-fb22d8c73506
 # ╟─34543b76-28d8-48a4-a8ac-3847f73e01ab
 # ╟─32e41ac2-cc51-11ea-3358-bbead9c68123
-# ╟─f74f434a-c768-11ea-079c-fb707e6ba17b
-# ╟─ea00721c-cc4b-11ea-1e82-0b3dbe6a7f1e
-# ╠═fc12280c-c768-11ea-3ebc-ebcd6b3459c1
-# ╠═067cbcde-cc4c-11ea-3eed-972dc6d7bb3b
-# ╟─a511879b-135d-4e83-b576-eb602d3ee6bd
-# ╟─f69a5d5e-c765-11ea-3fa0-230c6c619730
 # ╟─7da30d97-b28a-4eb9-a2ef-fad599b549d1
 # ╟─170089cd-f366-4c0a-b58d-fe6e36049db7
 # ╠═b29215cb-8e7e-4382-822c-cdaa4c473ba1
