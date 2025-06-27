@@ -718,7 +718,7 @@ We are still figure out what API to expose, and where to publish it, hence the _
 # ╔═╡ 387f152a-da56-4329-a21f-0d00265ce7d5
 md"""
 ## NotebookCard
-You can use `NotebookCard` to create an inviting link to another notebook. This is available for notebooks on sites generated using PlutoPages.jl and PlutoSliderServer.jl. The image, title and description are taken from notebook frontmatter. Check out the docstring to learn more!
+You can use `NotebookCard` to create an inviting link to another notebook. This is available for notebooks on sites generated using PlutoPages.jl and PlutoSliderServer.jl. The image, title and description are taken from [notebook frontmatter](https://plutojl.org/en/docs/frontmatter/). Check out the docstring to learn more!
 """
 
 # ╔═╡ a662e44f-ce67-4269-926b-9c0e4a87801e
