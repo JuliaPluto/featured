@@ -31,6 +31,7 @@ level = getfield(Pkg, Symbol("UPLEVEL_$(ARGS[1])"))
 
 for n in all_notebooks
     @info "Updating" n
+    ENV["JULIA_PKG_PRECOMPILE_AUTO"] = 0
     Pluto.update_notebook_environment(n; backup=false, level)
 end
 
