@@ -1,6 +1,17 @@
 ### A Pluto.jl notebook ###
 # v0.20.17
 
+#> [frontmatter]
+#> license_url = "https://opensource.org/license/unlicense"
+#> title = "Traveling Salesperson Problem"
+#> date = "2025-09-02"
+#> license = "Unlicense"
+#> description = "An interactive exploration of optimal tours on a map"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Guillaume Dalle"
+#>     url = "https://github.com/gdalle"
+
 using Markdown
 using InteractiveUtils
 
@@ -29,30 +40,79 @@ begin
 	using TravelingSalesmanExact
 end
 
+# ╔═╡ 148303e1-5c39-4b5c-b954-0e4bccf7e8d5
+md"""
+# Traveling Salesperson Problem
+"""
+
+# ╔═╡ b61bcb45-29a3-40d3-9b7b-14fab7e2a6e0
+md"""
+!!! warning "Todo"
+	Add explanations.
+"""
+
+# ╔═╡ 047fca76-9616-495b-8d7f-8a1aef98ef0c
+city_picker = @bind city TextField(; default="Paris");
+
+# ╔═╡ 2dc173a8-692e-453a-a10e-0258b6839929
+zoom_picker = @bind zoom NumberField(1:20; default=13);
+
 # ╔═╡ a33fe11e-bfc8-4c0d-b6f1-e525627dc4b5
-begin
-	city_picker = md"""City: $(@bind city TextField(; default="Paris"))"""
-	zoom_picker = md"""Zoom level: $(@bind zoom NumberField(1:20; default=13))"""
-	TwoColumn(city_picker, zoom_picker)
-end
+TwoColumn(
+	md"""City: $city_picker""",
+	md"""Zoom level: $zoom_picker"""
+)
 
 # ╔═╡ b3be1cfa-b207-45c5-b39e-ead3342516af
-begin
-	coords = geocoder(city)
-	if !isempty(coords)
-		long, lat = coords
-		@bind locations MapPickerMultiple(lat, long, zoom)
+location_picker = begin
+	city_coords = geocoder(city)
+	if !isempty(city_coords)
+		city_long, city_lat = city_coords
+		@bind locations MapPickerMultiple(city_lat, city_long, zoom)
 	end
-end
+end;
+
+# ╔═╡ de7c4088-f5fa-4f37-9be3-137064427947
+const translator = Proj.Transformation("WGS84", "EPSG:3857"; always_xy=true);
+
+# ╔═╡ c6debed6-6148-46cc-ba5f-6bfce699dc82
+function plot_tour(tour, xy_coords)
+	X = first.(xy_coords[tour])
+	Y = last.(xy_coords[tour])
+	X = vcat(X, first(X))
+	Y = vcat(Y, first(Y))
+
+	fig = Figure(size=(400, 600))
+	ax = Axis(fig[1, 1]; aspect=DataAspect())
+    hidedecorations!(ax)
+    hidespines!(ax)
+	scatterlines!(ax, X, Y; color=:black, markersize=20)
+	resize_to_layout!(fig)
+
+	return fig
+end;
 
 # ╔═╡ 52edc94f-2597-42a3-a19e-765c1552767c
-locations
+tour_plotter = if (
+	@isdefined(locations) &&
+	!isnothing(locations) &&
+	!ismissing(locations) &&
+	length(locations) > 3
+)
+	xy_coords = [translator(l["lng"], l["lat"]) for l in locations]
+	tour, cost = get_optimal_tour(xy_coords, HiGHS.Optimizer; verbose=false)
+	plot_tour(tour, xy_coords)
+else
+	md"Optimal tour is trivial"
+end;
 
-# ╔═╡ 2158146d-c429-458e-aeb6-42b7384947f6
-@isdefined locations
-
-# ╔═╡ 74a302d8-1a82-4b80-b184-cb83a01ed131
-typeof(locations)
+# ╔═╡ 46393d05-cc99-4ccd-9e3d-fc417e9af766
+TwoColumn(
+	md"""## Locations
+	$location_picker""",
+	md"""## Optimal tour
+	$tour_plotter"""
+)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2107,11 +2167,16 @@ version = "4.1.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═c239cfc4-8804-11f0-1f1f-ad4d99ddd4e9
+# ╟─148303e1-5c39-4b5c-b954-0e4bccf7e8d5
+# ╟─b61bcb45-29a3-40d3-9b7b-14fab7e2a6e0
 # ╠═a33fe11e-bfc8-4c0d-b6f1-e525627dc4b5
+# ╠═46393d05-cc99-4ccd-9e3d-fc417e9af766
+# ╠═c239cfc4-8804-11f0-1f1f-ad4d99ddd4e9
+# ╠═047fca76-9616-495b-8d7f-8a1aef98ef0c
+# ╠═2dc173a8-692e-453a-a10e-0258b6839929
 # ╠═b3be1cfa-b207-45c5-b39e-ead3342516af
 # ╠═52edc94f-2597-42a3-a19e-765c1552767c
-# ╠═2158146d-c429-458e-aeb6-42b7384947f6
-# ╠═74a302d8-1a82-4b80-b184-cb83a01ed131
+# ╠═de7c4088-f5fa-4f37-9be3-137064427947
+# ╠═c6debed6-6148-46cc-ba5f-6bfce699dc82
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
