@@ -734,6 +734,11 @@ md"""
 ### Defining Variables and Functions
 """
 
+# ╔═╡ 50caa04e-880d-4224-90b4-0a8d9004576b
+md"""
+#### Titration Curve
+"""
+
 # ╔═╡ 41bed3bd-75f9-4b1a-9ea8-786b338b7503
 #Defining constants and parameters (Acid and Base constants, concentrations and volumes)
 begin
@@ -835,8 +840,13 @@ end
 # ╔═╡ 9dee0462-b5af-4962-a65b-7ac7b2faf3df
 println("At this point, $pointX millilitre of titrant were added. The pH Value of the \nsolution is $pH_Value.")
 
-# ╔═╡ 6ebfa6d8-b4a7-4d5e-8d3d-ccf0ba596f25
-begin 
+# ╔═╡ 8b9e6746-b731-4b39-a0b8-4b9e4c752cc6
+md"""
+#### Indicators
+"""
+
+# ╔═╡ 4127a0c7-897b-41c2-9319-2b1c48369699
+begin
 	begin #The indicators with their pH range and their colors
 		Methyl_orange = ColorScheme(range(colorant"red", colorant"yellow", length=130));
 		Litmus = ColorScheme(range(colorant"red", colorant"blue", length=300));
@@ -884,19 +894,52 @@ begin
 	elseif pH_Value >= 12.00
 		e::Int64 = size(Alizarin_yellow)
 	end
-	# Output of the Indicatorcolour in a Dataframe
-	begin
-		df_color = DataFrame(Dict(
-			"Methyl orange" => [Methyl_orange[a]],
-			"Litmus" => [Litmus[b]],
-			"Bromothymol blue" => [Bromothymol_blue[c]],
-			"Phenolphthalein" => [Phenolphthalein[d]],
-			"Alizarin yellow" => [Alizarin_yellow[e]]
-								))
-		desired_order = ["Methyl orange", "Litmus", "Bromothymol blue", "Phenolphthalein", "Alizarin yellow"]
-		df_color = df_color[:, desired_order]
-	end
+end; nothing
+
+# ╔═╡ 6ebfa6d8-b4a7-4d5e-8d3d-ccf0ba596f25
+# Output of the Indicatorcolour in a Dataframe
+begin
+	df_color = DataFrame(Dict(
+		"Methyl orange" => [Methyl_orange[a]],
+		"Litmus" => [Litmus[b]],
+		"Bromothymol blue" => [Bromothymol_blue[c]],
+		"Phenolphthalein" => [Phenolphthalein[d]],
+		"Alizarin yellow" => [Alizarin_yellow[e]]
+							))
+	desired_order = ["Methyl orange", "Litmus", "Bromothymol blue", "Phenolphthalein", "Alizarin yellow"]
+	df_color = df_color[:, desired_order]
 end
+
+# ╔═╡ 67136d72-c447-4268-8c17-b6d9ad3652ca
+md"""
+**Alternative** in a more julia way, using the clamp function:
+"""
+
+# ╔═╡ ab1430fd-ddd9-48d6-94e8-465cea45ff25
+begin
+	struct IndicatorRange #Define structure which can be applied to every single indicator with color at beginning / end and the pH range
+		mincolor
+		maxcolor
+		minph
+		maxph
+	end
+
+	
+	function getcolorant(range::IndicatorRange, ph) #Using the structure, define function to return the right color at given pH
+		factor = (ph - range.minph) / (range.maxph - range.minph) #Inside pH range: gives factor between 0 and 1
+
+
+		factor = clamp(factor, 0, 1) #clamps the factor between 0 and 1, shorter than the if/else block for every indicator above
+		
+		range.maxcolor * factor + range.mincolor * (1 - factor) #mixes the color according to the factor depending on pH value
+	end
+
+	range_Methyl_orange = IndicatorRange(colorant"red", colorant"yellow",3.1,4.4)
+
+end
+
+# ╔═╡ cf7b07a7-a340-47d4-b747-79aebe2c2bb8
+getcolorant(range_Methyl_orange, pH_Value)
 
 # ╔═╡ cec8f377-dc41-41ba-a3b3-d916acba1147
 md"""
@@ -2272,7 +2315,7 @@ version = "1.9.2+0"
 # ╟─d2fe14b6-59a9-4b9d-9028-3c9f41e91d1c
 # ╟─76baa379-4a48-4268-871e-9e68db92c528
 # ╟─d2323592-e4eb-4ac1-ab86-741910e1738c
-# ╠═241fc16e-d252-4ef8-8e6d-267fc327ee88
+# ╟─241fc16e-d252-4ef8-8e6d-267fc327ee88
 # ╟─c1799961-2ae2-4fb0-8934-55fc2a16cc7e
 # ╟─874bdbe5-d512-4566-9780-b78f141a8ba0
 # ╟─4811fcde-5bfa-4c45-a32f-d39343651c90
@@ -2302,8 +2345,14 @@ version = "1.9.2+0"
 # ╠═094598f7-8319-4551-b677-de5729672080
 # ╠═ffc3c232-12c1-408a-af0a-25fadb418a21
 # ╟─d67aad9b-1b53-48e1-bb39-82a2ac52b17c
+# ╟─50caa04e-880d-4224-90b4-0a8d9004576b
 # ╠═41bed3bd-75f9-4b1a-9ea8-786b338b7503
 # ╠═af04638c-2615-4195-a45e-d6d85af6d6cd
+# ╟─8b9e6746-b731-4b39-a0b8-4b9e4c752cc6
+# ╠═4127a0c7-897b-41c2-9319-2b1c48369699
+# ╠═67136d72-c447-4268-8c17-b6d9ad3652ca
+# ╠═ab1430fd-ddd9-48d6-94e8-465cea45ff25
+# ╠═cf7b07a7-a340-47d4-b747-79aebe2c2bb8
 # ╟─cec8f377-dc41-41ba-a3b3-d916acba1147
 # ╟─4336e057-2a02-47d6-8fd9-e9cf9ec29399
 # ╟─00000000-0000-0000-0000-000000000001
