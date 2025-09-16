@@ -42,7 +42,7 @@ In this notebook, we want to see how the interactive and reactive features of Pl
 	
 	This notebook is intended for highschool students, university students studying chemistry or another natural science, or others who are just interested to see what this notebook has to offer. Basic chemistry knowledge is recommended (f.e. knowing what an acid and base is, what the pH scale is etc.), but some short reminders are included. Feel free to give the notebook a try if it is not the case.
 
-	For those with further interest in how the titration curves were plotted, check out the code in combination to the appendix at the end of the notebook.
+	For those with further interest in how the titration curves were plotted and how the equations were derived, check out the code in combination to the appendix at the end of the notebook.
 """
 
 # ╔═╡ 0f262891-af4b-4007-82f6-7aae20f91dbd
@@ -68,7 +68,7 @@ By meassuring how much base is needed to convert the acid completly, the concent
 	c\mathrm{(H_3O^+)} = c\mathrm{(HA)}
 	```
 
-	For the other cases (weaker acids, di- or triprotonic acids etc.) the chemistry is a bit more complex. We will look at some of these cases later.
+	For the other cases (weaker acids, di- or triprotonic acids etc.) the chemistry is a bit more complex. We will look at some of these cases later. Of course, the analyte can also be a base, in which case an acid is used as titrant.
 """
 
 # ╔═╡ 83a21840-a772-469e-999d-c066f60e2e0e
@@ -676,8 +676,8 @@ c_{\mathrm{B}}\mathrm{(OH^-)} = -\frac{K_{\mathrm{b}}}{2} + \sqrt{\frac{K_{\math
 In total, we get the expression
 ```math
 \begin{align}
-c\mathrm{(OH^-)} &= c_{\mathrm{A}}\mathrm{(OH^-)} + c_{\mathrm{B}}\mathrm{(OH^-)} \\
-	&=  \frac{c_0\mathrm{(NaOH)} * V_{\text{added}}\mathrm{(NaOH)} - (c_0\mathrm{(HA)} - c_0\mathrm{(H_3O^+)}) * V_0\mathrm{(HA)}}{V_0\mathrm{(HA)} + V_{\text{added}}\mathrm{(NaOH)}} \\
+c\mathrm{(OH^-)} =& c_{\mathrm{A}}\mathrm{(OH^-)} + c_{\mathrm{B}}\mathrm{(OH^-)} \\
+	=&  \frac{c_0\mathrm{(NaOH)} * V_{\text{added}}\mathrm{(NaOH)} - (c_0\mathrm{(HA)} - c_0\mathrm{(H_3O^+)}) * V_0\mathrm{(HA)}}{V_0\mathrm{(HA)} + V_{\text{added}}\mathrm{(NaOH)}} \\
 	&+ -\frac{K_{\mathrm{b}}}{2} + \sqrt{\frac{K_{\mathrm{b}}^2}{4} + K_{\mathrm{b}} * c_0{\mathrm{(A^-)}}}
 \end{align}
 ```
@@ -872,22 +872,24 @@ md"""
 
 # ╔═╡ 4336e057-2a02-47d6-8fd9-e9cf9ec29399
 md"""
-If you are interested in contributing, there is still a lot that can be done! Here are some more ideas listed, but if you got some ideas of your own, they are more than welcome!
+If you are interested in contributing, there is still a lot that can be done! Here are some more ideas listed with some estimation of their *difficulty*. But, if you got some ideas of your own, they are more than welcome!
 
-- Di- and Triprotonic acids as options
+- Di- and Triprotonic acids as options (*Medium*)
 
-- Add a curve with a hidden concentration as an exercise; the concentration can be determined with the curve and checked as an input 
+- Add a curve with a hidden concentration as an exercise; the concentration can be determined with the curve and checked as an input (*Medium*)
 
-- Titrations against weak bases can be added
+- Enumerate the equations with the ```\tag{}``` option to improve references to specific equations (*Easy*)
 
-- Flip acids and bases: Titrations of bases against acids
+- Titrations against weak bases can be added (*Medium*)
 
-- Contribute to the visualisation:
+- Flip acids and bases: Titrations of bases against acids (*Medium*)
+
+- Contribute to the visualisation: (*hard*)
 
   - Add animations of erlenmeyer flask with colorful liquids inside, which maybe even change in volume depending on the added titrant
   - change the slider to a tab, which can be openedto fill a flask (new widget)
 
-- Bugfixing: Further testing of the notebook and find errors and fix them
+- Bugfixing: Further testing of the notebook and find errors and fix them (*medium - hard*)
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
