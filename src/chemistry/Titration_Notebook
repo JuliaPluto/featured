@@ -935,11 +935,25 @@ begin
 	end
 
 	range_Methyl_orange = IndicatorRange(colorant"red", colorant"yellow",3.1,4.4)
+	range_Litmus = IndicatorRange(colorant"red", colorant"blue",5.0,8.0)
+	range_Bromothymol_blue = IndicatorRange(colorant"yellow", colorant"blue",6.0,7.6)
+	range_Phenolphtalein = IndicatorRange(colorant"white", colorant"magenta",8.3,10.0)
+	range_Alizarin_yellow = IndicatorRange(colorant"yellow", colorant"red",10.1,12.0)
 
 end
 
-# ╔═╡ cf7b07a7-a340-47d4-b747-79aebe2c2bb8
-getcolorant(range_Methyl_orange, pH_Value)
+# ╔═╡ 2ffcfcc2-ac5f-4293-bab0-3fede68c115a
+# Output of the Indicatorcolour in a Dataframe
+begin
+	df_color_alt = DataFrame(Dict(
+		"Methyl orange" => [getcolorant(range_Methyl_orange, pH_Value)],
+		"Litmus" => [getcolorant(range_Litmus, pH_Value)],
+		"Bromothymol blue" => [getcolorant(range_Bromothymol_blue, pH_Value)],
+		"Phenolphthalein" => [getcolorant(range_Phenolphtalein, pH_Value)],
+		"Alizarin yellow" => [getcolorant(range_Alizarin_yellow, pH_Value)]
+							))
+	df_color_alt = df_color_alt[:, desired_order]
+end
 
 # ╔═╡ cec8f377-dc41-41ba-a3b3-d916acba1147
 md"""
@@ -2350,9 +2364,9 @@ version = "1.9.2+0"
 # ╠═af04638c-2615-4195-a45e-d6d85af6d6cd
 # ╟─8b9e6746-b731-4b39-a0b8-4b9e4c752cc6
 # ╠═4127a0c7-897b-41c2-9319-2b1c48369699
-# ╠═67136d72-c447-4268-8c17-b6d9ad3652ca
+# ╟─67136d72-c447-4268-8c17-b6d9ad3652ca
 # ╠═ab1430fd-ddd9-48d6-94e8-465cea45ff25
-# ╠═cf7b07a7-a340-47d4-b747-79aebe2c2bb8
+# ╠═2ffcfcc2-ac5f-4293-bab0-3fede68c115a
 # ╟─cec8f377-dc41-41ba-a3b3-d916acba1147
 # ╟─4336e057-2a02-47d6-8fd9-e9cf9ec29399
 # ╟─00000000-0000-0000-0000-000000000001
