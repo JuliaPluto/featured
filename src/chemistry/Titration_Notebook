@@ -303,11 +303,6 @@ md"""
 ## Interactive Titration Curve
 """
 
-# ╔═╡ fa5deb25-ee07-4917-bf57-595bced01394
-md"""
-### Adjust the Settings
-"""
-
 # ╔═╡ 7c465102-7d68-4827-bd8e-ed8e8ef0e303
 #Test von Tabellen #Only with 1 proton
 md"""
@@ -331,6 +326,38 @@ Here you can choose from one of the given acids.
 # ╔═╡ 563df061-7e97-4745-b101-cf4aa200da60
 @bind Acid Select(stringacids)
 
+# ╔═╡ 7cab03c4-048d-4df7-a3a5-b20dfd1e6e9d
+md"""
+### Control the Added Volume and Check the Indicators
+"""
+
+# ╔═╡ f2b5c3e7-29c1-4f7b-82bb-cfa8da90d494
+md"""
+Here you can track the titration by visualising the point in the titration curve at a given added volume of titrant. The slider can also be controlled with the arrow keys for more precise control, which is most iomportant around the equivalence point.
+"""
+
+# ╔═╡ a7e6ac40-51bd-46d7-a21c-ad294fa23d5a
+md"""
+#### Exercises I
+"""
+
+# ╔═╡ ab20be4e-d214-4c0e-85df-c293724c978e
+md"""
+1) Take a look at the titration of a strong acid (e.g. HCl) against NaOH and add the base step by step with the slider. Which indicators can you use for the titration and which are not suitable? Just like in the lab, at which stages can you add the titrant faster and at which point should you add the base more slowly and carefully?
+2) Now take a look at the titration of a weak acid (e.g. acetic acid) against NaOH. Check again, which indicators are usable for this titration. Did it change compared to the titration against a strong acid?
+3) Now try the other acids. Are there differences between medium-strong acids or do they behave the same?
+"""
+
+# ╔═╡ fa5deb25-ee07-4917-bf57-595bced01394
+md"""
+### Adjust the Settings
+"""
+
+# ╔═╡ 1a229a8e-2378-4aff-871f-69446b9a4dd2
+md"""
+Here you can experiment with some parameters and how they change the titration curve.
+"""
+
 # ╔═╡ 006a4f14-2cd1-439f-8b64-aab99601aba8
 md"To plot a titration curve, you need to know the concentration of the acid you are analysing. It is always important to keep the units in mind! Here you can write it down in ``\frac{\text{mol}}{\text{L}}``. Of course in an analytical titration, this is the value you don't know and need to find out."
 
@@ -351,25 +378,31 @@ Next, you need to know the concentration of your titrant, in this example the ba
 # ╔═╡ 2e016b07-2ac0-4fd0-9c0a-3062616666f3
 @bind c0_Base_string TextField(default="0.1")
 
-# ╔═╡ 7cab03c4-048d-4df7-a3a5-b20dfd1e6e9d
+# ╔═╡ 8af4355b-b5cf-4017-a660-0b0ca884ad95
 md"""
-### Control the Added Volume and Check the Indicators
+#### Exercises II
 """
 
-# ╔═╡ f2b5c3e7-29c1-4f7b-82bb-cfa8da90d494
+# ╔═╡ 38c319e0-0124-41fa-9910-173e645e7d03
 md"""
-Here you can track the titration by visualising the point in the titration curve at a given added volume of titrant. The slider can also be controlled with the arrow keys for more precise control, which is most iomportant around the equivalence point.
+1) Change the concetration of the analyte. What changes in the curve and what stays the same? Can you see any proportionality ("If I double the concentration, [...] is doubled / halved")?
 """
 
-# ╔═╡ a7e6ac40-51bd-46d7-a21c-ad294fa23d5a
+# ╔═╡ 3b77b70e-be0b-46a7-948d-7289fcc72924
+details("Hint",
 md"""
-## Exercises
+Keep an eye out for the scaling on the x-axis!!
+"""
+)
+
+# ╔═╡ 05063b3d-8769-4d54-ad70-f38e95dca7a3
+md"""
+2) Before you change the volume of the analyte, try to predict how the curve changes. Now change the volume and check the curve again Look out for proportionalities!
 """
 
-# ╔═╡ ab20be4e-d214-4c0e-85df-c293724c978e
+# ╔═╡ 38ba4eb9-4cd1-41d1-8b14-e07b3c76be3b
 md"""
-1) Take a look at the titration of HCl against NaOH at the default volumes and concentrations. Which indicators could you choose? What changes by changing the concentrations and volume of the analyte? Does it affect your choice of indicator? 
-2) Now take a look at the titration of the weak acids against NaOH. Again, check how the concentrations of analyte and titrat and the volume of the analyte affect the curve and your choice of indicator.
+3) Finally, let's take a look at the concentration of the titrant. Try to make a prediction, how it affects the curve and check it afterwards in the same way as before.
 """
 
 # ╔═╡ d2fe14b6-59a9-4b9d-9028-3c9f41e91d1c
@@ -2211,17 +2244,10 @@ version = "1.9.2+0"
 # ╟─512a3218-e9e9-482e-b0b0-59650ea55fd1
 # ╟─724c61e2-7237-4f3e-ab30-655164288aaf
 # ╟─cd5bcc78-ad78-40c8-9356-140a04ea1a69
-# ╟─fa5deb25-ee07-4917-bf57-595bced01394
 # ╟─7c465102-7d68-4827-bd8e-ed8e8ef0e303
 # ╟─fa8df29f-be0a-498d-8fac-4cbe016f034a
 # ╟─eb8979e7-b163-435d-a909-f020194ffc15
 # ╟─563df061-7e97-4745-b101-cf4aa200da60
-# ╟─006a4f14-2cd1-439f-8b64-aab99601aba8
-# ╟─41536d79-8949-42ea-971c-8069918c455d
-# ╟─1462be43-386b-4f9a-bae0-304fd058dd93
-# ╟─95b20797-e804-4c15-b0d0-7aeb36540234
-# ╟─5b088b11-f0af-461a-bc92-61fbfed0e768
-# ╟─2e016b07-2ac0-4fd0-9c0a-3062616666f3
 # ╟─7cab03c4-048d-4df7-a3a5-b20dfd1e6e9d
 # ╟─f2b5c3e7-29c1-4f7b-82bb-cfa8da90d494
 # ╟─831198d1-d22c-42b5-a198-3bd34139eb0e
@@ -2230,10 +2256,23 @@ version = "1.9.2+0"
 # ╟─6ebfa6d8-b4a7-4d5e-8d3d-ccf0ba596f25
 # ╟─a7e6ac40-51bd-46d7-a21c-ad294fa23d5a
 # ╟─ab20be4e-d214-4c0e-85df-c293724c978e
+# ╟─fa5deb25-ee07-4917-bf57-595bced01394
+# ╟─1a229a8e-2378-4aff-871f-69446b9a4dd2
+# ╟─006a4f14-2cd1-439f-8b64-aab99601aba8
+# ╟─41536d79-8949-42ea-971c-8069918c455d
+# ╟─1462be43-386b-4f9a-bae0-304fd058dd93
+# ╟─95b20797-e804-4c15-b0d0-7aeb36540234
+# ╟─5b088b11-f0af-461a-bc92-61fbfed0e768
+# ╟─2e016b07-2ac0-4fd0-9c0a-3062616666f3
+# ╟─8af4355b-b5cf-4017-a660-0b0ca884ad95
+# ╟─38c319e0-0124-41fa-9910-173e645e7d03
+# ╟─3b77b70e-be0b-46a7-948d-7289fcc72924
+# ╟─05063b3d-8769-4d54-ad70-f38e95dca7a3
+# ╟─38ba4eb9-4cd1-41d1-8b14-e07b3c76be3b
 # ╟─d2fe14b6-59a9-4b9d-9028-3c9f41e91d1c
 # ╟─76baa379-4a48-4268-871e-9e68db92c528
 # ╟─d2323592-e4eb-4ac1-ab86-741910e1738c
-# ╟─241fc16e-d252-4ef8-8e6d-267fc327ee88
+# ╠═241fc16e-d252-4ef8-8e6d-267fc327ee88
 # ╟─c1799961-2ae2-4fb0-8934-55fc2a16cc7e
 # ╟─874bdbe5-d512-4566-9780-b78f141a8ba0
 # ╟─4811fcde-5bfa-4c45-a32f-d39343651c90
