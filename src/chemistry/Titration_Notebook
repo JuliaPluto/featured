@@ -40,20 +40,20 @@ In this notebook, we want to see how the interactive and reactive features of Pl
 
 !!! question "Is this for me?"
 	
-	This notebook is intended for highschool students, university students studying chemistry or another natural science, or others who are just interested to see what this notebook has to offer. Basic chemistry knowledge is recommended (f.e. knowing what an acid and base is, what the pH scale is etc.), but some short reminders are included. Feel free to give the notebook a try if it is not the case.
+	This notebook is intended for highschool students, university students studying chemistry or another natural science, or others who are interested in seeing what this notebook has to offer. Basic chemistry knowledge is recommended (e.g. knowing acids and bases, familiarity with the pH scale), but some short reminders are included. Feel free to give the notebook a try nonetheless.
 
-	For those with further interest in how the titration curves were plotted and how the equations were derived, check out the code in combination to the appendix at the end of the notebook.
+	For those further interested in how the titration curves were plotted and how the equations were derived, check out the code in combination to the appendix at the end of the notebook.
 """
 
 # ╔═╡ 0f262891-af4b-4007-82f6-7aae20f91dbd
 md"""
 ## The Basics
-📚 *The explanations are based on [Titration (Wikipedia)](https://en.wikipedia.org/wiki/Titration), [Acid-base titration (Wikipedia)](https://en.wikipedia.org/wiki/Acid%E2%80%93base_titration) and [Binnewies et al., 2016](https://doi.org/10.1007/978-3-662-45067-3). For further reading, check out the links or take a look into a general chemistry textbook of your choice.*
+📚 *The explanations are based on [Titration (Wikipedia)](https://en.wikipedia.org/wiki/Titration), [Acid-base titration (Wikipedia)](https://en.wikipedia.org/wiki/Acid%E2%80%93base_titration) and [Binnewies et al., 2016](https://doi.org/10.1007/978-3-662-45067-3). For further reading, check out the links or take a look at a general chemistry textbook of your choice.*
 """
 
 # ╔═╡ ee2a647a-0cba-46c6-afb0-ba16bf0f0150
 md"""
-Titrations are used to analyse samples and determine unknown concentrations. One of the most common types of titration is the acid-base titration. To find out the concentration of an analyte, f.e. an acid like hydrochloric acid (HCl), a titrant solution, f.e. a base like sodium hydroxide (NaOH), with a known concentration is used. The base and acid react with each other in a neutralisation reaction to form water.
+Titrations are used to analyse samples and determine unknown concentrations. One of the most common types of titration is the acid-base titration. To find out the concentration of an analyte, e.g. an acid like hydrochloric acid (HCl), you use a titrant solution, e.g. a base like sodium hydroxide (NaOH), with a known concentration. The base and acid react with each other in a neutralisation reaction to form water.
 
 ```math
 \mathrm{H_{3}O^{+}} + \mathrm{OH^{-}} \rightarrow \mathrm{H_{2}O}
@@ -62,7 +62,7 @@ Titrations are used to analyse samples and determine unknown concentrations. One
 By meassuring how much base is needed to convert the acid completly, the concentration of the acid is determined.
 
 !!! question "Is that always the case?"
-	This is a very brief explanation to illustrate the key idea of titrations and is in this form only valid for very strong acids and bases, which dissociate completly, while weaker acids and bases do not. Therefore, only for very strong acids the concentration of hydronium ions (``\mathrm{H_{3}O^{+}}``) is equal to the concentration of acid (``\mathrm{HA}`` in general form).
+	This is a very brief explanation to illustrate the key idea of titrations and in this form it is only valid for very strong acids and bases, which dissociate completly, while weaker acids and bases do not. Therefore, only for very strong acids the concentration of hydronium ions (``\mathrm{H_{3}O^{+}}``) is equal to the concentration of acid (``\mathrm{HA}`` in general form).
 
 	```math
 	c\mathrm{(H_3O^+)} = c\mathrm{(HA)}
@@ -95,8 +95,8 @@ md"""
 
 # ╔═╡ ad925028-59c3-433d-a54a-3f644d11b639
 md"""
-To see, if the acid is completly converted, the pH value at each point of added base can be measured with a pH electrode.
-This allows the plotting of a titration curve. The inflection point of this curve is the equivalence point. At this point, the acid is completly reacted completly with the added base. Because in this example a titration of a strong acid (HCl) and strong base (NaOH) is shown, the neutralisation results in a neutral sodium chloride solution (NaCl) and therefore the equivalence point is at pH 7.
+To see if the acid is completly converted, the pH value at each point of added base can be measured with a pH electrode.
+This allows the plotting of a titration curve. The inflection point of this curve is the equivalence point. At this stage, the acid has reacted completly with the added base. Because this example is a titration of a strong acid (HCl) and strong base (NaOH), the neutralisation results in a neutral sodium chloride solution (NaCl) and therefore the equivalence point is at pH 7.
 """
 
 # ╔═╡ 8cea32f9-a670-4269-a586-c7bdb339a80d
@@ -142,12 +142,12 @@ md"""
 	\mathrm{pH} = -\log{c\mathrm{(H_3O^+)}}.
 	```
 
-	When 90 % of the acid is neutralised, the pH value is changed by one unit. When further 9 % are neutralised and overall 99 % acid is converted, the pH value changes by another unit. Next, only 0.9 % more acid needs to be converted, to change the pH value by another value. Because of this logarithmic behaviour, the pH value does not change much at the beginning of the titration. As we get closer to the equivalence point, the pH value rises quickly until there is a jump around the equivalence point. Afterwards the pH level rises because of the added base.
+	When 90 % of the acid is neutralised, the pH value is changed by one unit. When further 9 % are neutralised and overall 99 % acid is converted, the pH value changes by another unit. Next, only 0.9 % more acid needs to be converted, to change the pH value by another unit. Because of this logarithmic behaviour, the pH value does not change much at the beginning of the titration. As we get closer to the equivalence point, the pH value rises quickly until there is a jump around the equivalence point. Afterwards, the pH level rises because of the added base.
 """
 
 # ╔═╡ d9adecaa-6ae8-46d4-955f-4a89a82a46c9
 md"""
-#### Strong and Medium Strong Acids
+#### Strong and Medium-strong Acids
 """
 
 # ╔═╡ 9264917e-724d-4220-bbee-ec026285e475
@@ -164,7 +164,7 @@ is formed. As every equilibrium, it can be described by an equilibrium constant 
 \mathrm{p}K\mathrm{_a} = -\log{K_{\mathrm{a}}}.
 ```
 
-These constants describe the strength of the acids. The lower the ``\mathrm{p}K\mathrm{_a}``, the stronger the acid. The classification of acids is as follows: very strong acids: ``\mathrm{p}K\mathrm{_a} < 0``, strong acids: ``0 < \mathrm{p}K\mathrm{_a} < 3`` and medium strong acids: ``3 < \mathrm{p}K\mathrm{_a} < 7``.
+These constants describe the strength of the acids. The lower the ``\mathrm{p}K\mathrm{_a}``, the stronger the acid. The classification of acids is as follows: very strong acids: ``\mathrm{p}K\mathrm{_a} < 0``, strong acids: ``0 < \mathrm{p}K\mathrm{_a} < 3`` and medium-strong acids: ``3 < \mathrm{p}K\mathrm{_a} < 7``.
 """
 
 # ╔═╡ 4882a030-f1d6-4b8b-a86f-a20e64fe4a6c
@@ -191,7 +191,7 @@ Let's compare the titration curve below for acetic acid with the titration curve
 
 	1) The pH value at the **start** is higher, although in both cases the starting concentration of the acid is ``c_0\mathrm{(HA)} = 0.1~\mathrm{M}``. Of course, this is the case because the weaker acid does not dissociate completly and forms less hydronium ions with water.
 
-	2) After the curve rises, there is a flat section where the pH value does not change much by adding base. This is the **buffer region** of the titration. Adding NaOH to the analyte solution leads to the formation of a sodium acetate solution (`` \mathrm{Na^+} + \mathrm{^-OOCCH_3}``), where the acetate anion is the conjugated base to acetic acid. Solutions consisting of a weak acid and its conjugated base are called buffer solutions. Further added acids or bases dont react with water or hydronium ions to further change the pH value, but react with the pair of weak acid and conjugated base first. The pH value in this region is described by the *Henderson-Hasselbalch equation*\
+	2) After the curve rises, there is a flat section where the pH value does not change much by adding the base. This is the **buffer region** of the titration. Adding NaOH to the analyte solution leads to the formation of a sodium acetate solution (`` \mathrm{Na^+} + \mathrm{^-OOCCH_3}``), where the acetate anion is the conjugated base to acetic acid. Solutions consisting of a weak acid and its conjugated base are called buffer solutions. Further added acids or bases dont react with water or hydronium ions to further change the pH value, but react with the pair of weak acid and conjugated base first. The pH value in this region is described by the *Henderson-Hasselbalch equation*\
 	```math
 		\mathrm{pH} = \mathrm{p}K_{\mathrm{a}} + \log{\frac{c(\mathrm{A^-})}{c(\mathrm{HA})}}.
 	```
@@ -278,7 +278,7 @@ end
 
 # ╔═╡ b3420e1d-413e-463b-9bed-ac6182ce863a
 md"""
-Indicators themself are weak organic acids which form conjugated acid-base pairs, where acid and base are of different colors.
+Indicators themselves are weak organic acids which form conjugated acid-base pairs, where acid and base are of different colors.
 As shown before for weak acids, an equilibrium is formed and it shifts when changing the pH value of the environment. 
 In the following picture, the acid-base pair for the indicator methyl red can be seen.
 """
@@ -476,7 +476,7 @@ based on the autoprotolysis of water.
 
 # ╔═╡ 4811fcde-5bfa-4c45-a32f-d39343651c90
 md"""
-### Modelling the Titration Curve for Medium Strong and Weak Acids
+### Modelling the Titration Curve for Medium-strong and Weak Acids
 """
 
 # ╔═╡ 587040b9-c31a-4900-8b5d-26bf7000c570
@@ -496,7 +496,7 @@ md"""
 
 # ╔═╡ 50437455-4784-43ff-ac9c-5abdb43787fe
 md"""
-The concentration of hydronium ions of medium strong and weak acids is given as
+The concentration of hydronium ions of medium-strong and weak acids is given as
 ```math
 c_0\mathrm{(H_3O^+)} = -\frac{K_{\mathrm{s}}}{2} + \sqrt{\frac{K_{\mathrm{s}}^2}{4} + K_{\mathrm{s}} * c_0{\mathrm{(HA)}}}.
 ``` 
@@ -582,7 +582,7 @@ Note, that when ``\mathrm{HA}`` reacts with water at the beginning, it forms ``\
 ```math
 n_0\mathrm{(A^-)} = n_0\mathrm{(H_3O^+)}
 ```
-and can be writte as
+and can be written as
 ```math
 n_0\mathrm{(A^-)} = c_0\mathrm{(H_3O^+)} * V_0\mathrm{(HA)}
 ```
@@ -628,7 +628,7 @@ md"""
 
 # ╔═╡ 7e8946ca-8168-4b3a-851b-1e4458c6be77
 md"""
-At the equivalence point, the salt of the medium strong or weak acid remains, which is itself a medium strong or weak base. Therefore, the concetration of hydroxy ions can be calculated with
+At the equivalence point, the salt of the medium-strong or weak acid remains, which is itself a medium-strong or weak base. Therefore, the concetration of hydroxy ions can be calculated with
 ```math
 c_0\mathrm{(OH^-)} = -\frac{K_{\mathrm{b}}}{2} + \sqrt{\frac{K_{\mathrm{b}}^2}{4} + K_{\mathrm{b}} * c_0{\mathrm{(A^-)}}},
 ``` 
@@ -658,7 +658,7 @@ md"""
 
 # ╔═╡ c44d318d-a710-4adb-acac-fd7f0f53cec3
 md"""
-This is almost the same as for strong acids with some minor differences. First, the amount of substance of ``\mathrm{OH^-}`` from the added base is calculated slightly differently with
+This is almost the same as for strong acids with some minor differences. Firstly, the amount of substance of ``\mathrm{OH^-}`` from the added base is calculated slightly differently with
 ```math
 \begin{align}
 	c_{\mathrm{A}}\mathrm{(OH^-)} &= \frac{n_{\mathrm{added}}\mathrm{(OH^-)} - n_0\mathrm{(HA)}}{V_{\mathrm{total}}} \\
@@ -669,7 +669,7 @@ This is almost the same as for strong acids with some minor differences. First, 
 
 # ╔═╡ 4b5214a5-e35f-431a-9f3e-63eff56d1f45
 md"""
-Second, the concentration of hydroxyde from the weak base present at the equivalence point needs to be additionally considered.
+Secondly, the concentration of hydroxyde from the weak base present at the equivalence point needs to be additionally considered.
 ```math
 c_{\mathrm{B}}\mathrm{(OH^-)} = -\frac{K_{\mathrm{b}}}{2} + \sqrt{\frac{K_{\mathrm{b}}^2}{4} + K_{\mathrm{b}} * c_0{\mathrm{(A^-)}}}
 ```
@@ -716,7 +716,7 @@ begin
 	if pKa <= 0 #Very strong acids
 		c0_H⁺::Float64 = c0_Acid*v0_Acid
 		c0_OH⁻::Float64 = 10^(-7)
-	else #Medium strong and weak acid
+	else #Medium-strong and weak acid
 		c0_H⁺::Float64 = -Ka/2 + sqrt(Ka^2 / 4 + Ka*c0_Acid) #The starting concentration for protons (at the same time for the deprotonated acid)
 		c0_OH⁻::Float64 = -Kb/2 + sqrt(Kb^2 / 4 + Kb*c0_Acid) # Concentration of OH⁻ at the EP, after the weak acid is completly neutralised
 	end
@@ -737,7 +737,7 @@ begin
 				c_H⁺ = 10^(-14) / c_OH⁻
 			end
 			pH = -log(10, c_H⁺)
-		else #for mediumstrong and weak acids
+		else #for medium-strong and weak acids
 			if v_Base_added == 0.0 #at the starting point
 				pH = -log(10, c0_H⁺)
 			elseif round((c0_Acid - c0_H⁺)*v0_Acid, digits=3) > round(c0_Base*v_Base_added, digits=3) #between starting point and EP
