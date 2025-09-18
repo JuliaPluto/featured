@@ -2,10 +2,12 @@
 # v0.20.17
 
 #> [frontmatter]
+#> image = "https://tutebucket.com/wp-content/uploads/2024/10/tittration.jpg"
 #> language = "en-US"
 #> title = "Simulating titrations"
 #> tags = ["Chemistry"]
 #> date = "2025-09-17"
+#> description = "Learn about titrations and indicators. Deepen your understanding by conducting a digital titration yourself! "
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Lucas Hildebrandt"
@@ -913,9 +915,14 @@ begin
 	df_color = df_color[:, desired_order]
 end
 
+# ╔═╡ c59b620d-a6dd-4e19-ac30-5840568efba4
+md"""
+##### Alternative
+"""
+
 # ╔═╡ 67136d72-c447-4268-8c17-b6d9ad3652ca
 md"""
-**Alternative** in a more julia way, using the clamp function:
+Constructing a function and using the existing clamp function, instead of constructing multiple if/else blocks.
 """
 
 # ╔═╡ ab1430fd-ddd9-48d6-94e8-465cea45ff25
@@ -2290,13 +2297,13 @@ version = "1.9.2+0"
 # ╟─657f405a-a7f8-4915-ba60-46464a01873f
 # ╟─7c79ba77-e2b6-4e0d-8522-f0b540e6815f
 # ╟─ad925028-59c3-433d-a54a-3f644d11b639
-# ╠═8cea32f9-a670-4269-a586-c7bdb339a80d
+# ╟─8cea32f9-a670-4269-a586-c7bdb339a80d
 # ╟─7205b4a5-d032-43c6-8232-a5d3cffb29d6
 # ╟─d9adecaa-6ae8-46d4-955f-4a89a82a46c9
 # ╟─9264917e-724d-4220-bbee-ec026285e475
 # ╟─4882a030-f1d6-4b8b-a86f-a20e64fe4a6c
 # ╟─733fe755-796d-41db-883a-cfc8d7d077a4
-# ╠═6ba1348c-3cca-46a4-b109-bfb90f7ef7f2
+# ╟─6ba1348c-3cca-46a4-b109-bfb90f7ef7f2
 # ╟─975a203f-e2d8-4f21-a4af-62212c7a9423
 # ╟─7f5a2d2a-62fe-4985-b0fb-8559d9124801
 # ╟─ffe30f1b-cde3-4f41-ac69-70f4d2634b3a
@@ -2367,6 +2374,7 @@ version = "1.9.2+0"
 # ╠═af04638c-2615-4195-a45e-d6d85af6d6cd
 # ╟─8b9e6746-b731-4b39-a0b8-4b9e4c752cc6
 # ╠═4127a0c7-897b-41c2-9319-2b1c48369699
+# ╟─c59b620d-a6dd-4e19-ac30-5840568efba4
 # ╟─67136d72-c447-4268-8c17-b6d9ad3652ca
 # ╠═ab1430fd-ddd9-48d6-94e8-465cea45ff25
 # ╠═2ffcfcc2-ac5f-4293-bab0-3fede68c115a
