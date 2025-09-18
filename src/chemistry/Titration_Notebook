@@ -127,6 +127,7 @@ begin
 		ylims=(0, 14),
 		# xticks=0:0.005:0.06,
 		title="Titration curve of 0.1 M HCl against 0.1 M NaOH",
+		dpi=300
 	)
 	
 	plot(v_Base_ex, pH_total_strong, label="titration curve", linewidth=2;plot_attrs_strong...)
@@ -245,7 +246,8 @@ begin
 	    ylabel="pH-Value",
 		xlims=(-1,v_Base_end_ex+2),
 		ylims=(0, 14),
-		title=latexstring("\$\\mathrm{Titration~curve~of~0.1~M~CH_3COOH~against~0.1~M~NaOH}\$")
+		title=latexstring("\$\\mathrm{Titration~curve~of~0.1~M~CH_3COOH~against~0.1~M~NaOH}\$"),
+		dpi=300
 	)
 	
 	plot(v_Base_ex, pH_total_weak, label="titration curve", linewidth=2;plot_attrs_weak...)
@@ -806,6 +808,7 @@ begin
 			xlims=(-1,v_Base_end+2),
 			ylims=(0, 14),
 			title=latexstring("\$\\mathrm{Titration~curve~of~}", c0_Acid_string, "\\mathrm{M~} ", strip(acidmap[Acid], '$'), "\\mathrm{~against~}", c0_Base_string," \\mathrm{M~NaOH}\$"),
+			dpi=300
 		)
 
 		plot(v_Base, pH_total, label="titration curve", linewidth=2;plot_attrs...)
@@ -2287,13 +2290,13 @@ version = "1.9.2+0"
 # ╟─657f405a-a7f8-4915-ba60-46464a01873f
 # ╟─7c79ba77-e2b6-4e0d-8522-f0b540e6815f
 # ╟─ad925028-59c3-433d-a54a-3f644d11b639
-# ╟─8cea32f9-a670-4269-a586-c7bdb339a80d
+# ╠═8cea32f9-a670-4269-a586-c7bdb339a80d
 # ╟─7205b4a5-d032-43c6-8232-a5d3cffb29d6
 # ╟─d9adecaa-6ae8-46d4-955f-4a89a82a46c9
 # ╟─9264917e-724d-4220-bbee-ec026285e475
 # ╟─4882a030-f1d6-4b8b-a86f-a20e64fe4a6c
 # ╟─733fe755-796d-41db-883a-cfc8d7d077a4
-# ╟─6ba1348c-3cca-46a4-b109-bfb90f7ef7f2
+# ╠═6ba1348c-3cca-46a4-b109-bfb90f7ef7f2
 # ╟─975a203f-e2d8-4f21-a4af-62212c7a9423
 # ╟─7f5a2d2a-62fe-4985-b0fb-8559d9124801
 # ╟─ffe30f1b-cde3-4f41-ac69-70f4d2634b3a
