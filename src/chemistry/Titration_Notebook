@@ -108,7 +108,7 @@ begin
 		v_Base_end_ex = 25 * 0.1 / 0.1 * 2
 		v_Base_ex::Vector{Float64} = collect(0:0.005:v_Base_end_ex)
 	end
-	function calc_pH_strong(v_Base_added_ex::Float64) #v später die Elemente des Vectors v_Base
+	function calc_pH_strong(v_Base_added_ex::Float64) #v as elements of the vector v_Base
 		if v_Base_added_ex*0.1 <= 25*0.1
 			c_H_ex::Float64 = ((0.1 * 25 - 0.1 * v_Base_added_ex) / (25 + v_Base_added_ex)) + 10^(-7)
 		else
@@ -127,7 +127,6 @@ begin
 	    ylabel="pH-Value",
 		xlims=(-1,v_Base_end_ex+2),
 		ylims=(0, 14),
-		# xticks=0:0.005:0.06,
 		title="Titration curve of 0.1 M HCl against 0.1 M NaOH",
 		dpi=300
 	)
@@ -171,7 +170,6 @@ These constants describe the strength of the acids. The lower the ``\mathrm{p}K\
 """
 
 # ╔═╡ 4882a030-f1d6-4b8b-a86f-a20e64fe4a6c
-#Test von Tabellen #Only with 1 proton
 md"""
 Here is a table with some monoprotonic acids and their ``\mathrm{p}K\mathrm{_a}`` values. 
 
@@ -266,7 +264,6 @@ md"""
 md"""
 Another way of determining the equivalence point is by using a pH indicator. These are chemical compounds which change colour depending on the pH value of their environement. Every indicator changes colour at a characteristic pH range.
 """
-# Die Farbgradienten zeigen und evtl die Reaktiona us dem Binnewies als PNG zeigen als Beispielstruktur und Reaktion.
 
 # ╔═╡ ffe30f1b-cde3-4f41-ac69-70f4d2634b3a
 begin
@@ -308,7 +305,6 @@ md"""
 """
 
 # ╔═╡ 7c465102-7d68-4827-bd8e-ed8e8ef0e303
-#Test von Tabellen #Only with 1 proton
 md"""
 The table with some monoprotonic acids and their ``\mathrm{p}K\mathrm{_a}`` values is shown here again.
 """
@@ -319,7 +315,6 @@ begin
 	stringacids = ["HClO4","HCl","HSO4-","HNO2","HF","HCOOH","CH3COOH"]
 	acidmap = Dict(s => l for (s,l) in zip(stringacids, latexacids))
 	df = DataFrame(Dict("Acid" => latexacids, "pKa" => [-10.0,-6.0,1.92,3.15,3.17,3.75,4.76]))
-	#show(df, show_row_number=false) not possible, show() gives Output in Terminal. Also the Strings are dispalyed with "" => Ask Fons
 end
 
 # ╔═╡ eb8979e7-b163-435d-a909-f020194ffc15
@@ -902,7 +897,7 @@ begin
 end; nothing
 
 # ╔═╡ 6ebfa6d8-b4a7-4d5e-8d3d-ccf0ba596f25
-# Output of the Indicatorcolour in a Dataframe
+# Output of the Indicator color in a Dataframe
 begin
 	df_color = DataFrame(Dict(
 		"Methyl orange" => [Methyl_orange[a]],
@@ -953,7 +948,6 @@ begin
 end
 
 # ╔═╡ 2ffcfcc2-ac5f-4293-bab0-3fede68c115a
-# Output of the Indicatorcolour in a Dataframe
 begin
 	df_color_alt = DataFrame(Dict(
 		"Methyl orange" => [getcolorant(range_Methyl_orange, pH_Value)],
