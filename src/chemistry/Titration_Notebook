@@ -530,7 +530,7 @@ md"""
 md"""
 The concentration of hydronium ions of medium-strong and weak acids is given as
 ```math
-c_0\mathrm{(H_3O^+)} = -\frac{K_{\mathrm{s}}}{2} + \sqrt{\frac{K_{\mathrm{s}}^2}{4} + K_{\mathrm{s}} * c_0{\mathrm{(HA)}}}.
+c_0\mathrm{(H_3O^+)} = -\frac{K_{\mathrm{a}}}{2} + \sqrt{\frac{K_{\mathrm{a}}^2}{4} + K_{\mathrm{a}} * c_0{\mathrm{(HA)}}}.
 ``` 
 Now the acid constant needs to be considered because of the equilibrium
 ```math
@@ -562,19 +562,19 @@ md"""
 
 # ╔═╡ a27a4577-151d-45c0-9675-288076d2da59
 md"""
-With the definition of ``K_{\mathrm{s}}`` out of the law of mass action
+With the definition of ``K_{\mathrm{a}}`` out of the law of mass action
 ```math
-K_{\mathrm{s}} = \frac{c\mathrm{(A^-)} * c\mathrm{(H_3O^+)}}{c\mathrm{(HA)}},
+K_{\mathrm{a}} = \frac{c\mathrm{(A^-)} * c\mathrm{(H_3O^+)}}{c\mathrm{(HA)}},
 ```
 we get for the concentration of hydronium ions
 ```math
-c\mathrm{(H_3O^+)} = K_{\mathrm{s}} * \frac{c\mathrm{(HA)}}{c\mathrm{(A^-)}}.
+c\mathrm{(H_3O^+)} = K_{\mathrm{a}} * \frac{c\mathrm{(HA)}}{c\mathrm{(A^-)}}.
 ```
 The concentration of acid at any given point can also be written as ``c\mathrm{(HA)} = c_0\mathrm{(HA)} - c\mathrm{(A^-)}``, thus
 ```math
 \begin{align}
-c\mathrm{(H_3O^+)} &= K_{\mathrm{s}} * \frac{c_0\mathrm{(HA)} - c\mathrm{(A^-)}}{c\mathrm{(A^-)}} \\
-&= K_{\mathrm{s}} * \left(\frac{c_0\mathrm{(HA)}}{c\mathrm{(A^-)}} - 1\right).
+c\mathrm{(H_3O^+)} &= K_{\mathrm{a}} * \frac{c_0\mathrm{(HA)} - c\mathrm{(A^-)}}{c\mathrm{(A^-)}} \\
+&= K_{\mathrm{a}} * \left(\frac{c_0\mathrm{(HA)}}{c\mathrm{(A^-)}} - 1\right).
 \end{align}
 ```
 As only the ratio of concentrations is important here, it can easily be converted to a molar ratio
@@ -583,7 +583,7 @@ As only the ratio of concentrations is important here, it can easily be converte
 ```
 and the expression above turns to
 ```math
-c\mathrm{(H_3O^+)} = K_{\mathrm{s}} * \left(\frac{n_0\mathrm{(HA)}}{n\mathrm{(A^-)}} - 1\right).
+c\mathrm{(H_3O^+)} = K_{\mathrm{a}} * \left(\frac{n_0\mathrm{(HA)}}{n\mathrm{(A^-)}} - 1\right).
 ```
 The amount of substance of acid at the starting point can easily be expressed by
 ```math
@@ -633,7 +633,7 @@ n\mathrm{(A^-)} = c_0\mathrm{(H_3O^+)} * V_0\mathrm{(HA)} + c_0\mathrm{(NaOH)} *
 ```
 and thus, the concentration of hydronium ions between the starting point and equivalence point is
 ```math
-c\mathrm{(H_3O^+)} = K_{\mathrm{s}} * \left(\frac{c_0\mathrm{(H_3O^+)} * V_0\mathrm{(HA)}}{c_0\mathrm{(H_3O^+)} * V_0\mathrm{(HA)} + c_0\mathrm{(NaOH)} * V_{\mathrm{added}}\mathrm{(NaOH)}} - 1\right).
+c\mathrm{(H_3O^+)} = K_{\mathrm{a}} * \left(\frac{c_0\mathrm{(H_3O^+)} * V_0\mathrm{(HA)}}{c_0\mathrm{(H_3O^+)} * V_0\mathrm{(HA)} + c_0\mathrm{(NaOH)} * V_{\mathrm{added}}\mathrm{(NaOH)}} - 1\right).
 ```
 """
 
@@ -2297,7 +2297,7 @@ version = "1.9.2+0"
 # ╟─9264917e-724d-4220-bbee-ec026285e475
 # ╟─4882a030-f1d6-4b8b-a86f-a20e64fe4a6c
 # ╟─733fe755-796d-41db-883a-cfc8d7d077a4
-# ╠═6ba1348c-3cca-46a4-b109-bfb90f7ef7f2
+# ╟─6ba1348c-3cca-46a4-b109-bfb90f7ef7f2
 # ╟─975a203f-e2d8-4f21-a4af-62212c7a9423
 # ╟─7f5a2d2a-62fe-4985-b0fb-8559d9124801
 # ╟─ffe30f1b-cde3-4f41-ac69-70f4d2634b3a
@@ -2314,7 +2314,7 @@ version = "1.9.2+0"
 # ╟─831198d1-d22c-42b5-a198-3bd34139eb0e
 # ╟─02c0320c-7c56-4fe5-8f8c-9ab0f733b28e
 # ╟─9dee0462-b5af-4962-a65b-7ac7b2faf3df
-# ╠═6ebfa6d8-b4a7-4d5e-8d3d-ccf0ba596f25
+# ╟─6ebfa6d8-b4a7-4d5e-8d3d-ccf0ba596f25
 # ╟─a7e6ac40-51bd-46d7-a21c-ad294fa23d5a
 # ╟─ab20be4e-d214-4c0e-85df-c293724c978e
 # ╟─fa5deb25-ee07-4917-bf57-595bced01394
@@ -2371,7 +2371,7 @@ version = "1.9.2+0"
 # ╟─c59b620d-a6dd-4e19-ac30-5840568efba4
 # ╟─67136d72-c447-4268-8c17-b6d9ad3652ca
 # ╠═ab1430fd-ddd9-48d6-94e8-465cea45ff25
-# ╠═2ffcfcc2-ac5f-4293-bab0-3fede68c115a
+# ╟─2ffcfcc2-ac5f-4293-bab0-3fede68c115a
 # ╟─cec8f377-dc41-41ba-a3b3-d916acba1147
 # ╟─4336e057-2a02-47d6-8fd9-e9cf9ec29399
 # ╟─00000000-0000-0000-0000-000000000001
