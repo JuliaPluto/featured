@@ -2,12 +2,14 @@
 # v0.20.17
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
 #> image = "https://tutebucket.com/wp-content/uploads/2024/10/tittration.jpg"
 #> language = "en-US"
 #> title = "Simulating titrations"
-#> tags = ["Chemistry"]
+#> tags = ["chemistry"]
 #> date = "2025-09-17"
 #> description = "Learn about titrations and indicators. Deepen your understanding by conducting a digital titration yourself! "
+#> license = "Unilicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Lucas Hildebrandt"
