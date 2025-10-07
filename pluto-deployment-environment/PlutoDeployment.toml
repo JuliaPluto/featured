@@ -8,6 +8,7 @@ exclude = [
     "src/math/ZombieAttackWithMTK.jl",
     "math/ZombieAttackWithMTK.jl", # because i dont know which one
 ]
+number_of_parallel_tasks=8
 # more parameters can go here
 
 [SliderServer]
