@@ -43,12 +43,12 @@ end
 # ╔═╡ 148303e1-5c39-4b5c-b954-0e4bccf7e8d5
 md"""
 # Traveling Salesperson Problem
-"""
 
-# ╔═╡ b61bcb45-29a3-40d3-9b7b-14fab7e2a6e0
-md"""
-!!! warning "Todo"
-	Add explanations.
+This notebook gives an interactive demonstation of the _Traveling Salesperson Problem_, a classic problem in mathematics... and holiday planning!
+
+Say that you have 10 museums in Paris that you want to visit, but you don't want to spend too much time traveling between them. You want to find the **optimal order** in which to visit the museums, so that the total paths between them is minimal.
+
+**What is the fastest route to visit all destinations?**
 """
 
 # ╔═╡ 047fca76-9616-495b-8d7f-8a1aef98ef0c
@@ -103,7 +103,7 @@ end;
 
 # ╔═╡ 46393d05-cc99-4ccd-9e3d-fc417e9af766
 TwoColumn(
-	md"""## Locations
+	md"""## Locations _(click to add)_
 	$location_picker""",
 	md"""## Optimal tour
 	$tour_plotter"""
@@ -1300,7 +1300,6 @@ version = "1.2.3+0"
 
 # ╔═╡ Cell order:
 # ╟─148303e1-5c39-4b5c-b954-0e4bccf7e8d5
-# ╟─b61bcb45-29a3-40d3-9b7b-14fab7e2a6e0
 # ╟─a33fe11e-bfc8-4c0d-b6f1-e525627dc4b5
 # ╟─46393d05-cc99-4ccd-9e3d-fc417e9af766
 # ╠═c239cfc4-8804-11f0-1f1f-ad4d99ddd4e9
