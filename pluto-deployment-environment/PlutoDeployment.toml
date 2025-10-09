@@ -4,4 +4,15 @@ baked_state=false
 create_index=true
 create_pluto_featured_index=true
 slider_server_url="https://fonsi.armada.silentech.gr"
+exclude = [
+    "src/math/ZombieAttackWithMTK.jl",
+    "math/ZombieAttackWithMTK.jl", # because i dont know which one
+]
+number_of_parallel_tasks=8
 # more parameters can go here
+
+[SliderServer]
+exclude = [
+    "src/math/ZombieAttackWithMTK.jl",
+    "math/ZombieAttackWithMTK.jl",
+]
