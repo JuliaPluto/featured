@@ -59,6 +59,11 @@ jobs:
                   
                   @info "hmmm" pwd() readdir()
                   
+                  @async while true
+                    @info "hmmm" pwd()
+                    sleep(2)
+                  end
+                  
                   
                   # run PlutoSliderServer
                   PlutoSliderServer.github_action("src";
