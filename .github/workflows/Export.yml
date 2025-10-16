@@ -57,14 +57,6 @@ jobs:
 
                   isdir("output") && rm("output"; recursive=true)
                   
-                  @info "hmmm" pwd() readdir()
-                  
-                  @async while true
-                    @info "hmmm" pwd()
-                    sleep(2)
-                  end
-                  
-                  
                   # run PlutoSliderServer
                   PlutoSliderServer.github_action("src";
                     Export_output_dir="output",
@@ -91,8 +83,6 @@ jobs:
                     ]""",
                   )
                   write(joinpath("output", "index.html"), index_html_contents)
-                  
-                  @info "hmmm" pwd() readdir()
                   cp("netlify.toml", joinpath("output", "netlify.toml"))'
 
 
