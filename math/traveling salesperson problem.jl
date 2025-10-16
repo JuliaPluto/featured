@@ -7,6 +7,7 @@
 #> date = "2025-09-02"
 #> license = "Unlicense"
 #> description = "An interactive exploration of optimal tours on a map"
+#> tags = ["geospatial", "math", "traveling salesperson problem"]
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Guillaume Dalle"
