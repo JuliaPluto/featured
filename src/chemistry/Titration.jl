@@ -6,7 +6,7 @@
 #> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Vinegar_Titration_-_Color_of_the_Phenolphthalein_reacting_to_NaOH.jpg/960px-Vinegar_Titration_-_Color_of_the_Phenolphthalein_reacting_to_NaOH.jpg"
 #> language = "en-US"
 #> title = "Simulating titrations"
-#> tags = ["chemistry"]
+#> tags = ["chemistry", "plotting"]
 #> date = "2025-09-17"
 #> description = "Learn about titrations and indicators. Deepen your understanding by conducting a digital titration yourself! "
 #> license = "Unilicense"
