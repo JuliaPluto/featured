@@ -334,7 +334,7 @@ md"""
 
 # ╔═╡ f2b5c3e7-29c1-4f7b-82bb-cfa8da90d494
 md"""
-Here you can track the titration by visualising the point in the titration curve at a given added volume of titrant. The slider can also be controlled with the arrow keys for more precise control, which is most iomportant around the equivalence point.
+Here you can track the titration by visualising the point in the titration curve at a given added volume of titrant. The slider can also be controlled with the arrow keys for more precise control, which is most important around the equivalence point.
 """
 
 # ╔═╡ a7e6ac40-51bd-46d7-a21c-ad294fa23d5a
