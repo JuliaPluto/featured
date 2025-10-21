@@ -334,7 +334,7 @@ md"""
 
 # ╔═╡ f2b5c3e7-29c1-4f7b-82bb-cfa8da90d494
 md"""
-Here you can track the titration by visualising the point in the titration curve at a given added volume of titrant. The slider can also be controlled with the arrow keys for more precise control, which is most iomportant around the equivalence point.
+Here you can track the titration by visualising the point in the titration curve at a given added volume of titrant. The slider can also be controlled with the arrow keys for more precise control, which is most important around the equivalence point.
 """
 
 # ╔═╡ a7e6ac40-51bd-46d7-a21c-ad294fa23d5a
@@ -386,7 +386,7 @@ md"""
 
 # ╔═╡ 38c319e0-0124-41fa-9910-173e645e7d03
 md"""
-1) Change the concetration of the analyte. What changes in the curve and what stays the same? Can you see any proportionality ("If I double the concentration, [...] is doubled / halved")?
+1) Change the concentration of the analyte. What changes in the curve and what stays the same? Can you see any proportionality ("If I double the concentration, [...] is doubled / halved")?
 """
 
 # ╔═╡ 3b77b70e-be0b-46a7-948d-7289fcc72924
@@ -398,7 +398,7 @@ Keep an eye out for the scaling on the x-axis!!
 
 # ╔═╡ 05063b3d-8769-4d54-ad70-f38e95dca7a3
 md"""
-2) Before you change the volume of the analyte, try to predict how the curve changes. Now change the volume and check the curve again Look out for proportionalities!
+2) Before you change the volume of the analyte, try to predict how the curve changes. Now change the volume and check the curve again. Look out for proportionalities!
 """
 
 # ╔═╡ 38ba4eb9-4cd1-41d1-8b14-e07b3c76be3b
@@ -499,7 +499,7 @@ The concentration of ``\mathrm{OH^-}`` after the equivalence point can be writte
 ```
 and converted to
 ```math
-	c\mathrm{(H_3O^+)} = \frac{c\mathrm{(OH^-)}}{10^{-14}}.
+	c\mathrm{(H_3O^+)} = \frac{10^{-14}~\mathrm{\frac{mol^2}{L^2}}}{c\mathrm{(OH^-)}}.
 ```
 Alternatively, the pOH value can be calculated in the same way as pH values are calculated. The pOH can be transformed into the pH value with
 ```math
@@ -662,11 +662,11 @@ md"""
 
 # ╔═╡ 7e8946ca-8168-4b3a-851b-1e4458c6be77
 md"""
-At the equivalence point, the salt of the medium-strong or weak acid remains, which is itself a medium-strong or weak base. Therefore, the concetration of hydroxy ions can be calculated with
+At the equivalence point, the salt of the medium-strong or weak acid remains, which is itself a medium-strong or weak base. Therefore, the concentration of hydroxy ions can be calculated with
 ```math
 c_0\mathrm{(OH^-)} = -\frac{K_{\mathrm{b}}}{2} + \sqrt{\frac{K_{\mathrm{b}}^2}{4} + K_{\mathrm{b}} * c_0{\mathrm{(A^-)}}},
 ``` 
-from which then the pOH and thus the pH value can be calculated or it can first be converted to the concentration of hydonium ions as can be seen in the case of strong acids.
+from which then the pOH and thus the pH value can be calculated or it can first be converted to the concentration of hydronium ions as can be seen in the case of strong acids.
 """
 
 # ╔═╡ 5e2cdf07-4cf4-4347-a10d-58322aee46eb
@@ -703,7 +703,7 @@ This is almost the same as for strong acids with some minor differences. Firstly
 
 # ╔═╡ 4b5214a5-e35f-431a-9f3e-63eff56d1f45
 md"""
-Secondly, the concentration of hydroxyde from the weak base present at the equivalence point needs to be additionally considered.
+Secondly, the concentration of hydroxide from the weak base present at the equivalence point needs to be additionally considered.
 ```math
 c_{\mathrm{B}}\mathrm{(OH^-)} = -\frac{K_{\mathrm{b}}}{2} + \sqrt{\frac{K_{\mathrm{b}}^2}{4} + K_{\mathrm{b}} * c_0{\mathrm{(A^-)}}}
 ```
