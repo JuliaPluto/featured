@@ -836,7 +836,7 @@ HiddenDocs(:DownloadButton)
 HiddenDocs(:Clock)
 
 # ╔═╡ e3e29b54-9f20-4db6-8c1a-46202a308f84
-HiddenDocs(:Confirm)
+HiddenDocs(:confirm)
 
 # ╔═╡ 85194e82-1b15-4740-9ae6-6ed9b2f3e37c
 HiddenDocs(:combine)
