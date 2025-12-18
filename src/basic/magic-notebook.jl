@@ -1,5 +1,16 @@
 ### A Pluto.jl notebook ###
-# v0.20.20
+# v0.20.21
+
+#> [frontmatter]
+#> image = "https://upload.wikimedia.org/wikipedia/commons/9/99/Colordblind-friendly-map.png"
+#> title = "Magic Notebook 🔮"
+#> tags = ["reactivity", " basics", "math", "art", "adaptibility"]
+#> date = "2025-12-18"
+#> description = "This is a notebook that adapts to you! "
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Boshra Ariguib"
+#>     url = "https://github.com/ariguiba"
 
 using Markdown
 using InteractiveUtils
