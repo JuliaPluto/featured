@@ -34,7 +34,7 @@ using PlutoUI, PlutoTeachingTools, PlutoImageCoordinatePicker, Colors,ImageIO, I
 md"""
 # Magic Notebooks 
 
-Hi there 👋 Welcome to the magic notebook 🔮 All you need to do is choose the right setting down here 👇 and the notebook will adapt to **you!**"""
+Welcome to the magic notebook 🔮 This notebook can adapt to **you**, the reader! All you need to do is choose the right setting down here 👇 """
 
 # ╔═╡ 26bd9a9d-b1f6-44a5-a716-34518b4c5ae4
 aside(md"""
@@ -67,9 +67,6 @@ aside(md"""
 # ╔═╡ c923e948-10cb-44b7-967d-0c2f7fe32457
 md"Great! Now let's choose our point $x$. To make thing more fun, we'll use complex numbers. If you don't know what that is, that's okay, for now you can think of it as a **2D point**"
 
-# ╔═╡ 15579b19-9d7d-40a0-84f8-0648f0d07f1e
-# TODO: the pointer selects the image on some regions in the PlutoImagePicker object - how do we fix this? 
-
 # ╔═╡ 23ce42b5-0cc2-4448-b8fb-9123fe85f307
 md"That's pretty boring and unintuitive to understand right? Isn't there a better way?
 
@@ -90,13 +87,6 @@ md"## Math Art 📏🎨"
 
 # ╔═╡ 0b437583-f142-4844-9150-4db126105c0b
 md" 👇Let's choose again a function "
-
-# ╔═╡ f6067289-8664-4600-ad33-35dd9cc7b154
-aside(md"""
-!!! tip "Color-blind friendly 🎨"
-	Toggle me $colorsblind_mode to increase contrast between neighboring regions. This also uses color-blind friendly colors :) 
-	  
-	  ⚠ The mapping is not unique now! If a point is colored in green, we don't know if it's the upper right or middle left green value meant. """, v_offset=30 )
 
 # ╔═╡ 4c1ea556-72fb-4f5a-a1a0-b2af8e9fd22d
 md"And tadaaa 🎉"
@@ -177,13 +167,24 @@ function g3(r)
 	return 0.5 + 0.5*(r - floor(r))
 end
 
-# ╔═╡ 08468abc-6793-4fcb-8657-14ca5c1d316e
-begin
-math_mode = @bind math Switch() 
-beginner_mode = @bind beginner Switch()
-colorblind_mode = @bind colorblind Switch()
+# ╔═╡ 25e95390-0b20-457a-8fdf-18d87515f4b2
 md"### Toggles"
+
+# ╔═╡ 1c5e90d0-8c18-461d-9f3b-4531319607fb
+math_mode = @bind math Switch()
+
+# ╔═╡ 0baf3cbd-3f16-4b91-befd-960abff1ed70
+if math
+	md"Your currently chosen function is: $(function_names[f])"
 end
+
+# ╔═╡ f3a37fc0-cd93-41e3-b3b6-dcf33b578c5f
+if math
+md"Your currently chosen function is: $(function_names[f])"
+end
+
+# ╔═╡ 150de310-3969-46cc-8ace-1b3d9aafbb6f
+beginner_mode = @bind beginner Switch()
 
 # ╔═╡ 6daac7c1-efd8-4200-aa3a-d564bcf687c3
 md""" 
@@ -202,11 +203,6 @@ You (hopefully) know from school, that we can define a function for a number, su
 
 end
 
-# ╔═╡ 0baf3cbd-3f16-4b91-befd-960abff1ed70
-if math
-	md"Your currently chosen function is: $(function_names[f])"
-end
-
 # ╔═╡ 788a6961-f926-4cf8-bccd-a6f3e80f1e70
 if beginner md"👇 Click anywhere to chose a point!" end
 
@@ -222,13 +218,15 @@ md"""To finally create our art pieces, all we have to do is repeat the same thin
 """
 end
 
-# ╔═╡ f3a37fc0-cd93-41e3-b3b6-dcf33b578c5f
-if math
-md"Your currently chosen function is: $(function_names[f])"
-end
+# ╔═╡ 5d3a2612-18b2-4a51-87ba-6bfc7a6130d3
+colorblind_mode = @bind colorblind Switch()
 
-# ╔═╡ 3e632518-6a04-437c-8919-b7df67a53c40
-colorblind_mode # TODO: This should be in the aside on the right as variable $ but this doesn't work!
+# ╔═╡ f6067289-8664-4600-ad33-35dd9cc7b154
+aside(md"""
+!!! tip "Color-blind friendly 🎨"
+	Toggle me $colorblind_mode to increase contrast between neighboring regions. This also uses color-blind friendly colors :) 
+	  
+	  ⚠ The mapping is not unique now! If a point is colored in green, we don't know if it's the upper right or middle left green value meant. """, v_offset=30 )
 
 # ╔═╡ 7c7b6eb0-0e83-4333-968f-3fb9223e4d13
 md"### Number Picker from `PlutoImageCoordinatePicker`"
@@ -630,7 +628,7 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Colors = "~0.13.1"
 ImageIO = "~0.6.9"
 ImageShow = "~0.3.8"
-PlutoImageCoordinatePicker = "~1.4.1"
+PlutoImageCoordinatePicker = "~1.4.2"
 PlutoTeachingTools = "~0.4.6"
 PlutoUI = "~0.7.76"
 """
@@ -639,9 +637,9 @@ PlutoUI = "~0.7.76"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.3"
+julia_version = "1.12.2"
 manifest_format = "2.0"
-project_hash = "e3e9983862dd1f1835a89906a938951b3c58afcc"
+project_hash = "77750a01c86041d0e62e249efd8313aeea2ef5fb"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -709,7 +707,7 @@ version = "0.13.1"
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.1+0"
+version = "1.3.0+1"
 
 [[deps.DataStructures]]
 deps = ["OrderedCollections"]
@@ -735,7 +733,7 @@ version = "0.9.5"
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
-version = "1.6.0"
+version = "1.7.0"
 
 [[deps.FileIO]]
 deps = ["Pkg", "Requires", "UUIDs"]
@@ -885,9 +883,14 @@ version = "0.1.6"
 
 [[deps.JpegTurbo_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "4255f0032eafd6451d707a51d5f0248b8a165e4d"
+git-tree-sha1 = "b6893345fd6658c8e475d40155789f4860ac3b21"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
-version = "3.1.3+0"
+version = "3.1.4+0"
+
+[[deps.JuliaSyntaxHighlighting]]
+deps = ["StyledStrings"]
+uuid = "ac6e5ff7-fb65-4e79-a425-ec3bc9c03011"
+version = "1.12.0"
 
 [[deps.LERC_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -929,24 +932,24 @@ uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
 version = "0.6.4"
 
 [[deps.LibCURL_jll]]
-deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "OpenSSL_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "8.6.0+0"
+version = "8.15.0+0"
 
 [[deps.LibGit2]]
-deps = ["Base64", "LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
+deps = ["LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 version = "1.11.0"
 
 [[deps.LibGit2_jll]]
-deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll"]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "OpenSSL_jll"]
 uuid = "e37daf67-58a4-590a-8e99-b0245dd2ffc5"
-version = "1.7.2+0"
+version = "1.9.0+0"
 
 [[deps.LibSSH2_jll]]
-deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
+deps = ["Artifacts", "Libdl", "OpenSSL_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
-version = "1.11.0+1"
+version = "1.11.3+1"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
@@ -967,7 +970,7 @@ version = "4.7.2+0"
 [[deps.LinearAlgebra]]
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-version = "1.11.0"
+version = "1.12.0"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -989,14 +992,9 @@ uuid = "dbb5928d-eab1-5f90-85c2-b9b0edb7c900"
 version = "0.4.3"
 
 [[deps.Markdown]]
-deps = ["Base64"]
+deps = ["Base64", "JuliaSyntaxHighlighting", "StyledStrings"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 version = "1.11.0"
-
-[[deps.MbedTLS_jll]]
-deps = ["Artifacts", "Libdl"]
-uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.6+0"
 
 [[deps.Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
@@ -1010,7 +1008,7 @@ version = "0.3.4"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2023.12.12"
+version = "2025.5.20"
 
 [[deps.Netpbm]]
 deps = ["FileIO", "ImageCore", "ImageMetadata"]
@@ -1020,7 +1018,7 @@ version = "1.1.1"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
-version = "1.2.0"
+version = "1.3.0"
 
 [[deps.OffsetArrays]]
 git-tree-sha1 = "117432e406b5c023f665fa73dc26e79ec3630151"
@@ -1036,7 +1034,7 @@ version = "1.17.0"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.27+1"
+version = "0.3.29+0"
 
 [[deps.OpenEXR]]
 deps = ["Colors", "FileIO", "OpenEXR_jll"]
@@ -1049,6 +1047,11 @@ deps = ["Artifacts", "Imath_jll", "JLLWrappers", "Libdl", "Zlib_jll"]
 git-tree-sha1 = "8292dd5c8a38257111ada2174000a33745b06d4e"
 uuid = "18a262bb-aa17-5467-a713-aee519bc75cb"
 version = "3.2.4+0"
+
+[[deps.OpenSSL_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
+version = "3.5.4+0"
 
 [[deps.OrderedCollections]]
 git-tree-sha1 = "05868e21324cede2207c6f0f466b4bfef6d5e7ee"
@@ -1070,7 +1073,7 @@ version = "0.5.12"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.11.0"
+version = "1.12.0"
 weakdeps = ["REPL"]
 
     [deps.Pkg.extensions]
@@ -1084,9 +1087,9 @@ version = "0.3.3"
 
 [[deps.PlutoImageCoordinatePicker]]
 deps = ["AbstractPlutoDingetjes", "Base64", "HypertextLiteral", "InteractiveUtils", "Markdown"]
-git-tree-sha1 = "0befd0746e8c8387afa36097731aae3cebc76116"
+git-tree-sha1 = "07038a9658bfc6607ab27d26663c3b7a181f4025"
 uuid = "79686372-6169-7274-6170-6568746b6366"
-version = "1.4.1"
+version = "1.4.2"
 
 [[deps.PlutoTeachingTools]]
 deps = ["Downloads", "HypertextLiteral", "Latexify", "Markdown", "PlutoUI"]
@@ -1102,15 +1105,15 @@ version = "0.7.76"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
-git-tree-sha1 = "5aa36f7049a63a1528fe8f7c3f2113413ffd4e1f"
+git-tree-sha1 = "07a921781cab75691315adc645096ed5e370cb77"
 uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.2.1"
+version = "1.3.3"
 
 [[deps.Preferences]]
 deps = ["TOML"]
-git-tree-sha1 = "0f27480397253da18fe2c12a4ba4eb9eb208bf3d"
+git-tree-sha1 = "522f093a29b31a93e34eaea17ba055d850edea28"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.5.0"
+version = "1.5.1"
 
 [[deps.Printf]]
 deps = ["Unicode"]
@@ -1130,7 +1133,7 @@ uuid = "4b34888f-f399-49d4-9bb3-47ed5cae4e65"
 version = "1.0.2"
 
 [[deps.REPL]]
-deps = ["InteractiveUtils", "Markdown", "Sockets", "StyledStrings", "Unicode"]
+deps = ["InteractiveUtils", "JuliaSyntaxHighlighting", "Markdown", "Sockets", "StyledStrings", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 version = "1.11.0"
 
@@ -1304,7 +1307,7 @@ version = "1.6.0+0"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.13+1"
+version = "1.3.1+2"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1315,7 +1318,7 @@ version = "1.5.7+1"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.11.0+0"
+version = "5.15.0+0"
 
 [[deps.libpng_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Zlib_jll"]
@@ -1338,12 +1341,12 @@ version = "1.6.0+0"
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.59.0+0"
+version = "1.64.0+1"
 
 [[deps.p7zip_jll]]
-deps = ["Artifacts", "Libdl"]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
-version = "17.4.0+2"
+version = "17.7.0+0"
 """
 
 # ╔═╡ Cell order:
@@ -1363,7 +1366,6 @@ version = "17.4.0+2"
 # ╟─788a6961-f926-4cf8-bccd-a6f3e80f1e70
 # ╟─f10023d7-d957-424d-9582-7e68a9a3c5e0
 # ╟─cd1d54a2-b64a-4ef4-9998-a337ee5e37d3
-# ╠═15579b19-9d7d-40a0-84f8-0648f0d07f1e
 # ╟─674c2efc-4642-4c46-ba6a-45dbddd6b0f4
 # ╟─23ce42b5-0cc2-4448-b8fb-9123fe85f307
 # ╟─9d307da9-f5ac-478f-a3a5-1d623dc56a80
@@ -1378,7 +1380,6 @@ version = "17.4.0+2"
 # ╟─f6067289-8664-4600-ad33-35dd9cc7b154
 # ╟─4c1ea556-72fb-4f5a-a1a0-b2af8e9fd22d
 # ╟─665ddd8e-dc5b-4925-a283-aebe7d16592c
-# ╠═3e632518-6a04-437c-8919-b7df67a53c40
 # ╟─cea778b1-8cf9-4abb-8114-35fe36906351
 # ╟─8d330a5c-9db4-4016-90ab-2c82d4be09cb
 # ╟─82f80e24-5997-46d9-9c8b-e7e60780f4b0
@@ -1396,7 +1397,10 @@ version = "17.4.0+2"
 # ╟─2b49529e-b51d-4fd5-b078-63492e6ae82f
 # ╟─7abe3aad-39b7-4d40-93c8-2f64c02a07ac
 # ╟─4fb45141-001f-4ce6-93ea-650c91862a3d
-# ╟─08468abc-6793-4fcb-8657-14ca5c1d316e
+# ╟─25e95390-0b20-457a-8fdf-18d87515f4b2
+# ╟─1c5e90d0-8c18-461d-9f3b-4531319607fb
+# ╟─150de310-3969-46cc-8ace-1b3d9aafbb6f
+# ╟─5d3a2612-18b2-4a51-87ba-6bfc7a6130d3
 # ╟─7c7b6eb0-0e83-4333-968f-3fb9223e4d13
 # ╟─5dfe9168-f4a1-48c7-aaff-01cd878c0c17
 # ╟─f51b5948-7338-4808-9d6c-e5d2b10251fa
