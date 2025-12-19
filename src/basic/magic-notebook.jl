@@ -2,11 +2,14 @@
 # v0.20.21
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://upload.wikimedia.org/wikipedia/commons/9/99/Colordblind-friendly-map.png"
+#> language = "en-US"
 #> title = "Magic Notebook 🔮"
 #> tags = ["reactivity", " basics", "math", "art", "adaptibility"]
 #> date = "2025-12-18"
 #> description = "This is a notebook that adapts to you! "
+#> license = "Unlicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Boshra Ariguib"
