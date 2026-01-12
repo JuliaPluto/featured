@@ -5,3 +5,4 @@ PlutoSliderServer = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
 [compat]
 Pluto = "0.20.21"
 PlutoSliderServer = "1.8.0"
+julia = "~1.12"
