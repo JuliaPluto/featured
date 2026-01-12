@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
         inputs:
           plutocommitsha:
-            description: 'Commit SHA or version number'     
+            description: 'Commit SHA or version number'
             required: true
             default: '3df8390a or 0.19.36'
 
@@ -22,8 +22,8 @@ jobs:
               # See https://docs.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
               with:
                 token: ${{ secrets.PAT_TOKEN }}
-            - uses: fregante/setup-git-user@v1
-            
+            - uses: fregante/setup-git-user@v2
+
             - name: Install Julia
               uses: julia-actions/setup-julia@v2
               with:
@@ -31,10 +31,9 @@ jobs:
                   version: "1.11"
 
             - name: Update Pkg environment
+              shell: julia --color=yes --project=pluto-deployment-environment {0}
               run: |
-                  julia -e '
                   import Pkg
-                  Pkg.activate("pluto-deployment-environment")
                   Pkg.instantiate()
                   Pkg.resolve()
                   Pkg.rm("Pluto")
@@ -45,7 +44,6 @@ jobs:
                       Pkg.add([Pkg.PackageSpec(name="Pluto", rev=input)])
                   end
                   Pkg.update()
-                  '
 
             - name: Push changes to main
               working-directory: pluto-deployment-environment
