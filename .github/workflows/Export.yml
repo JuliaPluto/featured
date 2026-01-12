@@ -5,8 +5,7 @@
 name: Export Pluto notebooks
 on:
     push:
-        branches:
-            - main
+        branches: [main]
     workflow_dispatch:
 
 # When two jobs run in parallel, cancel the older ones, to make sure that the website is generated from the most recent commit.
@@ -21,12 +20,11 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v6
 
-
             - name: Install Julia
               uses: julia-actions/setup-julia@v2
               with:
                   # note: this version should match the version in the other actions in this repo
-                  version: "1.11"
+                  version: "1.12"
 
             - name: Cache Julia artifacts & such
               uses: julia-actions/cache@v2
@@ -36,34 +34,35 @@ jobs:
 
             # We set up a folder that Pluto can use to cache exported notebooks. If the notebook file did not change, then Pluto can take the exported file from cache instead of running the notebook.
             - name: Set up notebook state cache
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: pluto_state_cache
                   key: ${{ runner.os }}-pluto_state_cache-v3-${{ hashFiles('**/Project.toml', '**/Manifest.toml') }}-${{ github.run_id }}
-                  restore-keys: |
-                      ${{ runner.os }}-pluto_state_cache-v3-${{ hashFiles('**/Project.toml', '**/Manifest.toml') }}
+                  restore-keys: ${{ runner.os }}-pluto_state_cache-v3-${{ hashFiles('**/Project.toml', '**/Manifest.toml') }}
 
             - name: install GL dependencies
               run: sudo apt-get update && sudo apt-get install -y xorg-dev mesa-utils xvfb libgl1 freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev xsettingsd x11-xserver-utils
-              
-            - name: Run & export Pluto notebooks            
+
+            - name: Run & export Pluto notebooks
+              env:
+                DISPLAY: ':0'
               run: |
-                 DISPLAY=:0 xvfb-run -s '-screen 0 1024x768x24' julia -e '
+                 xvfb-run -s '-screen 0 1024x768x24' julia -e '
                   import Pkg
                   Pkg.activate("pluto-deployment-environment")
                   Pkg.instantiate()
-                  
+
                   import PlutoSliderServer, Pluto
 
                   isdir("output") && rm("output"; recursive=true)
-                  
+
                   # run PlutoSliderServer
                   PlutoSliderServer.github_action("src";
                     Export_output_dir="output",
                     Export_cache_dir="pluto_state_cache",
                     # more parameters can go here
                   )
-                  
+
                   # custom index
                   index_html_contents = Pluto.generate_index_html(;
                     version=PlutoSliderServer.try_get_exact_pluto_version(),

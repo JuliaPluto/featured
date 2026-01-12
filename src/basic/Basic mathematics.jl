@@ -310,7 +310,7 @@ else
 end
 
 # ╔═╡ a07e5c3e-d476-11ea-308c-718f8f128334
-if A2 != pi * (12 / 2)^2
+if A2 != pi * r^2
 	hint(md"Keep trying to get the right answer.  
 	**Hint**: you need to multiply the radius by 2 to convert it into the diameter.")
 else
