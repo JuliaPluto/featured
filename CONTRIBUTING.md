@@ -55,7 +55,7 @@ Things to avoid:
 
 
 # Technical information
-The information below describes the technical details for making a notebook work well in our _featured_ system. If this is intimidating or unclear, don't worry! You can skip all of this and just make a Pull Request, and we will figure it out together ☺️
+The information below describes the technical details for making a notebook work well in our _featured_ system. If this is intimidating or unclear, don't worry! You can skip all of this and just make a Pull Request, and we will figure it out together ☺️ Oh, and if working with Github and Pull Requests is of yet arcane magic to you, we have some [more information below](#creating-a-pull-request).
 
 If you are experienced with these topics, you can also work through this list yourself, and make your own choices about the license, etc.
 
@@ -122,3 +122,23 @@ TODO
 
 Check out [these instructions](https://github.com/JuliaPluto/pluto-developer-instructions/blob/main/How%20to%20update%20the%20featured%20notebooks.md) to learn more about maintenance.
 
+
+# Creating a pull request
+
+You've got a notebook (or an idea) that you'd like to contribute, but you're still unsure how to proceed?
+Why, just open a pull request.
+We can sort out all bits and bobs in the discussion.
+
+But you've never collaborated on Github before?
+Don't worry.
+It's awesome that you want to give it a try!
+We're honored that you've chosen this project as your first step towards contributing to open source software.
+We'll try to guide you through it as best we can.
+In fact, we have created a [featured notebook](https://www.youtube.com/watch?v=dQw4w9WgXcQ) to help you get started.
+
+You've worked through the notebook, but still you haven't been able to create a pull request? 
+This means our explanation still needs improvement.
+In open source software terms, you have just discovered a bug (of sorts).
+You can still help us by telling us about it.
+Click on [this link](https://github.com/JuliaPluto/featured/issues/new?title=Help+wanted&body=Describe+your+problem), provide some more information in the text fields and click on the green button "Submit new issue".
+Congratulations, you've just contributed to open source software.
