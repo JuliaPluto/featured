@@ -29,12 +29,12 @@ using PlutoUI
 md"# Interactivity and animations via WGLMakie"
 
 # ╔═╡ 4acece79-c67c-420e-a688-679d4c4dbe36
-md"""The most natural way to put interactivity in a Pluto notebook is to use the `@bind` macro from `PlutoUI.jl` coupled with Pluto reactivity. The [PlutoUI notebook](https://featured.plutojl.org/basic/plutoui.jl) gives lots of examples to elaborate on.
+md"""The most natural way to put interactivity within a **Pluto notebook** is to use the `@bind` macro from `PlutoUI.jl` coupled with Pluto reactivity. The [PlutoUI notebook](https://featured.plutojl.org/basic/plutoui.jl) gives lots of examples to elaborate on.
 
 The objective of the present notebook is to present an alternative using the [Makie](https://docs.makie.org/stable/) ecosystem.
 
 !!! warning
-	The `Makie` package is super powerful but it comes with huge instalation and precompilation times.
+	The `Makie` package is a powerful plotting package, but it takes a while to install and precompile. Therefore, this notebook will be a bit slow to start the first time you run it.
 """
 
 # ╔═╡ 2ed1866c-1d9a-4992-a98d-4492ebe8ca44
@@ -72,9 +72,9 @@ end
 md"## Makie"
 
 # ╔═╡ 106e4592-7ddc-4388-b92d-d41933828032
-md"If you are not familiar with Makie, here is a [basic tutorial](https://docs.makie.org/stable/tutorials/getting-started) dealing with static single plots and an [advanced tutorial](https://docs.makie.org/stable/tutorials/layout-tutorial) dealing with layouts of multiple plots.
+md"If you are not familiar with Makie, here is Makie's [basic tutorial](https://docs.makie.org/stable/tutorials/getting-started) dealing with static single plots and Makie's [advanced tutorial](https://docs.makie.org/stable/tutorials/layout-tutorial) dealing with layouts of multiple plots.
 
-If you are familiar with Makie for static plots, but not for animations, have a look at this [tutorial](https://docs.makie.org/stable/explanations/animation)."
+If you are familiar with Makie for static plots, but not for animations, have a look at Makie's [animation tutorial](https://docs.makie.org/stable/explanations/animation)."
 
 # ╔═╡ 9cf1da97-dcb0-4691-8597-44bc62dff257
 md"## Integration in Pluto"
