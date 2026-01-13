@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.9
+# v0.20.21
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -55,7 +55,7 @@ TableOfContents()
 
 # ╔═╡ fddb794c-c75c-11ea-1f55-eb9c178424cd
 md"""
-# Basics
+# Basic inputs
 """
 
 # ╔═╡ b819e9a8-c760-11ea-11ee-dd01da663b5c
@@ -134,16 +134,28 @@ A `NumberField` can be used just like a `Slider`, it just looks different:
 # ╔═╡ 314cb85a-c761-11ea-1cba-b73f84a52be8
 @bind x_different NumberField(0:100, default=20)
 
+# ╔═╡ 195bc258-2fd4-402a-81f0-576a25b42b01
+md"""
+You can also use `NumberField` without a range, and without a default:
+"""
+
+# ╔═╡ 06654252-5829-437d-bb25-a8f0dcef62a1
+@bind x_very_different NumberField()
+
+# ╔═╡ 78ecdf26-26a1-45e3-a44d-e65594a24ada
+x_very_different
+
 # ╔═╡ 104b55ce-cc4f-11ea-1273-092a1717e399
 
 
 # ╔═╡ 4513b730-c761-11ea-1460-2dca56081fcf
 md"""
-## CheckBox
+## Switch
+A `Boolean` input.
 """
 
 # ╔═╡ 4f8e4e1e-c761-11ea-1787-419cab59bb12
-@bind z CheckBox()
+@bind z Switch()
 
 # ╔═╡ b787ead6-c761-11ea-3b17-41c0a5434f9b
 z
@@ -155,7 +167,7 @@ z
 md"Default value:"
 
 # ╔═╡ b53c8ffa-c761-11ea-38d1-2d4ad96a7bee
-@bind having_fun CheckBox(default=true)
+@bind having_fun Switch(default=true)
 
 # ╔═╡ adcf4e68-c761-11ea-00bb-c3b15c6dedc0
 having_fun
@@ -169,11 +181,11 @@ having_fun ? md"🎈🎈" : md"☕"
 # ╔═╡ 378c44c7-8565-49bf-8ccb-12fe6831ccce
 md"""
 !!! tip
-	The `CheckBox` is simple, but you can use it in very powerful ways with reactivity! For example, you can use these two cells to switch between a beginner/expert explanation of a topic:
+	The `Switch` is simple, but you can use it in very powerful ways with reactivity! For example, you can use these two cells to switch between a beginner/expert explanation of a topic:
 
 	```julia
 	md""\"
-	Show a simplified version: $(@bind simplified CheckBox(default=true))
+	Show a simplified version: $(@bind simplified Switch(default=true))
 	""\"
 	```
 
@@ -199,6 +211,20 @@ md"""
 
 # ╔═╡ 09393bf2-cc4f-11ea-1e48-cfbedab8e6b4
 
+
+# ╔═╡ af9af1f0-8e17-4a87-bff2-075c7d484666
+md"""
+## CheckBox
+A `Boolean` input.
+
+`CheckBox` is the same as a `Switch`, but in a different visual style.
+"""
+
+# ╔═╡ 452974e7-ac48-4cc1-af47-850b958b3f26
+@bind check_me CheckBox()
+
+# ╔═╡ c1d728e8-4833-4be8-bb7e-7f564b844b84
+check_me
 
 # ╔═╡ cd1b5872-c761-11ea-2179-57a3cb34d235
 md"## TextField"
@@ -410,6 +436,40 @@ t_slow
 # ╔═╡ 343d7118-cc51-11ea-387a-fb22d8c73506
 md"You can use a `Clock` to drive an animation! Or use it to repeat the same command at an interval: just like with `Button`, you can reference a bound (reactive) variable without actually using it!"
 
+# ╔═╡ 9f20014a-7c1b-4168-adb7-2da143d85152
+
+
+# ╔═╡ e861de69-a951-4072-aa57-e46879176009
+md"""
+# Show variable name with `@bindname`
+You can use the macro `@bindname` instead of `@bind` to display the variable name before the bond:
+"""
+
+# ╔═╡ bcd30c48-e77d-4d07-a6c9-e61c04dd389c
+md"""
+With **`@bind`**:
+"""
+
+# ╔═╡ b3e2443d-dcb0-4423-ae0f-bba3b1dce585
+@bind test1 Slider(1:20)
+
+# ╔═╡ 33df82f5-2223-4f77-8bff-b6665040070b
+test1
+
+# ╔═╡ 6cb16c3b-3e13-4095-a1a9-a44086272c46
+
+
+# ╔═╡ d05862a6-a84c-4ac5-bd36-f04db8252487
+md"""
+With **`@bindname`**, you see the name (**`test2`**):
+"""
+
+# ╔═╡ 7b3999ab-8a9f-4d51-849a-debd9b23c404
+@bindname test2 Slider(1:20)
+
+# ╔═╡ 21347c66-ad0f-46db-a7dd-d9ef7a22c61b
+test2
+
 # ╔═╡ 32e41ac2-cc51-11ea-3358-bbead9c68123
 
 
@@ -589,15 +649,15 @@ html"""
 
 
 # ╔═╡ c65d28a2-c75d-11ea-2e13-7332f93d9c5e
-md"## LocalResource _(not recommended)_
+md"## LocalResource _(not always recommended)_
 
-The examples above use `Resource` to make media from a URL available inside Markdown. To use **local files**, simply **replace `Resource` with `LocalResource`**, and use a _file path_ instead of a URL."
+The examples above use `Resource` to make media from a URL available inside Markdown. To use local files, simply **replace `Resource` with `LocalResource`**, and use a _file path_ instead of a URL."
 
 # ╔═╡ c16dff74-cc5d-11ea-380c-aff1639b5551
 
 
 # ╔═╡ dada2154-c75d-11ea-2312-b9156a9a531e
-html"<span style='font-family: cursive; color: purple;'>I really hope that this works</span>"
+html"<span style='font-family: cursive; color: purple; font-size: 2em;'>I really hope that this works</span>"
 
 # ╔═╡ f809110c-cc55-11ea-1551-e138c28d5d82
 md"""Hello I am a dog $(LocalResource("C:\\Users\\fons\\Pictures\\hannes.jpg"))"""
@@ -636,6 +696,15 @@ md"""
 
 We are working on more options for controlling layout in notebooks: putting things in boxes, grids, side-by-side, etc.
 """
+
+# ╔═╡ 5304db90-3c41-4078-8c55-45220fd8c251
+md"""
+## Reading time
+PlutoUI contains a handy widget to display the estimated reading time of the current document. 
+"""
+
+# ╔═╡ ddb352f2-49ea-436a-825b-27a92aa01944
+ReadingTimeEstimator()
 
 # ╔═╡ 3abec86a-6ec3-41ec-adb4-36c52f233883
 md"""
@@ -678,7 +747,7 @@ WideCell(
 	#### Hello from an extra wide cell! I can fit so so so so so so so so so so so so so so so so much in here!
 	Here is a picture:
 	
-	![](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/2560px-Red_Sunset_Panorama_-_Canada1.jpg)
+	![image of a sunset](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/2560px-Red_Sunset_Panorama_-_Canada1.jpg)
 	"""
 )
 
@@ -714,6 +783,33 @@ You can use `PlutoUI.ExperimentalLayout` to display multiple objects together in
 
 We are still figure out what API to expose, and where to publish it, hence the _"Experimental"_.
 """
+
+# ╔═╡ 05f49ea7-14b6-4546-a566-6bc770d10a39
+md"""
+## ExperimentalLayout.aside
+
+The `aside` function lets you place content on the right margin of the page. You might need to hide the Table of Contents to see it (top left corner of the ToC). On small screens (when there is no margin), the `aside` will automatically turn into regular block content.
+"""
+
+# ╔═╡ 064b183c-13c1-4c7b-b0c1-d98f5166f853
+md"""
+This feature is most useful when you **hide the code**. You can use it to give additional information, without breaking the flow of the main content.
+
+In this example, I created the content in another cell, using `;` at the end to disable its display.
+"""
+
+# ╔═╡ b5d0e73b-a3d3-4ada-bf7c-ef1e35f32940
+content_for_aside = md"""
+This information is in the sidebar!
+
+!!! tip
+	You can put anything in here, like a picture:
+
+	![image of a sunset](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/2560px-Red_Sunset_Panorama_-_Canada1.jpg)
+""";
+
+# ╔═╡ 68dee8de-3808-4060-8966-3058729d7b91
+PlutoUI.ExperimentalLayout.aside(content_for_aside)
 
 # ╔═╡ 387f152a-da56-4329-a21f-0d00265ce7d5
 md"""
@@ -806,6 +902,9 @@ HiddenDocs(:Scrubbable)
 HiddenDocs(:NumberField)
 
 # ╔═╡ 8ec1a56e-ad91-439d-a3b2-4d154e730cb9
+HiddenDocs(:Switch)
+
+# ╔═╡ 732b9e87-607b-480d-a23d-d544eda7fa7e
 HiddenDocs(:CheckBox)
 
 # ╔═╡ 9d68baef-fb1d-441b-b973-37ca1054d5c9
@@ -847,6 +946,9 @@ HiddenDocs(:Resource)
 # ╔═╡ 1c8db4bd-d243-47ac-bb0c-a630333e11d4
 HiddenDocs(:LocalResource)
 
+# ╔═╡ 4778964d-ba41-49c9-b941-4c5296ef927e
+HiddenDocs(:ReadingTimeEstimator)
+
 # ╔═╡ 664b538e-b370-43b3-8b0c-5abf696fba0e
 HiddenDocs(:details)
 
@@ -870,277 +972,273 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 HypertextLiteral = "~0.9.5"
-PlutoUI = "~0.7.52"
+PlutoUI = "~0.7.78"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-[[AbstractPlutoDingetjes]]
+julia_version = "1.12.2"
+manifest_format = "2.0"
+project_hash = "4bab4d3f82dcff366a0da41992f67adb04c42561"
+
+[[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
 git-tree-sha1 = "6e1d2a35f2f90a4bc7c2ed98079b2ba09c35b83a"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
 version = "1.3.2"
 
-[[ArgTools]]
+[[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
-version = "1.1.1"
+version = "1.1.2"
 
-[[Artifacts]]
+[[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+version = "1.11.0"
 
-[[Base64]]
+[[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+version = "1.11.0"
 
-[[ColorTypes]]
+[[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
 git-tree-sha1 = "67e11ee83a43eb71ddc950302c53bf33f0690dfe"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
 version = "0.12.1"
+weakdeps = ["StyledStrings"]
 
-    [ColorTypes.extensions]
+    [deps.ColorTypes.extensions]
     StyledStringsExt = "StyledStrings"
 
-    [ColorTypes.weakdeps]
-    StyledStrings = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
-
-[[CompilerSupportLibraries_jll]]
+[[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.1+0"
+version = "1.3.0+1"
 
-[[Dates]]
+[[deps.Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+version = "1.11.0"
 
-[[Downloads]]
+[[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
-version = "1.6.0"
+version = "1.7.0"
 
-[[FileWatching]]
+[[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
+version = "1.11.0"
 
-[[FixedPointNumbers]]
+[[deps.FixedPointNumbers]]
 deps = ["Statistics"]
 git-tree-sha1 = "05882d6995ae5c12bb5f36dd2ed3f61c98cbb172"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.5"
 
-[[Hyperscript]]
+[[deps.Hyperscript]]
 deps = ["Test"]
 git-tree-sha1 = "179267cfa5e712760cd43dcae385d7ea90cc25a4"
 uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
 version = "0.0.5"
 
-[[HypertextLiteral]]
+[[deps.HypertextLiteral]]
 deps = ["Tricks"]
 git-tree-sha1 = "7134810b1afce04bbc1045ca1985fbe81ce17653"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 version = "0.9.5"
 
-[[IOCapture]]
+[[deps.IOCapture]]
 deps = ["Logging", "Random"]
-git-tree-sha1 = "b6d6bfdd7ce25b0f9b2f6b3dd56b2673a66c8770"
+git-tree-sha1 = "0ee181ec08df7d7c911901ea38baf16f755114dc"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
-version = "0.2.5"
+version = "1.0.0"
 
-[[InteractiveUtils]]
+[[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+version = "1.11.0"
 
-[[JSON]]
-deps = ["Dates", "Mmap", "Parsers", "Unicode"]
-git-tree-sha1 = "31e996f0a15c7b280ba9f76636b3ff9e2ae58c9a"
-uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
-version = "0.21.4"
+[[deps.JuliaSyntaxHighlighting]]
+deps = ["StyledStrings"]
+uuid = "ac6e5ff7-fb65-4e79-a425-ec3bc9c03011"
+version = "1.12.0"
 
-[[LibCURL]]
+[[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
 version = "0.6.4"
 
-[[LibCURL_jll]]
-deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
+[[deps.LibCURL_jll]]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "OpenSSL_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "8.4.0+0"
+version = "8.15.0+0"
 
-[[LibGit2]]
-deps = ["Base64", "LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
+[[deps.LibGit2]]
+deps = ["LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
+version = "1.11.0"
 
-[[LibGit2_jll]]
-deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll"]
+[[deps.LibGit2_jll]]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "OpenSSL_jll"]
 uuid = "e37daf67-58a4-590a-8e99-b0245dd2ffc5"
-version = "1.6.4+0"
+version = "1.9.0+0"
 
-[[LibSSH2_jll]]
-deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
+[[deps.LibSSH2_jll]]
+deps = ["Artifacts", "Libdl", "OpenSSL_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
-version = "1.11.0+1"
+version = "1.11.3+1"
 
-[[Libdl]]
+[[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+version = "1.11.0"
 
-[[LinearAlgebra]]
+[[deps.LinearAlgebra]]
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+version = "1.12.0"
 
-[[Logging]]
+[[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+version = "1.11.0"
 
-[[MIMEs]]
+[[deps.MIMEs]]
 git-tree-sha1 = "c64d943587f7187e751162b3b84445bbbd79f691"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
 version = "1.1.0"
 
-[[Markdown]]
-deps = ["Base64"]
+[[deps.Markdown]]
+deps = ["Base64", "JuliaSyntaxHighlighting", "StyledStrings"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+version = "1.11.0"
 
-[[MbedTLS_jll]]
-deps = ["Artifacts", "Libdl"]
-uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.2+1"
-
-[[Mmap]]
-uuid = "a63ad114-7e13-5084-954f-fe012c677804"
-
-[[MozillaCACerts_jll]]
+[[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2023.1.10"
+version = "2025.5.20"
 
-[[NetworkOptions]]
+[[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
-version = "1.2.0"
+version = "1.3.0"
 
-[[OpenBLAS_jll]]
+[[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+4"
+version = "0.3.29+0"
 
-[[Parsers]]
-deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "7d2f8f21da5db6a806faf7b9b292296da42b2810"
-uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.8.3"
+[[deps.OpenSSL_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
+version = "3.5.4+0"
 
-[[Pkg]]
-deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+[[deps.Pkg]]
+deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "Random", "SHA", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.10.0"
+version = "1.12.0"
 
-[[PlutoUI]]
-deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Downloads", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "3151a0c8061cc3f887019beebf359e6c4b3daa08"
+    [deps.Pkg.extensions]
+    REPLExt = "REPL"
+
+    [deps.Pkg.weakdeps]
+    REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+
+[[deps.PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Downloads", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "6122f9423393a2294e26a4efdf44960c5f8acb70"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.65"
+version = "0.7.78"
 
-[[PrecompileTools]]
-deps = ["Preferences"]
-git-tree-sha1 = "5aa36f7049a63a1528fe8f7c3f2113413ffd4e1f"
-uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.2.1"
-
-[[Preferences]]
-deps = ["TOML"]
-git-tree-sha1 = "9306f6085165d270f7e3db02af26a400d580f5c6"
-uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.4.3"
-
-[[Printf]]
+[[deps.Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+version = "1.11.0"
 
-[[REPL]]
-deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
-uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
-
-[[Random]]
+[[deps.Random]]
 deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+version = "1.11.0"
 
-[[Reexport]]
+[[deps.Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
 
-[[SHA]]
+[[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
-[[Serialization]]
+[[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+version = "1.11.0"
 
-[[Sockets]]
-uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
-
-[[SparseArrays]]
-deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
-uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-version = "1.10.0"
-
-[[Statistics]]
-deps = ["LinearAlgebra", "SparseArrays"]
+[[deps.Statistics]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "ae3bb1eb3bba077cd276bc5cfc337cc65c3075c0"
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-version = "1.10.0"
+version = "1.11.1"
 
-[[SuiteSparse_jll]]
-deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
-uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "7.2.1+1"
+    [deps.Statistics.extensions]
+    SparseArraysExt = ["SparseArrays"]
 
-[[TOML]]
+    [deps.Statistics.weakdeps]
+    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
+[[deps.StyledStrings]]
+uuid = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
+version = "1.11.0"
+
+[[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
 
-[[Tar]]
+[[deps.Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 version = "1.10.0"
 
-[[Test]]
+[[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+version = "1.11.0"
 
-[[Tricks]]
-git-tree-sha1 = "6cae795a5a9313bbb4f60683f7263318fc7d1505"
+[[deps.Tricks]]
+git-tree-sha1 = "311349fd1c93a31f783f977a71e8b062a57d4101"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.10"
+version = "0.1.13"
 
-[[URIs]]
-git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
+[[deps.URIs]]
+git-tree-sha1 = "bef26fb046d031353ef97a82e3fdb6afe7f21b1a"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.2"
+version = "1.6.1"
 
-[[UUIDs]]
+[[deps.UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+version = "1.11.0"
 
-[[Unicode]]
+[[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+version = "1.11.0"
 
-[[Zlib_jll]]
+[[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.13+1"
+version = "1.3.1+2"
 
-[[libblastrampoline_jll]]
+[[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.11.0+0"
+version = "5.15.0+0"
 
-[[nghttp2_jll]]
+[[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.52.0+1"
+version = "1.64.0+1"
 
-[[p7zip_jll]]
-deps = ["Artifacts", "Libdl"]
+[[deps.p7zip_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
-version = "17.4.0+2"
+version = "17.7.0+0"
 """
 
 # ╔═╡ Cell order:
@@ -1172,6 +1270,9 @@ version = "17.4.0+2"
 # ╟─e49623ac-c760-11ea-3689-c15f2e2f6081
 # ╠═314cb85a-c761-11ea-1cba-b73f84a52be8
 # ╟─3c68b25c-c761-11ea-226a-4f46579a6732
+# ╟─195bc258-2fd4-402a-81f0-576a25b42b01
+# ╠═06654252-5829-437d-bb25-a8f0dcef62a1
+# ╠═78ecdf26-26a1-45e3-a44d-e65594a24ada
 # ╟─0f9623fc-ec9f-4c0a-936d-677bf79fa2e3
 # ╟─104b55ce-cc4f-11ea-1273-092a1717e399
 # ╟─4513b730-c761-11ea-1460-2dca56081fcf
@@ -1186,6 +1287,10 @@ version = "17.4.0+2"
 # ╟─8ec1a56e-ad91-439d-a3b2-4d154e730cb9
 # ╟─378c44c7-8565-49bf-8ccb-12fe6831ccce
 # ╟─09393bf2-cc4f-11ea-1e48-cfbedab8e6b4
+# ╟─af9af1f0-8e17-4a87-bff2-075c7d484666
+# ╠═452974e7-ac48-4cc1-af47-850b958b3f26
+# ╠═c1d728e8-4833-4be8-bb7e-7f564b844b84
+# ╟─732b9e87-607b-480d-a23d-d544eda7fa7e
 # ╟─cd1b5872-c761-11ea-2179-57a3cb34d235
 # ╠═d9e85ed0-c761-11ea-30bf-83ce272526e0
 # ╟─e4c262d6-c761-11ea-36b2-055419bfc981
@@ -1257,6 +1362,15 @@ version = "17.4.0+2"
 # ╟─347e3d06-cc51-11ea-012c-43e824eaffa2
 # ╟─343d7118-cc51-11ea-387a-fb22d8c73506
 # ╟─34543b76-28d8-48a4-a8ac-3847f73e01ab
+# ╟─9f20014a-7c1b-4168-adb7-2da143d85152
+# ╟─e861de69-a951-4072-aa57-e46879176009
+# ╟─bcd30c48-e77d-4d07-a6c9-e61c04dd389c
+# ╠═b3e2443d-dcb0-4423-ae0f-bba3b1dce585
+# ╟─33df82f5-2223-4f77-8bff-b6665040070b
+# ╟─6cb16c3b-3e13-4095-a1a9-a44086272c46
+# ╟─d05862a6-a84c-4ac5-bd36-f04db8252487
+# ╠═7b3999ab-8a9f-4d51-849a-debd9b23c404
+# ╟─21347c66-ad0f-46db-a7dd-d9ef7a22c61b
 # ╟─32e41ac2-cc51-11ea-3358-bbead9c68123
 # ╟─7da30d97-b28a-4eb9-a2ef-fad599b549d1
 # ╟─170089cd-f366-4c0a-b58d-fe6e36049db7
@@ -1299,6 +1413,9 @@ version = "17.4.0+2"
 # ╟─1c8db4bd-d243-47ac-bb0c-a630333e11d4
 # ╟─a11e6f08-d743-4ff5-8648-30e8d739b5cc
 # ╟─84c703f0-3b48-459b-bd99-75113995396f
+# ╟─5304db90-3c41-4078-8c55-45220fd8c251
+# ╠═ddb352f2-49ea-436a-825b-27a92aa01944
+# ╟─4778964d-ba41-49c9-b941-4c5296ef927e
 # ╟─3abec86a-6ec3-41ec-adb4-36c52f233883
 # ╠═b8779a4f-314d-45e0-8571-4bb3c2748573
 # ╟─7290c1d1-65a1-433c-86c3-fb88255ad2c2
@@ -1311,6 +1428,10 @@ version = "17.4.0+2"
 # ╟─8950fab5-d416-4a75-8701-96df4335dd5e
 # ╟─83c00a49-22ae-475f-8988-902f09ecc9da
 # ╟─faadc603-5132-499e-87c5-a1ca8eec8acf
+# ╟─05f49ea7-14b6-4546-a566-6bc770d10a39
+# ╠═68dee8de-3808-4060-8966-3058729d7b91
+# ╟─064b183c-13c1-4c7b-b0c1-d98f5166f853
+# ╠═b5d0e73b-a3d3-4ada-bf7c-ef1e35f32940
 # ╟─387f152a-da56-4329-a21f-0d00265ce7d5
 # ╠═a662e44f-ce67-4269-926b-9c0e4a87801e
 # ╟─b5e32ef9-0c85-4bf3-a63e-48d1658083ee
