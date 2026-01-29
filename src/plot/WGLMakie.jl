@@ -119,32 +119,47 @@ end
 md"## Integration in Pluto (with PlutoUI)"
 
 # ╔═╡ 9e86e965-7a3e-43bc-930a-5d916273770f
-md"There is an intermediate solution that combines Makie's `Observable` with PlutoUI's interactivity. Here is a simple example with a `PlutoUI.Slider` where we want to plot the integer values between 0 and `val`."
+md"There is an intermediate solution that combines Makie's `Observable` with PlutoUI's interactivity. Here is a simple example with a `PlutoUI.Slider` where we want to plot some values generated from a range between 0 and `val`."
 
 # ╔═╡ b8b581e9-5085-4763-8f46-2aa718925635
-@bind val PlutoUI.Slider(0:10)
+@bind val PlutoUI.Slider(0.0:0.01:40.0)
 
 # ╔═╡ 86f8bb60-7e4c-4acd-af9c-ada0c589f7a5
-md"Then, we initialize an `Observable`. *The argument `1:1` below can be replaced by `0:0` or `2:25`, etc. It only has to respect the type that we want, i.e. `UnitRange{Int64}` here.*"
+md"Then, we initialize an `Observable`. The argument `0.0:0.1:0.0` is only used for initialization. It only has to respect the type that we want, i.e. `StepRange` here. *In case you don't know the type in advance, you could force it to be `Any` via `val_obs = Observable{Any}(0)` for instance.*"
 
 # ╔═╡ 96269a69-e678-4a9f-87c2-6215032b42d1
-val_obs = Observable(0:0)
+val_obs = Observable(0.0:0.1:0.0)
 
 # ╔═╡ b1658a17-b59f-4c35-b7a0-1503e377c731
 md"The following cell automatically updates the content of the observable `val_obs` each time we move the slider. In turn, it updates the plot below."
 
 # ╔═╡ b496ac83-b3c7-4758-994e-7534abc56932
-val_obs[] = 0:val
+val_obs[] = 0:0.01:val
 
 # ╔═╡ a6937e90-5714-4023-aaf5-02909c53daa7
-scatter(val_obs, axis=(;limits=(0,12,-1,11)))
+begin
+	x = @lift(@. exp(-$val_obs/8)*cos($val_obs))
+	y = @lift(@. exp(-$val_obs/8)*sin($val_obs))
+	lines(x,y, axis=(;limits=(-1,2,-1,1)))
+end
+
+# ╔═╡ 774f1c41-7a84-401a-950c-466cf05fcd92
+md"""
+!!! warning
+	The code must be separated into four cells as above (slider, definition of the observable, update of the observable, plot). *In fact, the definition of the observable could be included in the "plot cell".*
+"""
 
 # ╔═╡ 6d79f301-b6b4-40be-b48e-e194466b5170
 md"
 !!! note 
 	The plot above is internaly updated thanks to the `Observable` type. It is not replotted each time `val` is modified. Compare with:
 	```
-	scatter(1:val, axis=(;limits=(0,12,-1,11)))
+	let
+		val_non_obs = 0:0.01:val
+		x = @. exp(- val_non_obs/8) * cos(val_non_obs)
+		y = @. exp(- val_non_obs/8) * sin(val_non_obs)
+		lines(x,y, axis=(;limits=(-1,2,-1,1)))
+	end
 	```
 "
 
@@ -1851,6 +1866,7 @@ version = "4.1.0+0"
 # ╟─b1658a17-b59f-4c35-b7a0-1503e377c731
 # ╠═b496ac83-b3c7-4758-994e-7534abc56932
 # ╠═a6937e90-5714-4023-aaf5-02909c53daa7
+# ╟─774f1c41-7a84-401a-950c-466cf05fcd92
 # ╟─6d79f301-b6b4-40be-b48e-e194466b5170
 # ╟─917f2df5-f63f-4937-b1e0-b60ed4351d9f
 # ╟─6a54d18f-45ec-4917-843e-d6af2660525c
