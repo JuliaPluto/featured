@@ -1,6 +1,16 @@
 ### A Pluto.jl notebook ###
 # v0.20.21
 
+#> [frontmatter]
+#> image = "https://image2url.com/r2/default/gifs/1772474106000-b9bdee0b-91fe-4d82-af83-2bc1fec8c734.gif"
+#> title = "Animations with WGLMakie"
+#> tags = ["visualisation", "animation", "plotting"]
+#> description = "An introduction to animations with or without the use of PlutoUI.jl"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Julien Chevallier"
+#>     url = "https://github.com/jucheval"
+
 using Markdown
 using InteractiveUtils
 
