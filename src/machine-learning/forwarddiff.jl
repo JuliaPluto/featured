@@ -2,12 +2,14 @@
 # v0.20.23
 
 #> [frontmatter]
+#> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
 #> image = "https://raw.githubusercontent.com/ariguiba/assets/refs/heads/main/forwarddiff-notebook-example.png"
 #> language = "en-US"
 #> title = "ForwardDiff.jl"
 #> date = "2026-03-02"
 #> tags = ["forwarddiff", " autodiff", " machine-learning"]
 #> description = "Example usage of the ForwardDiff.jl package"
+#> license = "Unlicense"
 #> 
 #>     [[frontmatter.author]]
 #>     name = "Boshra Ariguib"
