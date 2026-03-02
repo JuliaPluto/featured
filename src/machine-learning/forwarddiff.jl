@@ -1,6 +1,18 @@
 ### A Pluto.jl notebook ###
 # v0.20.23
 
+#> [frontmatter]
+#> image = "https://raw.githubusercontent.com/ariguiba/assets/refs/heads/main/forwarddiff-notebook-example.png"
+#> language = "en-US"
+#> title = "ForwardDiff.jl"
+#> date = "2026-03-02"
+#> tags = ["forwarddiff", " autodiff", " machine-learning"]
+#> description = "Example usage of the ForwardDiff.jl package"
+#> 
+#>     [[frontmatter.author]]
+#>     name = "Boshra Ariguib"
+#>     url = "https://github.com/ariguiba"
+
 using Markdown
 using InteractiveUtils
 
