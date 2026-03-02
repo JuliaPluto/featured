@@ -71,10 +71,12 @@ If you take a look at [featured.plutojl.org](https://featured.plutojl.org), you 
   - `name`: your name to display
   - `url`: your user page URL, like `https://github.com/fonsp`. This is where people will go when they click on your name. If it's a github user URL, then it will also be used for the image.
   - `image` *(optional)*: if you did *not* provide a github `url` that can be used for the image, or if you want to choose another image, use this for a custom avatar URL.
-- `tags`: fill in as many tags as you wish! This is where you choose in which category the notebook is listed, include at least one existing tag from [the collections configuration](https://github.com/JuliaPluto/featured/blob/main/src/pluto_export_configuration.json). *(lowercase, spaces allowed)*
+- `tags`: fill in as many tags as you wish! This is where you choose in which category the notebook is listed, include at least one existing tag from [the collections configuration](https://github.com/JuliaPluto/featured/blob/main/src/pluto_export_configuration.json). *(lowercase, spaces allowed)* All notebook files in this repository will be rendered by PlutoSliderServer, but they will only show up in Pluto's main menu if they belong to a collection. 
 - `order` *(optional)*: this can be a number that is used to sort notebooks within a collection. Notebooks with lower orders show up first.
 
-All notebook files in this repository will be rendered by PlutoSliderServer, but they will only show up in Pluto's main menu if they belong to a collection. 
+Take a look at the other notebook files for an example!
+
+
 
 
 ## Licensing
