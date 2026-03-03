@@ -31,7 +31,7 @@ end
 # ╔═╡ ccc7e21c-6e3c-465d-b0ee-e8e31b02c3ad
 using PlutoTeachingTools
 
-# ╔═╡ 7c2dd390-d703-48bd-b364-56afad6bac4f
+# ╔═╡ e531ee08-961b-463c-a35a-e3f4d2583c3a
 using Bonito
 
 # ╔═╡ 87f336cf-e4e6-4209-8408-bbb6690654b0
@@ -99,10 +99,21 @@ md"If you want to adapt quickly to a new monitor resolution, you may want to def
 # ╔═╡ 06fae66c-ee2e-480b-989b-4f0dea3f0e92
 md"## Handling space"
 
+# ╔═╡ 9dd82faa-067d-4a15-b111-841efb155959
+md"#### Horizontal space
+
+The function `horizontalspace` defined below gives a simple way to add a blank horizontal space. *However, do not use it to handle several columns. Instead, look at [this slide](#Columns).*"
+
+# ╔═╡ 15078a74-d795-4ce2-8203-2b45227629b7
+horizontalspace(width::Int) = HTML("&nbsp;"^width)
+
+# ╔═╡ 6a1931d9-bc17-4454-b892-05ce71c1108d
+md"It can be used to give your text some breathing $(horizontalspace(15)) space!"
+
 # ╔═╡ 1185ef83-02d0-4144-9e3f-84773909d993
 md"#### Vertical space
 
-The function `verticalspace` defined below gives a simple way to add a blank vertical space. It uses the DOM API from [Bonito.jl](https://simondanisch.github.io/Bonito.jl/stable/)."
+The function `verticalspace` defined below gives a simple way to add a blank vertical space."
 
 # ╔═╡ f67836a9-2bce-4324-864e-56eb3e52b19d
 verticalspace(height::Real) = HTML("""<div style="height: $(height)px;"></div>""")
@@ -120,17 +131,19 @@ verticalspace(500)
 
 # ╔═╡ 3581c507-8de0-4ec1-b449-e0998cf148a5
 md"### Supplementary information
-- The DOM API from [Bonito.jl](https://simondanisch.github.io/Bonito.jl/stable/) is a convenient way to produce HTML tags in a Pluto notebook.
-- `DOM.div` can be used to put multiple expressions in one cell. An example can be found in [this slide](#Columns).
+- More complex HTML tags can be integrated in a Pluto Notebook via the DOM API from [Bonito.jl](https://simondanisch.github.io/Bonito.jl/stable/).
+- For instance, `DOM.div` can be used to put multiple expressions in one cell. An example can be found in [this slide](#Columns).
 "
 
 # ╔═╡ 68eb0b86-8af5-45f6-87f6-c1e6d87f7b6e
 md"## Columns"
 
 # ╔═╡ 73fa93a2-7e9f-4c3d-9b0c-5103b01f0988
-Columns(md"The `Columns` function from [PlutoTeachingTools.jl](https://featured.plutojl.org/basic/plutoteachingtools) let you separate your slides in several columns.",
-	   md"The `widths` keyword argument lets you customize their widths",
-	   widths=[60,40])
+Columns(
+	md"The `Columns` function from [PlutoTeachingTools.jl](https://featured.plutojl.org/basic/plutoteachingtools) let you separate your slides in several columns.",
+	md"The `widths` keyword argument lets you customize their widths",
+	widths=[60,40]
+)
 
 # ╔═╡ e7257379-d1f1-4f24-be57-9f19aadc85b4
 Columns(
@@ -155,16 +168,14 @@ md"Markdown admonitions are great to emphasize definitions and theorems.
 md"In Pluto, they come in four differents colors:"
 
 # ╔═╡ 99d14a96-b2ee-457e-8980-0247533d94a9
-Columns(
-	md"""
+Columns(md"""
 	!!! note "Box title"
 		`note` admonition
 	""",
 	md"""
 	!!! tip "Box title"
 		`tip` admonition
-	"""
-)
+	""")
 
 # ╔═╡ bb3b0c55-cc8b-4803-aa40-0bada8fb835b
 Columns(
@@ -184,28 +195,9 @@ md"## Markdown and LaTeX"
 # ╔═╡ 904af79c-2990-4cba-b203-9a3c379655b7
 md"Most of the text in a Pluto notebook is rendered via Markdown. Have a look at the [Markdown notebook](https://featured.plutojl.org/basic/markdown) for some information."
 
-# ╔═╡ 3ede6b0a-0931-4ca5-a4fc-92c01a9fcd59
-md"""Here are some additional informations regarding mathematical equations:
-
-- Equations in display mode are rendered using ` `\`\`\`math ... \`\`\` blocks:
-```math
-e^{i\pi} = - 1
-```
-- A tag can be added via the `\tag` LaTeX function:
-```math
-E = mc^2
-\tag{⋆}
-```
-- An anchor can be added to get hyperlinks:
-$(DOM.div(; id="label"))
-```math
-1+1=2
-\tag{1}
-```
-"""
-
 # ╔═╡ 423796ef-4db8-42e9-ab18-a3ae27894552
-md"For instance, you can put a linked reference to Equation [(1)](#label)."
+md"For instance, you can put a linked reference to Equation [(1)](#eq_label).\
+*Beware: the page scrolling is such that the labeled equation is at the top of the page.*"
 
 # ╔═╡ f4360336-4672-4621-a0c4-4686146f0191
 md"## Images"
@@ -226,7 +218,7 @@ A convenient way to extend the markdown syntax in a Julia friendly manner is to 
 Resource(
 	"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg",
 	:alt => "Pluto (dwarf planet)",
-	:width => 200
+	:width => 100
 )
 
 # ╔═╡ e1fd7375-bbb2-415b-88df-84e1bed59cf3
@@ -284,7 +276,7 @@ Some content can be... $(DOM.span("right-aligned", style="float:right"))
 """
 
 # ╔═╡ 08b4a3b2-8034-47d6-a3dd-8a73073da115
-md"## Interactivity and animations"
+md"## Interactivity and animations with PlutoUI"
 
 # ╔═╡ 37ddecc7-d458-4fcb-9a4d-dc06b327233c
 md"### PlutoUI and reactivity"
@@ -294,23 +286,49 @@ md"The `@bind` macro from `PlutoUI.jl` coupled with Pluto reactivity give a simp
 
 Here is an example:"
 
+# ╔═╡ 6f396e68-4c5f-404b-b3f7-d1122804a81e
+md" Choose your favorite function: $(@bind function_to_plot Select([sin, cos, exp, sqrt, log]))"
+
 # ╔═╡ fddac2d2-850e-4dc1-b0cc-21eac0eea757
-Columns(
-	md" Choose your favorite function: $(@bind function_to_plot Select([sin, cos, exp, sqrt, log]))",
-	plot(function_to_plot, size=(600,300))
-)
+plot(function_to_plot, size=(slidewidth,400))
+
+# ╔═╡ 73e30e82-1e01-40a8-9d50-f6e4f5b8ce07
+md"## Interactivity and animations without PlutoUI"
 
 # ╔═╡ 53b35f0b-a676-4605-97e1-7b7a059ee865
-md"### Makie"
+md"### WGLMakie observables"
 
 # ╔═╡ 04b78f1f-11d4-4dd9-8d7d-42d8c7d1bd12
-Columns(
-	md"An alternative is to use [Makie](https://docs.makie.org/stable/) ecosystem. Its advantages, drawbacks and integration to Pluto are treated in a separate notebook.",
-	md"TODO : include link"#NotebookCard(TODO)
-)
+md"An alternative is to use [Makie](https://docs.makie.org/stable/) ecosystem. Its advantages, drawbacks and integration to Pluto are treated in a separate notebook."
+
+# ╔═╡ 1e92b548-ce45-4894-851c-f27ba44b5212
+md"TODO : NotebookCard"#NotebookCard("https://featured.plutojl.org/plot/wglmakie")
 
 # ╔═╡ d27b8fe2-ef82-4c52-9eff-ea5b5689c744
 md"# Appendix"
+
+# ╔═╡ 638ad552-dde3-4c0e-b6c3-679e555c50b1
+label(marker::String) = HTML("""<div id="$(marker)"></div>""")
+
+# ╔═╡ 3ede6b0a-0931-4ca5-a4fc-92c01a9fcd59
+md"""Here are some additional informations regarding mathematical equations:
+
+- Equations in display mode are rendered using ` `\`\`\`math ... \`\`\` blocks:
+```math
+e^{i\pi} = - 1
+```
+- A tag can be added via the `\tag` LaTeX function:
+```math
+E = mc^2
+\tag{⋆}
+```
+- An anchor can be added to get hyperlinks:
+$(label("eq_label"))
+```math
+1+1=2
+\tag{1}
+```
+"""
 
 # ╔═╡ fcc6724e-e316-4979-84df-6346aba8930e
 md"## Font color"
@@ -330,10 +348,10 @@ divcolor(color, content...) = DOM.div(content..., style="color: "*htmlcolor(colo
 # ╔═╡ 0f77789d-997d-4eb9-b3bc-0d3dd5ccf63d
 divcolor(:red,
 		 md"""
-		 This paragraph is produced thanks to the `divcolor` and $(textcolor(RGB(0,1,0), "`textcolor`")) functions. Their definitions can be found at the bottom of this notebook (Appendix section).
+		 This paragraph is produced thanks to the `divcolor` and $(textcolor(RGB(0,1,0), HTML("<code>textcolor</code>"))) functions. Their definitions can be found at the bottom of this notebook ([Appendix section](#Font-color)).
 		 
 		 - The color is preserved in lists
-		 - and math equations, e.g. ``\\mu = 3``
+		 - and math equations, e.g. ``\mu = 3``
 		 """
 		)
 
@@ -347,7 +365,7 @@ PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-Bonito = "~4.1.11"
+Bonito = "~4.2.0"
 Colors = "~0.13.1"
 Plots = "~1.40.14"
 PlutoTeachingTools = "~0.4.6"
@@ -358,9 +376,9 @@ PlutoUI = "~0.7.73"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.3"
+julia_version = "1.12.5"
 manifest_format = "2.0"
-project_hash = "f2919e3f326bf3679c8058a8b9299372c0425432"
+project_hash = "22d8a9f7530a08040419f983174ac93b84692c76"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -392,10 +410,10 @@ uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
 version = "0.1.9"
 
 [[deps.Bonito]]
-deps = ["Base64", "CodecZlib", "Colors", "Dates", "Deno_jll", "HTTP", "Hyperscript", "LinearAlgebra", "Markdown", "MbedTLS", "MsgPack", "Observables", "OrderedCollections", "Random", "RelocatableFolders", "SHA", "Sockets", "Tables", "ThreadPools", "URIs", "UUIDs", "WidgetsBase"]
-git-tree-sha1 = "d93c02a93b1bda3fd9213935a2b9159043e0da63"
+deps = ["Base64", "CodecZlib", "Colors", "Dates", "Deno_jll", "HTTP", "Hyperscript", "JSON", "LinearAlgebra", "Markdown", "MbedTLS", "MsgPack", "Observables", "OrderedCollections", "Random", "RelocatableFolders", "SHA", "Sockets", "Tables", "ThreadPools", "URIs", "UUIDs", "WidgetsBase"]
+git-tree-sha1 = "bb43f72801f703ad3c66833bd02b8f54c7328238"
 uuid = "824d6782-a2ef-11e9-3a09-e5662e0c26f8"
-version = "4.1.11"
+version = "4.2.0"
 
 [[deps.Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -882,7 +900,7 @@ version = "1.11.0"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2025.5.20"
+version = "2025.11.4"
 
 [[deps.MsgPack]]
 deps = ["Serialization"]
@@ -1566,12 +1584,15 @@ version = "1.13.0+0"
 # ╠═fb2798c2-3bee-4538-b40e-f6cd3a858e43
 # ╟─9b07060f-ae3f-464f-a2c6-8552d410d84d
 # ╟─06fae66c-ee2e-480b-989b-4f0dea3f0e92
+# ╟─9dd82faa-067d-4a15-b111-841efb155959
+# ╠═15078a74-d795-4ce2-8203-2b45227629b7
+# ╠═6a1931d9-bc17-4454-b892-05ce71c1108d
 # ╟─1185ef83-02d0-4144-9e3f-84773909d993
-# ╠═7c2dd390-d703-48bd-b364-56afad6bac4f
 # ╠═f67836a9-2bce-4324-864e-56eb3e52b19d
 # ╟─fcd586da-708d-457c-a53c-2d6e60ff6076
 # ╠═19074f6c-17cd-47df-aadc-9fceb0a0fac2
 # ╟─3581c507-8de0-4ec1-b449-e0998cf148a5
+# ╠═e531ee08-961b-463c-a35a-e3f4d2583c3a
 # ╟─68eb0b86-8af5-45f6-87f6-c1e6d87f7b6e
 # ╠═73fa93a2-7e9f-4c3d-9b0c-5103b01f0988
 # ╟─e7257379-d1f1-4f24-be57-9f19aadc85b4
@@ -1605,10 +1626,14 @@ version = "1.13.0+0"
 # ╟─37ddecc7-d458-4fcb-9a4d-dc06b327233c
 # ╟─ecde154d-9a0e-4581-a84d-6a586627ca10
 # ╠═27752b44-a7f7-445f-9990-7bba8610023e
+# ╟─6f396e68-4c5f-404b-b3f7-d1122804a81e
 # ╟─fddac2d2-850e-4dc1-b0cc-21eac0eea757
+# ╟─73e30e82-1e01-40a8-9d50-f6e4f5b8ce07
 # ╟─53b35f0b-a676-4605-97e1-7b7a059ee865
 # ╟─04b78f1f-11d4-4dd9-8d7d-42d8c7d1bd12
+# ╟─1e92b548-ce45-4894-851c-f27ba44b5212
 # ╟─d27b8fe2-ef82-4c52-9eff-ea5b5689c744
+# ╠═638ad552-dde3-4c0e-b6c3-679e555c50b1
 # ╟─fcc6724e-e316-4979-84df-6346aba8930e
 # ╠═c8046b5d-c383-4487-8892-a56f298b8180
 # ╠═61c72542-beeb-48ba-ac91-3cf51066c8d7
