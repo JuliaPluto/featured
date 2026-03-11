@@ -584,7 +584,7 @@ md"Here is a _dog_: ![](https://fonsp.com/img/doggoSmall.jpg)"
 - support for audio"""
 
 # ╔═╡ 6a7e7e54-c75e-11ea-2ea7-ed3da37e9e96
-dog_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Welsh_Springer_Spaniel.jpg/640px-Welsh_Springer_Spaniel.jpg"
+dog_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Welsh_Springer_Spaniel.jpg/500px-Welsh_Springer_Spaniel.jpg"
 
 # ╔═╡ 3c68b25c-c761-11ea-226a-4f46579a6732
 Resource(dog_url, :width => x * x_different)
