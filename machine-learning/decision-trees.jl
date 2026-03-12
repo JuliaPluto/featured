@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
-#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png/238px-Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png/250px-Denominacao-de-origem-controlada-destalo-wine-denomination-controlled-origin.png"
 #> title = "Decision Trees"
 #> tags = ["machine learning", "data", "decision tree", "classification", "OpenML", "DataFrames", "Makie"]
 #> date = "2023-09-20"

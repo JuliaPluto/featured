@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
-#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/480px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/500px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg"
 #> title = "Images"
 #> date = "2023-11-04"
 #> tags = ["basic", "images", "markdown"]
@@ -45,7 +45,7 @@ For example, here is a nice picture:
 
 # ╔═╡ 8da421ba-781d-4b00-bffd-a579f770e72b
 md"""
-![Pluto (dwarf planet)](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg)
+![Pluto (dwarf planet)](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/960px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg)
 """
 
 # ╔═╡ a4e2a4b1-5111-44cb-b967-479c7d9c265a
@@ -90,7 +90,7 @@ One option is to use HTML instead of markdown:
 html"""
 <p>Small planet, small picture:</p>
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg"
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/960px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg"
 	width="200"
 	alt="Pluto (dwarf planet)">
 """
@@ -102,7 +102,7 @@ If you are not used to working with HTML, this can be a bit of a hassle, and it 
 
 # ╔═╡ 2dec646f-3170-434d-b192-c86c98d467d2
 Resource(
-	"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg",
+	"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/960px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg",
 	:alt => "Pluto (dwarf planet)",
 	:width => 200
 )
@@ -122,7 +122,7 @@ What if we want to do something with the image in the code? We can use the `Imag
 """
 
 # ╔═╡ 3d8a4c8f-d0d8-40f4-959c-9f14d163285c
-image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/1024px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg";
+image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pluto-01_Stern_03_Pluto_Color_TXT.jpg/960px-Pluto-01_Stern_03_Pluto_Color_TXT.jpg";
 
 # ╔═╡ d841917b-4075-44f4-bd07-b24d1062f5a9
 image_file = download(image_url)

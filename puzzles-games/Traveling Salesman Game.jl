@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://opensource.org/license/unlicense/"
-#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Travelling_salesman_problem_solved_with_simulated_annealing.gif/640px-Travelling_salesman_problem_solved_with_simulated_annealing.gif"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Travelling_salesman_problem_solved_with_simulated_annealing.gif/500px-Travelling_salesman_problem_solved_with_simulated_annealing.gif"
 #> title = "Traveling Salesman Game"
 #> tags = ["optimization", "puzzle", "traveling-salesman"]
 #> license = "Unlicense"
