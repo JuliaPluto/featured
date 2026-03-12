@@ -747,7 +747,7 @@ WideCell(
 	#### Hello from an extra wide cell! I can fit so so so so so so so so so so so so so so so so much in here!
 	Here is a picture:
 	
-	![image of a sunset](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/2560px-Red_Sunset_Panorama_-_Canada1.jpg)
+	![image of a sunset](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/1920px-Red_Sunset_Panorama_-_Canada1.jpg)
 	"""
 )
 
@@ -805,7 +805,7 @@ This information is in the sidebar!
 !!! tip
 	You can put anything in here, like a picture:
 
-	![image of a sunset](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/2560px-Red_Sunset_Panorama_-_Canada1.jpg)
+	![image of a sunset](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Red_Sunset_Panorama_-_Canada1.jpg/1920px-Red_Sunset_Panorama_-_Canada1.jpg)
 """;
 
 # ╔═╡ 68dee8de-3808-4060-8966-3058729d7b91

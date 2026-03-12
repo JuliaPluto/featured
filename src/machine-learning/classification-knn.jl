@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/main/LICENSES/Unlicense"
-#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg/1024px-Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg/960px-Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg"
 #> order = "1"
 #> title = "Classifying Irises"
 #> tags = ["machine learning", "knn"]
@@ -48,7 +48,7 @@ This notebook will discuss some basic concepts in **machine learning**. We'll be
 # ╔═╡ 7def21a0-7d83-4b4f-863b-90b9e61c7e13
 html"""
 <figure>
-	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg/1024px-Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg">
+	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg/960px-Verschiedenfarbige_Schwertlilie_%28Iris_versicolor%29-20200603-RM-100257.jpg">
 	<figcaption><i>
 		Photograph by <a href="https://commons.wikimedia.org/wiki/User:Ermell">Reinhold Möller</a>, licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0 International</a>
 	</i></figcaption

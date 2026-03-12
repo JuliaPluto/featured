@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> licence_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
-#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Collatz_Conjecture_Vizualization.png/600px-Collatz_Conjecture_Vizualization.png?20231214223051"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Collatz_Conjecture_Vizualization.png/500px-Collatz_Conjecture_Vizualization.png"
 #> title = "Visualizing the Collatz Conjecture "
 #> tags = ["math", "interactive visualization", "collatz conjecture", "edmond harris"]
 #> date = "2023-12-14"

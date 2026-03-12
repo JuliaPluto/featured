@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> license_url = "https://unlicense.org/"
-#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/9975Poblacion%2C_Baliuag%2C_Bulacan_06.jpg/640px-9975Poblacion%2C_Baliuag%2C_Bulacan_06.jpg"
+#> image = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/9975Poblacion%2C_Baliuag%2C_Bulacan_06.jpg/500px-9975Poblacion%2C_Baliuag%2C_Bulacan_06.jpg"
 #> title = "Optimal Meatballs"
 #> date = "2024-02-08"
 #> tags = ["puzzle", "circle-packing", "Plots.jl", "PlutoUI.jl"]
