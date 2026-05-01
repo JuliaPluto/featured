@@ -25,7 +25,7 @@ jobs:
             - uses: fregante/setup-git-user@v2
 
             - name: Install Julia
-              uses: julia-actions/setup-julia@v2
+              uses: julia-actions/setup-julia@v3
               with:
                   # note: this version should match the version in the other actions in this repo
                   version: "1.12"
