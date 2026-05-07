@@ -2,6 +2,7 @@
 # v0.20.23
 
 #> [frontmatter]
+#> image = "https://raw.githubusercontent.com/ariguiba/assets/3498b1846711726cd9d47ab74c7a9980efc87e30/budget.png"
 #> language = "en-US"
 #> title = "Budget Planner"
 #> date = "2026-05-07"
