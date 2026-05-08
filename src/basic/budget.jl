@@ -79,7 +79,7 @@ md"""
 ### 💡 How This Works (The Spreadsheet Analogy)
  
 | Spreadsheet Concept | Pluto Equivalent |
-|---|---|
+|---:|:---|
 | **Input cell** (you type a number) | `@bind` widget (slider, text box) |
 | **Formula cell** (=A1*B1) | A regular Julia cell that uses bound variables |
 | **Auto-recalculate** | Pluto's reactivity engine, runs automatically! |
@@ -129,6 +129,13 @@ md"Using a DataFrame lets us store all our information neatly in **one table** i
 
 It is especially useful for tasks like **creating plots**, **filtering values** or exporting results. Rather than handling each cell individually, we can work with the entire dataset in a clean and structured way. Creating one is very simple, check it out! 👇"
 
+# ╔═╡ 18263605-d9ba-4122-b271-048eb91795cc
+PlutoTeachingTools.aside(
+md"""
+!!! tip "⚡ Pro Tip" 
+	If you want to dive deep into how to use Excel files directly in Pluto, check out the package [`XLSX.jl`](https://juliadata.org/XLSX.jl/stable/tutorial/) 📖
+""", v_offset=-230)
+
 # ╔═╡ 4c507c65-61db-4ea5-887d-9a906d8fb0e1
 md"Now that we have our data neatly organized in a table, we can explore it in a fun visual way 📊
 
@@ -139,7 +146,9 @@ PlutoTeachingTools.aside(
 md"""!!! info "💡 Fun Fact" 
 		If you've ever created charts in Julia, you're probably familiar with `Plots.jl`. `Plots.jl` is what we traditionally call an **imperative** plotting library: you explicitly tell Julia step by step what to draw, where to place it, and how it should look. But that is not the only way to create visualizations! 🌈
 
-		`VegaLite.jl` offers a different approach called **declarative** (or descriptive) plotting. Instead of giving detailed drawing instructions, you simply *describe* the kind of plot you want, such as which columns should go on the x- and y-axis, what type of chart to use, and how the data should be grouped. The package then takes care of the rest behind the scenes!
+		`VegaLite.jl` offers a different approach called **declarative** (or descriptive) plotting. Instead of giving detailed drawing instructions, you simply *describe* the kind of plot you want, such as which columns should go on the x- and y-axis, what type of chart to use, and how the data should be grouped. The package then takes care of the rest behind the scenes! 
+		
+		PS: If you prefer the Makie family, [`AlgebraOfGraphics.jl`](https://github.com/MakieOrg/AlgebraOfGraphics.jl) is totally worth checking out 😉 )
 	"""
 )
 
@@ -1869,6 +1878,7 @@ version = "1.13.0+0"
 # ╠═69f0df55-3759-4d11-bf73-66af63c7e9a7
 # ╟─15057167-1c1b-4ee2-8d05-df56efd45033
 # ╠═f5dbd11d-11fa-489f-b226-cfa68f87c140
+# ╟─18263605-d9ba-4122-b271-048eb91795cc
 # ╟─4c507c65-61db-4ea5-887d-9a906d8fb0e1
 # ╟─939c8418-65c4-4f46-935d-9d109d6c9e8b
 # ╠═bc943588-fffc-4d0d-8994-f727690d0121
