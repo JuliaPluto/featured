@@ -1,15 +1,19 @@
-if !isdir("pluto-deployment-environment") || length(ARGS) != 1
+if !isdir("pluto-deployment-environment") || length(ARGS) != 2
     error("""
     Run me from the root of the repository directory, using:
 
-    julia tools/update_notebook_packages.jl <level>
+    julia tools/update_notebook_packages.jl <level> <run_notebooks>
     
     Where <level> is one of: PATCH, MINOR, MAJOR
+    And <run_notebooks> is true or false to run all notebooks with Pluto at the end. This will ensure that cells are stored in the correct order.
     """)
 end
 
-if !(v"1.11.0-aaa" < VERSION < v"1.12.0")
-    error("Our notebook package environments need to be updated with Julia 1.11. Go to julialang.org/downloads to install it.")
+begin
+    import TOML
+    manifest_version = TOML.parsefile("./pluto-deployment-environment/Manifest.toml")["julia_version"]
+    
+    @assert manifest_version == string(VERSION) "This repository uses Julia version $(manifest_version) (in pluto-deployment-environment), but this is Julia $(VERSION). Start a new Julia session with the correct version, or create a new Manifest.toml."
 end
 
 import Pkg
@@ -28,6 +32,7 @@ end
 all_notebooks = filter(Pluto.is_pluto_notebook, all_files_recursive)
 
 level = getfield(Pkg, Symbol("UPLEVEL_$(ARGS[1])"))
+run_notebooks = parse(Bool, ARGS[2])
 
 for n in all_notebooks
     @info "Updating" n
@@ -36,3 +41,8 @@ for n in all_notebooks
 end
 
 @info "All notebooks done!"
+
+if run_notebooks
+    @info "Running all notebooks with Pluto..."
+    Pluto.run(notebook=all_notebooks)
+end
