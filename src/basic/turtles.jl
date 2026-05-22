@@ -441,8 +441,8 @@ PlutoTurtles = "67697473-756c-6b61-6172-6b407461726b"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-PlutoTurtles = "~1.0.1"
-PlutoUI = "~0.7.81"
+PlutoTurtles = "~1.0.2"
+PlutoUI = "~0.7.82"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -519,9 +519,9 @@ version = "0.0.5"
 
 [[HypertextLiteral]]
 deps = ["Tricks"]
-git-tree-sha1 = "7134810b1afce04bbc1045ca1985fbe81ce17653"
+git-tree-sha1 = "d1a86724f81bcd184a38fd284ce183ec067d71a0"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.5"
+version = "1.0.0"
 
 [[IOCapture]]
 deps = ["Logging", "Random"]
@@ -597,15 +597,15 @@ version = "3.5.4+0"
 
 [[PlutoTurtles]]
 deps = ["AbstractPlutoDingetjes", "Compat", "HypertextLiteral", "InteractiveUtils", "Markdown", "PlutoUI"]
-git-tree-sha1 = "467866275ad02b4abf63c80bad78ad4f92744473"
+git-tree-sha1 = "87f92ad150ec83979d5b3eb4167245719ec89603"
 uuid = "67697473-756c-6b61-6172-6b407461726b"
-version = "1.0.1"
+version = "1.0.2"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Downloads", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "79436d2d6f29a5d5b4e4749043a3f190d55631a3"
+git-tree-sha1 = "0ecd70a51c13e150266e76a865f10a64a7f178a3"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.81"
+version = "0.7.82"
 
 [[Printf]]
 deps = ["Unicode"]
