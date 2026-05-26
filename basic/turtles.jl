@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.27
+# v0.20.25
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -441,7 +441,7 @@ PlutoTurtles = "67697473-756c-6b61-6172-6b407461726b"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-PlutoTurtles = "~1.0.2"
+PlutoTurtles = "~1.0.3"
 PlutoUI = "~0.7.82"
 """
 
@@ -597,9 +597,9 @@ version = "3.5.4+0"
 
 [[PlutoTurtles]]
 deps = ["AbstractPlutoDingetjes", "Compat", "HypertextLiteral", "InteractiveUtils", "Markdown", "PlutoUI"]
-git-tree-sha1 = "87f92ad150ec83979d5b3eb4167245719ec89603"
+git-tree-sha1 = "25233aa903ffd950b4e7f12d94700aae9fc81aaa"
 uuid = "67697473-756c-6b61-6172-6b407461726b"
-version = "1.0.2"
+version = "1.0.3"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Downloads", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]

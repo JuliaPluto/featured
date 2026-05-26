@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.27
+# v0.20.25
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -244,7 +244,7 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
-PlutoTurtles = "~1.0.2"
+PlutoTurtles = "~1.0.3"
 PlutoUI = "~0.7.82"
 """
 
@@ -254,7 +254,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.12.5"
 manifest_format = "2.0"
-project_hash = "8f58bfb9b9d666ff6b1c50f0f43586406bd786cd"
+project_hash = "9bc8b62ad9dbd74e8f9d8ff9b2a06dfb82afbd57"
 
 [[deps.AbstractPlutoDingetjes]]
 git-tree-sha1 = "6c3913f4e9bdf6ba3c08041a446fb1332716cbc2"
@@ -404,9 +404,9 @@ version = "3.5.4+0"
 
 [[deps.PlutoTurtles]]
 deps = ["AbstractPlutoDingetjes", "Compat", "HypertextLiteral", "InteractiveUtils", "Markdown", "PlutoUI"]
-git-tree-sha1 = "87f92ad150ec83979d5b3eb4167245719ec89603"
+git-tree-sha1 = "25233aa903ffd950b4e7f12d94700aae9fc81aaa"
 uuid = "67697473-756c-6b61-6172-6b407461726b"
-version = "1.0.2"
+version = "1.0.3"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Downloads", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
