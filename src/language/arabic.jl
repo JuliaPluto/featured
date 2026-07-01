@@ -2,6 +2,7 @@
 # v1.0.2
 
 #> [frontmatter]
+#> image = "https://github.com/ariguiba/assets/blob/ecabc356c6f54c85801518e1523b3ecb26c377c6/arabic.png"
 #> language = "ar"
 #> title = "Pluto in Arabic ✨"
 #> tags = ["arabic", "rtl", "game"]
@@ -34,6 +35,8 @@ using Markdown, InteractiveUtils, PlutoUI, PlutoTeachingTools
 md"""
 # 🌍 العالم العربي: اللغة والثقافة والتنوع
 *🌍 The Arab world: language, culture, and diversity*
+
+🇩🇿🇧🇭🇰🇲🇩🇯🇪🇬🇮🇶🇯🇴🇰🇼🇱🇧🇱🇾🇲🇷🇲🇦🇴🇲🇵🇸🇶🇦🇸🇦🇸🇴🇸🇩🇸🇾🇹🇳🇦🇪🇾🇪
 """
 
 # ╔═╡ 2ed505a6-ae9f-426e-acfd-7bad8b792130
@@ -42,27 +45,28 @@ md"""
 *?What is the Arab world* 
 """
 
-# ╔═╡ 227b15bd-416c-4bea-8082-5292983755af
+# ╔═╡ eca9ee43-06b8-4d1b-9894-45c25fe7bd42
 md"""
-*The Arab world is a group of 22 countries spread across Asia and Africa.*
-
-العالم العربي هو مجموعة من 22 دولة موزعة عبر آسيا وأفريقيا. 
+تربط بينها لغة واحدة جميلة: **العربية**، وتاريخ عريق يمتد آلاف السنين. 
+العالم العربي هو مجموعة من 22 دولة موزعة عبر آسيا وأفريقيا
 
 """
 
-# ╔═╡ eca9ee43-06b8-4d1b-9894-45c25fe7bd42
+# ╔═╡ 227b15bd-416c-4bea-8082-5292983755af
 md"""
-تربط بينها لغة واحدة جميلة: **العربية**، وتاريخ عريق يمتد آلاف السنين.
-
+*The Arab world is a group of 22 countries spread across Asia and Africa.*
 *They are connected by one beautiful language: **Arabic**, and a rich history spanning thousands of years.*
+
 """
 
 # ╔═╡ 9487240b-03dc-468c-83cd-c56fbec29ada
 aside(md"""
 !!! info "💡 Info"
-	👈 You can easily switch between Arabic and English in the same cell :) The system will decide between left-to-right or right-to-left based on the first language you chose. 
+	
+	  يمكنك اختار بين العربية والإنجليزية داخل الخلية نفسها 😄 سيحدد النظام تلقائيًا اتجاه النص، سواء من اليمين إلى اليسار أو العكس، حسب اللغة التي تختارها
 	  
-	  يمكنك التنقل بسهولة بين العربية والإنجليزية داخل الخلية نفسها :) سيحدد النظام تلقائيًا اتجاه النص، سواء من اليمين إلى اليسار أو العكس، حسب اللغة التي تختارها أولًا.""", v_offset=-200)
+	  👈 You can choose to add cells both in English and in arabic :) The system will automatically decide between left-to-right or right-to-left based on the language you chose. 
+	  """, v_offset=-200)
 
 # ╔═╡ 03cb77e1-1133-49c0-8173-0cc94768185d
 md"""
@@ -113,7 +117,7 @@ aside(md"""
 # ╔═╡ e874dc90-6cb8-441c-97ee-55d6623e6a68
 aside(md"""
 !!! info "🔥 How cooool !يا سلاااام"
-	You can also define variable directly in arabic! 
+	You can also define variables directly in arabic! 
 
 	  يمكنك أيضًا إنشاء المتغير مباشرةً باللغة العربية! ✨
 	   """, v_offset=-120)
@@ -190,7 +194,7 @@ md"""
 begin
     if إجابتك == اللهجة_الصحيحة   
         md"""
-        # ✅ صحيح جداً! 🎉
+        # ✅ صحيح! 🎉
         
         الكلمة **$الكلمة_المعروضة** فعلاً من **اللهجة $إجابتك**!
         
@@ -592,8 +596,8 @@ version = "17.7.0+0"
 # ╠═7c02fda2-de9b-4273-8cae-1d56e80fe4b9
 # ╟─03dc3462-681a-11f1-91f3-457519421651
 # ╟─2ed505a6-ae9f-426e-acfd-7bad8b792130
-# ╟─227b15bd-416c-4bea-8082-5292983755af
 # ╟─eca9ee43-06b8-4d1b-9894-45c25fe7bd42
+# ╟─227b15bd-416c-4bea-8082-5292983755af
 # ╟─9487240b-03dc-468c-83cd-c56fbec29ada
 # ╟─03cb77e1-1133-49c0-8173-0cc94768185d
 # ╟─ca4629fb-526c-4691-99f8-f8a43bfd97c9
