@@ -5,7 +5,7 @@
 #> image = "https://github.com/ariguiba/assets/blob/ecabc356c6f54c85801518e1523b3ecb26c377c6/arabic.png"
 #> language = "ar"
 #> title = "Pluto in Arabic ✨"
-#> tags = ["arabic", "rtl", "game"]
+#> tags = ["arabic", "rtl", "game", "language"]
 #> date = "2026-06-24"
 #> description = "An introduction notebook for Arabic speakers"
 #> 
