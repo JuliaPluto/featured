@@ -2,7 +2,7 @@
 
 julia_version = "1.13.3"
 manifest_format = "2.1"
-project_hash = "caa2bbf0985f01be82edf9b78384a9c1ce630f84"
+project_hash = "51e9bcb04a04a287368079b2f6bca70074ab3bbd"
 
 [[deps.AbstractPlutoDingetjes]]
 git-tree-sha1 = "e71ee7b4aa06b045259a7d6101e1cb45ad140bce"
@@ -401,10 +401,10 @@ weakdeps = ["REPL"]
 
 [[deps.Pluto]]
 deps = ["Base64", "Configurations", "Dates", "Downloads", "ExpressionExplorer", "FileWatching", "GracefulPkg", "HTTP", "HypertextLiteral", "InteractiveUtils", "LRUCache", "Logging", "LoggingExtras", "MIMEs", "Malt", "Markdown", "MsgPack", "Pkg", "PlutoDependencyExplorer", "PrecompileSignatures", "PrecompileTools", "REPL", "Random", "RegistryInstances", "RelocatableFolders", "SHA", "Scratch", "Sockets", "TOML", "Tables", "URIs", "UUIDs"]
-git-tree-sha1 = "ecb99a3714b5b1b3dd7498b87be2f9468f35ab7b"
+git-tree-sha1 = "3bb3d6a96633c20dfb6366217bf592ecda71659c"
 registries = "General"
 uuid = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
-version = "1.0.4"
+version = "1.1.0"
 
 [[deps.PlutoDependencyExplorer]]
 deps = ["ExpressionExplorer", "InteractiveUtils", "Markdown"]
@@ -415,10 +415,10 @@ version = "1.2.2"
 
 [[deps.PlutoSliderServer]]
 deps = ["AbstractPlutoDingetjes", "Base64", "BetterFileWatching", "CancellationTokens", "Configurations", "Distributed", "FromFile", "Git", "Glob", "GracefulPkg", "HTTP", "JSON", "LibGit2", "Logging", "Pkg", "Pluto", "PlutoDependencyExplorer", "SHA", "Serialization", "Sockets", "TOML", "TerminalLoggers", "UUIDs"]
-git-tree-sha1 = "8983b5ceb534a6ea067bc0dea61afee4218c8b27"
+git-tree-sha1 = "8ff3dfacf04e79b1be490ba3b2dd68f1bacb1776"
 registries = "General"
 uuid = "2fc8631c-6f24-4c5b-bca7-cbb509c42db4"
-version = "1.9.0"
+version = "1.10.0"
 
 [[deps.PrecompileSignatures]]
 git-tree-sha1 = "18ef344185f25ee9d51d80e179f8dad33dc48eb1"
